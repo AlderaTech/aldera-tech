@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { isStaff } from "@/lib/permissions";
+import { ADMIN_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 import type { InvoiceStatus } from "@prisma/client";
 
 async function requireAdmin() {
@@ -26,8 +27,8 @@ export async function bulkBlogPublishAction(ids: string[], publish: boolean) {
       publishedAt: publish ? now : null,
     },
   });
-  revalidatePath("/blog");
-  revalidatePath("/admin/blog");
+  revalidatePath(PUBLIC_ROUTES.blog);
+  revalidatePath(ADMIN_ROUTES.blog);
   return { ok: true, count: result.count };
 }
 
@@ -37,8 +38,8 @@ export async function bulkBlogDeleteAction(ids: string[]) {
   const result = await prisma.blogPost.deleteMany({
     where: { id: { in: ids } },
   });
-  revalidatePath("/blog");
-  revalidatePath("/admin/blog");
+  revalidatePath(PUBLIC_ROUTES.blog);
+  revalidatePath(ADMIN_ROUTES.blog);
   return { ok: true, count: result.count };
 }
 
@@ -56,8 +57,8 @@ export async function bulkInvoiceStatusAction(
       paidAt: status === "PAID" ? new Date() : null,
     },
   });
-  revalidatePath("/admin/invoices");
-  revalidatePath("/dashboard/invoices");
+  revalidatePath(ADMIN_ROUTES.invoices);
+  revalidatePath(DASHBOARD_ROUTES.invoices);
   return { ok: true, count: result.count };
 }
 
@@ -67,6 +68,6 @@ export async function bulkInvoiceDeleteAction(ids: string[]) {
   const result = await prisma.invoice.deleteMany({
     where: { id: { in: ids } },
   });
-  revalidatePath("/admin/invoices");
+  revalidatePath(ADMIN_ROUTES.invoices);
   return { ok: true, count: result.count };
 }

@@ -23,14 +23,22 @@ const COLORS = [
   "oklch(0.398 0.07 227.392)",
 ];
 
+const CHART_INITIAL_DIMENSION = { width: 640, height: 256 };
+
 export function RevenueAreaChart({
   data,
 }: {
   data: { month: string; revenue: number }[];
 }) {
   return (
-    <div className="h-64 w-full">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-64 min-h-64 w-full min-w-0">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        minWidth={0}
+        minHeight={256}
+        initialDimension={CHART_INITIAL_DIMENSION}
+      >
         <AreaChart data={data} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
@@ -87,8 +95,14 @@ export function ProjectStatusPie({
     );
   }
   return (
-    <div className="h-64 w-full">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-64 min-h-64 w-full min-w-0">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        minWidth={0}
+        minHeight={256}
+        initialDimension={CHART_INITIAL_DIMENSION}
+      >
         <PieChart>
           <Pie
             data={data}

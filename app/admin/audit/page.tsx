@@ -14,12 +14,13 @@ import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { formatDate } from "@/lib/utils";
 import { hasPermission, PERMISSIONS } from "@/lib/permissions";
+import { ADMIN_ROUTES, AUTH_ROUTES } from "@/lib/routes";
 
 export default async function AuditLogPage() {
   const session = await auth();
-  if (!session?.user) redirect("/login");
+  if (!session?.user) redirect(AUTH_ROUTES.login);
   if (!hasPermission(session.user.role, PERMISSIONS.AUDIT_VIEW)) {
-    redirect("/admin");
+    redirect(ADMIN_ROUTES.home);
   }
 
   const logs = await safeDb(

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
+import { ADMIN_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
 import { RecurringTemplateForm } from "../_components/recurring-form";
 
@@ -28,7 +29,7 @@ export default async function NewRecurringPage() {
   return (
     <div className="space-y-6">
       <Button asChild variant="ghost" size="sm" className="-ml-2">
-        <Link href="/admin/invoices/recurring">← Kembali</Link>
+        <Link href={ADMIN_ROUTES.invoicesRecurring}>← Kembali</Link>
       </Button>
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Template Baru</h1>

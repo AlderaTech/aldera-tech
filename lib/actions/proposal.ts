@@ -14,6 +14,7 @@ import {
 import { sendMail } from "@/lib/email";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { logAudit } from "@/lib/actions/team";
+import { ADMIN_ROUTES, PROPOSAL_ROUTES } from "@/lib/routes";
 
 export type ProposalActionState = {
   ok: boolean;
@@ -112,7 +113,7 @@ export async function createProposalAction(
   });
 
   await logAudit(user.id, "PROPOSAL_CREATED", "Proposal", proposal.id);
-  revalidatePath("/admin/proposals");
+  revalidatePath(ADMIN_ROUTES.proposals);
   return { ok: true, proposalId: proposal.id, message: "Proposal dibuat." };
 }
 
@@ -174,9 +175,9 @@ export async function sendProposalAction(id: string) {
     },
   });
   await logAudit(user.id, "PROPOSAL_SENT", "Proposal", id);
-  revalidatePath("/admin/proposals");
-  revalidatePath(`/admin/proposals/${id}`);
-  revalidatePath(`/proposal/${proposal.token}`);
+  revalidatePath(ADMIN_ROUTES.proposals);
+  revalidatePath(ADMIN_ROUTES.proposalDetail(id));
+  revalidatePath(PROPOSAL_ROUTES.publicDetail(proposal.token));
 }
 
 /**
@@ -193,8 +194,8 @@ export async function markProposalViewedAction(token: string) {
       where: { id: proposal.id },
       data: { status: "VIEWED", viewedAt: new Date() },
     });
-    revalidatePath(`/admin/proposals/${proposal.id}`);
-    revalidatePath(`/proposal/${token}`);
+    revalidatePath(ADMIN_ROUTES.proposalDetail(proposal.id));
+    revalidatePath(PROPOSAL_ROUTES.publicDetail(token));
   }
 }
 
@@ -251,8 +252,8 @@ export async function signProposalAction(
     },
   });
 
-  revalidatePath(`/admin/proposals/${proposal.id}`);
-  revalidatePath(`/proposal/${token}`);
+  revalidatePath(ADMIN_ROUTES.proposalDetail(proposal.id));
+  revalidatePath(PROPOSAL_ROUTES.publicDetail(token));
   return { ok: true, message: "Proposal berhasil ditandatangani!" };
 }
 
@@ -271,8 +272,8 @@ export async function rejectProposalAction(
     where: { id: proposal.id },
     data: { status: "REJECTED", rejectedAt: new Date() },
   });
-  revalidatePath(`/admin/proposals/${proposal.id}`);
-  revalidatePath(`/proposal/${token}`);
+  revalidatePath(ADMIN_ROUTES.proposalDetail(proposal.id));
+  revalidatePath(PROPOSAL_ROUTES.publicDetail(token));
   return { ok: true, message: "Proposal ditolak." };
 }
 
@@ -345,11 +346,11 @@ export async function convertProposalToProjectAction(id: string) {
     projectId: project.id,
   });
 
-  revalidatePath("/admin/proposals");
-  revalidatePath(`/admin/proposals/${id}`);
-  revalidatePath("/admin/projects");
-  revalidatePath(`/admin/projects/${project.id}`);
-  revalidatePath(`/proposal/${proposal.token}`);
+  revalidatePath(ADMIN_ROUTES.proposals);
+  revalidatePath(ADMIN_ROUTES.proposalDetail(id));
+  revalidatePath(ADMIN_ROUTES.projects);
+  revalidatePath(ADMIN_ROUTES.projectDetail(project.id));
+  revalidatePath(PROPOSAL_ROUTES.publicDetail(proposal.token));
   return { ok: true, projectId: project.id };
 }
 
@@ -357,5 +358,5 @@ export async function deleteProposalAction(id: string) {
   const user = await requireStaff();
   await prisma.proposal.delete({ where: { id } });
   await logAudit(user.id, "PROPOSAL_DELETED", "Proposal", id);
-  revalidatePath("/admin/proposals");
+  revalidatePath(ADMIN_ROUTES.proposals);
 }

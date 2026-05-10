@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { Card } from "@/components/ui/card";
 import { getPricingPlans, getSiteSettings } from "@/lib/public-settings";
+import { ADMIN_ROUTES } from "@/lib/routes";
 import { SettingsForm } from "./_components/settings-form";
 
 export default async function AdminSettingsPage() {
@@ -10,7 +11,7 @@ export default async function AdminSettingsPage() {
     !session?.user ||
     (session.user.role !== "OWNER" && session.user.role !== "ADMIN")
   ) {
-    redirect("/admin");
+    redirect(ADMIN_ROUTES.home);
   }
 
   const [settings, pricingPlans] = await Promise.all([

@@ -16,6 +16,7 @@ import {
   type ProposalActionState,
 } from "@/lib/actions/proposal";
 import { formatCurrency } from "@/lib/utils";
+import { ADMIN_ROUTES } from "@/lib/routes";
 
 type ProposalItemDraft = {
   description: string;
@@ -81,7 +82,7 @@ export function ProposalCreateForm() {
       const result = await createProposalAction(empty, formData);
       if (result.ok && result.proposalId) {
         toast.success(result.message ?? "Proposal dibuat");
-        router.push(`/admin/proposals/${result.proposalId}`);
+        router.push(ADMIN_ROUTES.proposalDetail(result.proposalId));
         router.refresh();
       } else {
         toast.error(result.message ?? "Gagal membuat proposal");

@@ -4,6 +4,7 @@ import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { getAdminNavConfig } from "@/lib/dashboard-nav";
 import { isStaff } from "@/lib/permissions";
+import { ADMIN_ROUTES, AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 
 export default async function AdminLayout({
   children,
@@ -11,8 +12,8 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  if (!session?.user) redirect("/login?callbackUrl=/admin");
-  if (!isStaff(session.user.role)) redirect("/dashboard");
+  if (!session?.user) redirect(AUTH_ROUTES.loginWithCallback(ADMIN_ROUTES.home));
+  if (!isStaff(session.user.role)) redirect(DASHBOARD_ROUTES.home);
 
   const navConfig = getAdminNavConfig(session.user.role);
 

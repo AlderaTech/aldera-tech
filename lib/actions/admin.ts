@@ -9,6 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { unlink } from "node:fs/promises";
 import { join } from "node:path";
 import { isStaff } from "@/lib/permissions";
+import { ADMIN_ROUTES } from "@/lib/routes";
 
 async function requireAdmin() {
   const session = await auth();
@@ -49,7 +50,7 @@ export async function inviteUserAction(
     },
   });
 
-  revalidatePath("/admin/users");
+  revalidatePath(ADMIN_ROUTES.users);
 
   return {
     ok: true,
@@ -64,7 +65,7 @@ export async function updateUserRoleAction(userId: string, role: Role) {
     throw new Error("Tidak bisa menurunkan role diri sendiri menjadi Client.");
   }
   await prisma.user.update({ where: { id: userId }, data: { role } });
-  revalidatePath("/admin/users");
+  revalidatePath(ADMIN_ROUTES.users);
 }
 
 export async function toggleUserActiveAction(userId: string) {
@@ -80,7 +81,7 @@ export async function toggleUserActiveAction(userId: string) {
     where: { id: userId },
     data: { isActive: !u?.isActive },
   });
-  revalidatePath("/admin/users");
+  revalidatePath(ADMIN_ROUTES.users);
 }
 
 export async function deleteFileAction(fileId: string) {
@@ -96,5 +97,5 @@ export async function deleteFileAction(fileId: string) {
     // File might already be deleted on disk, continue.
   }
   await prisma.file.delete({ where: { id: fileId } });
-  revalidatePath("/admin/files");
+  revalidatePath(ADMIN_ROUTES.files);
 }

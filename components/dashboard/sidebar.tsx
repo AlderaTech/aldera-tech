@@ -27,6 +27,7 @@ import {
   type DashboardNavIcon,
   type DashboardNavItem,
 } from "@/lib/dashboard-nav";
+import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 const navIcons: Record<DashboardNavIcon, LucideIcon> = {
@@ -48,7 +49,7 @@ const navIcons: Record<DashboardNavIcon, LucideIcon> = {
 };
 
 function isActive(pathname: string, href: string) {
-  if (href === "/admin" || href === "/dashboard") {
+  if (href === ADMIN_ROUTES.home || href === DASHBOARD_ROUTES.home) {
     return pathname === href;
   }
 

@@ -3,6 +3,7 @@ import { Check, ArrowRight, Sparkles } from "lucide-react";
 import { auth } from "@/auth";
 import { Card } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
+import { DASHBOARD_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
 import { cn } from "@/lib/utils";
 
@@ -48,28 +49,28 @@ export async function OnboardingChecklist() {
       title: "Lengkapi profil",
       description: "Tambahkan nomor telepon dan informasi perusahaan.",
       done: profileComplete,
-      cta: { label: "Lengkapi", href: "/dashboard/profile" },
+      cta: { label: "Lengkapi", href: DASHBOARD_ROUTES.profile },
     },
     {
       id: "project",
       title: "Miliki proyek pertama",
       description: "Mulai kolaborasi dengan membuat proyek bersama admin.",
       done: data.projectCount > 0,
-      cta: { label: "Lihat proyek", href: "/dashboard/projects" },
+      cta: { label: "Lihat proyek", href: DASHBOARD_ROUTES.projects },
     },
     {
       id: "message",
       title: "Tinggalkan pesan pertama",
       description: "Berkomunikasi langsung dalam halaman proyek.",
       done: data.messageCount > 0,
-      cta: { label: "Lihat proyek", href: "/dashboard/projects" },
+      cta: { label: "Lihat proyek", href: DASHBOARD_ROUTES.projects },
     },
     {
       id: "invoice",
       title: "Selesaikan invoice pertama",
       description: "Tandai milestone bayar untuk unlock progres penuh.",
       done: data.paidInvoiceCount > 0,
-      cta: { label: "Lihat invoice", href: "/dashboard/invoices" },
+      cta: { label: "Lihat invoice", href: DASHBOARD_ROUTES.invoices },
     },
   ];
 

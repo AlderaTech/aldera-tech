@@ -21,6 +21,7 @@ import {
   createProjectAction,
   type ProjectActionState,
 } from "@/lib/actions/project";
+import { ADMIN_ROUTES } from "@/lib/routes";
 
 export function ProjectCreateForm({
   clients,
@@ -38,7 +39,7 @@ export function ProjectCreateForm({
       const result = await createProjectAction(empty, fd);
       if (result.ok && result.projectId) {
         toast.success(result.message ?? "Proyek dibuat");
-        router.push(`/admin/projects/${result.projectId}`);
+        router.push(ADMIN_ROUTES.projectDetail(result.projectId));
         router.refresh();
       } else {
         toast.error(result.message ?? "Gagal");

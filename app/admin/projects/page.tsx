@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { prisma } from "@/lib/prisma";
+import { ADMIN_ROUTES, API_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import { projectStatusMeta } from "@/lib/status-meta";
@@ -38,12 +39,12 @@ export default async function AdminProjectsList() {
         </div>
         <div className="flex items-center gap-2">
           <Button asChild variant="outline">
-            <a href="/api/admin/export/projects" download>
+            <a href={API_ROUTES.exportProjects} download>
               <Download className="size-4" /> Export CSV
             </a>
           </Button>
           <Button asChild>
-            <Link href="/admin/projects/new">
+            <Link href={ADMIN_ROUTES.projectNew}>
               <Plus className="size-4" /> Proyek Baru
             </Link>
           </Button>
@@ -110,7 +111,7 @@ export default async function AdminProjectsList() {
                     </TableCell>
                     <TableCell className="text-right">
                       <Button asChild size="sm" variant="ghost">
-                        <Link href={`/admin/projects/${p.id}`}>
+                        <Link href={ADMIN_ROUTES.projectDetail(p.id)}>
                           Detail
                           <ExternalLink className="size-3.5" />
                         </Link>

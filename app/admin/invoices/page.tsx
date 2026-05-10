@@ -3,6 +3,7 @@ import { Plus, Download, Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
+import { ADMIN_ROUTES, API_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
 import { InvoiceTable } from "./_components/invoice-table";
 
@@ -39,17 +40,17 @@ export default async function AdminInvoicesPage() {
         </div>
         <div className="flex items-center gap-2">
           <Button asChild variant="outline">
-            <Link href="/admin/invoices/recurring">
+            <Link href={ADMIN_ROUTES.invoicesRecurring}>
               <Repeat className="size-4" /> Recurring
             </Link>
           </Button>
           <Button asChild variant="outline">
-            <a href="/api/admin/export/invoices" download>
+            <a href={API_ROUTES.exportInvoices} download>
               <Download className="size-4" /> Export CSV
             </a>
           </Button>
           <Button asChild>
-            <Link href="/admin/invoices/new">
+            <Link href={ADMIN_ROUTES.invoiceNew}>
               <Plus className="size-4" /> Invoice Baru
             </Link>
           </Button>

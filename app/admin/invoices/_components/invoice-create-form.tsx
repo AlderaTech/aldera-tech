@@ -21,6 +21,7 @@ import {
   createInvoiceAction,
   type InvoiceActionState,
 } from "@/lib/actions/invoice";
+import { ADMIN_ROUTES } from "@/lib/routes";
 import { formatCurrency } from "@/lib/utils";
 
 type Client = { id: string; name: string; email: string };
@@ -100,7 +101,7 @@ export function InvoiceCreateForm({
       const result = await createInvoiceAction(empty, fd);
       if (result.ok && result.invoiceId) {
         toast.success(result.message ?? "Invoice dibuat");
-        router.push(`/admin/invoices/${result.invoiceId}`);
+        router.push(ADMIN_ROUTES.invoiceDetail(result.invoiceId));
         router.refresh();
       } else {
         toast.error(result.message ?? "Gagal");

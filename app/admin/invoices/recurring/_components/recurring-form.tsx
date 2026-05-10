@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createRecurringTemplateAction } from "@/lib/actions/recurring-invoice";
+import { ADMIN_ROUTES } from "@/lib/routes";
 import { formatCurrency } from "@/lib/utils";
 
 type Client = { id: string; name: string; email: string };
@@ -83,7 +84,7 @@ export function RecurringTemplateForm({
       const r = await createRecurringTemplateAction(fd);
       if (r.ok) {
         toast.success(r.message ?? "Template dibuat");
-        router.push("/admin/invoices/recurring");
+        router.push(ADMIN_ROUTES.invoicesRecurring);
         router.refresh();
       } else {
         toast.error(r.message ?? "Gagal");

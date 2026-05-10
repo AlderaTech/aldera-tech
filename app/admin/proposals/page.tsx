@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { prisma } from "@/lib/prisma";
+import { ADMIN_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
 import { proposalStatusMeta } from "@/lib/status-meta";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -41,7 +42,7 @@ export default async function AdminProposalsPage() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/admin/proposals/new">
+          <Link href={ADMIN_ROUTES.proposalNew}>
             <Plus className="size-4" /> Proposal Baru
           </Link>
         </Button>
@@ -76,7 +77,7 @@ export default async function AdminProposalsPage() {
                   <TableRow key={p.id}>
                     <TableCell className="font-medium">
                       <Link
-                        href={`/admin/proposals/${p.id}`}
+                        href={ADMIN_ROUTES.proposalDetail(p.id)}
                         className="hover:underline"
                       >
                         {p.number}

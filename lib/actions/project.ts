@@ -10,6 +10,7 @@ import {
 } from "@/lib/validations/project";
 import type { ActivityAction, MilestoneStatus } from "@prisma/client";
 import { isStaff } from "@/lib/permissions";
+import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 
 export type ProjectActionState = {
   ok: boolean;
@@ -113,10 +114,10 @@ export async function createProjectAction(
     `Proyek "${data.title}" dibuat.`
   );
 
-  revalidatePath("/admin/projects");
-  revalidatePath("/admin");
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/projects");
+  revalidatePath(ADMIN_ROUTES.projects);
+  revalidatePath(ADMIN_ROUTES.home);
+  revalidatePath(DASHBOARD_ROUTES.home);
+  revalidatePath(DASHBOARD_ROUTES.projects);
 
   return { ok: true, projectId: project.id, message: "Proyek berhasil dibuat." };
 }
@@ -187,11 +188,11 @@ export async function updateProjectAction(
     );
   }
 
-  revalidatePath("/admin/projects");
-  revalidatePath(`/admin/projects/${projectId}`);
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/projects");
-  revalidatePath(`/dashboard/projects/${projectId}`);
+  revalidatePath(ADMIN_ROUTES.projects);
+  revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
+  revalidatePath(DASHBOARD_ROUTES.home);
+  revalidatePath(DASHBOARD_ROUTES.projects);
+  revalidatePath(DASHBOARD_ROUTES.projectDetail(projectId));
 
   return { ok: true, projectId, message: "Proyek diperbarui." };
 }
@@ -199,9 +200,9 @@ export async function updateProjectAction(
 export async function deleteProjectAction(projectId: string) {
   await requireAdmin();
   await prisma.project.delete({ where: { id: projectId } });
-  revalidatePath("/admin/projects");
-  revalidatePath("/admin");
-  redirect("/admin/projects");
+  revalidatePath(ADMIN_ROUTES.projects);
+  revalidatePath(ADMIN_ROUTES.home);
+  redirect(ADMIN_ROUTES.projects);
 }
 
 // -------- Milestones --------
@@ -234,8 +235,8 @@ export async function createMilestoneAction(projectId: string, formData: FormDat
     `Milestone "${parsed.data.title}" ditambahkan.`
   );
   await recomputeProgressIfAuto(projectId);
-  revalidatePath(`/admin/projects/${projectId}`);
-  revalidatePath(`/dashboard/projects/${projectId}`);
+  revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
+  revalidatePath(DASHBOARD_ROUTES.projectDetail(projectId));
   return { ok: true };
 }
 
@@ -259,8 +260,8 @@ export async function updateMilestoneStatusAction(
     `Milestone "${milestone.title}" → ${status}.`
   );
   await recomputeProgressIfAuto(milestone.projectId);
-  revalidatePath(`/admin/projects/${milestone.projectId}`);
-  revalidatePath(`/dashboard/projects/${milestone.projectId}`);
+  revalidatePath(ADMIN_ROUTES.projectDetail(milestone.projectId));
+  revalidatePath(DASHBOARD_ROUTES.projectDetail(milestone.projectId));
 }
 
 export async function deleteMilestoneAction(milestoneId: string) {
@@ -270,8 +271,8 @@ export async function deleteMilestoneAction(milestoneId: string) {
     select: { projectId: true },
   });
   await recomputeProgressIfAuto(m.projectId);
-  revalidatePath(`/admin/projects/${m.projectId}`);
-  revalidatePath(`/dashboard/projects/${m.projectId}`);
+  revalidatePath(ADMIN_ROUTES.projectDetail(m.projectId));
+  revalidatePath(DASHBOARD_ROUTES.projectDetail(m.projectId));
 }
 
 // -------- Activity log note --------
@@ -280,7 +281,7 @@ export async function addActivityNoteAction(projectId: string, formData: FormDat
   const note = String(formData.get("note") ?? "").trim();
   if (note.length < 2) return { ok: false };
   await logActivity(projectId, user.id, "NOTE_ADDED", note);
-  revalidatePath(`/admin/projects/${projectId}`);
-  revalidatePath(`/dashboard/projects/${projectId}`);
+  revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
+  revalidatePath(DASHBOARD_ROUTES.projectDetail(projectId));
   return { ok: true };
 }

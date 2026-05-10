@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { isStaff } from "@/lib/permissions";
+import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 
 async function getAuthContext(projectId: string) {
   const session = await auth();
@@ -46,8 +47,8 @@ export async function postMessageAction(
       description: `Pesan baru${parentId ? " (balasan)" : ""}.`,
     },
   });
-  revalidatePath(`/admin/projects/${projectId}`);
-  revalidatePath(`/dashboard/projects/${projectId}`);
+  revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
+  revalidatePath(DASHBOARD_ROUTES.projectDetail(projectId));
   return { ok: true };
 }
 
@@ -68,8 +69,8 @@ export async function editMessageAction(messageId: string, content: string) {
     where: { id: messageId },
     data: { content: trimmed, editedAt: new Date() },
   });
-  revalidatePath(`/admin/projects/${msg.projectId}`);
-  revalidatePath(`/dashboard/projects/${msg.projectId}`);
+  revalidatePath(ADMIN_ROUTES.projectDetail(msg.projectId));
+  revalidatePath(DASHBOARD_ROUTES.projectDetail(msg.projectId));
 }
 
 export async function deleteMessageAction(messageId: string) {
@@ -88,6 +89,6 @@ export async function deleteMessageAction(messageId: string) {
     where: { id: messageId },
     data: { deletedAt: new Date(), content: "[pesan dihapus]" },
   });
-  revalidatePath(`/admin/projects/${msg.projectId}`);
-  revalidatePath(`/dashboard/projects/${msg.projectId}`);
+  revalidatePath(ADMIN_ROUTES.projectDetail(msg.projectId));
+  revalidatePath(DASHBOARD_ROUTES.projectDetail(msg.projectId));
 }

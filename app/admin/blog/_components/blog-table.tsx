@@ -24,6 +24,7 @@ import {
 } from "@/lib/actions/bulk";
 import { BlogRowActions } from "./blog-row-actions";
 import { formatDate } from "@/lib/utils";
+import { ADMIN_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 
 type BlogRow = {
   id: string;
@@ -161,7 +162,7 @@ export function BlogTable({ posts }: { posts: BlogRow[] }) {
                     {p.published && (
                       <Button asChild size="icon" variant="ghost">
                         <Link
-                          href={`/blog/${p.slug}`}
+                          href={PUBLIC_ROUTES.blogDetail(p.slug)}
                           target="_blank"
                           aria-label="Lihat di frontend"
                         >
@@ -171,7 +172,7 @@ export function BlogTable({ posts }: { posts: BlogRow[] }) {
                     )}
                     <Button asChild size="icon" variant="ghost">
                       <Link
-                        href={`/admin/blog/${p.id}/edit`}
+                        href={ADMIN_ROUTES.blogEdit(p.id)}
                         aria-label="Edit"
                       >
                         <Pencil className="size-4" />

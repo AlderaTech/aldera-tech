@@ -24,6 +24,7 @@ import {
 } from "@/lib/actions/bulk";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { invoiceStatusMeta } from "@/lib/status-meta";
+import { ADMIN_ROUTES } from "@/lib/routes";
 import type { InvoiceStatus } from "@prisma/client";
 
 type InvoiceRow = {
@@ -170,7 +171,7 @@ export function InvoiceTable({ invoices }: { invoices: InvoiceRow[] }) {
                   </TableCell>
                   <TableCell className="text-right">
                     <Button asChild size="sm" variant="outline">
-                      <Link href={`/admin/invoices/${inv.id}`}>
+                      <Link href={ADMIN_ROUTES.invoiceDetail(inv.id)}>
                         <Eye className="size-3.5" />
                         Detail
                       </Link>

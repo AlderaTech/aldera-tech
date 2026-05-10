@@ -17,6 +17,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { proposalStatusMeta } from "@/lib/status-meta";
+import { ADMIN_ROUTES } from "@/lib/routes";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ProposalActions } from "../_components/proposal-actions";
 
@@ -55,7 +56,7 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="space-y-2">
           <Button asChild variant="ghost" size="sm" className="-ml-2">
-            <Link href="/admin/proposals">
+            <Link href={ADMIN_ROUTES.proposals}>
               <ArrowLeft className="size-4" /> Kembali ke Proposal
             </Link>
           </Button>
@@ -137,7 +138,7 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
           )}
           {proposal.convertedProject && (
             <Button asChild variant="outline" size="sm" className="mt-2">
-              <Link href={`/admin/projects/${proposal.convertedProject.id}`}>
+              <Link href={ADMIN_ROUTES.projectDetail(proposal.convertedProject.id)}>
                 Lihat Proyek
               </Link>
             </Button>

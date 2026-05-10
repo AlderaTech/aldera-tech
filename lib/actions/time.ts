@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { isStaff } from "@/lib/permissions";
+import { ADMIN_ROUTES } from "@/lib/routes";
 
 async function requireStaff() {
   const session = await auth();
@@ -39,7 +40,7 @@ export async function startTimerAction(projectId: string, description: string) {
     },
     select: { id: true },
   });
-  revalidatePath(`/admin/projects/${projectId}`);
+  revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
   return { ok: true, id: entry.id };
 }
 
@@ -68,7 +69,7 @@ export async function stopTimerAction(entryId: string) {
       description: `Waktu tercatat: ${Math.round(durationSec / 60)} menit.`,
     },
   });
-  revalidatePath(`/admin/projects/${entry.projectId}`);
+  revalidatePath(ADMIN_ROUTES.projectDetail(entry.projectId));
   return { ok: true };
 }
 
@@ -97,7 +98,7 @@ export async function addManualEntryAction(
       billable,
     },
   });
-  revalidatePath(`/admin/projects/${projectId}`);
+  revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
   return { ok: true };
 }
 
@@ -112,5 +113,5 @@ export async function deleteTimeEntryAction(entryId: string) {
     throw new Error("Forbidden");
   }
   await prisma.timeEntry.delete({ where: { id: entryId } });
-  revalidatePath(`/admin/projects/${entry.projectId}`);
+  revalidatePath(ADMIN_ROUTES.projectDetail(entry.projectId));
 }

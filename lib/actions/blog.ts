@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { blogPostSchema } from "@/lib/validations/blog";
 import { isStaff } from "@/lib/permissions";
+import { ADMIN_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 
 export type BlogActionState = {
   ok: boolean;
@@ -81,9 +82,9 @@ export async function createBlogPostAction(
     select: { id: true, slug: true },
   });
 
-  revalidatePath("/blog");
-  revalidatePath(`/blog/${post.slug}`);
-  revalidatePath("/admin/blog");
+  revalidatePath(PUBLIC_ROUTES.blog);
+  revalidatePath(PUBLIC_ROUTES.blogDetail(post.slug));
+  revalidatePath(ADMIN_ROUTES.blog);
 
   return { ok: true, postId: post.id, message: "Post berhasil dibuat." };
 }
@@ -145,12 +146,12 @@ export async function updateBlogPostAction(
     select: { id: true, slug: true },
   });
 
-  revalidatePath("/blog");
+  revalidatePath(PUBLIC_ROUTES.blog);
   if (current?.slug && current.slug !== post.slug) {
-    revalidatePath(`/blog/${current.slug}`);
+    revalidatePath(PUBLIC_ROUTES.blogDetail(current.slug));
   }
-  revalidatePath(`/blog/${post.slug}`);
-  revalidatePath("/admin/blog");
+  revalidatePath(PUBLIC_ROUTES.blogDetail(post.slug));
+  revalidatePath(ADMIN_ROUTES.blog);
 
   return { ok: true, postId: post.id, message: "Post berhasil diperbarui." };
 }
@@ -169,9 +170,9 @@ export async function togglePublishBlogPostAction(id: string) {
       publishedAt: !post.published ? new Date() : post.published ? null : undefined,
     },
   });
-  revalidatePath("/blog");
-  revalidatePath(`/blog/${updated.slug}`);
-  revalidatePath("/admin/blog");
+  revalidatePath(PUBLIC_ROUTES.blog);
+  revalidatePath(PUBLIC_ROUTES.blogDetail(updated.slug));
+  revalidatePath(ADMIN_ROUTES.blog);
 }
 
 export async function deleteBlogPostAction(id: string) {
@@ -181,9 +182,9 @@ export async function deleteBlogPostAction(id: string) {
     select: { slug: true },
   });
   await prisma.blogPost.delete({ where: { id } });
-  revalidatePath("/blog");
-  if (post?.slug) revalidatePath(`/blog/${post.slug}`);
-  revalidatePath("/admin/blog");
+  revalidatePath(PUBLIC_ROUTES.blog);
+  if (post?.slug) revalidatePath(PUBLIC_ROUTES.blogDetail(post.slug));
+  revalidatePath(ADMIN_ROUTES.blog);
 }
 
 /**

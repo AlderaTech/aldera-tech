@@ -41,6 +41,10 @@ export const DASHBOARD_ROUTES = {
   projectDetail: (id: string) => `/dashboard/projects/${id}`,
 } as const;
 
+export const PROPOSAL_ROUTES = {
+  publicDetail: (token: string) => `/proposal/${token}`,
+} as const;
+
 export const ADMIN_ROUTES = {
   home: "/admin",
   audit: "/admin/audit",
@@ -62,4 +66,10 @@ export const ADMIN_ROUTES = {
   invoiceDetail: (id: string) => `/admin/invoices/${id}`,
   projectDetail: (id: string) => `/admin/projects/${id}`,
   proposalDetail: (id: string) => `/admin/proposals/${id}`,
+} as const;
+
+export const API_ROUTES = {
+  exportInvoices: "/api/admin/export/invoices",
+  exportProjects: "/api/admin/export/projects",
+  invoicePdf: (id: string) => `/api/invoices/${id}/pdf`,
 } as const;

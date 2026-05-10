@@ -7,6 +7,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { invoiceCreateSchema } from "@/lib/validations/invoice";
 import { sendMail, invoiceEmailHtml } from "@/lib/email";
+import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 async function requireAdmin() {
@@ -99,9 +100,9 @@ export async function createInvoiceAction(
     select: { id: true },
   });
 
-  revalidatePath("/admin/invoices");
-  revalidatePath("/admin");
-  revalidatePath("/dashboard/invoices");
+  revalidatePath(ADMIN_ROUTES.invoices);
+  revalidatePath(ADMIN_ROUTES.home);
+  revalidatePath(DASHBOARD_ROUTES.invoices);
 
   return { ok: true, invoiceId: invoice.id, message: "Invoice dibuat." };
 }
@@ -119,9 +120,9 @@ export async function updateInvoiceStatusAction(
     },
     select: { id: true, clientId: true },
   });
-  revalidatePath("/admin/invoices");
-  revalidatePath(`/admin/invoices/${invoiceId}`);
-  revalidatePath("/dashboard/invoices");
+  revalidatePath(ADMIN_ROUTES.invoices);
+  revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
+  revalidatePath(DASHBOARD_ROUTES.invoices);
   return invoice;
 }
 
@@ -158,8 +159,8 @@ export async function sendInvoiceEmailAction(invoiceId: string) {
     },
   });
 
-  revalidatePath(`/admin/invoices/${invoiceId}`);
-  revalidatePath("/admin/invoices");
+  revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
+  revalidatePath(ADMIN_ROUTES.invoices);
 }
 
 export async function sendReminderAction(invoiceId: string) {
@@ -180,7 +181,7 @@ export async function sendReminderAction(invoiceId: string) {
         clientName: invoice.client.name,
         total: formatCurrency(Number(invoice.total)),
         dueDate: formatDate(invoice.dueDate),
-        viewUrl: `${appUrl}/dashboard/invoices`,
+        viewUrl: `${appUrl}${DASHBOARD_ROUTES.invoices}`,
         isReminder: true,
       }),
     });
@@ -194,12 +195,12 @@ export async function sendReminderAction(invoiceId: string) {
     data: { lastReminderSentAt: new Date() },
   });
 
-  revalidatePath(`/admin/invoices/${invoiceId}`);
+  revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
 }
 
 export async function deleteInvoiceAction(invoiceId: string) {
   await requireAdmin();
   await prisma.invoice.delete({ where: { id: invoiceId } });
-  revalidatePath("/admin/invoices");
-  redirect("/admin/invoices");
+  revalidatePath(ADMIN_ROUTES.invoices);
+  redirect(ADMIN_ROUTES.invoices);
 }

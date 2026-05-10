@@ -6,6 +6,7 @@ import type { ProjectAssignmentRole } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { isStaff, isOwnerOrAdmin } from "@/lib/permissions";
+import { ADMIN_ROUTES } from "@/lib/routes";
 
 async function requireOwnerOrAdmin() {
   const session = await auth();
@@ -77,7 +78,7 @@ export async function assignMemberAction(
     projectId,
     { assignedUserId: userId, role }
   );
-  revalidatePath(`/admin/projects/${projectId}`);
+  revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
 }
 
 export async function removeMemberAction(
@@ -103,7 +104,7 @@ export async function removeMemberAction(
     projectId,
     { removedUserId: userId }
   );
-  revalidatePath(`/admin/projects/${projectId}`);
+  revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
 }
 
 export { requireOwnerOrAdmin, requireStaff };

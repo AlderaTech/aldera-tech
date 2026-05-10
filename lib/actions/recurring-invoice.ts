@@ -5,6 +5,7 @@ import type { RecurringFrequency } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { isStaff } from "@/lib/permissions";
+import { ADMIN_ROUTES } from "@/lib/routes";
 import { recurringInvoiceSchema } from "@/lib/validations/recurring-invoice";
 
 async function requireAdmin() {
@@ -90,7 +91,7 @@ export async function createRecurringTemplateAction(formData: FormData) {
     select: { id: true },
   });
 
-  revalidatePath("/admin/invoices/recurring");
+  revalidatePath(ADMIN_ROUTES.invoicesRecurring);
   return { ok: true, id: template.id, message: "Template dibuat." };
 }
 
@@ -105,13 +106,13 @@ export async function toggleRecurringActiveAction(id: string) {
     where: { id },
     data: { active: !t.active },
   });
-  revalidatePath("/admin/invoices/recurring");
+  revalidatePath(ADMIN_ROUTES.invoicesRecurring);
 }
 
 export async function deleteRecurringAction(id: string) {
   await requireAdmin();
   await prisma.recurringInvoiceTemplate.delete({ where: { id } });
-  revalidatePath("/admin/invoices/recurring");
+  revalidatePath(ADMIN_ROUTES.invoicesRecurring);
 }
 
 /**
@@ -181,7 +182,7 @@ export async function issueDueRecurringInvoices(): Promise<{ issued: number }> {
 
     issued++;
   }
-  revalidatePath("/admin/invoices");
-  revalidatePath("/admin/invoices/recurring");
+  revalidatePath(ADMIN_ROUTES.invoices);
+  revalidatePath(ADMIN_ROUTES.invoicesRecurring);
   return { issued };
 }

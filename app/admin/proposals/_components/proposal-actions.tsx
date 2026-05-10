@@ -13,6 +13,7 @@ import {
   sendProposalAction,
 } from "@/lib/actions/proposal";
 import { isNextNavigationError } from "@/lib/is-next-nav-error";
+import { ADMIN_ROUTES } from "@/lib/routes";
 
 type Props = {
   proposalId: string;
@@ -67,7 +68,7 @@ export function ProposalActions({
     runAction("convert", async () => {
       const result = await convertProposalToProjectAction(proposalId);
       toast.success("Proposal dikonversi menjadi proyek");
-      router.push(`/admin/projects/${result.projectId}`);
+      router.push(ADMIN_ROUTES.projectDetail(result.projectId));
     });
   }
 
@@ -75,7 +76,7 @@ export function ProposalActions({
     runAction("delete", async () => {
       await deleteProposalAction(proposalId);
       toast.success("Proposal dihapus");
-      router.push("/admin/proposals");
+      router.push(ADMIN_ROUTES.proposals);
     });
   }
 

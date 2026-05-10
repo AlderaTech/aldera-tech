@@ -12,6 +12,7 @@ import {
   pricingSettingsSchema,
   siteSettingsSchema,
 } from "@/lib/validations/settings";
+import { ADMIN_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 
 export type SettingsActionState = {
   ok: boolean;
@@ -224,7 +225,7 @@ function splitLines(value: FormDataEntryValue | null) {
 
 function revalidateSettingsPaths() {
   revalidatePath("/", "layout");
-  revalidatePath("/pricing");
-  revalidatePath("/contact");
-  revalidatePath("/admin/settings");
+  revalidatePath(PUBLIC_ROUTES.pricing);
+  revalidatePath(PUBLIC_ROUTES.contact);
+  revalidatePath(ADMIN_ROUTES.settings);
 }

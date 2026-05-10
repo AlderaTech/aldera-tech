@@ -5,6 +5,7 @@ import type { ActivityAction, TaskStatus } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { requireStaff } from "@/lib/actions/team";
+import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 import { taskMutationSchema, taskReorderSchema } from "@/lib/validations/task";
 
 export type TaskActionState = {
@@ -25,10 +26,10 @@ async function logActivity(
 }
 
 function revalidateProject(projectId: string) {
-  revalidatePath(`/admin/projects/${projectId}`);
-  revalidatePath(`/dashboard/projects/${projectId}`);
-  revalidatePath("/admin/projects");
-  revalidatePath("/dashboard/projects");
+  revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
+  revalidatePath(DASHBOARD_ROUTES.projectDetail(projectId));
+  revalidatePath(ADMIN_ROUTES.projects);
+  revalidatePath(DASHBOARD_ROUTES.projects);
 }
 
 export async function createTaskAction(

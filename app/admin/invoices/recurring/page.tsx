@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { prisma } from "@/lib/prisma";
+import { ADMIN_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
 import { formatDate } from "@/lib/utils";
 import { RecurringRowActions } from "./_components/row-actions";
@@ -53,7 +54,7 @@ export default async function RecurringListPage() {
     <div className="space-y-6">
       <div>
         <Button asChild variant="ghost" size="sm" className="-ml-2 mb-2">
-          <Link href="/admin/invoices">← Kembali ke Invoice</Link>
+          <Link href={ADMIN_ROUTES.invoices}>← Kembali ke Invoice</Link>
         </Button>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
@@ -66,7 +67,7 @@ export default async function RecurringListPage() {
             </p>
           </div>
           <Button asChild>
-            <Link href="/admin/invoices/recurring/new">
+            <Link href={ADMIN_ROUTES.invoiceRecurringNew}>
               <Plus className="size-4" /> Template Baru
             </Link>
           </Button>
