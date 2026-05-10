@@ -104,21 +104,36 @@ export function InviteUserDialog({ children }: { children: React.ReactNode }) {
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="inv-name">Nama</Label>
-                <Input id="inv-name" name="name" required />
+                <Input
+                  id="inv-name"
+                  name="name"
+                  placeholder="Nama lengkap pengguna"
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="inv-email">Email</Label>
-                <Input id="inv-email" name="email" type="email" required />
+                <Input
+                  id="inv-email"
+                  name="email"
+                  type="email"
+                  placeholder="user@perusahaan.com"
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="inv-company">Perusahaan (opsional)</Label>
-                <Input id="inv-company" name="company" />
+                <Input
+                  id="inv-company"
+                  name="company"
+                  placeholder="Nama perusahaan"
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="inv-role">Role</Label>
                 <Select name="role" defaultValue="CLIENT">
                   <SelectTrigger id="inv-role">
-                    <SelectValue />
+                    <SelectValue placeholder="Pilih role pengguna" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="CLIENT">Client</SelectItem>

@@ -3,10 +3,11 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Trash2, Mail } from "lucide-react";
+import { CheckCircle2, Trash2, Mail, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
@@ -113,12 +114,13 @@ export function InvoiceTable({ invoices }: { invoices: InvoiceRow[] }) {
             <TableHead>Total</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="hidden lg:table-cell">Jatuh Tempo</TableHead>
+            <TableHead className="w-24 text-right">Aksi</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {invoices.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
+              <TableCell colSpan={8} className="text-center py-10 text-muted-foreground">
                 Belum ada invoice.
               </TableCell>
             </TableRow>
@@ -142,12 +144,7 @@ export function InvoiceTable({ invoices }: { invoices: InvoiceRow[] }) {
                     />
                   </TableCell>
                   <TableCell className="font-medium">
-                    <Link
-                      href={`/admin/invoices/${inv.id}`}
-                      className="hover:underline"
-                    >
-                      {inv.number}
-                    </Link>
+                    {inv.number}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     <div className="text-sm">{inv.client.name}</div>
@@ -170,6 +167,14 @@ export function InvoiceTable({ invoices }: { invoices: InvoiceRow[] }) {
                   </TableCell>
                   <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
                     {formatDate(inv.dueDate)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button asChild size="sm" variant="outline">
+                      <Link href={`/admin/invoices/${inv.id}`}>
+                        <Eye className="size-3.5" />
+                        Detail
+                      </Link>
+                    </Button>
                   </TableCell>
                 </TableRow>
               );

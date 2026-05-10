@@ -243,6 +243,7 @@ export function BlogForm({
                   value={scheduledAt}
                   onChange={(e) => setScheduledAt(e.target.value)}
                   className="text-xs"
+                  placeholder="Pilih waktu publish"
                 />
                 {scheduledAt && (
                   <button

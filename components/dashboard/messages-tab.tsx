@@ -8,6 +8,7 @@ import { Loader2, Send, Trash2, MoreHorizontal, Pencil } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import {
   DropdownMenu,
@@ -82,15 +83,17 @@ export function MessagesTab({
     : null;
 
   return (
-    <div className="space-y-6 max-w-3xl">
-      <div>
-        <h2 className="text-lg font-semibold">Diskusi Proyek</h2>
+    <div className="max-w-4xl space-y-4">
+      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="text-base font-semibold text-slate-950">
+          Diskusi proyek
+        </h2>
         <p className="text-sm text-muted-foreground">
           Komunikasi terpusat antara tim dan client, semua riwayat tersimpan.
         </p>
       </div>
 
-      <Card className="p-4 space-y-3">
+      <Card className="space-y-3 border-slate-200 bg-white p-4 shadow-sm">
         {replyTarget && (
           <div className="text-xs bg-muted/50 rounded px-3 py-2 flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
@@ -110,7 +113,7 @@ export function MessagesTab({
             </button>
           </div>
         )}
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-2">
           <Textarea
             placeholder="Tulis pesan…"
             value={content}
@@ -134,11 +137,11 @@ export function MessagesTab({
       </Card>
 
       {topLevel.length === 0 ? (
-        <Card className="p-10 text-center text-muted-foreground">
+        <Card className="border-dashed p-8 text-center text-sm text-muted-foreground">
           Belum ada pesan. Mulai diskusi di atas.
         </Card>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {topLevel
             .slice()
             .reverse()
@@ -176,6 +179,7 @@ function MessageBubble({
 }) {
   const [editing, setEditing] = React.useState(false);
   const [draft, setDraft] = React.useState(message.content);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
 
   const canEdit =
@@ -195,11 +199,11 @@ function MessageBubble({
   }
 
   function del() {
-    if (!confirm("Hapus pesan ini?")) return;
     startTransition(async () => {
       try {
         await deleteMessageAction(message.id);
         toast.success("Pesan dihapus");
+        setConfirmOpen(false);
         onRefresh();
       } catch {
         toast.error("Gagal");
@@ -210,7 +214,7 @@ function MessageBubble({
   const staffRole = message.author?.role !== "CLIENT";
 
   return (
-    <Card className="p-4">
+    <Card className="border-slate-200 bg-white p-4 shadow-sm">
       <div className="flex items-start gap-3">
         <Avatar className="size-8">
           <AvatarFallback
@@ -250,6 +254,7 @@ function MessageBubble({
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 rows={3}
+                placeholder="Edit isi pesan"
               />
               <div className="flex gap-2">
                 <Button size="sm" onClick={save} disabled={isPending}>
@@ -306,7 +311,13 @@ function MessageBubble({
               <DropdownMenuItem onClick={() => setEditing(true)}>
                 <Pencil className="size-4" /> Edit
               </DropdownMenuItem>
-              <DropdownMenuItem variant="destructive" onClick={del}>
+              <DropdownMenuItem
+                variant="destructive"
+                onSelect={(event) => {
+                  event.preventDefault();
+                  setConfirmOpen(true);
+                }}
+              >
                 <Trash2 className="size-4" /> Hapus
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -315,7 +326,7 @@ function MessageBubble({
       </div>
 
       {replies.length > 0 && (
-        <div className="mt-4 pl-11 space-y-3 border-l-2 ml-3">
+        <div className="mt-3 ml-3 space-y-3 border-l-2 border-slate-200 pl-8">
           {replies.map((r) => (
             <MessageBubble
               key={r.id}
@@ -329,6 +340,16 @@ function MessageBubble({
           ))}
         </div>
       )}
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Hapus pesan?"
+        description="Pesan akan ditandai sebagai dihapus agar struktur diskusi tetap utuh."
+        confirmLabel="Hapus pesan"
+        destructive
+        pending={isPending}
+        onConfirm={del}
+      />
     </Card>
   );
 }

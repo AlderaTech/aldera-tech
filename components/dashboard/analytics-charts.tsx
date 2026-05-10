@@ -12,8 +12,6 @@ import {
   XAxis,
   YAxis,
   Legend,
-  Bar,
-  BarChart,
 } from "recharts";
 import { formatCurrency } from "@/lib/utils";
 
@@ -135,41 +133,44 @@ export function TopClientsBar({
       </div>
     );
   }
+
+  const maxRevenue = Math.max(...data.map((item) => item.revenue), 1);
+
   return (
-    <div className="h-64 w-full">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" horizontal={false} strokeOpacity={0.3} />
-          <XAxis
-            type="number"
-            tick={{ fontSize: 11 }}
-            tickFormatter={(v) => {
-              if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(0)}jt`;
-              if (v >= 1_000) return `${(v / 1_000).toFixed(0)}rb`;
-              return String(v);
-            }}
-          />
-          <YAxis
-            type="category"
-            dataKey="name"
-            tick={{ fontSize: 11 }}
-            width={100}
-            tickLine={false}
-            axisLine={false}
-          />
-          <Tooltip
-            cursor={{ fill: "oklch(0.55 0.18 250 / 0.1)" }}
-            contentStyle={{
-              background: "var(--popover)",
-              border: "1px solid var(--border)",
-              borderRadius: "0.5rem",
-              fontSize: "12px",
-            }}
-            formatter={(value) => [formatCurrency(Number(value)), "Revenue"]}
-          />
-          <Bar dataKey="revenue" fill="oklch(0.55 0.18 250)" radius={[0, 4, 4, 0]} />
-        </BarChart>
-      </ResponsiveContainer>
+    <div className="space-y-3">
+      {data.map((item, index) => {
+        const percentage = Math.max((item.revenue / maxRevenue) * 100, 5);
+
+        return (
+          <div
+            key={item.name}
+            className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-xs font-semibold text-primary">
+                  {index + 1}
+                </div>
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-semibold text-slate-950">
+                    {item.name}
+                  </div>
+                  <div className="text-xs text-slate-500">Paid invoice</div>
+                </div>
+              </div>
+              <div className="shrink-0 text-right text-sm font-semibold tabular-nums text-slate-950">
+                {formatCurrency(item.revenue)}
+              </div>
+            </div>
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
+              <div
+                className="h-full rounded-full bg-primary"
+                style={{ width: `${percentage}%` }}
+              />
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

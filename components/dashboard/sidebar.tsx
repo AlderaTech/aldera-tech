@@ -1,113 +1,184 @@
 "use client";
 
-import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
-  LayoutDashboard,
-  FolderKanban,
-  Receipt,
-  Users,
-  FileText,
-  Newspaper,
-  FolderClosed,
-  Settings,
+  Activity,
+  Archive,
   FileSignature,
+  FileText,
+  FolderClosed,
+  FolderKanban,
+  LayoutDashboard,
+  Newspaper,
+  Plus,
+  Receipt,
+  Repeat,
+  Settings,
   ShieldCheck,
+  Tags,
+  Users,
 } from "lucide-react";
 
 import { Logo } from "@/components/shared/logo";
+import {
+  type DashboardNavGroup,
+  type DashboardNavIcon,
+  type DashboardNavItem,
+} from "@/lib/dashboard-nav";
 import { cn } from "@/lib/utils";
 
-export type DashboardNavItem = {
-  href: string;
-  label: string;
-  icon: LucideIcon;
+const navIcons: Record<DashboardNavIcon, LucideIcon> = {
+  activity: Activity,
+  archive: Archive,
+  fileSignature: FileSignature,
+  fileText: FileText,
+  folderClosed: FolderClosed,
+  folderKanban: FolderKanban,
+  layoutDashboard: LayoutDashboard,
+  newspaper: Newspaper,
+  plus: Plus,
+  receipt: Receipt,
+  repeat: Repeat,
+  settings: Settings,
+  shieldCheck: ShieldCheck,
+  tags: Tags,
+  users: Users,
 };
 
-export const clientNavItems: DashboardNavItem[] = [
-  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/projects", label: "Proyek Saya", icon: FolderKanban },
-  { href: "/dashboard/invoices", label: "Invoice", icon: Receipt },
-];
+function isActive(pathname: string, href: string) {
+  if (href === "/admin" || href === "/dashboard") {
+    return pathname === href;
+  }
 
-export const adminNavItems: DashboardNavItem[] = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/projects", label: "Proyek", icon: FolderKanban },
-  { href: "/admin/proposals", label: "Proposal", icon: FileSignature },
-  { href: "/admin/blog", label: "Blog", icon: Newspaper },
-  { href: "/admin/users", label: "Pengguna", icon: Users },
-  { href: "/admin/invoices", label: "Invoice", icon: FileText },
-  { href: "/admin/files", label: "File", icon: FolderClosed },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
-];
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
-export const ownerNavItems: DashboardNavItem[] = [
-  ...adminNavItems,
-  { href: "/admin/audit", label: "Audit Log", icon: ShieldCheck },
-];
+function hasActiveChild(pathname: string, item: DashboardNavItem) {
+  return item.items?.some((child) => isActive(pathname, child.href)) ?? false;
+}
 
-export function DashboardSidebar({
-  items,
+function NavLink({
+  item,
+  active,
+  child,
   onNavigate,
 }: {
-  items: DashboardNavItem[];
+  item: DashboardNavItem;
+  active: boolean;
+  child?: boolean;
+  onNavigate?: () => void;
+}) {
+  const Icon = navIcons[item.icon];
+
+  return (
+    <Link
+      href={item.href}
+      onClick={onNavigate}
+      className={cn(
+        "group flex min-h-10 items-center gap-3 rounded-lg text-sm font-medium transition-colors",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
+        child ? "px-3 py-2 pl-10 text-[13px]" : "px-3 py-2.5",
+        active
+          ? "bg-slate-950 text-white shadow-sm shadow-slate-950/10"
+          : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
+      )}
+    >
+      <span
+        className={cn(
+          "grid size-7 shrink-0 place-items-center rounded-md transition-colors",
+          child && "size-5 rounded-sm",
+          active
+            ? "bg-white/10 text-white"
+            : "bg-slate-100 text-slate-500 group-hover:bg-white group-hover:text-primary"
+        )}
+      >
+        <Icon className={child ? "size-3.5" : "size-4"} />
+      </span>
+      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+    </Link>
+  );
+}
+
+export function DashboardSidebar({
+  groups,
+  footerItem,
+  variant = "client",
+  onNavigate,
+}: {
+  groups: DashboardNavGroup[];
+  footerItem?: DashboardNavItem;
+  variant?: "admin" | "client";
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
+  const footerActive = footerItem ? isActive(pathname, footerItem.href) : false;
+
   return (
-    <aside className="h-full flex flex-col bg-sidebar text-sidebar-foreground border-r">
-      <div className="h-16 flex items-center px-6 border-b">
-        <Logo size="md" />
+    <aside className="flex h-full w-full flex-col border-r border-slate-200/80 bg-white text-slate-900">
+      <div className="flex h-16 items-center border-b border-slate-200/80 px-5">
+        <div className="flex min-w-0 items-center gap-3">
+          <Logo size="md" />
+          {variant === "admin" && (
+            <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
+              Admin
+            </span>
+          )}
+        </div>
       </div>
-      <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-        {items.map((item) => {
-          const active =
-            item.href === "/dashboard" || item.href === "/admin"
-              ? pathname === item.href
-              : pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onNavigate}
-              className={cn(
-                "relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors group",
-                active
-                  ? "text-sidebar-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              {active && (
-                <motion.span
-                  layoutId="sidebar-active"
-                  className="absolute inset-0 rounded-lg bg-primary"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
-                />
-              )}
-              <item.icon
-                className={cn(
-                  "size-4 relative z-10 transition-transform group-hover:scale-110",
-                  active ? "text-primary-foreground" : ""
-                )}
-              />
-              <span className="relative z-10">{item.label}</span>
-            </Link>
-          );
-        })}
+
+      <nav className="flex-1 overflow-y-auto px-3 py-4">
+        <div className="space-y-5">
+          {groups.map((group) => (
+            <div key={group.label} className="space-y-1.5">
+              <div className="px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                {group.label}
+              </div>
+              <div className="space-y-1">
+                {group.items.map((item) => {
+                  const active =
+                    isActive(pathname, item.href) || hasActiveChild(pathname, item);
+                  const childItems = item.items ?? [];
+
+                  return (
+                    <div key={item.href} className="space-y-1">
+                      <NavLink
+                        item={item}
+                        active={active}
+                        onNavigate={onNavigate}
+                      />
+                      {childItems.length > 0 && active && (
+                        <div className="relative ml-3 space-y-1 border-l border-slate-200 pl-1.5">
+                          {childItems.map((child) => (
+                            <NavLink
+                              key={child.href}
+                              item={child}
+                              active={isActive(pathname, child.href)}
+                              child
+                              onNavigate={onNavigate}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
       </nav>
-      <div className="border-t p-3">
-        <Link
-          href="/dashboard/settings"
-          onClick={onNavigate}
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
-        >
-          <Settings className="size-4" />
-          Pengaturan
-        </Link>
-      </div>
+
+      {footerItem && (
+        <div className="border-t border-slate-200/80 p-3">
+          <NavLink
+            item={footerItem}
+            active={footerActive}
+            onNavigate={onNavigate}
+          />
+        </div>
+      )}
     </aside>
   );
 }

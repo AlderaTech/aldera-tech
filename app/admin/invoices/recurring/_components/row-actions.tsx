@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Play, Pause, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import {
   toggleRecurringActiveAction,
   deleteRecurringAction,
@@ -43,22 +44,30 @@ export function RecurringRowActions({
         )}
         {active ? "Pause" : "Aktifkan"}
       </Button>
-      <Button
-        size="icon"
-        variant="ghost"
-        disabled={isPending}
-        aria-label="Hapus"
-        onClick={() => {
-          if (!confirm("Hapus template ini?")) return;
+      <ConfirmDialog
+        title="Hapus template recurring?"
+        description="Template invoice berulang akan dihapus dan tidak lagi digunakan untuk otomasi tagihan."
+        confirmLabel="Hapus template"
+        destructive
+        pending={isPending}
+        onConfirm={() =>
           startTransition(async () => {
             await deleteRecurringAction(id);
             toast.success("Template dihapus");
             router.refresh();
-          });
-        }}
-      >
-        <Trash2 className="size-3.5 text-destructive" />
-      </Button>
+          })
+        }
+        trigger={
+          <Button
+            size="icon"
+            variant="ghost"
+            disabled={isPending}
+            aria-label="Hapus"
+          >
+            <Trash2 className="size-3.5 text-destructive" />
+          </Button>
+        }
+      />
     </div>
   );
 }

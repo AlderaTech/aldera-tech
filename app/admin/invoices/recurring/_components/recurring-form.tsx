@@ -145,7 +145,7 @@ export function RecurringTemplateForm({
             <Label>Frekuensi</Label>
             <Select value={frequency} onValueChange={setFrequency}>
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder="Pilih frekuensi invoice" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="WEEKLY">Mingguan</SelectItem>
@@ -161,6 +161,7 @@ export function RecurringTemplateForm({
               type="date"
               value={nextIssueDate}
               onChange={(e) => setNextIssueDate(e.target.value)}
+              placeholder="Pilih tanggal terbit berikutnya"
               required
             />
           </div>
@@ -172,6 +173,7 @@ export function RecurringTemplateForm({
               max="90"
               value={dueDays}
               onChange={(e) => setDueDays(e.target.value)}
+              placeholder="14"
             />
           </div>
         </div>
@@ -183,6 +185,7 @@ export function RecurringTemplateForm({
             max="100"
             value={taxRate}
             onChange={(e) => setTaxRate(e.target.value)}
+            placeholder="11"
           />
         </div>
       </Card>
@@ -262,6 +265,7 @@ export function RecurringTemplateForm({
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}
+          placeholder="Catatan yang akan muncul di invoice"
         />
       </Card>
 

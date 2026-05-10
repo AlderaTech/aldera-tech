@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import {
+  Archive,
   FolderKanban,
   FileText,
   Users,
@@ -11,7 +12,14 @@ import {
   Search as SearchIcon,
   LayoutDashboard,
   Plus,
+  FileSignature,
+  FolderClosed,
+  Repeat,
+  Settings,
+  ShieldCheck,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import type { Role } from "@prisma/client";
 import {
   CommandDialog,
   CommandEmpty,
@@ -22,6 +30,13 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
+import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
+import {
+  hasPermission,
+  isStaff,
+  PERMISSIONS,
+  type Permission,
+} from "@/lib/permissions";
 
 type SearchResult = {
   kind: "project" | "invoice" | "user" | "blog";
@@ -45,7 +60,112 @@ const kindLabel = {
   blog: "Blog",
 };
 
-export function CommandPalette({ isStaff = false }: { isStaff?: boolean }) {
+type QuickNavItem = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+  permission?: Permission;
+};
+
+const adminQuickNav: QuickNavItem[] = [
+  { label: "Dashboard", href: ADMIN_ROUTES.home, icon: LayoutDashboard },
+  {
+    label: "Proyek",
+    href: ADMIN_ROUTES.projects,
+    icon: FolderKanban,
+    permission: PERMISSIONS.PROJECT_VIEW_ALL,
+  },
+  {
+    label: "Proyek Baru",
+    href: ADMIN_ROUTES.projectNew,
+    icon: Plus,
+    permission: PERMISSIONS.PROJECT_CREATE,
+  },
+  {
+    label: "Proposal",
+    href: ADMIN_ROUTES.proposals,
+    icon: FileSignature,
+    permission: PERMISSIONS.PROPOSAL_MANAGE,
+  },
+  {
+    label: "Proposal Baru",
+    href: ADMIN_ROUTES.proposalNew,
+    icon: Plus,
+    permission: PERMISSIONS.PROPOSAL_MANAGE,
+  },
+  {
+    label: "Invoice",
+    href: ADMIN_ROUTES.invoices,
+    icon: FileText,
+    permission: PERMISSIONS.INVOICE_VIEW,
+  },
+  {
+    label: "Invoice Baru",
+    href: ADMIN_ROUTES.invoiceNew,
+    icon: Plus,
+    permission: PERMISSIONS.INVOICE_CREATE,
+  },
+  {
+    label: "Invoice Berulang",
+    href: ADMIN_ROUTES.invoicesRecurring,
+    icon: Repeat,
+    permission: PERMISSIONS.INVOICE_VIEW,
+  },
+  {
+    label: "Template Invoice Baru",
+    href: ADMIN_ROUTES.invoiceRecurringNew,
+    icon: Archive,
+    permission: PERMISSIONS.INVOICE_CREATE,
+  },
+  {
+    label: "Blog",
+    href: ADMIN_ROUTES.blog,
+    icon: Newspaper,
+    permission: PERMISSIONS.BLOG_VIEW,
+  },
+  {
+    label: "Post Baru",
+    href: ADMIN_ROUTES.blogNew,
+    icon: Plus,
+    permission: PERMISSIONS.BLOG_CREATE,
+  },
+  {
+    label: "File Manager",
+    href: ADMIN_ROUTES.files,
+    icon: FolderClosed,
+    permission: PERMISSIONS.FILE_MANAGE,
+  },
+  {
+    label: "Pengguna",
+    href: ADMIN_ROUTES.users,
+    icon: Users,
+    permission: PERMISSIONS.USER_MANAGE,
+  },
+  {
+    label: "Settings Website",
+    href: ADMIN_ROUTES.settings,
+    icon: Settings,
+    permission: PERMISSIONS.SETTINGS_MANAGE,
+  },
+  {
+    label: "Audit Log",
+    href: ADMIN_ROUTES.audit,
+    icon: ShieldCheck,
+    permission: PERMISSIONS.AUDIT_VIEW,
+  },
+];
+
+const clientQuickNav: QuickNavItem[] = [
+  { label: "Overview", href: DASHBOARD_ROUTES.home, icon: LayoutDashboard },
+  {
+    label: "Proyek Saya",
+    href: DASHBOARD_ROUTES.projects,
+    icon: FolderKanban,
+  },
+  { label: "Invoice", href: DASHBOARD_ROUTES.invoices, icon: FileText },
+];
+
+export function CommandPalette({ role }: { role?: Role | null }) {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
@@ -107,22 +227,11 @@ export function CommandPalette({ isStaff = false }: { isStaff?: boolean }) {
     (grouped[r.kind] ??= []).push(r);
   }
 
-  const quickNav = isStaff
-    ? [
-        { label: "Overview", href: "/admin", icon: LayoutDashboard },
-        { label: "Proyek", href: "/admin/projects", icon: FolderKanban },
-        { label: "Invoice", href: "/admin/invoices", icon: FileText },
-        { label: "Blog", href: "/admin/blog", icon: Newspaper },
-        { label: "Pengguna", href: "/admin/users", icon: Users },
-        { label: "Proyek Baru", href: "/admin/projects/new", icon: Plus },
-        { label: "Invoice Baru", href: "/admin/invoices/new", icon: Plus },
-        { label: "Blog Baru", href: "/admin/blog/new", icon: Plus },
-      ]
-    : [
-        { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
-        { label: "Proyek Saya", href: "/dashboard/projects", icon: FolderKanban },
-        { label: "Invoice", href: "/dashboard/invoices", icon: FileText },
-      ];
+  const quickNav = isStaff(role)
+    ? adminQuickNav.filter(
+        (item) => !item.permission || hasPermission(role, item.permission)
+      )
+    : clientQuickNav;
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>

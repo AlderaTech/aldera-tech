@@ -52,7 +52,12 @@ export function FileUploader({ projectId }: { projectId?: string }) {
         uploading && "pointer-events-none opacity-60"
       )}
     >
-      <input {...getInputProps()} />
+      <input
+        placeholder="Pilih file untuk diunggah"
+        {...getInputProps({
+          "aria-label": "Pilih file untuk diunggah",
+        })}
+      />
       <div className="flex flex-col items-center gap-2">
         {uploading ? (
           <Loader2 className="size-8 animate-spin text-primary" />

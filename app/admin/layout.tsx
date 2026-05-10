@@ -1,11 +1,8 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import {
-  DashboardSidebar,
-  adminNavItems,
-  ownerNavItems,
-} from "@/components/dashboard/sidebar";
+import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import { getAdminNavConfig } from "@/lib/dashboard-nav";
 import { isStaff } from "@/lib/permissions";
 
 export default async function AdminLayout({
@@ -17,21 +14,20 @@ export default async function AdminLayout({
   if (!session?.user) redirect("/login?callbackUrl=/admin");
   if (!isStaff(session.user.role)) redirect("/dashboard");
 
-  const items =
-    session.user.role === "OWNER"
-      ? ownerNavItems
-      : session.user.role === "ADMIN"
-        ? adminNavItems
-        : adminNavItems.filter((item) => item.href !== "/admin/settings");
+  const navConfig = getAdminNavConfig(session.user.role);
 
   return (
-    <div className="min-h-svh bg-muted/20 flex">
-      <div className="hidden lg:flex w-64 xxxl:w-72 shrink-0 sticky top-0 h-svh">
-        <DashboardSidebar items={items} />
+    <div className="flex min-h-svh bg-slate-50">
+      <div className="sticky top-0 hidden h-svh w-72 shrink-0 lg:flex">
+        <DashboardSidebar
+          groups={navConfig.groups}
+          footerItem={navConfig.footerItem}
+          variant={navConfig.variant}
+        />
       </div>
-      <div className="flex-1 flex flex-col min-w-0">
-        <DashboardHeader session={session} navItems={items} />
-        <main className="flex-1 container-px py-6 max-w-screen-xxxl w-full mx-auto">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <DashboardHeader session={session} navConfig={navConfig} />
+        <main className="container-px mx-auto w-full max-w-screen-xxxl flex-1 py-5">
           {children}
         </main>
       </div>

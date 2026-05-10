@@ -152,6 +152,7 @@ export function InvoiceCreateForm({
               type="date"
               value={issueDate}
               onChange={(e) => setIssueDate(e.target.value)}
+              placeholder="Pilih tanggal terbit"
               required
             />
           </div>
@@ -162,6 +163,7 @@ export function InvoiceCreateForm({
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
+              placeholder="Pilih tanggal jatuh tempo"
               required
             />
           </div>
@@ -174,6 +176,7 @@ export function InvoiceCreateForm({
               max="100"
               value={taxRate}
               onChange={(e) => setTaxRate(e.target.value)}
+              placeholder="11"
             />
           </div>
         </div>

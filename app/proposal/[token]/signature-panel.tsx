@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -129,7 +130,6 @@ export function SignaturePanel({ token, disabled }: Props) {
   }
 
   function handleReject() {
-    if (!confirm("Tolak proposal ini?")) return;
     setPendingAction("reject");
     React.startTransition(async () => {
       const result = await rejectProposalAction(token);
@@ -196,19 +196,28 @@ export function SignaturePanel({ token, disabled }: Props) {
         </span>
       </label>
       <div className="flex flex-wrap justify-end gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleReject}
-          disabled={pendingAction !== null}
-        >
-          {pendingAction === "reject" ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <XCircle className="size-4" />
-          )}
-          Tolak
-        </Button>
+        <ConfirmDialog
+          title="Tolak proposal?"
+          description="Proposal akan ditandai sebagai ditolak dan tim Solvo Tech akan melihat status terbaru."
+          confirmLabel="Tolak proposal"
+          destructive
+          pending={pendingAction !== null}
+          onConfirm={handleReject}
+          trigger={
+            <Button
+              type="button"
+              variant="outline"
+              disabled={pendingAction !== null}
+            >
+              {pendingAction === "reject" ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <XCircle className="size-4" />
+              )}
+              Tolak
+            </Button>
+          }
+        />
         <Button
           type="button"
           onClick={handleSign}

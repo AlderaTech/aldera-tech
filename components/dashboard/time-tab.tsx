@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -57,6 +58,9 @@ export function TimeTab({
   const [description, setDescription] = React.useState("");
   const [isPending, startTransition] = React.useTransition();
   const [showManual, setShowManual] = React.useState(false);
+  const [deleteTarget, setDeleteTarget] = React.useState<TimeEntryItem | null>(
+    null
+  );
 
   const running = entries.find(
     (e) => !e.endedAt && e.user.id === currentUserId
@@ -110,9 +114,9 @@ export function TimeTab({
   }
 
   function del(id: string) {
-    if (!confirm("Hapus entry ini?")) return;
     startTransition(async () => {
       await deleteTimeEntryAction(id);
+      setDeleteTarget(null);
       router.refresh();
     });
   }
@@ -125,79 +129,17 @@ export function TimeTab({
     .reduce((s, e) => s + e.durationSec, 0);
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div>
-        <h2 className="text-lg font-semibold flex items-center gap-2">
-          <Timer className="size-5" />
-          Time Tracking
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          Catat waktu kerja di proyek ini untuk billing dan produktivitas.
-        </p>
-      </div>
-
-      {/* Timer widget */}
-      <Card className="p-5 space-y-4">
-        {running ? (
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="min-w-0 flex-1">
-              <div className="text-xs text-muted-foreground mb-1">Sedang berjalan</div>
-              <div className="text-2xl xxxl:text-3xl font-mono font-bold tabular-nums">
-                {fmtDuration(runningSeconds)}
-              </div>
-              <div className="text-sm text-muted-foreground truncate mt-1">
-                {running.description}
-              </div>
-            </div>
-            <Button
-              size="lg"
-              variant="destructive"
-              onClick={() => stop(running.id)}
-              disabled={isPending}
-            >
-              <Square className="size-4" /> Stop
-            </Button>
-          </div>
-        ) : (
-          <div className="flex items-end gap-2 flex-wrap">
-            <div className="flex-1 min-w-56 space-y-2">
-              <Label htmlFor="desc">Apa yang Anda kerjakan?</Label>
-              <Input
-                id="desc"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Review design, debug API…"
-              />
-            </div>
-            <Button onClick={start} disabled={isPending} size="lg">
-              {isPending ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Play className="size-4" />
-              )}
-              Mulai Timer
-            </Button>
-          </div>
-        )}
-      </Card>
-
-      {/* Stats + Manual entry toggle */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="p-4">
-          <div className="text-xs text-muted-foreground">Total Waktu</div>
-          <div className="text-xl font-bold tabular-nums">{fmtDuration(totalSec)}</div>
-        </Card>
-        <Card className="p-4">
-          <div className="text-xs text-muted-foreground">Billable</div>
-          <div className="text-xl font-bold tabular-nums">{fmtDuration(billableSec)}</div>
-        </Card>
-        <Card className="p-4">
-          <div className="text-xs text-muted-foreground">Entries</div>
-          <div className="text-xl font-bold">{completed.length}</div>
-        </Card>
-      </div>
-
-      <div className="flex justify-end">
+    <div className="max-w-5xl space-y-4">
+      <div className="flex items-start justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm flex-wrap">
+        <div>
+          <h2 className="flex items-center gap-2 text-base font-semibold text-slate-950">
+            <Timer className="size-5" />
+            Time Tracking
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Catat waktu kerja di proyek ini untuk billing dan produktivitas.
+          </p>
+        </div>
         <Button
           variant="outline"
           size="sm"
@@ -207,10 +149,77 @@ export function TimeTab({
         </Button>
       </div>
 
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(320px,0.7fr)]">
+        <Card className="space-y-4 border-slate-200 bg-white p-4 shadow-sm">
+          {running ? (
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="min-w-0 flex-1">
+                <div className="text-xs text-muted-foreground mb-1">
+                  Sedang berjalan
+                </div>
+                <div className="text-2xl xxxl:text-3xl font-mono font-bold tabular-nums">
+                  {fmtDuration(runningSeconds)}
+                </div>
+                <div className="text-sm text-muted-foreground truncate mt-1">
+                  {running.description}
+                </div>
+              </div>
+              <Button
+                size="lg"
+                variant="destructive"
+                onClick={() => stop(running.id)}
+                disabled={isPending}
+              >
+                <Square className="size-4" /> Stop
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-end gap-2 flex-wrap">
+              <div className="flex-1 min-w-56 space-y-1.5">
+                <Label htmlFor="desc">Apa yang Anda kerjakan?</Label>
+                <Input
+                  id="desc"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Review design, debug API…"
+                />
+              </div>
+              <Button onClick={start} disabled={isPending} size="lg">
+                {isPending ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Play className="size-4" />
+                )}
+                Mulai Timer
+              </Button>
+            </div>
+          )}
+        </Card>
+
+        <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+          <Card className="border-slate-200 bg-white p-4 shadow-sm">
+            <div className="text-xs text-muted-foreground">Total Waktu</div>
+            <div className="text-xl font-bold tabular-nums">
+              {fmtDuration(totalSec)}
+            </div>
+          </Card>
+          <Card className="border-slate-200 bg-white p-4 shadow-sm">
+            <div className="text-xs text-muted-foreground">Billable</div>
+            <div className="text-xl font-bold tabular-nums">
+              {fmtDuration(billableSec)}
+            </div>
+          </Card>
+          <Card className="border-slate-200 bg-white p-4 shadow-sm">
+            <div className="text-xs text-muted-foreground">Entries</div>
+            <div className="text-xl font-bold">{completed.length}</div>
+          </Card>
+        </div>
+      </div>
+
       {showManual && (
-        <Card className="p-4">
-          <form onSubmit={addManual} className="grid sm:grid-cols-[1fr_120px_100px_auto] gap-2 items-end">
-            <div className="space-y-1">
+        <Card className="border-slate-200 bg-white p-4 shadow-sm">
+          <form onSubmit={addManual} className="grid gap-3 sm:grid-cols-[1fr_120px_120px_auto] items-end">
+            <div className="space-y-1.5">
               <Label htmlFor="m-desc" className="text-xs">
                 Deskripsi
               </Label>
@@ -221,7 +230,7 @@ export function TimeTab({
                 required
               />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label htmlFor="m-minutes" className="text-xs">
                 Menit
               </Label>
@@ -234,7 +243,7 @@ export function TimeTab({
                 required
               />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label className="text-xs">Billable</Label>
               <select
                 name="billable"
@@ -254,11 +263,11 @@ export function TimeTab({
 
       {/* Entries table */}
       {entries.length === 0 ? (
-        <Card className="p-10 text-center text-muted-foreground">
+        <Card className="border-dashed p-8 text-center text-sm text-muted-foreground">
           Belum ada time entry.
         </Card>
       ) : (
-        <Card className="p-0 overflow-hidden">
+        <Card className="overflow-hidden border-slate-200 bg-white p-0 shadow-sm">
           <Table>
             <TableHeader>
               <TableRow>
@@ -300,7 +309,7 @@ export function TimeTab({
                       size="icon"
                       variant="ghost"
                       aria-label="Hapus"
-                      onClick={() => del(e.id)}
+                      onClick={() => setDeleteTarget(e)}
                       disabled={isPending || !!(e.endedAt === null)}
                     >
                       <Trash2 className="size-3.5" />
@@ -312,6 +321,20 @@ export function TimeTab({
           </Table>
         </Card>
       )}
+      <ConfirmDialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+        title="Hapus time entry?"
+        description={`Entry "${deleteTarget?.description ?? ""}" akan dihapus dari catatan waktu project.`}
+        confirmLabel="Hapus entry"
+        destructive
+        pending={isPending}
+        onConfirm={() => {
+          if (deleteTarget) del(deleteTarget.id);
+        }}
+      />
     </div>
   );
 }

@@ -27,7 +27,7 @@ export default async function AdminSettingsPage() {
         </p>
       </div>
 
-      <Card className="p-0">
+      <Card className="overflow-hidden border-slate-200 bg-white p-0 shadow-sm">
         <SettingsForm settings={settings} pricingPlans={pricingPlans} />
       </Card>
     </div>

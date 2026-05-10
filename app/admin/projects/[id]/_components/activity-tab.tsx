@@ -46,9 +46,17 @@ export function ActivityTab({
   }
 
   return (
-    <div className="space-y-5">
-      <Card className="p-5">
-        <form ref={formRef} onSubmit={handleAddNote} className="space-y-3">
+    <div className="space-y-4">
+      <Card className="border-slate-200 bg-white p-4 shadow-sm">
+        <div className="mb-3">
+          <h2 className="text-base font-semibold text-slate-950">
+            Activity log
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Tambahkan catatan internal dan pantau riwayat perubahan project.
+          </p>
+        </div>
+        <form ref={formRef} onSubmit={handleAddNote} className="space-y-2">
           <Textarea
             name="note"
             placeholder="Tulis catatan untuk activity log…"
@@ -72,15 +80,15 @@ export function ActivityTab({
       </Card>
 
       {activities.length === 0 ? (
-        <Card className="p-10 text-center text-muted-foreground">
+        <Card className="border-dashed p-8 text-center text-sm text-muted-foreground">
           Belum ada aktivitas.
         </Card>
       ) : (
-        <div className="relative border-l-2 ml-3 space-y-4 pl-6">
+        <div className="relative ml-3 space-y-3 border-l-2 border-slate-200 pl-6">
           {activities.map((a) => (
             <div key={a.id} className="relative">
               <span className="absolute -left-[29px] top-1 size-3 rounded-full bg-primary ring-4 ring-background" />
-              <Card className="p-4">
+              <Card className="border-slate-200 bg-white p-4 shadow-sm">
                 <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div className="min-w-0 flex-1">
                     <p className="text-sm">{a.description}</p>

@@ -6,6 +6,7 @@ import { CheckCircle2, Copy, ExternalLink, Loader2, Mail, Trash2 } from "lucide-
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import {
   convertProposalToProjectAction,
   deleteProposalAction,
@@ -71,7 +72,6 @@ export function ProposalActions({
   }
 
   function handleDelete() {
-    if (!confirm("Hapus proposal ini?")) return;
     runAction("delete", async () => {
       await deleteProposalAction(proposalId);
       toast.success("Proposal dihapus");
@@ -90,38 +90,61 @@ export function ProposalActions({
         </a>
       </Button>
       {canSend && (
-        <Button type="button" onClick={handleSend} disabled={isBusy}>
-          {pendingAction === "send" ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <Mail className="size-4" />
-          )}
-          Kirim
-        </Button>
+        <ConfirmDialog
+          title="Kirim proposal?"
+          description="Proposal akan dikirim ke client melalui email dan status penawaran akan diperbarui."
+          confirmLabel="Kirim proposal"
+          pending={isBusy}
+          onConfirm={handleSend}
+          trigger={
+            <Button type="button" disabled={isBusy}>
+              {pendingAction === "send" ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Mail className="size-4" />
+              )}
+              Kirim
+            </Button>
+          }
+        />
       )}
       {canConvert && (
-        <Button type="button" onClick={handleConvert} disabled={isBusy}>
-          {pendingAction === "convert" ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <CheckCircle2 className="size-4" />
-          )}
-          Convert ke Proyek
-        </Button>
+        <ConfirmDialog
+          title="Convert proposal ke proyek?"
+          description="Sistem akan membuat project baru berdasarkan proposal yang sudah ditandatangani."
+          confirmLabel="Convert"
+          pending={isBusy}
+          onConfirm={handleConvert}
+          trigger={
+            <Button type="button" disabled={isBusy}>
+              {pendingAction === "convert" ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <CheckCircle2 className="size-4" />
+              )}
+              Convert ke Proyek
+            </Button>
+          }
+        />
       )}
-      <Button
-        type="button"
-        variant="destructive"
-        onClick={handleDelete}
-        disabled={isBusy}
-      >
-        {pendingAction === "delete" ? (
-          <Loader2 className="size-4 animate-spin" />
-        ) : (
-          <Trash2 className="size-4" />
-        )}
-        Hapus
-      </Button>
+      <ConfirmDialog
+        title="Hapus proposal?"
+        description="Proposal akan dihapus permanen. Aksi ini tidak bisa di-undo."
+        confirmLabel="Hapus proposal"
+        destructive
+        pending={isBusy}
+        onConfirm={handleDelete}
+        trigger={
+          <Button type="button" variant="destructive" disabled={isBusy}>
+            {pendingAction === "delete" ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Trash2 className="size-4" />
+            )}
+            Hapus
+          </Button>
+        }
+      />
     </div>
   );
 }

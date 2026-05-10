@@ -1,5 +1,4 @@
 "use client";
-"use client";
 
 import * as React from "react";
 import Link from "next/link";
@@ -14,18 +13,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { UserMenu } from "@/components/shared/user-menu";
-import {
-  DashboardSidebar,
-  type DashboardNavItem,
-} from "@/components/dashboard/sidebar";
+import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { CommandPalette } from "@/components/dashboard/command-palette";
-import { isStaff } from "@/lib/permissions";
+import type { DashboardNavConfig } from "@/lib/dashboard-nav";
 
 type DashboardHeaderProps = {
   session: Session;
-  navItems: DashboardNavItem[];
+  navConfig: DashboardNavConfig;
 };
 
 function toTitleCase(s: string) {
@@ -44,12 +39,12 @@ function useBreadcrumbs() {
   }));
 }
 
-export function DashboardHeader({ session, navItems }: DashboardHeaderProps) {
+export function DashboardHeader({ session, navConfig }: DashboardHeaderProps) {
   const [open, setOpen] = React.useState(false);
   const crumbs = useBreadcrumbs();
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-background/80 backdrop-blur-md border-b flex items-center gap-2 px-4 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-slate-200/80 bg-white/90 px-4 shadow-sm shadow-slate-950/[0.02] backdrop-blur-md sm:px-6">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button
@@ -64,7 +59,9 @@ export function DashboardHeader({ session, navItems }: DashboardHeaderProps) {
         <SheetContent side="left" className="p-0 w-72 sm:w-80">
           <SheetTitle className="sr-only">Navigasi Dashboard</SheetTitle>
           <DashboardSidebar
-            items={navItems}
+            groups={navConfig.groups}
+            footerItem={navConfig.footerItem}
+            variant={navConfig.variant}
             onNavigate={() => setOpen(false)}
           />
         </SheetContent>
@@ -126,10 +123,9 @@ export function DashboardHeader({ session, navItems }: DashboardHeaderProps) {
         >
           <Bell className="size-4" />
         </Button>
-        <ThemeToggle />
         <UserMenu session={session} />
       </div>
-      <CommandPalette isStaff={isStaff(session.user.role)} />
+      <CommandPalette role={session.user.role} />
     </header>
   );
 }

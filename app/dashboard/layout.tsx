@@ -1,10 +1,8 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import {
-  DashboardSidebar,
-  clientNavItems,
-} from "@/components/dashboard/sidebar";
+import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import { clientNavConfig } from "@/lib/dashboard-nav";
 
 export default async function DashboardLayout({
   children,
@@ -15,13 +13,17 @@ export default async function DashboardLayout({
   if (!session?.user) redirect("/login?callbackUrl=/dashboard");
 
   return (
-    <div className="min-h-svh bg-muted/20 flex">
-      <div className="hidden lg:flex w-64 xxxl:w-72 shrink-0 sticky top-0 h-svh">
-        <DashboardSidebar items={clientNavItems} />
+    <div className="flex min-h-svh bg-slate-50">
+      <div className="sticky top-0 hidden h-svh w-72 shrink-0 lg:flex">
+        <DashboardSidebar
+          groups={clientNavConfig.groups}
+          footerItem={clientNavConfig.footerItem}
+          variant={clientNavConfig.variant}
+        />
       </div>
-      <div className="flex-1 flex flex-col min-w-0">
-        <DashboardHeader session={session} navItems={clientNavItems} />
-        <main className="flex-1 container-px py-6 max-w-screen-xxxl w-full mx-auto">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <DashboardHeader session={session} navConfig={clientNavConfig} />
+        <main className="container-px mx-auto w-full max-w-screen-xxxl flex-1 py-5">
           {children}
         </main>
       </div>

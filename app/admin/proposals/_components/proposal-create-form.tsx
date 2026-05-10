@@ -104,7 +104,12 @@ export function ProposalCreateForm() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="expiresAt">Berlaku Sampai</Label>
-            <Input id="expiresAt" name="expiresAt" type="date" />
+            <Input
+              id="expiresAt"
+              name="expiresAt"
+              type="date"
+              placeholder="Pilih tanggal kedaluwarsa"
+            />
           </div>
         </div>
         <div className="space-y-2">
@@ -123,15 +128,30 @@ export function ProposalCreateForm() {
         <div className="grid gap-4 md:grid-cols-3">
           <div className="space-y-2">
             <Label htmlFor="clientName">Nama</Label>
-            <Input id="clientName" name="clientName" required />
+            <Input
+              id="clientName"
+              name="clientName"
+              placeholder="Nama lengkap client"
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="clientEmail">Email</Label>
-            <Input id="clientEmail" name="clientEmail" type="email" required />
+            <Input
+              id="clientEmail"
+              name="clientEmail"
+              type="email"
+              placeholder="client@perusahaan.com"
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="clientCompany">Perusahaan</Label>
-            <Input id="clientCompany" name="clientCompany" />
+            <Input
+              id="clientCompany"
+              name="clientCompany"
+              placeholder="PT Contoh Teknologi"
+            />
           </div>
         </div>
       </Card>
@@ -203,6 +223,7 @@ export function ProposalCreateForm() {
               min="0"
               max="100"
               step="0.01"
+              placeholder="11"
             />
           </div>
           <div className="space-y-1 text-sm md:ml-auto md:min-w-72">

@@ -84,7 +84,12 @@ export function ProjectCreateForm({
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="deadline">Deadline</Label>
-            <Input id="deadline" name="deadline" type="date" />
+            <Input
+              id="deadline"
+              name="deadline"
+              type="date"
+              placeholder="Pilih tanggal deadline"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="budget">Budget (IDR)</Label>

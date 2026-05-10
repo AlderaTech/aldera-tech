@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import {
   Select,
   SelectContent,
@@ -72,7 +73,6 @@ export function MilestonesTab({
   }
 
   function handleDelete(id: string) {
-    if (!confirm("Hapus milestone ini?")) return;
     startTransition(async () => {
       await deleteMilestoneAction(id);
       toast.success("Milestone dihapus");
@@ -81,9 +81,16 @@ export function MilestonesTab({
   }
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Milestones</h2>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div>
+          <h2 className="text-base font-semibold text-slate-950">
+            Milestones
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Pecah project menjadi target delivery yang bisa dipantau.
+          </p>
+        </div>
         <Button size="sm" variant="outline" onClick={() => setShowForm((s) => !s)}>
           <Plus className="size-4" />
           {showForm ? "Tutup" : "Tambah Milestone"}
@@ -91,55 +98,67 @@ export function MilestonesTab({
       </div>
 
       {showForm && (
-        <Card className="p-5">
-          <form onSubmit={handleCreate} className="space-y-4">
-            <div className="grid sm:grid-cols-[2fr_1fr] gap-4">
-              <div className="space-y-2">
+        <Card className="border-slate-200 bg-white p-4 shadow-sm">
+          <form onSubmit={handleCreate} className="space-y-3">
+            <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_180px_180px]">
+              <div className="space-y-1.5">
                 <Label htmlFor="m-title">Judul</Label>
                 <Input id="m-title" name="title" required placeholder="Misal: UI Design" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="m-due">Target Selesai</Label>
-                <Input id="m-due" name="dueDate" type="date" />
+                <Input
+                  id="m-due"
+                  name="dueDate"
+                  type="date"
+                  placeholder="Pilih target selesai"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="m-status">Status</Label>
+                <Select name="status" defaultValue="PENDING">
+                  <SelectTrigger id="m-status">
+                    <SelectValue placeholder="Pilih status milestone" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PENDING">Pending</SelectItem>
+                    <SelectItem value="IN_PROGRESS">Berjalan</SelectItem>
+                    <SelectItem value="COMPLETED">Selesai</SelectItem>
+                    <SelectItem value="BLOCKED">Terhambat</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="m-desc">Deskripsi (opsional)</Label>
-              <Textarea id="m-desc" name="description" rows={2} />
+              <Textarea
+                id="m-desc"
+                name="description"
+                rows={2}
+                placeholder="Catatan singkat tentang milestone"
+              />
             </div>
-            <div className="space-y-2 max-w-xs">
-              <Label htmlFor="m-status">Status</Label>
-              <Select name="status" defaultValue="PENDING">
-                <SelectTrigger id="m-status">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="PENDING">Pending</SelectItem>
-                  <SelectItem value="IN_PROGRESS">Berjalan</SelectItem>
-                  <SelectItem value="COMPLETED">Selesai</SelectItem>
-                  <SelectItem value="BLOCKED">Terhambat</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="flex justify-end">
+              <Button type="submit" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" /> Menyimpan…
+                  </>
+                ) : (
+                  "Simpan Milestone"
+                )}
+              </Button>
             </div>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" /> Menyimpan…
-                </>
-              ) : (
-                "Simpan Milestone"
-              )}
-            </Button>
           </form>
         </Card>
       )}
 
       {milestones.length === 0 ? (
-        <Card className="p-10 text-center text-muted-foreground">
+        <Card className="border-dashed p-8 text-center text-sm text-muted-foreground">
           Belum ada milestone.
         </Card>
       ) : (
-        <ol className="relative border-l-2 ml-3 space-y-5">
+        <ol className="relative ml-3 space-y-3 border-l-2 border-slate-200">
           {milestones.map((m) => {
             const meta = milestoneStatusMeta[m.status];
             return (
@@ -155,7 +174,7 @@ export function MilestonesTab({
                           : "bg-muted-foreground/40"
                   }`}
                 />
-                <Card className="p-4">
+                <Card className="border-slate-200 bg-white p-4 shadow-sm">
                   <div className="flex items-start justify-between gap-3 flex-wrap">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
@@ -201,16 +220,25 @@ export function MilestonesTab({
                           <CircleDot className="size-4 text-primary" />
                         </Button>
                       )}
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => handleDelete(m.id)}
-                        disabled={isPending}
-                        aria-label="Hapus"
-                        title="Hapus"
-                      >
-                        <X className="size-4 text-destructive" />
-                      </Button>
+                      <ConfirmDialog
+                        title="Hapus milestone?"
+                        description={`Milestone "${m.title}" akan dihapus dari project ini.`}
+                        confirmLabel="Hapus milestone"
+                        destructive
+                        pending={isPending}
+                        onConfirm={() => handleDelete(m.id)}
+                        trigger={
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            disabled={isPending}
+                            aria-label="Hapus"
+                            title="Hapus"
+                          >
+                            <X className="size-4 text-destructive" />
+                          </Button>
+                        }
+                      />
                     </div>
                   </div>
                 </Card>

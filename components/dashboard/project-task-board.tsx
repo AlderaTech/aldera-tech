@@ -35,6 +35,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import {
   Dialog,
   DialogContent,
@@ -160,31 +161,33 @@ function TaskFormDialog({
             Lengkapi detail task untuk board proyek ini.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="space-y-1.5">
             <Label htmlFor="task-title">Judul</Label>
             <Input
               id="task-title"
               name="title"
               defaultValue={task?.title ?? ""}
+              placeholder="Judul task"
               required
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label htmlFor="task-description">Deskripsi</Label>
             <Textarea
               id="task-description"
               name="description"
               rows={3}
               defaultValue={task?.description ?? ""}
+              placeholder="Detail pekerjaan atau acceptance criteria"
             />
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-1.5">
               <Label>Status</Label>
               <Select name="status" defaultValue={task?.status ?? defaultStatus}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Pilih status task" />
                 </SelectTrigger>
                 <SelectContent>
                   {TASK_STATUSES.map((status) => (
@@ -195,11 +198,11 @@ function TaskFormDialog({
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>Prioritas</Label>
               <Select name="priority" defaultValue={task?.priority ?? "MEDIUM"}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Pilih prioritas task" />
                 </SelectTrigger>
                 <SelectContent>
                   {TASK_PRIORITIES.map((priority) => (
@@ -210,20 +213,21 @@ function TaskFormDialog({
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="task-due">Deadline</Label>
               <Input
                 id="task-due"
                 name="dueDate"
                 type="date"
                 defaultValue={toDateInputValue(task?.dueDate ?? null)}
+                placeholder="Pilih deadline task"
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>Assignee</Label>
               <Select name="assigneeId" defaultValue={task?.assigneeId ?? "none"}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Pilih assignee" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Tidak ada</SelectItem>
@@ -235,11 +239,11 @@ function TaskFormDialog({
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2 sm:col-span-2">
+            <div className="space-y-1.5 sm:col-span-2">
               <Label>Milestone</Label>
               <Select name="milestoneId" defaultValue={task?.milestoneId ?? "none"}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Pilih milestone" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Tidak ada</SelectItem>
@@ -252,7 +256,7 @@ function TaskFormDialog({
               </Select>
             </div>
           </div>
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 border-t border-slate-200 pt-3">
             <Button
               type="button"
               variant="outline"
@@ -305,7 +309,7 @@ function TaskCard({
         transition,
       }}
       className={cn(
-        "p-3 shadow-xs transition-shadow",
+        "border-slate-200 bg-white p-3 shadow-xs transition-shadow",
         isDragging && "opacity-70 shadow-lg"
       )}
     >
@@ -391,7 +395,10 @@ function DroppableColumn({
 }) {
   const { setNodeRef } = useDroppable({ id });
   return (
-    <div ref={setNodeRef} className="min-h-72 rounded-lg border bg-muted/30 p-3">
+    <div
+      ref={setNodeRef}
+      className="min-h-72 rounded-xl border border-slate-200 bg-slate-50/70 p-3"
+    >
       {children}
     </div>
   );
@@ -434,6 +441,7 @@ export function ProjectTaskBoard({
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [dialogStatus, setDialogStatus] = React.useState<TaskStatus>("BACKLOG");
   const [editingTask, setEditingTask] = React.useState<BoardTask | null>(null);
+  const [deleteTarget, setDeleteTarget] = React.useState<BoardTask | null>(null);
   const [isPending, startTransition] = React.useTransition();
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -464,10 +472,10 @@ export function ProjectTaskBoard({
   }
 
   function handleDelete(taskId: string) {
-    if (!confirm("Hapus task ini?")) return;
     startTransition(async () => {
       await deleteTaskAction(taskId);
       toast.success("Task dihapus");
+      setDeleteTarget(null);
       router.refresh();
     });
   }
@@ -511,7 +519,7 @@ export function ProjectTaskBoard({
   }
 
   const board = (
-    <div className="grid gap-4 xl:grid-cols-5">
+    <div className="grid gap-3 xl:grid-cols-5">
       {TASK_STATUSES.map((status) => {
         const meta = taskStatusMeta[status];
         const taskIds = columns[status].map((task) => task.id);
@@ -541,18 +549,18 @@ export function ProjectTaskBoard({
               items={taskIds}
               strategy={verticalListSortingStrategy}
             >
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {columns[status].map((task) => (
                   <TaskCard
                     key={task.id}
                     task={task}
                     readOnly={readOnly}
                     onEdit={openEdit}
-                    onDelete={handleDelete}
+                    onDelete={() => setDeleteTarget(task)}
                   />
                 ))}
                 {columns[status].length === 0 && (
-                  <div className="rounded-md border border-dashed bg-background/70 p-6 text-center text-xs text-muted-foreground">
+                  <div className="rounded-lg border border-dashed bg-white/70 p-5 text-center text-xs text-muted-foreground">
                     Belum ada task.
                   </div>
                 )}
@@ -566,9 +574,11 @@ export function ProjectTaskBoard({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm flex-wrap">
         <div>
-          <h2 className="text-lg font-semibold">Kanban Task Board</h2>
+          <h2 className="text-base font-semibold text-slate-950">
+            Kanban task board
+          </h2>
           <p className="text-sm text-muted-foreground">
             {readOnly
               ? "Pantau status task proyek."
@@ -607,6 +617,20 @@ export function ProjectTaskBoard({
           onSaved={() => router.refresh()}
         />
       )}
+      <ConfirmDialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+        title="Hapus task?"
+        description={`Task "${deleteTarget?.title ?? ""}" akan dihapus dari board project.`}
+        confirmLabel="Hapus task"
+        destructive
+        pending={isPending}
+        onConfirm={() => {
+          if (deleteTarget) handleDelete(deleteTarget.id);
+        }}
+      />
     </div>
   );
 }

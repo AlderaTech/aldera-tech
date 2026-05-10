@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Tags } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
+import { ADMIN_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
 import { BlogTable } from "./_components/blog-table";
 
@@ -34,11 +35,18 @@ export default async function AdminBlogPage() {
             Kelola semua artikel blog Anda.
           </p>
         </div>
-        <Button asChild>
-          <Link href="/admin/blog/new">
-            <Plus className="size-4" /> Post Baru
-          </Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button asChild variant="outline">
+            <Link href={ADMIN_ROUTES.blogCategories}>
+              <Tags className="size-4" /> Kategori
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href={ADMIN_ROUTES.blogNew}>
+              <Plus className="size-4" /> Post Baru
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <Card className="p-0 overflow-hidden">
