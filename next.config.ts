@@ -1,7 +1,28 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    // Allow serving images from public/uploads served by Next's built-in static handling.
+    // Remote patterns are empty, all images served are local for now.
+    remotePatterns: [],
+    qualities: [50, 75, 90, 100],
+  },
+  experimental: {
+    serverActions: {
+      // Allow file uploads up to 20 MB via server actions.
+      bodySizeLimit: "20mb",
+    },
+  },
+  async headers() {
+    return [
+      {
+        source: "/uploads/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

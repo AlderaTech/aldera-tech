@@ -1,0 +1,622 @@
+// Solvo Tech: Prisma schema
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ----------------------------------------------------------------
+// Enums
+// ----------------------------------------------------------------
+enum Role {
+  OWNER
+  ADMIN
+  DESIGNER
+  DEVELOPER
+  ACCOUNTANT
+  CLIENT
+}
+
+enum ProjectStatus {
+  PENDING
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+  CANCELLED
+}
+
+enum MilestoneStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  BLOCKED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum ActivityAction {
+  PROJECT_CREATED
+  PROJECT_UPDATED
+  PROJECT_STATUS_CHANGED
+  PROGRESS_UPDATED
+  MILESTONE_CREATED
+  MILESTONE_UPDATED
+  MILESTONE_COMPLETED
+  FILE_UPLOADED
+  FILE_DELETED
+  INVOICE_CREATED
+  INVOICE_SENT
+  INVOICE_PAID
+  NOTE_ADDED
+  TASK_CREATED
+  TASK_STATUS_CHANGED
+  TIME_LOGGED
+  MESSAGE_POSTED
+  PROPOSAL_SIGNED
+  TEAM_MEMBER_ADDED
+  TEAM_MEMBER_REMOVED
+}
+
+enum TaskStatus {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ProposalStatus {
+  DRAFT
+  SENT
+  VIEWED
+  SIGNED
+  REJECTED
+  CONVERTED
+  EXPIRED
+}
+
+enum RecurringFrequency {
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum ProjectAssignmentRole {
+  LEAD
+  CONTRIBUTOR
+  REVIEWER
+}
+
+// ----------------------------------------------------------------
+// Models
+// ----------------------------------------------------------------
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          Role      @default(CLIENT)
+  avatar        String?
+  company       String?
+  phone         String?
+  isActive      Boolean   @default(true)
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  projects            Project[]            @relation("ClientProjects")
+  activityLogs        ActivityLog[]
+  uploadedFiles       File[]
+  invoices            Invoice[]            @relation("ClientInvoices")
+  blogPosts           BlogPost[]           @relation("AuthoredPosts")
+  assignedTasks       Task[]               @relation("AssignedTasks")
+  projectAssignments  ProjectAssignment[]
+  projectMessages     ProjectMessage[]
+  timeEntries         TimeEntry[]
+  createdProposals    Proposal[]           @relation("CreatedProposals")
+  auditLogs           AuditLog[]
+  passwordResetTokens PasswordResetToken[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Project {
+  id           String        @id @default(cuid())
+  title        String
+  description  String        @db.Text
+  status       ProjectStatus @default(PENDING)
+  progress     Int           @default(0)
+  autoProgress Boolean       @default(false)
+  startDate    DateTime      @default(now())
+  deadline     DateTime?
+  completedAt  DateTime?
+  budget       Decimal?      @db.Decimal(14, 2)
+
+  clientId String
+  client   User   @relation("ClientProjects", fields: [clientId], references: [id], onDelete: Cascade)
+
+  milestones             Milestone[]
+  activities             ActivityLog[]
+  files                  File[]
+  invoices               Invoice[]
+  tasks                  Task[]
+  messages               ProjectMessage[]
+  timeEntries            TimeEntry[]
+  assignments            ProjectAssignment[]
+  convertedFromProposals Proposal[]          @relation("ProposalConvertedProject")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([status])
+  @@index([deadline])
+}
+
+model Milestone {
+  id          String          @id @default(cuid())
+  title       String
+  description String?         @db.Text
+  status      MilestoneStatus @default(PENDING)
+  order       Int             @default(0)
+  dueDate     DateTime?
+  completedAt DateTime?
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  tasks Task[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([status])
+}
+
+model ActivityLog {
+  id          String         @id @default(cuid())
+  action      ActivityAction
+  description String         @db.Text
+  metadata    Json?
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model File {
+  id           String @id @default(cuid())
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  path         String
+  url          String
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  uploaderId String
+  uploader   User   @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+  @@index([uploaderId])
+  @@index([createdAt])
+}
+
+model Invoice {
+  id     String        @id @default(cuid())
+  number String        @unique
+  status InvoiceStatus @default(DRAFT)
+
+  issueDate DateTime  @default(now())
+  dueDate   DateTime
+  paidAt    DateTime?
+
+  subtotal  Decimal @db.Decimal(14, 2)
+  taxRate   Decimal @default(0) @db.Decimal(5, 2)
+  taxAmount Decimal @default(0) @db.Decimal(14, 2)
+  total     Decimal @db.Decimal(14, 2)
+  currency  String  @default("IDR")
+  notes     String? @db.Text
+
+  pdfPath            String?
+  lastReminderSentAt DateTime?
+
+  clientId String
+  client   User   @relation("ClientInvoices", fields: [clientId], references: [id], onDelete: Cascade)
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  items InvoiceItem[]
+
+  recurringTemplateId String?
+  recurringTemplate   RecurringInvoiceTemplate? @relation(fields: [recurringTemplateId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([projectId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+model InvoiceItem {
+  id          String  @id @default(cuid())
+  description String
+  quantity    Decimal @default(1) @db.Decimal(10, 2)
+  price       Decimal @db.Decimal(14, 2)
+  total       Decimal @db.Decimal(14, 2)
+  order       Int     @default(0)
+
+  invoiceId String
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+}
+
+model RecurringInvoiceTemplate {
+  id            String             @id @default(cuid())
+  name          String
+  clientId      String
+  projectId     String?
+  items         Json
+  taxRate       Decimal            @default(0) @db.Decimal(5, 2)
+  notes         String?            @db.Text
+  currency      String             @default("IDR")
+  frequency     RecurringFrequency
+  nextIssueDate DateTime
+  dueDays       Int                @default(14)
+  active        Boolean            @default(true)
+  lastIssuedAt  DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  invoices  Invoice[]
+
+  @@index([active, nextIssueDate])
+  @@index([clientId])
+}
+
+model BlogCategory {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  posts BlogPost[]
+}
+
+model BlogPost {
+  id            String    @id @default(cuid())
+  slug          String    @unique
+  title         String
+  excerpt       String?   @db.Text
+  content       String    @db.Text
+  featuredImage String?
+  published     Boolean   @default(false)
+  publishedAt   DateTime?
+  scheduledAt   DateTime?
+  views         Int       @default(0)
+
+  draftContent String?   @db.Text
+  draftSavedAt DateTime?
+
+  authorId String
+  author   User   @relation("AuthoredPosts", fields: [authorId], references: [id], onDelete: Cascade)
+
+  categoryId String?
+  category   BlogCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([published, publishedAt])
+  @@index([scheduledAt])
+  @@index([categoryId])
+  @@index([authorId])
+}
+
+model Testimonial {
+  id         String   @id @default(cuid())
+  clientName String
+  clientRole String?
+  company    String?
+  content    String   @db.Text
+  rating     Int      @default(5)
+  avatar     String?
+  published  Boolean  @default(true)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([published, order])
+}
+
+model CaseStudy {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  client        String
+  industry      String
+  summary       String   @db.Text
+  challenge     String   @db.Text
+  solution      String   @db.Text
+  result        String   @db.Text
+  featuredImage String?
+  techStack     String[]
+  published     Boolean  @default(true)
+  order         Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([published, order])
+}
+
+model SiteSetting {
+  id                String   @id @default("site")
+  brandName         String   @default("Solvo Tech")
+  footerDescription String   @db.Text
+  email             String?
+  phone             String?
+  whatsapp          String?
+  address           String?
+  mapsUrl           String?
+  operatingHours    String?  @db.Text
+  responseTime      String   @default("1x24 jam")
+  githubUrl         String?
+  linkedinUrl       String?
+  instagramUrl      String?
+  seoTitle          String
+  seoDescription    String   @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model PricingPlan {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  tagline   String   @db.Text
+  priceFrom Decimal  @db.Decimal(14, 2)
+  featured  Boolean  @default(false)
+  ctaLabel  String
+  ctaHref   String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  features PricingPlanFeature[]
+
+  @@index([order])
+}
+
+model PricingPlanFeature {
+  id        String      @id @default(cuid())
+  text      String
+  included  Boolean     @default(true)
+  order     Int         @default(0)
+  planId    String
+  plan      PricingPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@index([planId, order])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  replied   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([read])
+  @@index([createdAt])
+}
+
+model Task {
+  id          String       @id @default(cuid())
+  title       String
+  description String?      @db.Text
+  status      TaskStatus   @default(BACKLOG)
+  priority    TaskPriority @default(MEDIUM)
+  order       Int          @default(0)
+  dueDate     DateTime?
+  completedAt DateTime?
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  milestoneId String?
+  milestone   Milestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+
+  assigneeId String?
+  assignee   User?   @relation("AssignedTasks", fields: [assigneeId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId, status])
+  @@index([assigneeId])
+  @@index([milestoneId])
+}
+
+model ProjectMessage {
+  id        String           @id @default(cuid())
+  content   String           @db.Text
+  projectId String
+  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parentId  String?
+  parent    ProjectMessage?  @relation("MessageReplies", fields: [parentId], references: [id], onDelete: SetNull)
+  replies   ProjectMessage[] @relation("MessageReplies")
+  editedAt  DateTime?
+  deletedAt DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([projectId, createdAt])
+  @@index([authorId])
+  @@index([parentId])
+}
+
+model TimeEntry {
+  id          String    @id @default(cuid())
+  description String
+  startedAt   DateTime
+  endedAt     DateTime?
+  durationSec Int       @default(0)
+  billable    Boolean   @default(true)
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([userId])
+  @@index([startedAt])
+}
+
+model ProjectAssignment {
+  id        String                @id @default(cuid())
+  projectId String
+  userId    String
+  role      ProjectAssignmentRole @default(CONTRIBUTOR)
+  createdAt DateTime              @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([userId])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model Proposal {
+  id            String         @id @default(cuid())
+  number        String         @unique
+  token         String         @unique
+  title         String
+  summary       String?        @db.Text
+  content       String         @db.Text
+  status        ProposalStatus @default(DRAFT)
+  clientName    String
+  clientEmail   String
+  clientCompany String?
+
+  currency    String  @default("IDR")
+  taxRate     Decimal @default(0) @db.Decimal(5, 2)
+  totalAmount Decimal @default(0) @db.Decimal(14, 2)
+
+  sentAt     DateTime?
+  viewedAt   DateTime?
+  signedAt   DateTime?
+  rejectedAt DateTime?
+  expiresAt  DateTime?
+
+  signatureDataUrl   String? @db.Text
+  signatureName      String?
+  signatureIp        String?
+  signatureUserAgent String?
+
+  createdById String
+  createdBy   User   @relation("CreatedProposals", fields: [createdById], references: [id], onDelete: Cascade)
+
+  convertedProjectId String?
+  convertedProject   Project? @relation("ProposalConvertedProject", fields: [convertedProjectId], references: [id], onDelete: SetNull)
+
+  items ProposalItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([token])
+}
+
+model ProposalItem {
+  id          String  @id @default(cuid())
+  description String
+  quantity    Decimal @default(1) @db.Decimal(10, 2)
+  price       Decimal @db.Decimal(14, 2)
+  total       Decimal @db.Decimal(14, 2)
+  order       Int     @default(0)
+
+  proposalId String
+  proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+
+  @@index([proposalId])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([token])
+  @@index([userId])
+}

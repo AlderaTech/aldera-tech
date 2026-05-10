@@ -1,0 +1,205 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import type { InvoiceStatus } from "@prisma/client";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { invoiceCreateSchema } from "@/lib/validations/invoice";
+import { sendMail, invoiceEmailHtml } from "@/lib/email";
+import { formatCurrency, formatDate } from "@/lib/utils";
+
+async function requireAdmin() {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "ADMIN") {
+    throw new Error("Forbidden");
+  }
+  return session.user;
+}
+
+async function generateInvoiceNumber() {
+  const year = new Date().getFullYear();
+  const last = await prisma.invoice.findFirst({
+    where: { number: { startsWith: `INV-${year}-` } },
+    orderBy: { number: "desc" },
+    select: { number: true },
+  });
+  const seq = last ? Number(last.number.split("-")[2] ?? 0) + 1 : 1;
+  return `INV-${year}-${String(seq).padStart(4, "0")}`;
+}
+
+export type InvoiceActionState = {
+  ok: boolean;
+  message?: string;
+  invoiceId?: string;
+};
+
+export async function createInvoiceAction(
+  _: InvoiceActionState,
+  formData: FormData
+): Promise<InvoiceActionState> {
+  await requireAdmin();
+
+  const itemsRaw = formData.get("items");
+  let itemsParsed: unknown;
+  try {
+    itemsParsed = JSON.parse(String(itemsRaw ?? "[]"));
+  } catch {
+    return { ok: false, message: "Items tidak valid." };
+  }
+
+  const parsed = invoiceCreateSchema.safeParse({
+    clientId: formData.get("clientId"),
+    projectId: formData.get("projectId") || "",
+    issueDate: formData.get("issueDate"),
+    dueDate: formData.get("dueDate"),
+    taxRate: formData.get("taxRate") ?? "0",
+    notes: formData.get("notes") || "",
+    items: itemsParsed,
+  });
+
+  if (!parsed.success) {
+    return {
+      ok: false,
+      message: parsed.error.issues[0]?.message ?? "Input tidak valid.",
+    };
+  }
+  const data = parsed.data;
+
+  const subtotal = data.items.reduce(
+    (sum, it) => sum + it.quantity * it.price,
+    0
+  );
+  const taxAmount = (subtotal * data.taxRate) / 100;
+  const total = subtotal + taxAmount;
+  const number = await generateInvoiceNumber();
+
+  const invoice = await prisma.invoice.create({
+    data: {
+      number,
+      clientId: data.clientId,
+      projectId: data.projectId || null,
+      issueDate: new Date(data.issueDate),
+      dueDate: new Date(data.dueDate),
+      subtotal: subtotal.toFixed(2),
+      taxRate: data.taxRate.toString(),
+      taxAmount: taxAmount.toFixed(2),
+      total: total.toFixed(2),
+      notes: data.notes || null,
+      items: {
+        create: data.items.map((it, idx) => ({
+          description: it.description,
+          quantity: it.quantity.toString(),
+          price: it.price.toString(),
+          total: (it.quantity * it.price).toFixed(2),
+          order: idx,
+        })),
+      },
+    },
+    select: { id: true },
+  });
+
+  revalidatePath("/admin/invoices");
+  revalidatePath("/admin");
+  revalidatePath("/dashboard/invoices");
+
+  return { ok: true, invoiceId: invoice.id, message: "Invoice dibuat." };
+}
+
+export async function updateInvoiceStatusAction(
+  invoiceId: string,
+  status: InvoiceStatus
+) {
+  await requireAdmin();
+  const invoice = await prisma.invoice.update({
+    where: { id: invoiceId },
+    data: {
+      status,
+      paidAt: status === "PAID" ? new Date() : null,
+    },
+    select: { id: true, clientId: true },
+  });
+  revalidatePath("/admin/invoices");
+  revalidatePath(`/admin/invoices/${invoiceId}`);
+  revalidatePath("/dashboard/invoices");
+  return invoice;
+}
+
+export async function sendInvoiceEmailAction(invoiceId: string) {
+  await requireAdmin();
+  const invoice = await prisma.invoice.findUnique({
+    where: { id: invoiceId },
+    include: { client: true },
+  });
+  if (!invoice) throw new Error("Invoice not found");
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  try {
+    await sendMail({
+      to: invoice.client.email,
+      subject: `Invoice ${invoice.number}, Solvo Tech`,
+      html: invoiceEmailHtml({
+        number: invoice.number,
+        clientName: invoice.client.name,
+        total: formatCurrency(Number(invoice.total)),
+        dueDate: formatDate(invoice.dueDate),
+        viewUrl: `${appUrl}/dashboard/invoices`,
+      }),
+    });
+  } catch (err) {
+    console.error("Send invoice email error:", err);
+    throw new Error("Gagal mengirim email");
+  }
+
+  await prisma.invoice.update({
+    where: { id: invoiceId },
+    data: {
+      status: invoice.status === "DRAFT" ? "SENT" : invoice.status,
+    },
+  });
+
+  revalidatePath(`/admin/invoices/${invoiceId}`);
+  revalidatePath("/admin/invoices");
+}
+
+export async function sendReminderAction(invoiceId: string) {
+  await requireAdmin();
+  const invoice = await prisma.invoice.findUnique({
+    where: { id: invoiceId },
+    include: { client: true },
+  });
+  if (!invoice) throw new Error("Invoice not found");
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  try {
+    await sendMail({
+      to: invoice.client.email,
+      subject: `Pengingat: Invoice ${invoice.number}, Solvo Tech`,
+      html: invoiceEmailHtml({
+        number: invoice.number,
+        clientName: invoice.client.name,
+        total: formatCurrency(Number(invoice.total)),
+        dueDate: formatDate(invoice.dueDate),
+        viewUrl: `${appUrl}/dashboard/invoices`,
+        isReminder: true,
+      }),
+    });
+  } catch (err) {
+    console.error("Send reminder error:", err);
+    throw new Error("Gagal mengirim reminder");
+  }
+
+  await prisma.invoice.update({
+    where: { id: invoiceId },
+    data: { lastReminderSentAt: new Date() },
+  });
+
+  revalidatePath(`/admin/invoices/${invoiceId}`);
+}
+
+export async function deleteInvoiceAction(invoiceId: string) {
+  await requireAdmin();
+  await prisma.invoice.delete({ where: { id: invoiceId } });
+  revalidatePath("/admin/invoices");
+  redirect("/admin/invoices");
+}

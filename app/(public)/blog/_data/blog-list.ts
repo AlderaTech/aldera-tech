@@ -1,0 +1,88 @@
+import { prisma } from "@/lib/prisma";
+import { publicBlogPosts, resolveBlogPostImage } from "@/lib/public-fallbacks";
+import { safeDb } from "@/lib/safe-db";
+
+export type BlogListItem = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  content: string;
+  featuredImage: string | null;
+  publishedAt: Date | null;
+  author: { name: string } | null;
+  category: { name: string; slug: string } | null;
+};
+
+export type BlogCategoryFilter = {
+  slug: string;
+  name: string;
+};
+
+export const BLOG_PAGE_SIZE = 9;
+
+const fallback: BlogListItem[] = publicBlogPosts.map((post) => ({
+  id: post.id,
+  slug: post.slug,
+  title: post.title,
+  excerpt: post.excerpt,
+  content: post.content,
+  featuredImage: post.featuredImage,
+  publishedAt: post.publishedAt,
+  author: post.author ? { name: post.author.name } : null,
+  category: post.category,
+}));
+
+export async function getBlogList(params: {
+  page: number;
+  category?: string;
+  q?: string;
+}) {
+  return safeDb<BlogListItem[]>(async () => {
+    const data = await prisma.blogPost.findMany({
+      where: {
+        published: true,
+        ...(params.category ? { category: { slug: params.category } } : {}),
+        ...(params.q
+          ? {
+              OR: [
+                { title: { contains: params.q, mode: "insensitive" } },
+                { excerpt: { contains: params.q, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+      },
+      orderBy: { publishedAt: "desc" },
+      skip: (params.page - 1) * BLOG_PAGE_SIZE,
+      take: BLOG_PAGE_SIZE,
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        excerpt: true,
+        content: true,
+        featuredImage: true,
+        publishedAt: true,
+        author: { select: { name: true } },
+        category: { select: { name: true, slug: true } },
+      },
+    });
+    return data.length
+      ? data.map((post) => ({
+          ...post,
+          featuredImage: resolveBlogPostImage(post.slug, post.featuredImage),
+        }))
+      : fallback;
+  }, fallback);
+}
+
+export async function getBlogCategories() {
+  return safeDb(
+    async () =>
+      prisma.blogCategory.findMany({
+        orderBy: { name: "asc" },
+        select: { slug: true, name: true },
+      }),
+    [] as BlogCategoryFilter[]
+  );
+}
