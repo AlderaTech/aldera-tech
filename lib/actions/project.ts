@@ -11,6 +11,8 @@ import {
 import type { ActivityAction, MilestoneStatus } from "@prisma/client";
 import { isStaff } from "@/lib/permissions";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
+import { notify } from "@/lib/notifications";
+import { waTemplates } from "@/lib/whatsapp-templates";
 
 export type ProjectActionState = {
   ok: boolean;
@@ -178,6 +180,12 @@ export async function updateProjectAction(
       "PROJECT_STATUS_CHANGED",
       `Status berubah dari ${before.status} ke ${updated.status}.`
     );
+    // Notify client via WhatsApp
+    const project = await prisma.project.findUnique({ where: { id: projectId }, select: { clientId: true, title: true } });
+    if (project) {
+      const tpl = waTemplates.projectStatusChanged(project.title, updated.status);
+      notify({ userId: project.clientId, type: "PROJECT_STATUS_CHANGED", ...tpl }).catch(() => {});
+    }
   }
   if (before && before.progress !== updated.progress) {
     await logActivity(
@@ -251,7 +259,7 @@ export async function updateMilestoneStatusAction(
       status,
       completedAt: status === "COMPLETED" ? new Date() : null,
     },
-    select: { projectId: true, title: true },
+    select: { projectId: true, title: true, requiresClientApproval: true },
   });
   await logActivity(
     milestone.projectId,
@@ -260,6 +268,16 @@ export async function updateMilestoneStatusAction(
     `Milestone "${milestone.title}" → ${status}.`
   );
   await recomputeProgressIfAuto(milestone.projectId);
+
+  // Notify client if milestone completed and requires approval
+  if (status === "COMPLETED" && milestone.requiresClientApproval) {
+    const project = await prisma.project.findUnique({ where: { id: milestone.projectId }, select: { clientId: true, title: true } });
+    if (project) {
+      const tpl = waTemplates.milestoneReadyForApproval(project.title, milestone.title, milestone.projectId);
+      notify({ userId: project.clientId, type: "MILESTONE_READY_FOR_APPROVAL", ...tpl }).catch(() => {});
+    }
+  }
+
   revalidatePath(ADMIN_ROUTES.projectDetail(milestone.projectId));
   revalidatePath(DASHBOARD_ROUTES.projectDetail(milestone.projectId));
 }

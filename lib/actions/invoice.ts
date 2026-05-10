@@ -9,6 +9,8 @@ import { invoiceCreateSchema } from "@/lib/validations/invoice";
 import { sendMail, invoiceEmailHtml } from "@/lib/email";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { notify } from "@/lib/notifications";
+import { waTemplates } from "@/lib/whatsapp-templates";
 
 async function requireAdmin() {
   const session = await auth();
@@ -158,6 +160,10 @@ export async function sendInvoiceEmailAction(invoiceId: string) {
       status: invoice.status === "DRAFT" ? "SENT" : invoice.status,
     },
   });
+
+  // WhatsApp notification
+  const tpl = waTemplates.invoiceSent(invoice.number, formatCurrency(Number(invoice.total)), formatDate(invoice.dueDate));
+  notify({ userId: invoice.clientId, type: "INVOICE_SENT", ...tpl }).catch(() => {});
 
   revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
   revalidatePath(ADMIN_ROUTES.invoices);

@@ -87,6 +87,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No file provided" }, { status: 400 });
   }
 
+  // Validate client can only upload to their own project
+  if (typeof projectId === "string" && projectId && session.user.role === "CLIENT") {
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+      select: { clientId: true },
+    });
+    if (!project || project.clientId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+  }
+
   if (file.size > MAX_SIZE) {
     return NextResponse.json(
       { error: `File too large (max ${MAX_SIZE / 1024 / 1024}MB)` },

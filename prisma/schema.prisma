@@ -105,6 +105,18 @@ enum ProjectAssignmentRole {
   REVIEWER
 }
 
+enum NotificationType {
+  PROJECT_STATUS_CHANGED
+  MILESTONE_READY_FOR_APPROVAL
+  MILESTONE_APPROVED
+  MILESTONE_REJECTED
+  INVOICE_SENT
+  INVOICE_REMINDER
+  FILE_UPLOADED
+  MESSAGE_NEW
+  TASK_COMPLETED
+}
+
 // ----------------------------------------------------------------
 // Models
 // ----------------------------------------------------------------
@@ -134,6 +146,7 @@ model User {
   createdProposals    Proposal[]           @relation("CreatedProposals")
   auditLogs           AuditLog[]
   passwordResetTokens PasswordResetToken[]
+  notifications       Notification[]
 
   @@index([email])
   @@index([role])
@@ -180,6 +193,11 @@ model Milestone {
   order       Int             @default(0)
   dueDate     DateTime?
   completedAt DateTime?
+
+  requiresClientApproval Boolean   @default(false)
+  clientApprovedAt       DateTime?
+  clientRejectedAt       DateTime?
+  clientFeedback         String?   @db.Text
 
   projectId String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -399,6 +417,8 @@ model SiteSetting {
   mapsUrl           String?
   operatingHours    String?  @db.Text
   responseTime      String   @default("1x24 jam")
+  hourlyRate        Decimal  @default(150000) @db.Decimal(14, 2)
+  whatsappNotify    Boolean  @default(true)
   githubUrl         String?
   linkedinUrl       String?
   instagramUrl      String?
@@ -619,4 +639,25 @@ model PasswordResetToken {
 
   @@index([token])
   @@index([userId])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  title     String
+  message   String           @db.Text
+  channel   String           @default("whatsapp")
+  metadata  Json?
+  sentAt    DateTime?
+  readAt    DateTime?
+  failedAt  DateTime?
+  error     String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, readAt])
+  @@index([createdAt])
 }

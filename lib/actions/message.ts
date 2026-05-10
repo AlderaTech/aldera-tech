@@ -5,6 +5,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { isStaff } from "@/lib/permissions";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
+import { notify } from "@/lib/notifications";
+import { waTemplates } from "@/lib/whatsapp-templates";
 
 async function getAuthContext(projectId: string) {
   const session = await auth();
@@ -49,6 +51,25 @@ export async function postMessageAction(
   });
   revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
   revalidatePath(DASHBOARD_ROUTES.projectDetail(projectId));
+
+  // Notify: if staff posted → notify client; if client posted → notify team
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    select: { clientId: true, title: true, assignments: { select: { userId: true } } },
+  });
+  if (project) {
+    const tpl = waTemplates.newMessage(session.user.name ?? "Seseorang", project.title, projectId);
+    if (isStaff(session.user.role)) {
+      notify({ userId: project.clientId, type: "MESSAGE_NEW", ...tpl }).catch(() => {});
+    } else {
+      for (const a of project.assignments) {
+        if (a.userId !== session.user.id) {
+          notify({ userId: a.userId, type: "MESSAGE_NEW", ...tpl }).catch(() => {});
+        }
+      }
+    }
+  }
+
   return { ok: true };
 }
 

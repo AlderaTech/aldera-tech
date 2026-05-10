@@ -6,6 +6,8 @@ import type { LucideIcon } from "lucide-react";
 import {
   Activity,
   Archive,
+  BarChart3,
+  Clock,
   FileSignature,
   FileText,
   FolderClosed,
@@ -18,7 +20,9 @@ import {
   Settings,
   ShieldCheck,
   Tags,
+  TrendingUp,
   Users,
+  Users2,
 } from "lucide-react";
 
 import { Logo } from "@/components/shared/logo";
@@ -33,6 +37,8 @@ import { cn } from "@/lib/utils";
 const navIcons: Record<DashboardNavIcon, LucideIcon> = {
   activity: Activity,
   archive: Archive,
+  barChart3: BarChart3,
+  clock: Clock,
   fileSignature: FileSignature,
   fileText: FileText,
   folderClosed: FolderClosed,
@@ -45,7 +51,9 @@ const navIcons: Record<DashboardNavIcon, LucideIcon> = {
   settings: Settings,
   shieldCheck: ShieldCheck,
   tags: Tags,
+  trendingUp: TrendingUp,
   users: Users,
+  users2: Users2,
 };
 
 function isActive(pathname: string, href: string) {

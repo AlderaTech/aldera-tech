@@ -6,6 +6,8 @@ import { hasPermission, PERMISSIONS, type Permission } from "@/lib/permissions";
 export type DashboardNavIcon =
   | "activity"
   | "archive"
+  | "barChart3"
+  | "clock"
   | "fileSignature"
   | "fileText"
   | "folderClosed"
@@ -18,7 +20,9 @@ export type DashboardNavIcon =
   | "settings"
   | "shieldCheck"
   | "tags"
-  | "users";
+  | "trendingUp"
+  | "users"
+  | "users2";
 
 export type DashboardNavItem = {
   href: string;
@@ -108,11 +112,37 @@ const adminNavGroups: DashboardNavGroup[] = [
         permission: PERMISSIONS.INVOICE_VIEW,
       },
       {
+        href: ADMIN_ROUTES.timesheet,
+        label: "Timesheet",
+        icon: "clock",
+        description: "Laporan jam kerja",
+        permission: PERMISSIONS.ANALYTICS_VIEW,
+      },
+      {
         href: ADMIN_ROUTES.files,
         label: "File Manager",
         icon: "folderClosed",
         description: "Asset dan dokumen",
         permission: PERMISSIONS.FILE_MANAGE,
+      },
+    ],
+  },
+  {
+    label: "Analitik",
+    items: [
+      {
+        href: ADMIN_ROUTES.team,
+        label: "Tim & Workload",
+        icon: "users2",
+        description: "Beban kerja tim",
+        permission: PERMISSIONS.ANALYTICS_VIEW,
+      },
+      {
+        href: ADMIN_ROUTES.analytics,
+        label: "Revenue & Profitability",
+        icon: "trendingUp",
+        description: "Performa bisnis",
+        permission: PERMISSIONS.ANALYTICS_VIEW,
       },
     ],
   },

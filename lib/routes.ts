@@ -47,6 +47,7 @@ export const PROPOSAL_ROUTES = {
 
 export const ADMIN_ROUTES = {
   home: "/admin",
+  analytics: "/admin/analytics",
   audit: "/admin/audit",
   blog: "/admin/blog",
   blogCategories: "/admin/blog/categories",
@@ -61,6 +62,8 @@ export const ADMIN_ROUTES = {
   proposals: "/admin/proposals",
   proposalNew: "/admin/proposals/new",
   settings: "/admin/settings",
+  team: "/admin/team",
+  timesheet: "/admin/timesheet",
   users: "/admin/users",
   blogEdit: (id: string) => `/admin/blog/${id}/edit`,
   invoiceDetail: (id: string) => `/admin/invoices/${id}`,
@@ -69,7 +72,9 @@ export const ADMIN_ROUTES = {
 } as const;
 
 export const API_ROUTES = {
+  exportAnalytics: "/api/admin/export/analytics",
   exportInvoices: "/api/admin/export/invoices",
   exportProjects: "/api/admin/export/projects",
+  exportTimesheet: "/api/admin/export/timesheet",
   invoicePdf: (id: string) => `/api/invoices/${id}/pdf`,
 } as const;

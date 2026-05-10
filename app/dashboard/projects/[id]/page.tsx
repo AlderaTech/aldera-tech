@@ -32,6 +32,8 @@ import {
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/shared/motion";
 import { MessagesTab } from "@/components/dashboard/messages-tab";
 import { ProjectTaskBoard } from "@/components/dashboard/project-task-board";
+import { MilestoneApproval } from "@/components/dashboard/milestone-approval";
+import { FileUploader } from "@/components/dashboard/file-uploader";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -190,6 +192,18 @@ export default async function UserProjectDetail({ params }: PageProps) {
                                   </span>
                                 )}
                               </div>
+                              {m.requiresClientApproval && m.status === "COMPLETED" && !m.clientApprovedAt && !m.clientRejectedAt && (
+                                <MilestoneApproval milestoneId={m.id} />
+                              )}
+                              {m.clientApprovedAt && (
+                                <p className="text-xs text-success mt-2">✓ Disetujui {formatDate(m.clientApprovedAt)}</p>
+                              )}
+                              {m.clientRejectedAt && (
+                                <div className="mt-2 text-xs">
+                                  <p className="text-destructive">✗ Ditolak {formatDate(m.clientRejectedAt)}</p>
+                                  {m.clientFeedback && <p className="text-muted-foreground mt-1">Feedback: {m.clientFeedback}</p>}
+                                </div>
+                              )}
                             </div>
                           </div>
                         </Card>
@@ -255,12 +269,13 @@ export default async function UserProjectDetail({ params }: PageProps) {
         </TabsContent>
 
         <TabsContent value="files" className="mt-6">
+          <FileUploader projectId={project.id} />
           {project.files.length === 0 ? (
-            <Card className="p-10 text-center text-muted-foreground">
+            <Card className="p-10 text-center text-muted-foreground mt-4">
               Belum ada file.
             </Card>
           ) : (
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 mt-4">
               {project.files.map((f) => (
                 <Card key={f.id} className="p-4 hover:shadow-md transition-shadow">
                   <div className="font-medium truncate mb-1">
