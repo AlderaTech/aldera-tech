@@ -21,7 +21,7 @@ export function AboutCta() {
               size="xl"
               className="bg-[#0b6bff] text-white hover:bg-[#075bd8]"
             >
-              <Link href={PUBLIC_ROUTES.contact}>Hubungi Kami</Link>
+              <Link href={PUBLIC_ROUTES.contact}>Konsultasi Gratis</Link>
             </Button>
           </div>
         </FadeUp>

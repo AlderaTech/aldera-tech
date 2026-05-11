@@ -5,6 +5,7 @@ export type AdminOverviewStats = {
   total: number;
   active: number;
   pending: number;
+  orderPending: number;
   revenue: number;
 };
 
@@ -26,6 +27,7 @@ const EMPTY_STATS: AdminOverviewStats = {
   total: 0,
   active: 0,
   pending: 0,
+  orderPending: 0,
   revenue: 0,
 };
 
@@ -48,10 +50,11 @@ export async function getAdminOverviewData() {
 async function getOverviewStats() {
   return safeDb(
     async () => {
-      const [total, active, pending, invoices] = await Promise.all([
+      const [total, active, pending, orderPending, invoices] = await Promise.all([
         prisma.project.count(),
         prisma.project.count({ where: { status: "IN_PROGRESS" } }),
         prisma.invoice.count({ where: { status: { in: ["SENT", "OVERDUE"] } } }),
+        prisma.orderRequest.count({ where: { status: "PENDING" } }),
         prisma.invoice.aggregate({
           _sum: { total: true },
           where: { status: "PAID" },
@@ -62,6 +65,7 @@ async function getOverviewStats() {
         total,
         active,
         pending,
+        orderPending,
         revenue: Number(invoices._sum.total ?? 0),
       };
     },

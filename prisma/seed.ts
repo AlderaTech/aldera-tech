@@ -552,6 +552,130 @@ async function main() {
 
   console.log("✔ Invoices seeded");
 
+  // --- Calculator Config & Data ---
+  await prisma.calculatorConfig.upsert({
+    where: { id: "calculator" },
+    update: {},
+    create: {
+      featureDisclaimer:
+        "Satu input = satu fitur spesifik.\n✓ Contoh benar: \"Login dengan Google\"\n✗ Contoh salah: \"Sistem login lengkap dengan social media, 2FA, dan forgot password\"\n\nJika fitur terlalu besar, tim kami akan memecahnya saat review.",
+      revisionPolicy:
+        "• Bug dari Solvo Tech = revisi gratis tanpa batas\n• Revisi dari Anda = 2x gratis (1 revisi = 1 fitur)\n• Revisi tambahan = Rp 300.000/fitur\n• Contoh: Jika Anda ingin merevisi 3 fitur sekaligus, itu menggunakan 3 jatah revisi.",
+      freeRevisions: 2,
+      revisionPricePerItem: 300000,
+      urgencyMultiplier: 1.5,
+      urgencyThresholdDays: 14,
+    },
+  });
+
+  const ptWebsite = await prisma.projectType.create({
+    data: {
+      name: "Website",
+      slug: "website",
+      description: "Website company profile, landing page, atau web app",
+      basePrice: 5000000,
+      icon: "code2",
+      dependentFields: [
+        { label: "Jumlah Halaman", type: "number", pricePerUnit: 500000, unit: "halaman", min: 1, max: 50 },
+      ],
+      order: 0,
+    },
+  });
+
+  const ptMobile = await prisma.projectType.create({
+    data: {
+      name: "Mobile App",
+      slug: "mobile-app",
+      description: "Aplikasi Android/iOS dengan React Native",
+      basePrice: 8000000,
+      icon: "smartphone",
+      dependentFields: [
+        { label: "Jumlah Screen", type: "number", pricePerUnit: 600000, unit: "screen", min: 1, max: 40 },
+      ],
+      order: 1,
+    },
+  });
+
+  const ptTugas = await prisma.projectType.create({
+    data: {
+      name: "Tugas Kampus/Sekolah",
+      slug: "tugas-kampus",
+      description: "Tugas pemrograman, skripsi, atau proyek akademik",
+      basePrice: 500000,
+      icon: "fileText",
+      dependentFields: [
+        { label: "Jumlah Modul/BAB", type: "number", pricePerUnit: 200000, unit: "modul", min: 1, max: 20 },
+      ],
+      order: 2,
+    },
+  });
+
+  await prisma.projectType.create({
+    data: {
+      name: "Custom / Lainnya",
+      slug: "custom",
+      description: "Proyek khusus yang tidak masuk kategori di atas",
+      basePrice: 3000000,
+      icon: "settings",
+      dependentFields: [],
+      order: 3,
+    },
+  });
+
+  // Standard features (all project types)
+  const standardFeatures = [
+    { name: "Login / Register", price: 500000 },
+    { name: "Dashboard Admin", price: 1000000 },
+    { name: "Upload File", price: 500000 },
+    { name: "Notifikasi Email", price: 500000 },
+    { name: "Search & Filter", price: 500000 },
+    { name: "CRUD Data", price: 500000 },
+    { name: "Export PDF/Excel", price: 500000 },
+  ];
+  for (let i = 0; i < standardFeatures.length; i++) {
+    await prisma.featureOption.create({
+      data: { ...standardFeatures[i], order: i, isMajor: false },
+    });
+  }
+
+  // Major features
+  const majorFeatures = [
+    { name: "Integrasi Payment Gateway", price: 3000000, disclaimer: "Termasuk Midtrans/Xendit. Stripe atau gateway lain mungkin berbeda harga." },
+    { name: "Integrasi API Pihak Ketiga", price: 2000000, disclaimer: "Satu integrasi per item. Jika butuh 3 API berbeda, tambahkan 3x." },
+    { name: "Real-time Chat", price: 2500000 },
+    { name: "Multi-language (i18n)", price: 1500000 },
+    { name: "Sistem Role & Permission", price: 1500000 },
+  ];
+  for (let i = 0; i < majorFeatures.length; i++) {
+    await prisma.featureOption.create({
+      data: { ...majorFeatures[i], order: standardFeatures.length + i, isMajor: true },
+    });
+  }
+
+  // Add-ons
+  await prisma.addOnOption.create({
+    data: {
+      name: "Domain + Deploy",
+      description: "Termasuk domain .com/.id dan hosting/deploy ke server",
+      pricePerMonth: 150000,
+      minMonths: 3,
+      maxMonths: 12,
+      order: 0,
+    },
+  });
+  await prisma.addOnOption.create({
+    data: {
+      name: "Maintenance",
+      description: "Pemeliharaan rutin, update keamanan, dan monitoring",
+      pricePerMonth: 500000,
+      minMonths: 1,
+      maxMonths: 12,
+      order: 1,
+    },
+  });
+
+  console.log("✔ Calculator config & data seeded");
+
   console.log("\n✅ Seeding complete!");
   console.log(`\n   Admin login: ${adminEmail} / ${adminPassword}`);
   console.log(`   Client 1  : gading@gmail.com / ${clientPassword}`);

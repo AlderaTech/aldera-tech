@@ -46,7 +46,7 @@ export async function Footer() {
                 href={PUBLIC_ROUTES.contact}
                 className="inline-flex rounded-lg bg-[#0b6bff] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#075bd8]"
               >
-                Diskusi proyek
+                Konsultasi Gratis
               </Link>
               {socialLinks.length > 0 && (
                 <div className="flex gap-3 pt-2">

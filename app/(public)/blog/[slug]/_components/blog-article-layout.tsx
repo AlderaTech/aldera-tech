@@ -1,6 +1,7 @@
 import { TableOfContents } from "./table-of-contents";
 import { BlogArticleBody } from "./blog-article-body";
 import { BlogArticleHeader } from "./blog-article-header";
+import { BlogCtaBanner } from "./blog-cta-banner";
 import { BlogFeaturedImage } from "./blog-featured-image";
 import type { BlogDetailPost } from "../_data/blog-detail";
 
@@ -22,6 +23,7 @@ export function BlogArticleLayout({
           <BlogArticleHeader post={post} minutes={minutes} />
           <BlogFeaturedImage src={featuredImage} alt={post.title} />
           <BlogArticleBody html={post.content} />
+          <BlogCtaBanner />
         </article>
         <TableOfContents containerId="blog-content" />
       </div>
