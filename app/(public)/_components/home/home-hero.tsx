@@ -7,6 +7,7 @@ import {
   ArrowRight,
   BarChart3,
   CheckCircle2,
+  ChevronDown,
   Clock3,
   Sparkles,
 } from "lucide-react";
@@ -14,8 +15,8 @@ import { Button } from "@/components/ui/button";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 
 const trustSignals = [
-  { value: "50+", label: "Proyek selesai", icon: BarChart3 },
-  { value: "30+", label: "Klien puas", icon: CheckCircle2 },
+  { value: "50+", label: "Proyek dirilis", icon: BarChart3 },
+  { value: "98%", label: "Klien repeat", icon: CheckCircle2 },
   { value: "1x24", label: "Respon awal", icon: Clock3 },
 ];
 
@@ -54,7 +55,7 @@ export function HomeHero() {
           transition={{ duration: 0.5, delay: 0.08 }}
           className="editorial-display mt-7 max-w-5xl text-5xl text-balance sm:text-6xl lg:text-7xl xxxl:text-8xl"
         >
-          Bangun produk digital yang siap dipakai, bukan sekadar terlihat rapi.
+          Bangun website & aplikasi yang mendatangkan pelanggan — bukan sekadar terlihat rapi.
         </motion.h1>
 
         <motion.p
@@ -63,9 +64,7 @@ export function HomeHero() {
           transition={{ duration: 0.5, delay: 0.16 }}
           className="mt-6 max-w-2xl text-base leading-relaxed text-white/72 sm:text-lg"
         >
-          Solvo Tech membantu bisnis merancang website, aplikasi, dan sistem
-          internal dengan proses yang jelas, visual yang matang, dan handoff
-          yang mudah dilanjutkan.
+          Proses jelas. Visual matang. Handoff yang mudah dilanjutkan tim Anda.
         </motion.p>
 
         <motion.div
@@ -116,6 +115,10 @@ export function HomeHero() {
             </div>
           ))}
         </motion.div>
+      </div>
+
+      <div className="absolute inset-x-0 bottom-6 z-20 hidden justify-center sm:flex">
+        <ChevronDown className="size-6 animate-bounce text-white/50" />
       </div>
     </section>
   );

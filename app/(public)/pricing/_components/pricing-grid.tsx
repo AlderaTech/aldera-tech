@@ -94,6 +94,16 @@ export function PricingGrid({ plans }: { plans: PublicPricingPlan[] }) {
             </StaggerItem>
           ))}
         </StaggerContainer>
+
+        <div className="mt-10 rounded-xl border border-black/10 bg-white/70 p-6 text-center sm:p-8">
+          <h3 className="text-xl font-black sm:text-2xl">Butuh estimasi lebih detail?</h3>
+          <p className="mx-auto mt-2 max-w-md text-sm text-black/62">
+            Gunakan kalkulator harga kami untuk menghitung biaya berdasarkan fitur spesifik yang Anda butuhkan.
+          </p>
+          <Button asChild size="lg" className="mt-5 bg-[#08090d] text-white hover:bg-black">
+            <Link href="/login?callbackUrl=/dashboard/calculator">Hitung Estimasi Detail</Link>
+          </Button>
+        </div>
       </div>
     </section>
   );

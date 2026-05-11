@@ -23,7 +23,7 @@ export function CtaSection() {
                 Proposal awal dalam 1x24 jam
               </div>
               <h2 className="editorial-display mt-6 max-w-4xl text-4xl text-balance sm:text-5xl lg:text-6xl">
-                Siap bawa bisnis Anda ke level berikutnya?
+                Siap mulai proyek Anda?
               </h2>
               <p className="mt-5 max-w-2xl text-white/72">
                 Konsultasi 30 menit gratis, mari diskusikan ide Anda dan lihat
@@ -66,7 +66,7 @@ export function CtaSection() {
                 className="group bg-[#0b6bff] text-white hover:bg-[#075bd8]"
               >
                 <Link href={PUBLIC_ROUTES.contact}>
-                  Mulai Proyek
+                  Konsultasi Gratis
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>

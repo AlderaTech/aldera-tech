@@ -53,15 +53,15 @@ export async function PortfolioPreview() {
   }, fallback);
 
   return (
-    <section className="editorial-surface h-[calc(100dvh-72px)] overflow-hidden">
-      <div className="mx-auto flex h-full max-w-screen-xxxl flex-col justify-center public-container-px py-8 sm:py-10">
+    <section className="editorial-surface">
+      <div className="mx-auto max-w-screen-xxxl public-container-px py-14 sm:py-20">
         <FadeUp className="mb-6 grid gap-5 lg:grid-cols-[0.8fr_1fr] lg:items-end">
           <div className="max-w-2xl">
             <div className="editorial-kicker border-black/20 text-black/60">
               Portfolio
             </div>
             <h2 className="editorial-display mt-4 text-4xl text-balance sm:text-5xl lg:text-6xl">
-              Proyek terbaru yang kami banggakan
+              Proyek terbaru yang sudah dirilis
             </h2>
           </div>
           <p className="max-w-2xl text-base leading-relaxed text-black/60 lg:justify-self-end">

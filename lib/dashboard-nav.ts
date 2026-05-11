@@ -56,6 +56,16 @@ export const clientNavConfig: DashboardNavConfig = {
           icon: "layoutDashboard",
         },
         {
+          href: DASHBOARD_ROUTES.calculator,
+          label: "Kalkulator Harga",
+          icon: "barChart3",
+        },
+        {
+          href: DASHBOARD_ROUTES.orders,
+          label: "Riwayat Estimasi",
+          icon: "receipt",
+        },
+        {
           href: DASHBOARD_ROUTES.projects,
           label: "Proyek Saya",
           icon: "folderKanban",
@@ -96,6 +106,20 @@ const adminNavGroups: DashboardNavGroup[] = [
         icon: "folderKanban",
         description: "Pipeline dan delivery",
         permission: PERMISSIONS.PROJECT_VIEW_ALL,
+      },
+      {
+        href: ADMIN_ROUTES.orders,
+        label: "Order Requests",
+        icon: "receipt",
+        description: "Estimasi dari kalkulator",
+        permission: PERMISSIONS.PROJECT_VIEW_ALL,
+      },
+      {
+        href: ADMIN_ROUTES.calculator,
+        label: "Kalkulator Harga",
+        icon: "barChart3",
+        description: "Kelola jenis proyek & fitur",
+        permission: PERMISSIONS.SETTINGS_MANAGE,
       },
       {
         href: ADMIN_ROUTES.proposals,

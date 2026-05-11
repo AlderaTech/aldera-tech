@@ -147,6 +147,7 @@ model User {
   auditLogs           AuditLog[]
   passwordResetTokens PasswordResetToken[]
   notifications       Notification[]
+  orderRequests       OrderRequest[]
 
   @@index([email])
   @@index([role])
@@ -606,6 +607,7 @@ model Proposal {
   convertedProject   Project? @relation("ProposalConvertedProject", fields: [convertedProjectId], references: [id], onDelete: SetNull)
 
   items ProposalItem[]
+  convertedFromOrder OrderRequest?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -660,4 +662,112 @@ model Notification {
 
   @@index([userId, readAt])
   @@index([createdAt])
+}
+
+// ----------------------------------------------------------------
+// Calculator & Order Request
+// ----------------------------------------------------------------
+enum OrderRequestStatus {
+  PENDING
+  REVIEWED
+  CONVERTED
+  CANCELLED
+}
+
+model ProjectType {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  description     String?  @db.Text
+  basePrice       Decimal  @db.Decimal(14, 2)
+  icon            String   @default("code2")
+  dependentFields Json     @default("[]")
+  order           Int      @default(0)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  features      FeatureOption[]
+  addOns        AddOnOption[]
+  orderRequests OrderRequest[]
+
+  @@index([active, order])
+}
+
+model FeatureOption {
+  id         String  @id @default(cuid())
+  name       String
+  description String?
+  price      Decimal @db.Decimal(14, 2)
+  isMajor    Boolean @default(false)
+  disclaimer String? @db.Text
+  order      Int     @default(0)
+  active     Boolean @default(true)
+
+  projectTypeId String?
+  projectType   ProjectType? @relation(fields: [projectTypeId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectTypeId, active, order])
+}
+
+model AddOnOption {
+  id            String  @id @default(cuid())
+  name          String
+  description   String?
+  pricePerMonth Decimal @db.Decimal(14, 2)
+  minMonths     Int     @default(1)
+  maxMonths     Int     @default(12)
+  order         Int     @default(0)
+  active        Boolean @default(true)
+
+  projectTypeId String?
+  projectType   ProjectType? @relation(fields: [projectTypeId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectTypeId, active, order])
+}
+
+model CalculatorConfig {
+  id                   String  @id @default("calculator")
+  featureDisclaimer    String  @db.Text
+  revisionPolicy       String  @db.Text
+  freeRevisions        Int     @default(2)
+  revisionPricePerItem Decimal @db.Decimal(14, 2) @default(300000)
+  urgencyMultiplier    Decimal @db.Decimal(3, 2) @default(1.50)
+  urgencyThresholdDays Int     @default(14)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model OrderRequest {
+  id              String             @id @default(cuid())
+  status          OrderRequestStatus @default(PENDING)
+  estimatedTotal  Decimal            @db.Decimal(14, 2)
+  urgency         String             @default("normal")
+  deadline        DateTime?
+  notes           String?            @db.Text
+  features        Json
+  addOns          Json               @default("[]")
+  dependentValues Json               @default("{}")
+  customFeatures  Json               @default("[]")
+
+  userId    String
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  projectTypeId String
+  projectType   ProjectType @relation(fields: [projectTypeId], references: [id], onDelete: Cascade)
+
+  convertedProposalId String?   @unique
+  convertedProposal   Proposal? @relation(fields: [convertedProposalId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
 }

@@ -9,6 +9,7 @@ import {
   Loader2,
   Newspaper,
   Plus,
+  ShoppingCart,
 } from "lucide-react";
 
 import { hasPermission, PERMISSIONS } from "@/lib/permissions";
@@ -37,6 +38,13 @@ export function getOverviewStatCards(stats: AdminOverviewStats) {
       value: stats.pending,
       helper: "Perlu follow up pembayaran",
       color: "text-amber-700 bg-amber-50 border-amber-200",
+    },
+    {
+      icon: ShoppingCart,
+      label: "Order Pending",
+      value: stats.orderPending,
+      helper: "Estimasi dari kalkulator",
+      color: "text-violet-700 bg-violet-50 border-violet-200",
     },
     {
       icon: DollarSign,

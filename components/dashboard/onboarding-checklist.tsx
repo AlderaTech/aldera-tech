@@ -54,9 +54,9 @@ export async function OnboardingChecklist() {
     {
       id: "project",
       title: "Miliki proyek pertama",
-      description: "Mulai kolaborasi dengan membuat proyek bersama admin.",
+      description: "Hitung estimasi harga dan ajukan proyek Anda.",
       done: data.projectCount > 0,
-      cta: { label: "Lihat proyek", href: DASHBOARD_ROUTES.projects },
+      cta: { label: "Hitung Estimasi", href: DASHBOARD_ROUTES.calculator },
     },
     {
       id: "message",
@@ -68,7 +68,7 @@ export async function OnboardingChecklist() {
     {
       id: "invoice",
       title: "Selesaikan invoice pertama",
-      description: "Tandai milestone bayar untuk unlock progres penuh.",
+      description: "Bayar invoice pertama untuk memulai sprint berikutnya.",
       done: data.paidInvoiceCount > 0,
       cta: { label: "Lihat invoice", href: DASHBOARD_ROUTES.invoices },
     },

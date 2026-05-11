@@ -55,15 +55,15 @@ const deliverables = [
 
 export function FeaturesSection() {
   return (
-    <section className="editorial-surface h-[calc(100dvh-72px)] overflow-hidden">
-      <div className="mx-auto flex h-full max-w-screen-xxxl flex-col justify-center public-container-px py-8 sm:py-10">
+    <section className="editorial-surface">
+      <div className="mx-auto max-w-screen-xxxl public-container-px py-14 sm:py-20">
         <FadeUp className="grid gap-5 border-b border-black/10 pb-6 lg:grid-cols-[0.75fr_1fr] lg:items-end">
           <div>
             <div className="editorial-kicker border-black/20 text-black/60">
               Cara kerja
             </div>
             <h2 className="editorial-display mt-4 max-w-3xl text-4xl text-balance sm:text-5xl lg:text-6xl">
-              Alur kerja yang jelas, tanpa ruang abu-abu.
+              Anda selalu tahu apa yang sedang dikerjakan.
             </h2>
           </div>
           <p className="max-w-2xl text-base leading-relaxed text-black/60 sm:text-lg lg:justify-self-end">

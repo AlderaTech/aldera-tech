@@ -21,9 +21,9 @@ const deliveryNotes = [
 export function ServicesPreview() {
   const preview = services.slice(0, 6);
   return (
-    <section className="editorial-ink h-[calc(100dvh-72px)] overflow-hidden">
-      <div className="mx-auto grid h-full max-w-screen-xxxl items-center gap-5 public-container-px py-8 sm:py-10 xl:grid-cols-[0.82fr_1.18fr]">
-        <FadeUp className="flex min-h-0 flex-col">
+    <section className="editorial-ink">
+      <div className="mx-auto grid max-w-screen-xxxl items-center gap-5 public-container-px py-14 sm:py-20 xl:grid-cols-[0.82fr_1.18fr]">
+        <FadeUp className="flex flex-col">
           <div className="editorial-kicker border-white/20 text-white/64">
             Layanan
           </div>
@@ -35,7 +35,7 @@ export function ServicesPreview() {
             terukur progresnya, dan rapi serah terimanya.
           </p>
 
-          <div className="relative mt-6 hidden min-h-0 flex-1 overflow-hidden rounded-xl border border-white/10 bg-white/[0.04] xl:block">
+          <div className="relative mt-6 hidden aspect-[16/10] overflow-hidden rounded-xl border border-white/10 bg-white/[0.04] xl:block">
             <Image
               src="/generated/solvo-tech/services-blue-suite.png"
               alt="Kolase mockup layanan web, mobile, dan e-commerce"
@@ -69,9 +69,9 @@ export function ServicesPreview() {
           </Button>
         </FadeUp>
 
-        <StaggerContainer className="grid min-h-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <StaggerContainer className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {preview.map((service, index) => (
-            <StaggerItem key={service.slug} className="min-h-0">
+            <StaggerItem key={service.slug}>
               <Link
                 href={PUBLIC_ROUTES.contactWithService(service.slug)}
                 className="group block h-full"
