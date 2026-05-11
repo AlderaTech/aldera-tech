@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ArrowRight, Calendar } from "lucide-react";
+import { ArrowRight, Calendar, FolderKanban } from "lucide-react";
 import { auth } from "@/auth";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -34,8 +35,17 @@ export default async function UserProjectsPage() {
       </div>
 
       {projects.length === 0 ? (
-        <Card className="p-12 text-center text-muted-foreground">
-          Belum ada proyek. Hubungi tim kami untuk memulai.
+        <Card className="flex flex-col items-center p-12 text-center">
+          <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-primary/10">
+            <FolderKanban className="size-7 text-primary" />
+          </div>
+          <h2 className="text-lg font-semibold">Belum ada proyek</h2>
+          <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+            Hitung estimasi harga dan ajukan proyek Anda melalui kalkulator.
+          </p>
+          <Button asChild className="mt-5">
+            <Link href="/dashboard/calculator">Hitung Estimasi</Link>
+          </Button>
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

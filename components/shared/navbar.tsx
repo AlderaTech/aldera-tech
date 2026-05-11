@@ -25,6 +25,8 @@ export function Navbar({ session }: { session: Session | null }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const isHome = pathname === "/";
+  const transparent = isHome && !scrolled;
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -36,8 +38,11 @@ export function Navbar({ session }: { session: Session | null }) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full border-b border-black/10 bg-[#f4f2ea]/95 public-container-px backdrop-blur-xl transition-all",
-        scrolled
+        "sticky top-0 z-40 w-full border-b public-container-px backdrop-blur-xl transition-all",
+        transparent
+          ? "border-transparent bg-transparent shadow-none"
+          : "border-black/10 bg-[#f4f2ea]/95",
+        scrolled && !transparent
           ? "shadow-[0_10px_28px_rgba(8,9,13,0.06)]"
           : "shadow-none"
       )}
@@ -45,12 +50,10 @@ export function Navbar({ session }: { session: Session | null }) {
       <div
         className={cn(
           "mx-auto flex h-[72px] w-full max-w-screen-xxxl items-center justify-between transition-all",
-          scrolled
-            ? "text-[#08090d]"
-            : "text-[#08090d]"
+          transparent ? "text-white" : "text-[#08090d]"
         )}
       >
-        <Logo size="md" />
+        <Logo size="md" variant={transparent ? "dark" : "light"} />
 
         <nav className="relative hidden items-center gap-7 xl:flex">
           {publicNavLinks.map((link) => {
@@ -66,7 +69,9 @@ export function Navbar({ session }: { session: Session | null }) {
                   "relative py-2 text-sm font-semibold transition-colors",
                   active
                     ? "text-[#0b6bff]"
-                    : "text-black/62 hover:text-black"
+                    : transparent
+                      ? "text-white/72 hover:text-white"
+                      : "text-black/62 hover:text-black"
                 )}
               >
                 {active && (
@@ -86,30 +91,49 @@ export function Navbar({ session }: { session: Session | null }) {
           {session?.user ? (
             <UserMenu session={session} />
           ) : (
-            <div className="hidden items-center gap-2 sm:flex">
-              <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                className="font-semibold text-black/58 hover:bg-black/5 hover:text-black"
-              >
-                <Link href={AUTH_ROUTES.login}>Masuk</Link>
-              </Button>
+            <>
               <Button
                 asChild
                 size="sm"
-                className="bg-[#08090d] font-bold text-white hover:bg-black"
+                className="bg-[#0b6bff] font-bold text-white hover:bg-[#075bd8] sm:hidden"
               >
                 <Link href={PUBLIC_ROUTES.contact}>Konsultasi</Link>
               </Button>
-            </div>
+              <div className="hidden items-center gap-2 sm:flex">
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "font-semibold",
+                    transparent
+                      ? "text-white/72 hover:bg-white/10 hover:text-white"
+                      : "text-black/58 hover:bg-black/5 hover:text-black"
+                  )}
+                >
+                  <Link href={AUTH_ROUTES.login}>Masuk</Link>
+                </Button>
+                <Button
+                  asChild
+                  size="sm"
+                  className={cn(
+                    "font-bold text-white",
+                    transparent
+                      ? "bg-white/15 backdrop-blur-md hover:bg-white/25"
+                      : "bg-[#08090d] hover:bg-black"
+                  )}
+                >
+                  <Link href={PUBLIC_ROUTES.contact}>Konsultasi</Link>
+                </Button>
+              </div>
+            </>
           )}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="hover:bg-black/5 xl:hidden"
+                className={cn("xl:hidden", transparent ? "hover:bg-white/10" : "hover:bg-black/5")}
                 aria-label="Buka menu"
               >
                 <Menu className="size-5" />

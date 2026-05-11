@@ -1,14 +1,16 @@
 "use client";
 
-import { useActionState, useTransition, useRef, useEffect } from "react";
+import { useTransition, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Loader2, Send } from "lucide-react";
+import Link from "next/link";
+import { CheckCircle2, Loader2, Send } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { PUBLIC_ROUTES } from "@/lib/routes";
 
 import {
   submitContactMessage,
@@ -22,8 +24,9 @@ export function ContactForm() {
   const prefilledService = searchParams.get("service");
   const prefilledPlan = searchParams.get("plan");
 
-  const [state] = useActionState(submitContactMessage, initialState);
+  const [state, setState] = useState<ContactActionState>(initialState);
   const [isPending, startTransition] = useTransition();
+  const [submitted, setSubmitted] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const prefilledSubject =
@@ -33,25 +36,45 @@ export function ContactForm() {
         ? `Tertarik dengan paket: ${prefilledPlan}`
         : "";
 
-  useEffect(() => {
-    if (prefilledSubject && formRef.current) {
-      const sub = formRef.current.elements.namedItem(
-        "subject"
-      ) as HTMLInputElement | null;
-      if (sub && !sub.value) sub.value = prefilledSubject;
-    }
-  }, [prefilledSubject]);
-
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
-      const result = await submitContactMessage(state, formData);
+      const result = await submitContactMessage(initialState, formData);
+      setState(result);
       if (result.ok) {
-        toast.success(result.message ?? "Pesan terkirim");
-        formRef.current?.reset();
+        setSubmitted(true);
       } else if (result.message) {
         toast.error(result.message);
       }
     });
+  }
+
+  if (submitted) {
+    return (
+      <div className="flex flex-col items-center py-8 text-center">
+        <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-[#0b6bff]/10">
+          <CheckCircle2 className="size-8 text-[#0b6bff]" />
+        </div>
+        <h3 className="text-2xl font-black">Pesan Anda sudah terkirim!</h3>
+        <p className="mt-2 max-w-md text-sm text-black/62">
+          Tim kami akan menghubungi Anda dalam 1x24 jam via email atau WhatsApp.
+        </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Button asChild variant="outline">
+            <Link href={PUBLIC_ROUTES.portfolio}>Lihat Portfolio</Link>
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setSubmitted(false);
+              setState(initialState);
+              formRef.current?.reset();
+            }}
+          >
+            Kirim pesan lain
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (

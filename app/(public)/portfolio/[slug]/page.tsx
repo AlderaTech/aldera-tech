@@ -7,6 +7,7 @@ import {
   getPortfolioStaticParams,
 } from "../_data/portfolio";
 import { PortfolioDetailContent } from "./_components/portfolio-detail-content";
+import { PortfolioCta } from "./_components/portfolio-cta";
 import { PortfolioFeaturedImage } from "./_components/portfolio-featured-image";
 import { PortfolioDetailHero } from "./_components/portfolio-detail-hero";
 
@@ -49,6 +50,7 @@ export default async function PortfolioDetail({ params }: PageProps) {
       <PortfolioDetailHero item={item} />
       <PortfolioFeaturedImage src={featuredImage} alt={item.title} />
       <PortfolioDetailContent item={item} />
+      <PortfolioCta />
     </>
   );
 }
