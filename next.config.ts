@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   images: {
     // Allow serving images from public/uploads served by Next's built-in static handling.
     // Remote patterns are empty, all images served are local for now.

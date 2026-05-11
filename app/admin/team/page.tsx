@@ -8,9 +8,10 @@ import { STAFF_ROLES } from "@/lib/permissions";
 const WEEKLY_CAPACITY_HOURS = 40;
 
 export default async function TeamWorkloadPage() {
-  const data = await safeDb(async () => {
-    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
 
+  const data = await safeDb(async () => {
     const staff = await prisma.user.findMany({
       where: { role: { in: [...STAFF_ROLES] }, isActive: true },
       select: {

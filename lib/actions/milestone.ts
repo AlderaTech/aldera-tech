@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { notify } from "@/lib/notifications";
-import { waTemplates } from "@/lib/whatsapp-templates";
 import { DASHBOARD_ROUTES } from "@/lib/routes";
 
 export async function approveMilestoneAction(milestoneId: string) {
@@ -74,11 +73,6 @@ export async function rejectMilestoneAction(milestoneId: string, feedback: strin
 
   // Notify assigned team members
   const teamIds = milestone.project.assignments.map((a) => a.userId);
-  const tpl = waTemplates.milestoneReadyForApproval(
-    milestone.project.title,
-    milestone.title,
-    milestone.project.id
-  );
   for (const uid of teamIds) {
     await notify({
       userId: uid,
