@@ -18,14 +18,14 @@ export function CtaSection() {
         <div className="overflow-hidden rounded-xl border border-black bg-[#08090d] text-white shadow-2xl">
           <div className="grid gap-8 p-6 sm:p-10 lg:min-h-[340px] lg:grid-cols-[1fr_0.62fr] lg:items-center lg:p-12">
             <div className="lg:self-center">
-              <div className="editorial-kicker border-white/20 text-white/55">
+              <div className="editorial-kicker border-white/20 text-white/64">
                 <CheckCircle2 className="size-3.5 text-[#0b6bff]" />
                 Proposal awal dalam 1x24 jam
               </div>
               <h2 className="editorial-display mt-6 max-w-4xl text-4xl text-balance sm:text-5xl lg:text-6xl">
                 Siap bawa bisnis Anda ke level berikutnya?
               </h2>
-              <p className="mt-5 max-w-2xl text-white/62">
+              <p className="mt-5 max-w-2xl text-white/72">
                 Konsultasi 30 menit gratis, mari diskusikan ide Anda dan lihat
                 bagaimana kami bisa membantu mewujudkannya.
               </p>
@@ -38,7 +38,7 @@ export function CtaSection() {
                 </div>
                 <div className="rounded-lg border border-white/10 p-4">
                   <div className="text-2xl font-black">1x24</div>
-                  <div className="text-white/50">Respon awal</div>
+                  <div className="text-white/64">Respon awal</div>
                 </div>
               </div>
               <div className="mb-5 space-y-2 rounded-lg border border-white/10 bg-black/20 p-3">
@@ -53,7 +53,7 @@ export function CtaSection() {
                         {step}
                       </span>
                     </div>
-                    <span className="shrink-0 text-xs font-bold text-white/35">
+                    <span className="shrink-0 text-xs font-bold text-white/50">
                       0{index + 1}
                     </span>
                   </div>
@@ -70,11 +70,8 @@ export function CtaSection() {
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
-              <Button asChild size="xl" variant="outline">
-                <Link
-                  href={PUBLIC_ROUTES.pricing}
-                  className="border-white/20 bg-white/10 text-white hover:bg-white/15 hover:text-white"
-                >
+              <Button asChild size="xl" variant="outline" className="border-white/20 bg-white/10 text-white hover:bg-white/15 hover:text-white">
+                <Link href={PUBLIC_ROUTES.pricing}>
                   Lihat Harga
                 </Link>
               </Button>

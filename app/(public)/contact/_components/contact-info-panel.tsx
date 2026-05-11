@@ -21,7 +21,7 @@ export function ContactInfoPanel({
                 <item.icon className="size-4" />
               </div>
               <div className="min-w-0">
-                <div className="text-xs text-black/45">{item.label}</div>
+                <div className="text-xs text-black/62">{item.label}</div>
                 <div className="truncate text-sm font-medium">{item.value}</div>
               </div>
             </div>
@@ -43,7 +43,7 @@ export function ContactInfoPanel({
       </div>
       <Card className="gap-0 rounded-xl border-black bg-[#08090d] p-5 text-white">
         <h3 className="mb-1 text-sm font-semibold">Jam operasional</h3>
-        <p className="text-xs leading-relaxed text-white/58">
+        <p className="text-xs leading-relaxed text-white/68">
           {operatingHours || "Hubungi kami untuk jadwal terbaru."}
           <br />
           Respon awal: {responseTime}

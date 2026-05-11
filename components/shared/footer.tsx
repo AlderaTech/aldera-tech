@@ -38,8 +38,8 @@ export async function Footer() {
         <div className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.04]">
           <div className="grid gap-10 p-6 md:grid-cols-2 sm:p-8 lg:grid-cols-[1.55fr_repeat(3,1fr)] lg:p-10">
             <div className="space-y-5">
-              <Logo size="md" />
-              <p className="max-w-md text-sm leading-relaxed text-white/58">
+              <Logo size="md" variant="dark" />
+              <p className="max-w-md text-sm leading-relaxed text-white/68">
                 {settings.footerDescription}
               </p>
               <Link
@@ -76,7 +76,7 @@ export async function Footer() {
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className="text-sm text-white/60 transition-colors hover:text-white"
+                        className="text-sm text-white/68 transition-colors hover:text-white"
                       >
                         {link.label}
                       </Link>
@@ -87,10 +87,10 @@ export async function Footer() {
             ))}
           </div>
           <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 px-6 py-5 sm:flex-row sm:px-8 lg:px-10">
-            <p className="text-xs text-white/50">
+            <p className="text-xs text-white/64">
               © {year} {settings.brandName}. All rights reserved.
             </p>
-            <p className="text-xs text-white/50">Dibuat di Indonesia</p>
+            <p className="text-xs text-white/64">Dibuat di Indonesia</p>
           </div>
         </div>
       </div>

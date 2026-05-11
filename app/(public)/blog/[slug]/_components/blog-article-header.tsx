@@ -47,17 +47,17 @@ export function BlogArticleHeader({ post, minutes }: BlogArticleHeaderProps) {
             </div>
           )}
           {post.publishedAt && (
-            <span className="inline-flex items-center gap-1 text-sm text-black/50">
+            <span className="inline-flex items-center gap-1 text-sm text-black/62">
               <Calendar className="size-3.5" />
               {formatDate(post.publishedAt)}
             </span>
           )}
-          <span className="inline-flex items-center gap-1 text-sm text-black/50">
+          <span className="inline-flex items-center gap-1 text-sm text-black/62">
             <Clock className="size-3.5" />
             {minutes} menit baca
           </span>
           {post.views > 0 && (
-            <span className="inline-flex items-center gap-1 text-sm text-black/50">
+            <span className="inline-flex items-center gap-1 text-sm text-black/62">
               <Eye className="size-3.5" />
               {post.views.toLocaleString("id-ID")} tampilan
             </span>

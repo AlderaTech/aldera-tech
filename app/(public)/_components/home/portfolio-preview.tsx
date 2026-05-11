@@ -102,7 +102,7 @@ export async function PortfolioPreview() {
                       <ArrowUpRight className="size-4" />
                     </div>
                     <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-6">
-                      <div className="mb-2 text-xs uppercase text-white/50">
+                      <div className="mb-2 text-xs uppercase text-white/64">
                         {item.client}
                       </div>
                       <h3 className="text-2xl font-black leading-tight text-balance lg:text-3xl">
@@ -114,7 +114,7 @@ export async function PortfolioPreview() {
                       </div>
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 border-t border-white/10 bg-[#08090d] text-xs text-white/52">
+                  <div className="grid grid-cols-3 border-t border-white/10 bg-[#08090d] text-xs text-white/64">
                     {["Cakupan", "Proses", "Rilis"].map((label) => (
                       <div
                         key={label}

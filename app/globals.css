@@ -4,7 +4,6 @@
 /* ----------------------------------------------------------------
    Custom variants
 ---------------------------------------------------------------- */
-@custom-variant dark (&:is(.dark *));
 
 /* ----------------------------------------------------------------
    Design tokens (CSS variables)
@@ -60,57 +59,6 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.55 0.18 250);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-
-  --card: oklch(0.18 0 0);
-  --card-foreground: oklch(0.985 0 0);
-
-  --popover: oklch(0.18 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-
-  --primary: oklch(0.7 0.17 250);
-  --primary-foreground: oklch(0.145 0 0);
-
-  --secondary: oklch(0.26 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-
-  --muted: oklch(0.26 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-
-  --accent: oklch(0.26 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-
-  --destructive: oklch(0.65 0.22 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-
-  --success: oklch(0.72 0.18 145);
-  --success-foreground: oklch(0.145 0 0);
-
-  --warning: oklch(0.82 0.18 85);
-  --warning-foreground: oklch(0.145 0 0);
-
-  --border: oklch(0.26 0 0);
-  --input: oklch(0.26 0 0);
-  --ring: oklch(0.7 0.17 250);
-
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-
-  --sidebar: oklch(0.18 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.7 0.17 250);
-  --sidebar-primary-foreground: oklch(0.145 0 0);
-  --sidebar-accent: oklch(0.26 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.26 0 0);
-  --sidebar-ring: oklch(0.7 0.17 250);
 }
 
 /* ----------------------------------------------------------------
@@ -328,6 +276,7 @@
   .editorial-card {
     border: 1px solid rgba(8, 9, 13, 0.1);
     background: rgba(255, 255, 255, 0.78);
+    color: #08090d;
     box-shadow: 0 18px 55px rgba(8, 9, 13, 0.08);
   }
 

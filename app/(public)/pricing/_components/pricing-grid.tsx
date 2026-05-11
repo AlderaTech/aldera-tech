@@ -35,7 +35,7 @@ export function PricingGrid({ plans }: { plans: PublicPricingPlan[] }) {
                 <p
                   className={cn(
                     "mt-1 mb-5 min-h-10 text-sm",
-                    plan.featured ? "text-white/58" : "text-black/58"
+                    plan.featured ? "text-white/68" : "text-black/58"
                   )}
                 >
                   {plan.tagline}
@@ -44,7 +44,7 @@ export function PricingGrid({ plans }: { plans: PublicPricingPlan[] }) {
                   <div
                     className={cn(
                       "text-xs",
-                      plan.featured ? "text-white/45" : "text-black/45"
+                      plan.featured ? "text-white/64" : "text-black/62"
                     )}
                   >
                     Mulai dari
@@ -60,7 +60,7 @@ export function PricingGrid({ plans }: { plans: PublicPricingPlan[] }) {
                       className={cn(
                         "flex items-start gap-2 text-sm",
                         !feature.included &&
-                          (plan.featured ? "text-white/38" : "text-black/38")
+                          (plan.featured ? "text-white/55" : "text-black/55")
                       )}
                     >
                       {feature.included ? (
@@ -69,7 +69,7 @@ export function PricingGrid({ plans }: { plans: PublicPricingPlan[] }) {
                         <X
                           className={cn(
                             "mt-0.5 size-4 shrink-0",
-                            plan.featured ? "text-white/30" : "text-black/30"
+                            plan.featured ? "text-white/55" : "text-black/55"
                           )}
                         />
                       )}

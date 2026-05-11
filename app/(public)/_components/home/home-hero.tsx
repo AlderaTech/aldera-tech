@@ -109,7 +109,7 @@ export function HomeHero() {
                 <div className="text-2xl font-black leading-none">
                   {signal.value}
                 </div>
-                <div className="mt-1 text-xs font-bold uppercase tracking-[0.1em] text-white/48">
+                <div className="mt-1 text-xs font-bold uppercase tracking-[0.1em] text-white/64">
                   {signal.label}
                 </div>
               </div>

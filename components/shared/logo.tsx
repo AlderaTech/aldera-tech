@@ -8,6 +8,7 @@ type LogoProps = {
   href?: string | null;
   size?: "sm" | "md" | "lg";
   showText?: boolean;
+  variant?: "light" | "dark";
 };
 
 const sizes = {
@@ -21,6 +22,7 @@ export function Logo({
   href = PUBLIC_ROUTES.home,
   size = "md",
   showText = true,
+  variant = "light",
 }: LogoProps) {
   const s = sizes[size];
   const content = (
@@ -35,8 +37,8 @@ export function Logo({
         />
       </div>
       {showText && (
-        <span className={cn("font-bold tracking-tight", s.text)}>
-          Solvo<span className="text-primary">Tech</span>
+        <span className={cn("font-bold tracking-tight", s.text, variant === "dark" ? "text-white" : undefined)}>
+          Solvo<span className={variant === "dark" ? "text-[#61a3ff]" : "text-primary"}>Tech</span>
         </span>
       )}
     </div>

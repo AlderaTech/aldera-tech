@@ -80,7 +80,7 @@ export function FeaturesSection() {
                   <div className="flex size-11 items-center justify-center rounded-lg bg-[#0b6bff] text-white">
                     <step.icon className="size-5" />
                   </div>
-                  <div className="text-xs font-black uppercase tracking-[0.14em] text-black/32">
+                  <div className="text-xs font-black uppercase tracking-[0.14em] text-black/50">
                     0{index + 1}
                   </div>
                 </div>

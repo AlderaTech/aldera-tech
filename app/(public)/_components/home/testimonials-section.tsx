@@ -66,14 +66,14 @@ export async function TestimonialsSection() {
       <div className="mx-auto max-w-screen-xxxl public-container-px py-14 sm:py-20">
         <FadeUp className="mb-10 grid gap-5 lg:grid-cols-[0.85fr_1fr] lg:items-end">
           <div>
-            <div className="editorial-kicker border-white/20 text-white/55">
+            <div className="editorial-kicker border-white/20 text-white/64">
             Testimoni
             </div>
             <h2 className="editorial-display mt-5 text-4xl text-balance sm:text-5xl lg:text-6xl">
               Bukti kerja dari bisnis yang sudah rilis.
             </h2>
           </div>
-          <p className="max-w-2xl text-base leading-relaxed text-white/58 lg:justify-self-end">
+          <p className="max-w-2xl text-base leading-relaxed text-white/68 lg:justify-self-end">
             Bisnis-bisnis yang telah mempercayakan transformasi digital mereka
             ke Solvo Tech.
           </p>

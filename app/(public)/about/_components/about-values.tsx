@@ -14,7 +14,7 @@ export function AboutValues() {
           <h2 className="editorial-display text-4xl text-balance sm:text-5xl">
             Nilai yang kami pegang
           </h2>
-          <p className="mt-4 text-white/58">
+          <p className="mt-4 text-white/68">
             Empat prinsip yang memandu cara kami bekerja.
           </p>
         </FadeUp>
@@ -44,7 +44,7 @@ export function AboutValues() {
                     className={
                       isFeatured
                         ? "text-sm leading-relaxed text-white/72"
-                        : "text-sm leading-relaxed text-white/58"
+                        : "text-sm leading-relaxed text-white/68"
                     }
                   >
                     {value.description}

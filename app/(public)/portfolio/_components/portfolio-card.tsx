@@ -38,7 +38,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
           </div>
         </div>
         <div className="space-y-3 bg-white/80 p-5">
-          <div className="text-xs uppercase text-black/45">{item.client}</div>
+          <div className="text-xs uppercase text-black/62">{item.client}</div>
           <h2 className="text-xl font-black leading-snug transition-colors group-hover:text-[#0b6bff]">
             {item.title}
           </h2>

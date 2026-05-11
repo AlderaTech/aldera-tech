@@ -93,7 +93,7 @@ export function TestimonialsCarousel({ items }: { items: TestimonialCard[] }) {
                   </Avatar>
                   <div className="min-w-0">
                     <div className="font-medium text-sm truncate">{t.clientName}</div>
-                    <div className="truncate text-xs text-white/45">
+                    <div className="truncate text-xs text-white/64">
                       {[t.clientRole, t.company].filter(Boolean).join(" · ")}
                     </div>
                   </div>

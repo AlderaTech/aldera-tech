@@ -22,7 +22,7 @@ export function PortfolioDetailHero({ item }: PortfolioDetailHeroProps) {
         <FadeUp>
           <div className="mb-4 flex flex-wrap items-center gap-2">
             <Badge variant="secondary">{item.industry}</Badge>
-            <span className="text-sm text-black/50">{item.client}</span>
+            <span className="text-sm text-black/62">{item.client}</span>
           </div>
           <h1 className="editorial-display max-w-5xl text-5xl text-balance sm:text-6xl lg:text-7xl">
             {item.title}

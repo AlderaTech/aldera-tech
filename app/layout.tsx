@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
-import { ThemeProvider } from "@/components/shared/theme-provider";
 import { SessionProvider } from "@/components/shared/session-provider";
 import { getSiteSettings } from "@/lib/public-settings";
 import "./globals.css";
@@ -94,17 +93,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SessionProvider>
-            {children}
-            <Toaster richColors closeButton position="top-right" />
-          </SessionProvider>
-        </ThemeProvider>
+        <SessionProvider>
+          {children}
+          <Toaster richColors closeButton position="top-right" />
+        </SessionProvider>
       </body>
     </html>
   );

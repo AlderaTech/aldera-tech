@@ -46,7 +46,7 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
           <div className="truncate text-sm font-medium">
             {testimonial.clientName}
           </div>
-          <div className="truncate text-xs text-white/45">
+          <div className="truncate text-xs text-white/64">
             {[testimonial.clientRole, testimonial.company]
               .filter(Boolean)
               .join(" · ")}
