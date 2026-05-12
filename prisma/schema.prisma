@@ -740,6 +740,7 @@ model CalculatorConfig {
   revisionPricePerItem Decimal @db.Decimal(14, 2) @default(300000)
   urgencyMultiplier    Decimal @db.Decimal(3, 2) @default(1.50)
   urgencyThresholdDays Int     @default(14)
+  dpPercentage         Int     @default(25)
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 }

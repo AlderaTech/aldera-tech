@@ -565,6 +565,7 @@ async function main() {
       revisionPricePerItem: 300000,
       urgencyMultiplier: 1.5,
       urgencyThresholdDays: 14,
+      dpPercentage: 25,
     },
   });
 

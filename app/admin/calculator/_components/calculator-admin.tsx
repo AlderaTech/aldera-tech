@@ -266,6 +266,7 @@ function ConfigTab({ config }: { config: any }) {
         revisionPricePerItem: Number(fd.get("revisionPricePerItem")),
         urgencyMultiplier: Number(fd.get("urgencyMultiplier")),
         urgencyThresholdDays: Number(fd.get("urgencyThresholdDays")),
+        dpPercentage: Number(fd.get("dpPercentage")),
       });
       toast.success("Pengaturan disimpan");
     });
@@ -281,6 +282,7 @@ function ConfigTab({ config }: { config: any }) {
           <div><Label>Harga Revisi/Fitur</Label><Input name="revisionPricePerItem" type="number" defaultValue={config?.revisionPricePerItem ?? 300000} /></div>
           <div><Label>Multiplier Urgent (x)</Label><Input name="urgencyMultiplier" type="number" step="0.1" defaultValue={config?.urgencyMultiplier ?? 1.5} /></div>
           <div><Label>Threshold Urgent (hari)</Label><Input name="urgencyThresholdDays" type="number" defaultValue={config?.urgencyThresholdDays ?? 14} /></div>
+          <div><Label>DP (%)</Label><Input name="dpPercentage" type="number" min={0} max={100} defaultValue={config?.dpPercentage ?? 25} /></div>
         </div>
         <Button type="submit" disabled={pending}>{pending && <Loader2 className="size-4 animate-spin" />}Simpan Pengaturan</Button>
       </form>
