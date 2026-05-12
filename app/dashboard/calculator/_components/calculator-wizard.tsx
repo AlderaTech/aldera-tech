@@ -15,7 +15,6 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatCurrency } from "@/lib/utils";
 import { submitOrderRequest } from "@/lib/actions/calculator";
-import Link from "next/link";
 
 type DependentField = { label: string; type: string; pricePerUnit: number; unit: string; min?: number; max?: number };
 type ProjectType = { id: string; name: string; slug: string; description: string | null; basePrice: any; icon: string; dependentFields: any; order: number };
