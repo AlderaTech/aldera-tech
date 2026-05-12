@@ -21,7 +21,7 @@ type DependentField = { label: string; type: string; pricePerUnit: number; unit:
 type ProjectType = { id: string; name: string; slug: string; description: string | null; basePrice: any; icon: string; dependentFields: any; order: number };
 type Feature = { id: string; name: string; description: string | null; price: any; isMajor: boolean; disclaimer: string | null; projectTypeId: string | null };
 type AddOn = { id: string; name: string; description: string | null; pricePerMonth: any; minMonths: number; maxMonths: number; projectTypeId: string | null };
-type Config = { featureDisclaimer: string; revisionPolicy: string; freeRevisions: number; revisionPricePerItem: any; urgencyMultiplier: any; urgencyThresholdDays: number } | null;
+type Config = { featureDisclaimer: string; revisionPolicy: string; freeRevisions: number; revisionPricePerItem: any; urgencyMultiplier: any; urgencyThresholdDays: number; dpPercentage: number } | null;
 
 type Props = { data: { projectTypes: ProjectType[]; features: Feature[]; addOns: AddOn[]; config: Config } };
 
@@ -307,6 +307,9 @@ export function CalculatorWizard({ data }: Props) {
               ) : null; })}
               <div className="flex justify-between"><span className="text-muted-foreground">Urgency</span><span>{urgency === "urgent" ? "Urgent" : "Normal"}</span></div>
               <div className="border-t pt-2 flex justify-between font-bold text-base"><span>Total Estimasi</span><span>{formatCurrency(total)}</span></div>
+              {config?.dpPercentage ? (
+                <div className="flex justify-between text-sm"><span>DP ({config.dpPercentage}%)</span><span className="font-semibold">{formatCurrency(Math.round(total * config.dpPercentage / 100))}</span></div>
+              ) : null}
             </Card>
 
             {config?.revisionPolicy && (
@@ -366,7 +369,13 @@ export function CalculatorWizard({ data }: Props) {
               <span>Total</span>
               <span>{formatCurrency(total)}</span>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">*Harga estimasi, final setelah review tim</p>
+            {config?.dpPercentage ? (
+              <div className="flex justify-between text-sm mt-2 pt-2 border-t border-dashed">
+                <span>DP ({config.dpPercentage}%)</span>
+                <span className="font-semibold">{formatCurrency(Math.round(total * config.dpPercentage / 100))}</span>
+              </div>
+            ) : null}
+            <p className="mt-2 text-xs text-muted-foreground">*Harga estimasi, final setelah review tim</p>
           </div>
         </Card>
       </div>

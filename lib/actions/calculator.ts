@@ -78,6 +78,7 @@ export async function deleteAddOnOption(id: string) {
 export async function updateCalculatorConfig(data: {
   featureDisclaimer: string; revisionPolicy: string; freeRevisions: number;
   revisionPricePerItem: number; urgencyMultiplier: number; urgencyThresholdDays: number;
+  dpPercentage: number;
 }) {
   await requireAdmin();
   await prisma.calculatorConfig.upsert({
