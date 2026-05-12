@@ -44,7 +44,7 @@ export function MilestoneApproval({ milestoneId }: { milestoneId: string }) {
 
   return (
     <div className="mt-3 space-y-2">
-      <p className="text-xs font-medium text-amber-600 dark:text-amber-400">
+      <p className="text-xs font-medium text-amber-600">
         ⏳ Menunggu persetujuan Anda
       </p>
       <div className="flex gap-2">
