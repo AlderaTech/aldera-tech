@@ -95,7 +95,7 @@ export default async function PublicProposalPage({ params }: PageProps) {
 
           <Card className="p-6">
             <div
-              className="prose prose-neutral dark:prose-invert max-w-none"
+              className="prose prose-neutral max-w-none"
               dangerouslySetInnerHTML={{ __html: proposal.content }}
             />
           </Card>

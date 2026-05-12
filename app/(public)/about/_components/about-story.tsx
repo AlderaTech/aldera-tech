@@ -14,7 +14,7 @@ export function AboutStory() {
             </h2>
           </FadeUp>
           <FadeUp delay={0.1}>
-            <div className="prose prose-neutral dark:prose-invert max-w-none">
+            <div className="prose prose-neutral max-w-none">
               <p>
                 Bertahun-tahun bekerja sebagai pengembang dan desainer untuk
                 startup dan korporat, kami sering melihat pola yang sama: klien

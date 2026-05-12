@@ -154,7 +154,7 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
           </p>
         </div>
         <div
-          className="prose prose-neutral dark:prose-invert max-w-none"
+          className="prose prose-neutral max-w-none"
           dangerouslySetInnerHTML={{ __html: proposal.content }}
         />
       </Card>
