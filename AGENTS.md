@@ -41,3 +41,18 @@ Setiap kali menyelesaikan task, berikan ringkasan terstruktur yang memuat:
 - **Dokumentasi yang Diperbarui**: Daftar file dokumentasi yang disinkronkan.
 - **Status Verifikasi**: Hasil linter / typecheck.
 - **Tawaran Verifikasi Lanjutan**: Menawarkan apakah pengguna ingin menjalankan test atau build.
+
+## 8. Standar Kualitas Kode & Arsitektur Modular (Code Quality Standards)
+- **Wajib** mematuhi 12 prinsip kualitas kode yang didokumentasikan di [`docs/code-quality.md`](file:///home/alfiang/Projects/solvo-tech/docs/code-quality.md):
+  1. **Larangan Fat Files**: Pecah file yang membengkak menjadi sub-komponen atau helper terpisah.
+  2. **Reusabilitas**: Desain komponen, custom hook, dan helper agar reusable.
+  3. **Pemisahan UI & Logic**: Pisahkan state/mutation/validation ke dalam custom hook, biarkan komponen UI murni untuk rendering presentasional.
+  4. **Batas Ukuran File**: Patokan batas lunak ~200–250 baris untuk file komponen UI (`.tsx`).
+  5. **Pola Co-location**: Gunakan folder privat per rute (`_components/`, `_hooks/`, `_data/`, `_utils/`).
+  6. **Zero-any Policy**: Dilarang keras menggunakan tipe `any`. Gunakan `unknown` + type narrowing atau tipe Prisma/Zod eksplisit.
+  7. **Sentralisasi Zod**: Validasi form & action wajib di `lib/validations/`.
+  8. **Clean RSC Boundary**: Data fetching di server, serialisasi tipe non-plain (seperti Decimal) sebelum oper ke Client Component.
+  9. **Error & Toast Hygiene**: Tangani error secara eksplisit dan berikan toast feedback via `sonner` (larangan silent failure).
+  10. **Disiplin Tailwind**: Gunakan helper `cn()` dan semantic design tokens (hindari inline style & hex statis).
+  11. **Efisiensi State**: Hindari redundant `useEffect` untuk derived state; gunakan `useTransition` untuk mutasi.
+  12. **Konvensi Penamaan**: Terapkan `kebab-case` untuk file/folder, `PascalCase` untuk komponen/type, `camelCase` untuk hooks/functions.

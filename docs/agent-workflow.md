@@ -32,30 +32,38 @@ Setiap AI Agent wajib memeriksa seluruh checklist berikut sebelum menyatakan bah
     - Fitur/perbaikan telah diimplementasikan sesuai kebutuhan pengguna.
     - Menjaga integritas komentar dan kode yang tidak terkait.
 
-[ ] 2. Pembersihan Kode & File Usang (Dead Code & Cleanup)
+[ ] 2. Kepatuhan Standar Kualitas Kode (Code Quality Audit)
+    - Mematuhi 12 prinsip di `docs/code-quality.md`.
+    - Tidak ada fat file (>200–250 baris) yang belum diekstrak ke sub-komponen/hooks.
+    - Logika state/mutasi form telah dipisahkan dari tampilan UI (menggunakan custom hooks).
+    - Tidak ada penggunaan tipe `any` (kebijakan zero-any dipatuhi).
+    - Validasi data form/action dipusatkan di `lib/validations/`.
+
+[ ] 3. Pembersihan Kode & File Usang (Dead Code & Cleanup)
     - File/folder lama yang digantikan telah dihapus.
     - File scratch/temporer yang dibuat selama investigasi telah dibersihkan.
     - Import yang tidak lagi digunakan (unused imports) telah dihapus.
 
-[ ] 3. Sinkronisasi Dokumentasi Proyek (Docs Sync)
+[ ] 4. Sinkronisasi Dokumentasi Proyek (Docs Sync)
     - Memeriksa folder `docs/` dan file markdown terkait.
-    - Jika ada perubahan peran, rute, atau arsitektur, perbarui `docs/roles-and-features.md`.
+    - Jika ada perubahan peran/rute, perbarui `docs/roles-and-features.md`.
+    - Jika ada penyesuaian arsitektur/standar, perbarui `docs/code-quality.md`.
     - Dokumentasi harus selalu mendeskripsikan kondisi sistem saat ini (tanpa riwayat masa lalu).
 
-[ ] 4. Keamanan & Environment Variables
+[ ] 5. Keamanan & Environment Variables
     - Jika ada env var baru, tambahkan ke `.env.example` beserta deskripsi singkatnya.
     - Tidak menimpa atau membocorkan isi kredensial di `.env`.
 
-[ ] 5. Verifikasi Non-Build / Non-Test
+[ ] 6. Verifikasi Non-Build / Non-Test
     - Jalankan `bunx tsc --noEmit` untuk memastikan 0 error tipe TypeScript.
     - Jalankan `bun run lint` jika relevan untuk membersihkan warning/error.
 
-[ ] 6. Pemeriksaan Integritas Git (Git Status Check)
+[ ] 7. Pemeriksaan Integritas Git (Git Status Check)
     - Jalankan `git status` untuk meninjau status direktori kerja.
     - Pastikan tidak ada file `untracked` yang tidak diinginkan tertinggal.
     - JANGAN menjalankan `git commit` kecuali diminta eksplisit oleh user.
 
-[ ] 7. Laporan Ringkasan Terstandarisasi
+[ ] 8. Laporan Ringkasan Terstandarisasi
     - Tampilkan ringkasan file yang disentuh (Modified, Created, Deleted).
     - Tampilkan status dokumen yang disinkronkan.
     - Tanyakan apakah pengguna ingin menjalankan `test` atau `build`.

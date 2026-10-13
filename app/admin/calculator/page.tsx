@@ -18,7 +18,28 @@ export default async function AdminCalculatorPage() {
       prisma.addOnOption.findMany({ orderBy: { order: "asc" } }),
       prisma.calculatorConfig.findUnique({ where: { id: "calculator" } }),
     ]);
-    return { projectTypes, features, addOns, config };
+
+    return {
+      projectTypes: projectTypes.map((pt) => ({
+        ...pt,
+        basePrice: Number(pt.basePrice),
+      })),
+      features: features.map((f) => ({
+        ...f,
+        price: Number(f.price),
+      })),
+      addOns: addOns.map((a) => ({
+        ...a,
+        pricePerMonth: Number(a.pricePerMonth),
+      })),
+      config: config
+        ? {
+            ...config,
+            revisionPricePerItem: Number(config.revisionPricePerItem),
+            urgencyMultiplier: Number(config.urgencyMultiplier),
+          }
+        : null,
+    };
   }, { projectTypes: [], features: [], addOns: [], config: null });
 
   return (

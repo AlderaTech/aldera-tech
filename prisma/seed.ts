@@ -36,6 +36,22 @@ async function main() {
     },
   });
 
+  await prisma.user.upsert({
+    where: { email: "dev@solvo.tech" },
+    update: {
+      password: await bcrypt.hash("password", 10),
+    },
+    create: {
+      email: "dev@solvo.tech",
+      name: "Alex Developer",
+      password: await bcrypt.hash("password", 10),
+      role: "DEVELOPER",
+      company: "Solvo Tech",
+      isActive: true,
+      emailVerified: new Date(),
+    },
+  });
+
   const client1 = await prisma.user.upsert({
     where: { email: "gading@gmail.com" },
     update: {
@@ -569,7 +585,7 @@ async function main() {
     },
   });
 
-  const ptWebsite = await prisma.projectType.create({
+  await prisma.projectType.create({
     data: {
       name: "Website",
       slug: "website",
@@ -583,7 +599,7 @@ async function main() {
     },
   });
 
-  const ptMobile = await prisma.projectType.create({
+  await prisma.projectType.create({
     data: {
       name: "Mobile App",
       slug: "mobile-app",
@@ -597,7 +613,7 @@ async function main() {
     },
   });
 
-  const ptTugas = await prisma.projectType.create({
+  await prisma.projectType.create({
     data: {
       name: "Tugas Kampus/Sekolah",
       slug: "tugas-kampus",
@@ -678,9 +694,10 @@ async function main() {
   console.log("✔ Calculator config & data seeded");
 
   console.log("\n✅ Seeding complete!");
-  console.log(`\n   Admin login: ${adminEmail} / ${adminPassword}`);
-  console.log(`   Client 1  : gading@gmail.com / ${clientPassword}`);
-  console.log(`   Client 2  : siti@example.com / ${clientPassword}`);
+  console.log(`\n   Admin login    : ${adminEmail} / ${adminPassword}`);
+  console.log(`   Developer login: dev@solvo.tech / password`);
+  console.log(`   Client 1       : gading@gmail.com / ${clientPassword}`);
+  console.log(`   Client 2       : siti@example.com / ${clientPassword}`);
 }
 
 main()

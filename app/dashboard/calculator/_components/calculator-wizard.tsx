@@ -17,10 +17,10 @@ import { formatCurrency } from "@/lib/utils";
 import { submitOrderRequest } from "@/lib/actions/calculator";
 
 type DependentField = { label: string; type: string; pricePerUnit: number; unit: string; min?: number; max?: number };
-type ProjectType = { id: string; name: string; slug: string; description: string | null; basePrice: any; icon: string; dependentFields: any; order: number };
-type Feature = { id: string; name: string; description: string | null; price: any; isMajor: boolean; disclaimer: string | null; projectTypeId: string | null };
-type AddOn = { id: string; name: string; description: string | null; pricePerMonth: any; minMonths: number; maxMonths: number; projectTypeId: string | null };
-type Config = { featureDisclaimer: string; revisionPolicy: string; freeRevisions: number; revisionPricePerItem: any; urgencyMultiplier: any; urgencyThresholdDays: number; dpPercentage: number } | null;
+type ProjectType = { id: string; name: string; slug: string; description: string | null; basePrice: number; icon: string; dependentFields: unknown; order: number };
+type Feature = { id: string; name: string; description: string | null; price: number; isMajor: boolean; disclaimer: string | null; projectTypeId: string | null };
+type AddOn = { id: string; name: string; description: string | null; pricePerMonth: number; minMonths: number; maxMonths: number; projectTypeId: string | null };
+type Config = { featureDisclaimer: string; revisionPolicy: string; freeRevisions: number; revisionPricePerItem: number; urgencyMultiplier: number; urgencyThresholdDays: number; dpPercentage: number } | null;
 
 type Props = { data: { projectTypes: ProjectType[]; features: Feature[]; addOns: AddOn[]; config: Config } };
 
@@ -39,7 +39,10 @@ export function CalculatorWizard({ data }: Props) {
   const [pending, startTransition] = useTransition();
 
   const pt = projectTypes.find((t) => t.id === selectedType);
-  const depFields: DependentField[] = pt ? (pt.dependentFields as DependentField[]) : [];
+  const depFields: DependentField[] = useMemo(
+    () => (pt && Array.isArray(pt.dependentFields) ? (pt.dependentFields as DependentField[]) : []),
+    [pt]
+  );
   const availableFeatures = features.filter((f) => !f.projectTypeId || f.projectTypeId === selectedType);
   const availableAddOns = addOns.filter((a) => !a.projectTypeId || a.projectTypeId === selectedType);
 

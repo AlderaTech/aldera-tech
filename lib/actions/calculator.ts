@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { Prisma } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { isStaff } from "@/lib/permissions";
@@ -16,10 +17,10 @@ async function requireAdmin() {
 // --- ProjectType CRUD ---
 export async function upsertProjectType(id: string | null, data: {
   name: string; slug: string; description?: string; basePrice: number;
-  icon: string; dependentFields: unknown[]; order: number; active: boolean;
+  icon: string; dependentFields: Prisma.InputJsonValue; order: number; active: boolean;
 }) {
   await requireAdmin();
-  const payload = { ...data, dependentFields: data.dependentFields as any };
+  const payload = { ...data, dependentFields: data.dependentFields };
   if (id) {
     await prisma.projectType.update({ where: { id }, data: payload });
   } else {
