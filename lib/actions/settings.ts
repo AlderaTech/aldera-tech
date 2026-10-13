@@ -22,10 +22,7 @@ export type SettingsActionState = {
 
 async function requireSettingsAdmin() {
   const session = await auth();
-  if (
-    !session?.user ||
-    (session.user.role !== "OWNER" && session.user.role !== "ADMIN")
-  ) {
+  if (!session?.user || session.user.role !== "ADMIN") {
     throw new Error("Forbidden");
   }
   return session.user;

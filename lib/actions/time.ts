@@ -109,7 +109,7 @@ export async function deleteTimeEntryAction(entryId: string) {
     select: { userId: true, projectId: true },
   });
   if (!entry) return;
-  if (entry.userId !== user.id && user.role !== "OWNER" && user.role !== "ADMIN") {
+  if (entry.userId !== user.id && user.role !== "ADMIN") {
     throw new Error("Forbidden");
   }
   await prisma.timeEntry.delete({ where: { id: entryId } });

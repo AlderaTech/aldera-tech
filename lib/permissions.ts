@@ -6,11 +6,8 @@ import type { Role } from "@prisma/client";
  * with varying permission levels (see ROLE_PERMISSIONS).
  */
 export const STAFF_ROLES = [
-  "OWNER",
   "ADMIN",
-  "DESIGNER",
   "DEVELOPER",
-  "ACCOUNTANT",
 ] as const satisfies readonly Role[];
 
 export type StaffRole = (typeof STAFF_ROLES)[number];
@@ -20,9 +17,11 @@ export function isStaff(role: Role | null | undefined): role is StaffRole {
   return (STAFF_ROLES as readonly Role[]).includes(role);
 }
 
-export function isOwnerOrAdmin(role: Role | null | undefined): boolean {
-  return role === "OWNER" || role === "ADMIN";
+export function isAdmin(role: Role | null | undefined): boolean {
+  return role === "ADMIN";
 }
+
+export const isOwnerOrAdmin = isAdmin;
 
 /**
  * Permission keys that control UI and API access.
@@ -60,6 +59,10 @@ export const PERMISSIONS = {
   // Analytics
   ANALYTICS_VIEW: "analytics.view",
 
+  // Timesheet & Team
+  TIMESHEET_VIEW: "timesheet.view",
+  TEAM_VIEW: "team.view",
+
   // Audit
   AUDIT_VIEW: "audit.view",
 
@@ -71,38 +74,22 @@ export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
 
 /**
  * Permission matrix per role.
- * OWNER has everything; lower roles have progressively fewer.
+ * ADMIN has everything; DEVELOPER handles technical delivery and operations.
  */
-const OWNER_ALL = Object.values(PERMISSIONS);
+const ADMIN_ALL = Object.values(PERMISSIONS);
 
 export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
-  OWNER: OWNER_ALL,
-  ADMIN: OWNER_ALL.filter(
-    (p) => p !== PERMISSIONS.AUDIT_VIEW
-  ),
-  DESIGNER: [
-    PERMISSIONS.PROJECT_VIEW_ALL,
-    PERMISSIONS.PROJECT_EDIT,
-    PERMISSIONS.BLOG_VIEW,
-    PERMISSIONS.BLOG_CREATE,
-    PERMISSIONS.BLOG_EDIT,
-    PERMISSIONS.FILE_MANAGE,
-  ],
+  ADMIN: ADMIN_ALL,
   DEVELOPER: [
     PERMISSIONS.PROJECT_VIEW_ALL,
+    PERMISSIONS.PROJECT_CREATE,
     PERMISSIONS.PROJECT_EDIT,
     PERMISSIONS.BLOG_VIEW,
     PERMISSIONS.BLOG_CREATE,
     PERMISSIONS.BLOG_EDIT,
     PERMISSIONS.FILE_MANAGE,
-  ],
-  ACCOUNTANT: [
-    PERMISSIONS.INVOICE_VIEW,
-    PERMISSIONS.INVOICE_CREATE,
-    PERMISSIONS.INVOICE_EDIT,
-    PERMISSIONS.INVOICE_SEND,
-    PERMISSIONS.ANALYTICS_VIEW,
-    PERMISSIONS.PROJECT_VIEW_ALL,
+    PERMISSIONS.TIMESHEET_VIEW,
+    PERMISSIONS.TEAM_VIEW,
   ],
   CLIENT: [],
 };
@@ -123,10 +110,7 @@ export function hasAnyPermission(
 }
 
 export const ROLE_LABELS: Record<Role, string> = {
-  OWNER: "Owner",
   ADMIN: "Admin",
-  DESIGNER: "Designer",
   DEVELOPER: "Developer",
-  ACCOUNTANT: "Accountant",
   CLIENT: "Client",
 };

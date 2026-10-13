@@ -3,7 +3,7 @@ import { safeDb } from "@/lib/safe-db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { STAFF_ROLES } from "@/lib/permissions";
+import { ROLE_LABELS, STAFF_ROLES } from "@/lib/permissions";
 
 const WEEKLY_CAPACITY_HOURS = 40;
 
@@ -68,7 +68,7 @@ export default async function TeamWorkloadPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-base">{member.name}</CardTitle>
-                  <Badge variant="secondary" className="text-xs">{member.role}</Badge>
+                  <Badge variant="secondary" className="text-xs">{ROLE_LABELS[member.role] ?? member.role}</Badge>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">

@@ -8,12 +8,11 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { unlink } from "node:fs/promises";
 import { join } from "node:path";
-import { isStaff } from "@/lib/permissions";
 import { ADMIN_ROUTES } from "@/lib/routes";
 
 async function requireAdmin() {
   const session = await auth();
-  if (!session?.user || !isStaff(session.user.role)) {
+  if (!session?.user || session.user.role !== "ADMIN") {
     throw new Error("Forbidden");
   }
   return session.user;

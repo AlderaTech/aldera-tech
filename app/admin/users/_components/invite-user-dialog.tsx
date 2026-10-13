@@ -137,6 +137,7 @@ export function InviteUserDialog({ children }: { children: React.ReactNode }) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="CLIENT">Client</SelectItem>
+                    <SelectItem value="DEVELOPER">Developer</SelectItem>
                     <SelectItem value="ADMIN">Admin</SelectItem>
                   </SelectContent>
                 </Select>

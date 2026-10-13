@@ -13,7 +13,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { formatDate } from "@/lib/utils";
-import { hasPermission, PERMISSIONS } from "@/lib/permissions";
+import { hasPermission, PERMISSIONS, ROLE_LABELS } from "@/lib/permissions";
 import { ADMIN_ROUTES, AUTH_ROUTES } from "@/lib/routes";
 
 export default async function AuditLogPage() {
@@ -75,7 +75,7 @@ export default async function AuditLogPage() {
                   <TableCell>
                     <div className="text-sm">{log.user.name}</div>
                     <div className="text-xs text-muted-foreground">
-                      {log.user.role}
+                      {ROLE_LABELS[log.user.role] ?? log.user.role}
                     </div>
                   </TableCell>
                   <TableCell>
