@@ -3,7 +3,8 @@
 import bcrypt from "bcryptjs";
 import { randomBytes } from "node:crypto";
 import { prisma } from "@/lib/prisma";
-import { sendMail } from "@/lib/email";
+import { sendWhatsApp } from "@/lib/whatsapp";
+import { waTemplates } from "@/lib/whatsapp-templates";
 import {
   requestResetSchema,
   resetPasswordSchema,
@@ -16,24 +17,6 @@ export type ResetActionState = {
 };
 
 const TOKEN_TTL_HOURS = 2;
-
-function resetEmailHtml(args: { name: string; url: string }) {
-  return `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f6f6f6;padding:24px;">
-<div style="max-width:520px;margin:0 auto;background:white;border-radius:8px;overflow:hidden;">
-  <div style="background:#0ea5e9;color:white;padding:20px;">
-    <h1 style="margin:0;font-size:20px;">Reset Password Solvo Tech</h1>
-  </div>
-  <div style="padding:24px;">
-    <p>Halo <strong>${args.name}</strong>,</p>
-    <p>Kami menerima permintaan untuk me-reset password akun Anda. Klik tombol di bawah dalam ${TOKEN_TTL_HOURS} jam ke depan untuk melanjutkan.</p>
-    <p style="text-align:center;margin:24px 0;">
-      <a href="${args.url}" style="background:#0ea5e9;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;">Reset Password</a>
-    </p>
-    <p style="color:#666;font-size:13px;">Jika tombol tidak berfungsi, salin URL ini:<br/><span style="word-break:break-all;">${args.url}</span></p>
-    <p style="color:#666;font-size:13px;">Jika Anda tidak meminta reset, abaikan email ini.</p>
-  </div>
-</div></body></html>`;
-}
 
 export async function requestPasswordResetAction(
   _: ResetActionState,
@@ -48,14 +31,15 @@ export async function requestPasswordResetAction(
 
   const user = await prisma.user.findUnique({
     where: { email: parsed.data.email },
-    select: { id: true, name: true, email: true, isActive: true },
+    select: { id: true, name: true, email: true, phone: true, isActive: true },
   });
 
-  // Always respond success to prevent email enumeration
-  if (!user || !user.isActive) {
+  // Always respond success to prevent enumeration
+  if (!user || !user.isActive || !user.phone) {
     return {
       ok: true,
-      message: "Jika email terdaftar, link reset telah dikirim.",
+      message:
+        "Jika akun dan nomor WhatsApp terdaftar, tautan reset telah dikirim ke WhatsApp Anda.",
     };
   }
 
@@ -70,22 +54,36 @@ export async function requestPasswordResetAction(
   const url = `${appUrl}/reset-password?token=${token}`;
 
   try {
-    await sendMail({
-      to: user.email,
-      subject: "Reset Password, Solvo Tech",
-      html: resetEmailHtml({ name: user.name, url }),
+    const tpl = waTemplates.passwordReset({
+      name: user.name,
+      resetUrl: url,
+      ttlHours: TOKEN_TTL_HOURS,
     });
+
+    const res = await sendWhatsApp({
+      to: user.phone,
+      message: `*${tpl.title}*\n\n${tpl.message}`,
+    });
+
+    if (!res.success) {
+      console.error("Password reset WhatsApp error:", res.error);
+      return {
+        ok: false,
+        message: "Gagal mengirim pesan WhatsApp. Coba lagi beberapa saat.",
+      };
+    }
   } catch (err) {
-    console.error("Password reset email error:", err);
+    console.error("Password reset error:", err);
     return {
       ok: false,
-      message: "Gagal mengirim email. Coba lagi beberapa saat.",
+      message: "Gagal mengirim pesan WhatsApp. Coba lagi beberapa saat.",
     };
   }
 
   return {
     ok: true,
-    message: "Jika email terdaftar, link reset telah dikirim.",
+    message:
+      "Jika akun dan nomor WhatsApp terdaftar, tautan reset telah dikirim ke WhatsApp Anda.",
   };
 }
 

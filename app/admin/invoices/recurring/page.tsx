@@ -53,12 +53,12 @@ export default async function RecurringListPage() {
   return (
     <div className="space-y-6">
       <div>
-        <Button asChild variant="ghost" size="sm" className="-ml-2 mb-2">
+        <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
           <Link href={ADMIN_ROUTES.invoices}>← Kembali ke Invoice</Link>
         </Button>
-        <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+            <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
               <Repeat className="size-5" />
               Invoice Berulang
             </h1>
@@ -74,15 +74,19 @@ export default async function RecurringListPage() {
         </div>
       </div>
 
-      <Card className="p-0 overflow-hidden">
+      <Card className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Nama</TableHead>
               <TableHead className="hidden md:table-cell">Client</TableHead>
               <TableHead>Frekuensi</TableHead>
-              <TableHead className="hidden lg:table-cell">Terbit Berikutnya</TableHead>
-              <TableHead className="hidden xl:table-cell">Sudah Terbit</TableHead>
+              <TableHead className="hidden lg:table-cell">
+                Terbit Berikutnya
+              </TableHead>
+              <TableHead className="hidden xl:table-cell">
+                Sudah Terbit
+              </TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Aksi</TableHead>
             </TableRow>
@@ -90,24 +94,28 @@ export default async function RecurringListPage() {
           <TableBody>
             {templates.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
-                  Belum ada template. Buat yang pertama untuk mulai otomasi tagihan.
+                <TableCell
+                  colSpan={7}
+                  className="py-10 text-center text-muted-foreground"
+                >
+                  Belum ada template. Buat yang pertama untuk mulai otomasi
+                  tagihan.
                 </TableCell>
               </TableRow>
             ) : (
               templates.map((t) => (
                 <TableRow key={t.id}>
                   <TableCell className="font-medium">{t.name}</TableCell>
-                  <TableCell className="hidden md:table-cell text-muted-foreground text-sm">
+                  <TableCell className="hidden text-sm text-muted-foreground md:table-cell">
                     {nameById.get(t.clientId) ?? "-"}
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline">{FREQ_LABEL[t.frequency]}</Badge>
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                  <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
                     {formatDate(t.nextIssueDate)}
                   </TableCell>
-                  <TableCell className="hidden xl:table-cell text-sm text-muted-foreground">
+                  <TableCell className="hidden text-sm text-muted-foreground xl:table-cell">
                     {t._count.invoices}x
                   </TableCell>
                   <TableCell>

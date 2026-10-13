@@ -6,6 +6,7 @@ import { UploadCloud, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { API_ROUTES } from "@/lib/routes";
 
 export function FileUploader({ projectId }: { projectId?: string }) {
   const router = useRouter();
@@ -20,9 +21,14 @@ export function FileUploader({ projectId }: { projectId?: string }) {
           const fd = new FormData();
           fd.append("file", file);
           if (projectId) fd.append("projectId", projectId);
-          const res = await fetch("/api/upload", { method: "POST", body: fd });
+          const res = await fetch(API_ROUTES.upload, {
+            method: "POST",
+            body: fd,
+          });
           if (!res.ok) {
-            const err = await res.json().catch(() => ({ error: "Upload failed" }));
+            const err = await res
+              .json()
+              .catch(() => ({ error: "Upload failed" }));
             throw new Error(err.error ?? "Upload failed");
           }
           toast.success(`${file.name} terunggah`);
@@ -47,7 +53,7 @@ export function FileUploader({ projectId }: { projectId?: string }) {
     <div
       {...getRootProps()}
       className={cn(
-        "border-2 border-dashed rounded-lg p-8 sm:p-12 text-center cursor-pointer transition-all",
+        "cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-all sm:p-12",
         isDragActive ? "border-primary bg-primary/5" : "hover:bg-muted/30",
         uploading && "pointer-events-none opacity-60"
       )}

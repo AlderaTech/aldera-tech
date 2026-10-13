@@ -14,9 +14,7 @@ function SheetTrigger(
 ) {
   return <DialogPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
 }
-function SheetClose(
-  props: React.ComponentProps<typeof DialogPrimitive.Close>
-) {
+function SheetClose(props: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return <DialogPrimitive.Close data-slot="sheet-close" {...props} />;
 }
 function SheetPortal(
@@ -32,7 +30,7 @@ function SheetOverlay({
   return (
     <DialogPrimitive.Overlay
       className={cn(
-        "fixed inset-0 z-50 bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/60",
         className
       )}
       {...props}
@@ -75,7 +73,7 @@ function SheetContent({
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring">
+        <DialogPrimitive.Close className="absolute top-4 right-4 rounded-sm opacity-70 hover:opacity-100 focus:ring-2 focus:ring-ring focus:outline-none">
           <XIcon className="size-4" />
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>

@@ -26,10 +26,7 @@ export async function GET(
   }
 
   // Clients can only download their own
-  if (
-    session.user.role !== "ADMIN" &&
-    invoice.clientId !== session.user.id
-  ) {
+  if (session.user.role !== "ADMIN" && invoice.clientId !== session.user.id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

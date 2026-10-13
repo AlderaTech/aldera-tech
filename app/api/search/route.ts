@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { isStaff } from "@/lib/permissions";
+import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 
 export const runtime = "nodejs";
 
@@ -58,7 +59,7 @@ export async function GET(req: NextRequest) {
             ],
           },
           take: 5,
-          select: { id: true, name: true, email: true, role: true },
+          select: { id: true, name: true, email: true, roles: true },
         }),
         prisma.blogPost.findMany({
           where: { title: { contains: q, mode: "insensitive" } },
@@ -73,7 +74,7 @@ export async function GET(req: NextRequest) {
           id: p.id,
           title: p.title,
           subtitle: p.client.name,
-          href: `/admin/projects/${p.id}`,
+          href: ADMIN_ROUTES.projectDetail(p.id),
         });
       }
       for (const inv of invoices) {
@@ -82,7 +83,7 @@ export async function GET(req: NextRequest) {
           id: inv.id,
           title: inv.number,
           subtitle: inv.client.name,
-          href: `/admin/invoices/${inv.id}`,
+          href: ADMIN_ROUTES.invoiceDetail(inv.id),
         });
       }
       for (const u of users) {
@@ -90,8 +91,8 @@ export async function GET(req: NextRequest) {
           kind: "user",
           id: u.id,
           title: u.name,
-          subtitle: `${u.email} · ${u.role}`,
-          href: `/admin/users`,
+          subtitle: `${u.email} · ${u.roles.join(", ")}`,
+          href: ADMIN_ROUTES.users,
         });
       }
       for (const p of posts) {
@@ -100,7 +101,7 @@ export async function GET(req: NextRequest) {
           id: p.id,
           title: p.title,
           subtitle: p.published ? "Published" : "Draft",
-          href: `/admin/blog/${p.id}/edit`,
+          href: ADMIN_ROUTES.blogEdit(p.id),
         });
       }
     } else {
@@ -131,7 +132,7 @@ export async function GET(req: NextRequest) {
           kind: "project",
           id: p.id,
           title: p.title,
-          href: `/dashboard/projects/${p.id}`,
+          href: DASHBOARD_ROUTES.projectDetail(p.id),
         });
       }
       for (const inv of invoices) {
@@ -139,7 +140,7 @@ export async function GET(req: NextRequest) {
           kind: "invoice",
           id: inv.id,
           title: inv.number,
-          href: `/dashboard/invoices`,
+          href: DASHBOARD_ROUTES.invoices,
         });
       }
     }

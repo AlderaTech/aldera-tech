@@ -45,9 +45,13 @@ export async function createTaskAction(
     priority: formData.get("priority") || "MEDIUM",
     dueDate: formData.get("dueDate") || "",
     milestoneId:
-      formData.get("milestoneId") === "none" ? "" : formData.get("milestoneId") || "",
+      formData.get("milestoneId") === "none"
+        ? ""
+        : formData.get("milestoneId") || "",
     assigneeId:
-      formData.get("assigneeId") === "none" ? "" : formData.get("assigneeId") || "",
+      formData.get("assigneeId") === "none"
+        ? ""
+        : formData.get("assigneeId") || "",
   });
 
   if (!parsed.success) {
@@ -105,9 +109,13 @@ export async function updateTaskAction(
     priority: formData.get("priority") || "MEDIUM",
     dueDate: formData.get("dueDate") || "",
     milestoneId:
-      formData.get("milestoneId") === "none" ? "" : formData.get("milestoneId") || "",
+      formData.get("milestoneId") === "none"
+        ? ""
+        : formData.get("milestoneId") || "",
     assigneeId:
-      formData.get("assigneeId") === "none" ? "" : formData.get("assigneeId") || "",
+      formData.get("assigneeId") === "none"
+        ? ""
+        : formData.get("assigneeId") || "",
   });
 
   if (!parsed.success) {
@@ -146,7 +154,7 @@ export async function updateTaskAction(
       dueDate: parsed.data.dueDate ? new Date(parsed.data.dueDate) : null,
       completedAt:
         parsed.data.status === "DONE"
-          ? existing.completedAt ?? new Date()
+          ? (existing.completedAt ?? new Date())
           : null,
       milestoneId: parsed.data.milestoneId || null,
       assigneeId: parsed.data.assigneeId || null,
@@ -183,7 +191,8 @@ export async function reorderProjectTasksAction(
 ) {
   const user = await requireStaff();
   const parsed = taskReorderSchema.safeParse({ columns });
-  if (!parsed.success) return { ok: false, message: "Urutan task tidak valid." };
+  if (!parsed.success)
+    return { ok: false, message: "Urutan task tidak valid." };
 
   const ids = Object.values(parsed.data.columns).flat();
   const tasks = await prisma.task.findMany({
@@ -205,8 +214,7 @@ export async function reorderProjectTasksAction(
           data: {
             status: status as TaskStatus,
             order,
-            completedAt:
-              status === "DONE" ? task?.completedAt ?? now : null,
+            completedAt: status === "DONE" ? (task?.completedAt ?? now) : null,
           },
           select: { id: true },
         });

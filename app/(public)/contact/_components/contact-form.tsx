@@ -29,12 +29,11 @@ export function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const prefilledSubject =
-    prefilledService
-      ? `Tertarik dengan layanan: ${prefilledService}`
-      : prefilledPlan
-        ? `Tertarik dengan paket: ${prefilledPlan}`
-        : "";
+  const prefilledSubject = prefilledService
+    ? `Tertarik dengan layanan: ${prefilledService}`
+    : prefilledPlan
+      ? `Tertarik dengan paket: ${prefilledPlan}`
+      : "";
 
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
@@ -79,7 +78,7 @@ export function ContactForm() {
 
   return (
     <form ref={formRef} action={handleSubmit} className="space-y-5">
-      <div className="grid sm:grid-cols-2 gap-4">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name">Nama lengkap *</Label>
           <Input id="name" name="name" required placeholder="Nama Anda" />

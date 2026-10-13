@@ -9,10 +9,11 @@ import { prisma } from "@/lib/prisma";
 import { unlink } from "node:fs/promises";
 import { join } from "node:path";
 import { ADMIN_ROUTES } from "@/lib/routes";
+import { isAdmin } from "@/lib/permissions";
 
 async function requireAdmin() {
   const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN") {
+  if (!session?.user || !isAdmin(session.user.roles ?? session.user.role)) {
     throw new Error("Forbidden");
   }
   return session.user;
@@ -26,7 +27,10 @@ export async function inviteUserAction(
     .trim()
     .toLowerCase();
   const name = String(formData.get("name") ?? "").trim();
-  const role = (formData.get("role") as Role) ?? "CLIENT";
+  const formRoles = formData.getAll("roles") as Role[];
+  const singleRole = (formData.get("role") as Role) ?? "CLIENT";
+  const roles: Role[] =
+    formRoles.length > 0 ? formRoles : singleRole ? [singleRole] : ["CLIENT"];
   const company = (formData.get("company") as string | null) || null;
 
   if (!email || !name) {
@@ -38,12 +42,13 @@ export async function inviteUserAction(
     return { ok: false, message: "Email sudah terdaftar." };
   }
 
-  const tempPassword = randomBytes(6).toString("base64").replace(/[+/=]/g, "") + "1A!";
+  const tempPassword =
+    randomBytes(6).toString("base64").replace(/[+/=]/g, "") + "1A!";
   await prisma.user.create({
     data: {
       email,
       name,
-      role,
+      roles,
       company,
       password: await bcrypt.hash(tempPassword, 10),
     },
@@ -58,13 +63,50 @@ export async function inviteUserAction(
   };
 }
 
-export async function updateUserRoleAction(userId: string, role: Role) {
+export async function updateUserRolesAction(userId: string, roles: Role[]) {
   const current = await requireAdmin();
-  if (userId === current.id && role === "CLIENT") {
-    throw new Error("Tidak bisa menurunkan role diri sendiri menjadi Client.");
+  if (roles.length === 0) {
+    throw new Error("User harus memiliki setidaknya satu role.");
   }
-  await prisma.user.update({ where: { id: userId }, data: { role } });
+  if (userId === current.id && !roles.includes("ADMIN")) {
+    throw new Error("Tidak bisa mencabut role Admin dari diri sendiri.");
+  }
+  await prisma.user.update({ where: { id: userId }, data: { roles } });
   revalidatePath(ADMIN_ROUTES.users);
+}
+
+export async function toggleUserRoleAction(userId: string, roleToToggle: Role) {
+  const current = await requireAdmin();
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { roles: true },
+  });
+  if (!user) throw new Error("User tidak ditemukan.");
+
+  const hasRole = user.roles.includes(roleToToggle);
+  let nextRoles: Role[];
+
+  if (hasRole) {
+    if (user.roles.length <= 1) {
+      throw new Error("User harus memiliki setidaknya satu role.");
+    }
+    if (userId === current.id && roleToToggle === "ADMIN") {
+      throw new Error("Tidak bisa mencabut role Admin dari diri sendiri.");
+    }
+    nextRoles = user.roles.filter((r) => r !== roleToToggle);
+  } else {
+    nextRoles = [...user.roles, roleToToggle];
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { roles: nextRoles },
+  });
+  revalidatePath(ADMIN_ROUTES.users);
+}
+
+export async function updateUserRoleAction(userId: string, role: Role) {
+  return updateUserRolesAction(userId, [role]);
 }
 
 export async function toggleUserActiveAction(userId: string) {

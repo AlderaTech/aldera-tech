@@ -4,20 +4,23 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import type { Role } from "@prisma/client";
+import { getPrimaryRole, isStaff } from "@/lib/permissions";
 
 /**
- * Extend the session type with our custom fields (role, id).
+ * Extend the session type with our custom fields (roles, role, id).
  */
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
       role: Role;
+      roles: Role[];
     } & DefaultSession["user"];
   }
 
   interface User {
     role: Role;
+    roles: Role[];
   }
 }
 
@@ -51,7 +54,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             email: true,
             name: true,
             password: true,
-            role: true,
+            roles: true,
             avatar: true,
             isActive: true,
           },
@@ -62,11 +65,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const ok = await bcrypt.compare(password, user.password);
         if (!ok) return null;
 
+        const primaryRole = getPrimaryRole(user.roles);
+
         return {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role,
+          role: primaryRole,
+          roles: user.roles,
           image: user.avatar ?? null,
         };
       },
@@ -74,41 +80,51 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user }) {
-      const appToken = token as typeof token & { id: string; role: Role };
+      const appToken = token as typeof token & {
+        id: string;
+        role: Role;
+        roles: Role[];
+      };
       if (user) {
         appToken.id = user.id as string;
-        appToken.role = user.role;
+        appToken.roles = user.roles ?? ["CLIENT"];
+        appToken.role = user.role ?? getPrimaryRole(appToken.roles);
       }
       return appToken;
     },
     async session({ session, token }) {
-      const appToken = token as typeof token & { id?: string; role?: Role };
+      const appToken = token as typeof token & {
+        id?: string;
+        role?: Role;
+        roles?: Role[];
+      };
       if (token && session.user) {
         session.user.id = appToken.id ?? "";
-        session.user.role = appToken.role ?? "CLIENT";
+        session.user.roles = appToken.roles ?? ["CLIENT"];
+        session.user.role = appToken.role ?? getPrimaryRole(session.user.roles);
       }
       return session;
     },
     authorized({ auth, request }) {
       const isLoggedIn = !!auth?.user;
-      const role = auth?.user?.role;
+      const roles =
+        auth?.user?.roles ?? (auth?.user?.role ? [auth.user.role] : []);
       const { pathname } = request.nextUrl;
 
       const isDashboard = pathname.startsWith("/dashboard");
-      const isAdmin = pathname.startsWith("/admin");
-      const isAuthRoute = pathname.startsWith("/login") || pathname.startsWith("/register");
+      const isAdminRoute = pathname.startsWith("/admin");
+      const isAuthRoute =
+        pathname.startsWith("/login") || pathname.startsWith("/register");
 
-      // Inline helper, auth.ts runs in proxy, keep imports minimal.
-      const isStaffRole = (r?: string) =>
-        r === "ADMIN" || r === "DEVELOPER";
+      const userIsStaff = isStaff(roles);
 
-      if (isAdmin) {
+      if (isAdminRoute) {
         if (!isLoggedIn) return false;
-        return isStaffRole(role);
+        return userIsStaff;
       }
       if (isDashboard) return isLoggedIn;
       if (isAuthRoute && isLoggedIn) {
-        const target = isStaffRole(role) ? "/admin" : "/dashboard";
+        const target = userIsStaff ? "/admin" : "/dashboard";
         return Response.redirect(new URL(target, request.nextUrl));
       }
       return true;

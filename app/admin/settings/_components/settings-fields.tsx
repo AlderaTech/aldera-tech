@@ -51,7 +51,11 @@ export function HiddenProfileFields({
       />
       <input type="hidden" name="responseTime" value={settings.responseTime} />
       <input type="hidden" name="seoTitle" value={settings.seoTitle} />
-      <input type="hidden" name="seoDescription" value={settings.seoDescription} />
+      <input
+        type="hidden"
+        name="seoDescription"
+        value={settings.seoDescription}
+      />
     </>
   );
 }
@@ -68,7 +72,11 @@ export function HiddenContactFields({
       <input type="hidden" name="whatsapp" value={settings.whatsapp} />
       <input type="hidden" name="address" value={settings.address} />
       <input type="hidden" name="mapsUrl" value={settings.mapsUrl} />
-      <input type="hidden" name="operatingHours" value={settings.operatingHours} />
+      <input
+        type="hidden"
+        name="operatingHours"
+        value={settings.operatingHours}
+      />
       <input type="hidden" name="githubUrl" value={settings.githubUrl} />
       <input type="hidden" name="linkedinUrl" value={settings.linkedinUrl} />
       <input type="hidden" name="instagramUrl" value={settings.instagramUrl} />

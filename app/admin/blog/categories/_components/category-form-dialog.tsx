@@ -49,7 +49,8 @@ export function CategoryFormDialog({
               {values.id ? "Edit Kategori Blog" : "Kategori Blog Baru"}
             </DialogTitle>
             <DialogDescription>
-              Slug dipakai untuk filter publik, jadi gunakan teks yang pendek dan stabil.
+              Slug dipakai untuk filter publik, jadi gunakan teks yang pendek
+              dan stabil.
             </DialogDescription>
           </DialogHeader>
 
@@ -97,9 +98,7 @@ export function CategoryFormDialog({
                 rows={3}
               />
               {errors.description && (
-                <p className="text-xs text-destructive">
-                  {errors.description}
-                </p>
+                <p className="text-xs text-destructive">{errors.description}</p>
               )}
             </div>
           </div>

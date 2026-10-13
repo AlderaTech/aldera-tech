@@ -73,7 +73,7 @@ function QuickActions({ actions }: { actions: QuickAction[] }) {
     <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <div className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+          <div className="text-xs font-semibold tracking-[0.12em] text-slate-500 uppercase">
             Aksi Cepat
           </div>
           <p className="mt-0.5 text-xs text-slate-500">

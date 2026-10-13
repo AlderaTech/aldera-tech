@@ -13,7 +13,7 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
     <Card className="editorial-card-dark relative h-full gap-0 rounded-xl p-6 text-white transition-all hover:-translate-y-1">
       <Quote
         aria-hidden
-        className="absolute right-4 top-4 size-6 text-[#0b6bff]/30"
+        className="absolute top-4 right-4 size-6 text-[#0b6bff]/30"
       />
       <div className="mb-3 flex items-center gap-0.5">
         {Array.from({ length: 5 }).map((_, index) => (

@@ -7,7 +7,7 @@ export default async function NewInvoicePage() {
     safeDb(
       async () =>
         await prisma.user.findMany({
-          where: { role: "CLIENT", isActive: true },
+          where: { roles: { has: "CLIENT" }, isActive: true },
           orderBy: { name: "asc" },
           select: { id: true, name: true, email: true },
         }),

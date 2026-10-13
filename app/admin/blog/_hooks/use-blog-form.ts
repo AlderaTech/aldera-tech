@@ -10,7 +10,7 @@ import {
   updateBlogPostAction,
   type BlogActionState,
 } from "@/lib/actions/blog";
-import { ADMIN_ROUTES } from "@/lib/routes";
+import { ADMIN_ROUTES, API_ROUTES } from "@/lib/routes";
 import { slugify } from "@/lib/utils";
 import type { BlogFormInitial } from "../_utils/blog-form-types";
 
@@ -25,7 +25,9 @@ export function useBlogForm(initial?: BlogFormInitial) {
   );
   const [categoryId, setCategoryId] = React.useState(initial?.categoryId ?? "");
   const [published, setPublished] = React.useState(Boolean(initial?.published));
-  const [scheduledAt, setScheduledAt] = React.useState(initial?.scheduledAt ?? "");
+  const [scheduledAt, setScheduledAt] = React.useState(
+    initial?.scheduledAt ?? ""
+  );
   const [lastSavedAt, setLastSavedAt] = React.useState<Date | null>(null);
   const [isSaving, setIsSaving] = React.useState(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
@@ -64,7 +66,10 @@ export function useBlogForm(initial?: BlogFormInitial) {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const res = await fetch(API_ROUTES.upload, {
+        method: "POST",
+        body: formData,
+      });
       if (!res.ok) throw new Error("Upload failed");
       const data = (await res.json()) as { url: string };
       setFeaturedImage(data.url);

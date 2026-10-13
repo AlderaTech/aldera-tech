@@ -30,7 +30,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
-import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
+import { ADMIN_ROUTES, DASHBOARD_ROUTES, API_ROUTES } from "@/lib/routes";
 import {
   hasPermission,
   isStaff,
@@ -197,10 +197,9 @@ export function CommandPalette({ role }: { role?: Role | null }) {
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await fetch(
-          `/api/search?q=${encodeURIComponent(trimmed)}`,
-          { signal: controller.signal }
-        );
+        const res = await fetch(API_ROUTES.search(trimmed), {
+          signal: controller.signal,
+        });
         if (!res.ok) throw new Error("Search failed");
         const data = (await res.json()) as { results: SearchResult[] };
         setResults(data.results);
@@ -242,12 +241,14 @@ export function CommandPalette({ role }: { role?: Role | null }) {
       />
       <CommandList>
         {loading && (
-          <div className="py-6 text-center text-sm text-muted-foreground inline-flex items-center justify-center gap-2 w-full">
+          <div className="inline-flex w-full items-center justify-center gap-2 py-6 text-center text-sm text-muted-foreground">
             <Loader2 className="size-4 animate-spin" /> Mencari…
           </div>
         )}
         {!loading && query && results.length === 0 && (
-          <CommandEmpty>Tidak ada hasil untuk &ldquo;{query}&rdquo;</CommandEmpty>
+          <CommandEmpty>
+            Tidak ada hasil untuk &ldquo;{query}&rdquo;
+          </CommandEmpty>
         )}
 
         {!query && (
@@ -284,10 +285,10 @@ export function CommandPalette({ role }: { role?: Role | null }) {
                   onSelect={() => handleSelect(item.href)}
                 >
                   <Icon className="size-4 text-muted-foreground" />
-                  <div className="flex flex-col min-w-0">
+                  <div className="flex min-w-0 flex-col">
                     <span className="truncate">{item.title}</span>
                     {item.subtitle && (
-                      <span className="text-xs text-muted-foreground truncate">
+                      <span className="truncate text-xs text-muted-foreground">
                         {item.subtitle}
                       </span>
                     )}

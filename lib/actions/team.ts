@@ -71,20 +71,14 @@ export async function assignMemberAction(
       description: `Anggota tim di-assign dengan role ${role}.`,
     },
   });
-  await logAudit(
-    current.id,
-    "PROJECT_ASSIGNMENT_ADDED",
-    "Project",
-    projectId,
-    { assignedUserId: userId, role }
-  );
+  await logAudit(current.id, "PROJECT_ASSIGNMENT_ADDED", "Project", projectId, {
+    assignedUserId: userId,
+    role,
+  });
   revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
 }
 
-export async function removeMemberAction(
-  projectId: string,
-  userId: string
-) {
+export async function removeMemberAction(projectId: string, userId: string) {
   const current = await requireStaff();
   await prisma.projectAssignment.deleteMany({
     where: { projectId, userId },

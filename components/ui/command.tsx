@@ -37,9 +37,11 @@ function CommandDialog({
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-        <DialogPrimitive.Content className="fixed left-[50%] top-[20%] z-50 w-[90vw] max-w-xl translate-x-[-50%] p-0 overflow-hidden rounded-lg border bg-popover shadow-2xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
-          <DialogPrimitive.Title className="sr-only">{title}</DialogPrimitive.Title>
+        <DialogPrimitive.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
+        <DialogPrimitive.Content className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[20%] left-[50%] z-50 w-[90vw] max-w-xl translate-x-[-50%] overflow-hidden rounded-lg border bg-popover p-0 shadow-2xl">
+          <DialogPrimitive.Title className="sr-only">
+            {title}
+          </DialogPrimitive.Title>
           <DialogPrimitive.Description className="sr-only">
             {description}
           </DialogPrimitive.Description>
@@ -76,13 +78,18 @@ function CommandList({
 }: React.ComponentProps<typeof CommandPrimitive.List>) {
   return (
     <CommandPrimitive.List
-      className={cn("max-h-[320px] overflow-y-auto overflow-x-hidden", className)}
+      className={cn(
+        "max-h-[320px] overflow-x-hidden overflow-y-auto",
+        className
+      )}
       {...props}
     />
   );
 }
 
-function CommandEmpty(props: React.ComponentProps<typeof CommandPrimitive.Empty>) {
+function CommandEmpty(
+  props: React.ComponentProps<typeof CommandPrimitive.Empty>
+) {
   return (
     <CommandPrimitive.Empty
       className="py-6 text-center text-sm text-muted-foreground"
@@ -97,10 +104,7 @@ function CommandGroup({
 }: React.ComponentProps<typeof CommandPrimitive.Group>) {
   return (
     <CommandPrimitive.Group
-      className={cn(
-        "overflow-hidden p-1 text-foreground",
-        className
-      )}
+      className={cn("overflow-hidden p-1 text-foreground", className)}
       {...props}
     />
   );
@@ -125,7 +129,7 @@ function CommandItem({
   return (
     <CommandPrimitive.Item
       className={cn(
-        "relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none",
+        "relative flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none",
         "data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground",
         "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50",
         className

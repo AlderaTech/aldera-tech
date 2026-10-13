@@ -15,6 +15,7 @@ import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { invoiceStatusMeta } from "@/lib/status-meta";
+import { API_ROUTES } from "@/lib/routes";
 
 export default async function UserInvoicesPage() {
   const session = await auth();
@@ -33,7 +34,7 @@ export default async function UserInvoicesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl xxxl:text-3xl font-bold tracking-tight">
+        <h1 className="text-2xl font-bold tracking-tight xxxl:text-3xl">
           Invoice
         </h1>
         <p className="text-muted-foreground">
@@ -41,7 +42,7 @@ export default async function UserInvoicesPage() {
         </p>
       </div>
 
-      <Card className="p-0 overflow-hidden">
+      <Card className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow>
@@ -49,14 +50,19 @@ export default async function UserInvoicesPage() {
               <TableHead className="hidden md:table-cell">Proyek</TableHead>
               <TableHead>Total</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="hidden lg:table-cell">Jatuh Tempo</TableHead>
+              <TableHead className="hidden lg:table-cell">
+                Jatuh Tempo
+              </TableHead>
               <TableHead className="text-right">Aksi</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {invoices.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                <TableCell
+                  colSpan={6}
+                  className="py-10 text-center text-muted-foreground"
+                >
                   Belum ada invoice.
                 </TableCell>
               </TableRow>
@@ -70,7 +76,7 @@ export default async function UserInvoicesPage() {
                 return (
                   <TableRow key={inv.id}>
                     <TableCell className="font-medium">{inv.number}</TableCell>
-                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground truncate max-w-xs">
+                    <TableCell className="hidden max-w-xs truncate text-sm text-muted-foreground md:table-cell">
                       {inv.project?.title ?? "-"}
                     </TableCell>
                     <TableCell className="font-semibold tabular-nums">
@@ -81,12 +87,12 @@ export default async function UserInvoicesPage() {
                         {overdue ? "Overdue" : m.label}
                       </Badge>
                     </TableCell>
-                    <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                    <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
                       {formatDate(inv.dueDate)}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button size="sm" variant="outline" asChild>
-                        <a href={`/api/invoices/${inv.id}/pdf`} download>
+                        <a href={API_ROUTES.invoicePdf(inv.id)} download>
                           <Download className="size-3.5" /> PDF
                         </a>
                       </Button>

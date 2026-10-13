@@ -35,7 +35,7 @@ export function AdminStatCard({
           <ArrowUpRight className="size-4 text-slate-300" />
         </div>
         <div className="mt-4 space-y-1">
-          <div className="text-xs font-medium uppercase tracking-[0.12em] text-slate-500">
+          <div className="text-xs font-medium tracking-[0.12em] text-slate-500 uppercase">
             {label}
           </div>
           <div className="text-2xl font-bold tracking-tight text-slate-950 xxxl:text-3xl">

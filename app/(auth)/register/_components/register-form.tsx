@@ -83,7 +83,10 @@ export function RegisterForm() {
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="company" className="text-sm font-bold text-black/72">
+            <Label
+              htmlFor="company"
+              className="text-sm font-bold text-black/72"
+            >
               Perusahaan
               <span className="font-medium text-black/42"> opsional</span>
             </Label>
@@ -112,7 +115,10 @@ export function RegisterForm() {
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="password" className="text-sm font-bold text-black/72">
+            <Label
+              htmlFor="password"
+              className="text-sm font-bold text-black/72"
+            >
               Password
             </Label>
             <PasswordInput
@@ -157,7 +163,7 @@ export function RegisterForm() {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex-col gap-3 px-5 pb-5 pt-4 sm:px-6 sm:pb-6">
+      <CardFooter className="flex-col gap-3 px-5 pt-4 pb-5 sm:px-6 sm:pb-6">
         <Button
           type="submit"
           size="xl"

@@ -49,10 +49,15 @@ export function ProjectCreateForm({
 
   return (
     <form onSubmit={handleSubmit}>
-      <Card className="p-6 space-y-5 max-w-3xl">
+      <Card className="max-w-3xl space-y-5 p-6">
         <div className="space-y-2">
           <Label htmlFor="title">Judul proyek</Label>
-          <Input id="title" name="title" required placeholder="Misal: Website E-Commerce" />
+          <Input
+            id="title"
+            name="title"
+            required
+            placeholder="Misal: Website E-Commerce"
+          />
         </div>
 
         <div className="space-y-2">
@@ -82,7 +87,7 @@ export function ProjectCreateForm({
           </Select>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="deadline">Deadline</Label>
             <Input

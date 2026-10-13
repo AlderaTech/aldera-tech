@@ -25,8 +25,10 @@ export function PasswordInput({
       <button
         type="button"
         onClick={onTogglePassword}
-        className="absolute right-3 top-1/2 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-black/42 transition-colors hover:bg-black/5 hover:text-black"
-        aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+        className="absolute top-1/2 right-3 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-black/42 transition-colors hover:bg-black/5 hover:text-black"
+        aria-label={
+          showPassword ? "Sembunyikan password" : "Tampilkan password"
+        }
       >
         {showPassword ? (
           <EyeOff className="size-4" />

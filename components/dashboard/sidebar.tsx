@@ -87,7 +87,7 @@ function NavLink({
       onClick={onNavigate}
       className={cn(
         "group flex min-h-10 items-center gap-3 rounded-lg text-sm font-medium transition-colors",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
+        "focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:outline-none",
         child ? "px-3 py-2 pl-10 text-[13px]" : "px-3 py-2.5",
         active
           ? "bg-slate-950 text-white shadow-sm shadow-slate-950/10"
@@ -130,7 +130,7 @@ export function DashboardSidebar({
         <div className="flex min-w-0 items-center gap-3">
           <Logo size="md" />
           {variant === "admin" && (
-            <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
+            <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] font-semibold tracking-[0.16em] text-primary uppercase">
               Admin
             </span>
           )}
@@ -141,13 +141,14 @@ export function DashboardSidebar({
         <div className="space-y-5">
           {groups.map((group) => (
             <div key={group.label} className="space-y-1.5">
-              <div className="px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+              <div className="px-3 text-[11px] font-semibold tracking-[0.14em] text-slate-400 uppercase">
                 {group.label}
               </div>
               <div className="space-y-1">
                 {group.items.map((item) => {
                   const active =
-                    isActive(pathname, item.href) || hasActiveChild(pathname, item);
+                    isActive(pathname, item.href) ||
+                    hasActiveChild(pathname, item);
                   const childItems = item.items ?? [];
 
                   return (

@@ -75,8 +75,10 @@ export function InviteUserDialog({ children }: { children: React.ReactNode }) {
                 mengubahnya setelah login pertama.
               </DialogDescription>
             </DialogHeader>
-            <div className="bg-muted rounded-md p-4 flex items-center justify-between gap-3">
-              <code className="font-mono text-sm break-all">{tempPassword}</code>
+            <div className="flex items-center justify-between gap-3 rounded-md bg-muted p-4">
+              <code className="font-mono text-sm break-all">
+                {tempPassword}
+              </code>
               <Button size="sm" variant="outline" onClick={handleCopy}>
                 {copied ? (
                   <>
@@ -144,7 +146,11 @@ export function InviteUserDialog({ children }: { children: React.ReactNode }) {
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
                 Batal
               </Button>
               <Button type="submit" disabled={isPending}>

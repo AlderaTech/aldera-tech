@@ -48,29 +48,26 @@ export async function getAdminOverviewData() {
 }
 
 async function getOverviewStats() {
-  return safeDb(
-    async () => {
-      const [total, active, pending, orderPending, invoices] = await Promise.all([
-        prisma.project.count(),
-        prisma.project.count({ where: { status: "IN_PROGRESS" } }),
-        prisma.invoice.count({ where: { status: { in: ["SENT", "OVERDUE"] } } }),
-        prisma.orderRequest.count({ where: { status: "PENDING" } }),
-        prisma.invoice.aggregate({
-          _sum: { total: true },
-          where: { status: "PAID" },
-        }),
-      ]);
+  return safeDb(async () => {
+    const [total, active, pending, orderPending, invoices] = await Promise.all([
+      prisma.project.count(),
+      prisma.project.count({ where: { status: "IN_PROGRESS" } }),
+      prisma.invoice.count({ where: { status: { in: ["SENT", "OVERDUE"] } } }),
+      prisma.orderRequest.count({ where: { status: "PENDING" } }),
+      prisma.invoice.aggregate({
+        _sum: { total: true },
+        where: { status: "PAID" },
+      }),
+    ]);
 
-      return {
-        total,
-        active,
-        pending,
-        orderPending,
-        revenue: Number(invoices._sum.total ?? 0),
-      };
-    },
-    EMPTY_STATS
-  );
+    return {
+      total,
+      active,
+      pending,
+      orderPending,
+      revenue: Number(invoices._sum.total ?? 0),
+    };
+  }, EMPTY_STATS);
 }
 
 async function getRecentActivities() {
@@ -89,39 +86,36 @@ async function getRecentActivities() {
 }
 
 async function getOverviewAnalytics() {
-  return safeDb(
-    async () => {
-      const now = new Date();
-      const start = new Date(now.getFullYear(), now.getMonth() - 11, 1);
-      const [paidInvoices, statusGroups, topClients] = await Promise.all([
-        prisma.invoice.findMany({
-          where: { status: "PAID", paidAt: { gte: start } },
-          select: { total: true, paidAt: true },
-        }),
-        prisma.project.groupBy({
-          by: ["status"],
-          _count: { _all: true },
-        }),
-        prisma.invoice.groupBy({
-          by: ["clientId"],
-          where: { status: "PAID" },
-          _sum: { total: true },
-          orderBy: { _sum: { total: "desc" } },
-          take: 5,
-        }),
-      ]);
+  return safeDb(async () => {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+    const [paidInvoices, statusGroups, topClients] = await Promise.all([
+      prisma.invoice.findMany({
+        where: { status: "PAID", paidAt: { gte: start } },
+        select: { total: true, paidAt: true },
+      }),
+      prisma.project.groupBy({
+        by: ["status"],
+        _count: { _all: true },
+      }),
+      prisma.invoice.groupBy({
+        by: ["clientId"],
+        where: { status: "PAID" },
+        _sum: { total: true },
+        orderBy: { _sum: { total: "desc" } },
+        take: 5,
+      }),
+    ]);
 
-      const revenueSeries = buildRevenueSeries(paidInvoices);
-      const statusData = statusGroups.map((group) => ({
-        name: PROJECT_STATUS_LABELS[group.status] ?? group.status,
-        value: group._count._all,
-      }));
-      const clientsData = await buildClientRevenueSeries(topClients);
+    const revenueSeries = buildRevenueSeries(paidInvoices);
+    const statusData = statusGroups.map((group) => ({
+      name: PROJECT_STATUS_LABELS[group.status] ?? group.status,
+      value: group._count._all,
+    }));
+    const clientsData = await buildClientRevenueSeries(topClients);
 
-      return { revenueSeries, statusData, clientsData };
-    },
-    EMPTY_ANALYTICS
-  );
+    return { revenueSeries, statusData, clientsData };
+  }, EMPTY_ANALYTICS);
 }
 
 function buildRevenueSeries(

@@ -4,7 +4,7 @@ import { FadeUp } from "@/components/shared/motion";
 export function ContactHero({ responseTime }: { responseTime: string }) {
   return (
     <section className="editorial-ink">
-      <div className="mx-auto grid max-w-screen-xxxl gap-4 public-container-px py-10 sm:py-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+      <div className="public-container-px mx-auto grid max-w-screen-xxxl gap-4 py-10 sm:py-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <FadeUp>
           <div className="editorial-kicker border-white/20 text-white/64">
             Kontak

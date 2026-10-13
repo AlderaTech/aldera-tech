@@ -30,7 +30,7 @@ export default async function AdminProjectsList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Proyek</h1>
           <p className="text-muted-foreground">
@@ -51,14 +51,16 @@ export default async function AdminProjectsList() {
         </div>
       </div>
 
-      <Card className="p-0 overflow-hidden">
+      <Card className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Judul</TableHead>
               <TableHead className="hidden md:table-cell">Client</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="w-40 hidden lg:table-cell">Progres</TableHead>
+              <TableHead className="hidden w-40 lg:table-cell">
+                Progres
+              </TableHead>
               <TableHead className="hidden xl:table-cell">Deadline</TableHead>
               <TableHead className="hidden xl:table-cell">Budget</TableHead>
               <TableHead className="text-right">Aksi</TableHead>
@@ -69,7 +71,7 @@ export default async function AdminProjectsList() {
               <TableRow>
                 <TableCell
                   colSpan={7}
-                  className="text-center text-muted-foreground py-10"
+                  className="py-10 text-center text-muted-foreground"
                 >
                   Belum ada proyek.
                 </TableCell>
@@ -79,10 +81,10 @@ export default async function AdminProjectsList() {
                 const meta = projectStatusMeta[p.status];
                 return (
                   <TableRow key={p.id}>
-                    <TableCell className="font-medium max-w-xs truncate">
+                    <TableCell className="max-w-xs truncate font-medium">
                       {p.title}
                     </TableCell>
-                    <TableCell className="hidden md:table-cell text-muted-foreground">
+                    <TableCell className="hidden text-muted-foreground md:table-cell">
                       <div className="flex flex-col">
                         <span className="text-sm">{p.client.name}</span>
                         {p.client.company && (
@@ -98,15 +100,15 @@ export default async function AdminProjectsList() {
                     <TableCell className="hidden lg:table-cell">
                       <div className="flex items-center gap-2">
                         <Progress value={p.progress} className="w-24" />
-                        <span className="text-xs tabular-nums text-muted-foreground">
+                        <span className="text-xs text-muted-foreground tabular-nums">
                           {p.progress}%
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="hidden xl:table-cell text-muted-foreground text-sm">
+                    <TableCell className="hidden text-sm text-muted-foreground xl:table-cell">
                       {p.deadline ? formatDate(p.deadline) : "-"}
                     </TableCell>
-                    <TableCell className="hidden xl:table-cell text-muted-foreground text-sm">
+                    <TableCell className="hidden text-sm text-muted-foreground xl:table-cell">
                       {p.budget ? formatCurrency(Number(p.budget)) : "-"}
                     </TableCell>
                     <TableCell className="text-right">

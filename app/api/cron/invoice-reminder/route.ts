@@ -11,7 +11,8 @@
  */
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendMail, invoiceEmailHtml } from "@/lib/email";
+import { sendWhatsApp } from "@/lib/whatsapp";
+import { waTemplates } from "@/lib/whatsapp-templates";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export const runtime = "nodejs";
@@ -49,24 +50,38 @@ export async function GET(req: NextRequest) {
     include: { client: true },
   });
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-
-  const results: Array<{ id: string; status: "sent" | "failed"; error?: string }> = [];
+  const results: Array<{
+    id: string;
+    status: "sent" | "failed";
+    error?: string;
+  }> = [];
 
   for (const invoice of targets) {
-    try {
-      await sendMail({
-        to: invoice.client.email,
-        subject: `Pengingat: Invoice ${invoice.number}, Solvo Tech`,
-        html: invoiceEmailHtml({
-          number: invoice.number,
-          clientName: invoice.client.name,
-          total: formatCurrency(Number(invoice.total)),
-          dueDate: formatDate(invoice.dueDate),
-          viewUrl: `${appUrl}/dashboard/invoices`,
-          isReminder: true,
-        }),
+    if (!invoice.client.phone) {
+      results.push({
+        id: invoice.id,
+        status: "failed",
+        error: "Nomor WhatsApp klien tidak tersedia",
       });
+      continue;
+    }
+
+    try {
+      const tpl = waTemplates.invoiceReminder(
+        invoice.number,
+        formatCurrency(Number(invoice.total)),
+        formatDate(invoice.dueDate)
+      );
+
+      const res = await sendWhatsApp({
+        to: invoice.client.phone,
+        message: `*${tpl.title}*\n\n${tpl.message}`,
+      });
+
+      if (!res.success) {
+        throw new Error(res.error ?? "Gagal mengirim WhatsApp");
+      }
+
       await prisma.invoice.update({
         where: { id: invoice.id },
         data: { lastReminderSentAt: new Date() },

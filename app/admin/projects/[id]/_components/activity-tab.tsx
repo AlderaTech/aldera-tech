@@ -87,13 +87,15 @@ export function ActivityTab({
         <div className="relative ml-3 space-y-3 border-l-2 border-slate-200 pl-6">
           {activities.map((a) => (
             <div key={a.id} className="relative">
-              <span className="absolute -left-[29px] top-1 size-3 rounded-full bg-primary ring-4 ring-background" />
+              <span className="absolute top-1 -left-[29px] size-3 rounded-full bg-primary ring-4 ring-background" />
               <Card className="border-slate-200 bg-white p-4 shadow-sm">
-                <div className="flex items-start justify-between gap-3 flex-wrap">
+                <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <p className="text-sm">{a.description}</p>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                      <span className="font-medium">{a.user?.name ?? "System"}</span>
+                    <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="font-medium">
+                        {a.user?.name ?? "System"}
+                      </span>
                       <span>•</span>
                       <span>
                         {formatDate(a.createdAt, {
@@ -104,7 +106,7 @@ export function ActivityTab({
                         })}
                       </span>
                       <span>•</span>
-                      <span className="text-xs uppercase tracking-wide">
+                      <span className="text-xs tracking-wide uppercase">
                         {a.action.replace(/_/g, " ")}
                       </span>
                     </div>

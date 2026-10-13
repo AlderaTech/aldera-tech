@@ -13,7 +13,9 @@ export async function GET(req: NextRequest) {
   }
 
   const sp = req.nextUrl.searchParams;
-  const from = sp.get("from") ? new Date(sp.get("from")!) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  const from = sp.get("from")
+    ? new Date(sp.get("from")!)
+    : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   const to = sp.get("to") ? new Date(sp.get("to")!) : new Date();
 
   const entries = await prisma.timeEntry.findMany({
@@ -36,5 +38,8 @@ export async function GET(req: NextRequest) {
   }));
 
   const csv = toCsv(rows);
-  return csvResponse(csv, `timesheet-${from.toISOString().slice(0, 10)}-${to.toISOString().slice(0, 10)}.csv`);
+  return csvResponse(
+    csv,
+    `timesheet-${from.toISOString().slice(0, 10)}-${to.toISOString().slice(0, 10)}.csv`
+  );
 }

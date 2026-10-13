@@ -39,15 +39,35 @@ export function RevenueAreaChart({
         minHeight={256}
         initialDimension={CHART_INITIAL_DIMENSION}
       >
-        <AreaChart data={data} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
+        <AreaChart
+          data={data}
+          margin={{ top: 5, right: 5, left: 0, bottom: 0 }}
+        >
           <defs>
             <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="oklch(0.55 0.18 250)" stopOpacity={0.4} />
-              <stop offset="95%" stopColor="oklch(0.55 0.18 250)" stopOpacity={0} />
+              <stop
+                offset="5%"
+                stopColor="oklch(0.55 0.18 250)"
+                stopOpacity={0.4}
+              />
+              <stop
+                offset="95%"
+                stopColor="oklch(0.55 0.18 250)"
+                stopOpacity={0}
+              />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.3} />
-          <XAxis dataKey="month" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            vertical={false}
+            strokeOpacity={0.3}
+          />
+          <XAxis
+            dataKey="month"
+            tick={{ fontSize: 11 }}
+            tickLine={false}
+            axisLine={false}
+          />
           <YAxis
             tick={{ fontSize: 11 }}
             tickLine={false}
@@ -89,7 +109,7 @@ export function ProjectStatusPie({
   const total = data.reduce((s, d) => s + d.value, 0);
   if (total === 0) {
     return (
-      <div className="h-64 flex items-center justify-center text-sm text-muted-foreground">
+      <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
         Belum ada proyek
       </div>
     );
@@ -142,7 +162,7 @@ export function TopClientsBar({
 }) {
   if (data.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center text-sm text-muted-foreground">
+      <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
         Belum ada data
       </div>
     );
@@ -172,7 +192,7 @@ export function TopClientsBar({
                   <div className="text-xs text-slate-500">Paid invoice</div>
                 </div>
               </div>
-              <div className="shrink-0 text-right text-sm font-semibold tabular-nums text-slate-950">
+              <div className="shrink-0 text-right text-sm font-semibold text-slate-950 tabular-nums">
                 {formatCurrency(item.revenue)}
               </div>
             </div>

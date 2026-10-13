@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { resolveCaseStudyImage } from "@/lib/public-fallbacks";
 import { PUBLIC_ROUTES } from "@/lib/routes";
-import {
-  getPortfolioItem,
-  getPortfolioStaticParams,
-} from "../_data/portfolio";
+import { getPortfolioItem, getPortfolioStaticParams } from "../_data/portfolio";
 import { PortfolioDetailContent } from "./_components/portfolio-detail-content";
 import { PortfolioCta } from "./_components/portfolio-cta";
 import { PortfolioFeaturedImage } from "./_components/portfolio-featured-image";
@@ -15,7 +12,9 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const item = await getPortfolioItem(slug);
   if (!item) return { title: "Portfolio tidak ditemukan" };

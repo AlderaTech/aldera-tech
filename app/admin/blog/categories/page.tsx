@@ -43,9 +43,7 @@ export default async function AdminBlogCategoriesPage() {
               </Link>
             </Button>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            Kategori Blog
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight">Kategori Blog</h1>
           <p className="text-muted-foreground">
             Kelola kategori untuk filter, navigasi, dan pengelompokan artikel.
           </p>

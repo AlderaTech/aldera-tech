@@ -14,7 +14,7 @@ export function PortfolioFeaturedImage({
 
   return (
     <section className="editorial-surface">
-      <div className="mx-auto max-w-screen-xxxl public-container-px py-10">
+      <div className="public-container-px mx-auto max-w-screen-xxxl py-10">
         <FadeUp>
           <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-black/10 shadow-2xl">
             <Image

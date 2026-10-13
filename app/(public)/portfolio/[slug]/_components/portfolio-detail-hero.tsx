@@ -13,7 +13,7 @@ type PortfolioDetailHeroProps = {
 export function PortfolioDetailHero({ item }: PortfolioDetailHeroProps) {
   return (
     <section className="editorial-surface">
-      <div className="mx-auto max-w-screen-xxxl public-container-px py-10">
+      <div className="public-container-px mx-auto max-w-screen-xxxl py-10">
         <Button asChild variant="ghost" size="sm" className="mb-6">
           <Link href={PUBLIC_ROUTES.portfolio}>
             <ArrowLeft className="size-4" /> Kembali ke Portfolio
@@ -27,9 +27,7 @@ export function PortfolioDetailHero({ item }: PortfolioDetailHeroProps) {
           <h1 className="editorial-display max-w-5xl text-5xl text-balance sm:text-6xl lg:text-7xl">
             {item.title}
           </h1>
-          <p className="mt-5 max-w-3xl text-lg text-black/60">
-            {item.summary}
-          </p>
+          <p className="mt-5 max-w-3xl text-lg text-black/60">{item.summary}</p>
         </FadeUp>
       </div>
     </section>

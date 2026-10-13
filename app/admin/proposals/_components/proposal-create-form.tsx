@@ -91,8 +91,8 @@ export function ProposalCreateForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl">
-      <Card className="p-6 space-y-5">
+    <form onSubmit={handleSubmit} className="max-w-5xl space-y-6">
+      <Card className="space-y-5 p-6">
         <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
           <div className="space-y-2">
             <Label htmlFor="title">Judul Proposal</Label>
@@ -124,9 +124,9 @@ export function ProposalCreateForm() {
         </div>
       </Card>
 
-      <Card className="p-6 space-y-5">
+      <Card className="space-y-5 p-6">
         <h2 className="font-semibold">Client</h2>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-2">
             <Label htmlFor="clientName">Nama</Label>
             <Input
@@ -147,6 +147,15 @@ export function ProposalCreateForm() {
             />
           </div>
           <div className="space-y-2">
+            <Label htmlFor="clientPhone">No. WhatsApp</Label>
+            <Input
+              id="clientPhone"
+              name="clientPhone"
+              type="tel"
+              placeholder="081234567890"
+            />
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="clientCompany">Perusahaan</Label>
             <Input
               id="clientCompany"
@@ -157,7 +166,7 @@ export function ProposalCreateForm() {
         </div>
       </Card>
 
-      <Card className="p-6 space-y-4">
+      <Card className="space-y-4 p-6">
         <div className="flex items-center justify-between gap-3">
           <h2 className="font-semibold">Line Items</h2>
           <Button type="button" size="sm" variant="outline" onClick={addItem}>
@@ -168,7 +177,7 @@ export function ProposalCreateForm() {
           {items.map((item, index) => (
             <div
               key={index}
-              className="grid gap-2 sm:grid-cols-[1fr_90px_160px_40px] items-start"
+              className="grid items-start gap-2 sm:grid-cols-[1fr_90px_160px_40px]"
             >
               <Input
                 value={item.description}
@@ -244,7 +253,7 @@ export function ProposalCreateForm() {
         </div>
       </Card>
 
-      <Card className="p-6 space-y-3">
+      <Card className="space-y-3 p-6">
         <Label>Konten Proposal</Label>
         <TipTapEditor
           value={content}

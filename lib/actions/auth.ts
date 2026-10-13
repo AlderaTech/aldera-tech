@@ -6,12 +6,14 @@ import type { Role } from "@prisma/client";
 import { signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { loginSchema, registerSchema } from "@/lib/validations/auth";
+import { getPrimaryRole } from "@/lib/permissions";
 
 export type ActionState = {
   ok: boolean;
   message?: string;
   errors?: Record<string, string>;
   role?: Role;
+  roles?: Role[];
 };
 
 export async function loginAction(
@@ -37,12 +39,18 @@ export async function loginAction(
       password: parsed.data.password,
       redirect: false,
     });
-    // Fetch the role so the client can redirect to the right dashboard.
+    // Fetch the roles so the client can redirect to the right dashboard.
     const user = await prisma.user.findUnique({
       where: { email: parsed.data.email },
-      select: { role: true },
+      select: { roles: true },
     });
-    return { ok: true, message: "Berhasil masuk.", role: user?.role };
+    const primaryRole = getPrimaryRole(user?.roles);
+    return {
+      ok: true,
+      message: "Berhasil masuk.",
+      role: primaryRole,
+      roles: user?.roles,
+    };
   } catch (error) {
     if (error instanceof AuthError) {
       if (error.type === "CredentialsSignin") {
@@ -96,7 +104,7 @@ export async function registerAction(
       email,
       name,
       password: hashed,
-      role: "CLIENT",
+      roles: ["CLIENT"],
       company: company || null,
       phone: phone || null,
     },

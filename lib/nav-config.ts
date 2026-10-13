@@ -36,8 +36,6 @@ export const footerSections: { title: string; links: NavLink[] }[] = [
   },
   {
     title: "Kontak",
-    links: [
-      { href: PUBLIC_ROUTES.contact, label: "Hubungi Kami" },
-    ],
+    links: [{ href: PUBLIC_ROUTES.contact, label: "Hubungi Kami" }],
   },
 ];

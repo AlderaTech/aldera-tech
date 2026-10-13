@@ -10,7 +10,7 @@ export default function DashboardLoading() {
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i} className="p-5 space-y-3">
+          <Card key={i} className="space-y-3 p-5">
             <Skeleton className="size-10 rounded-lg" />
             <Skeleton className="h-3 w-20" />
             <Skeleton className="h-7 w-24" />
@@ -18,13 +18,13 @@ export default function DashboardLoading() {
         ))}
       </div>
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <Card className="p-6 space-y-4">
+        <Card className="space-y-4 p-6">
           <Skeleton className="h-5 w-32" />
           {Array.from({ length: 3 }).map((_, i) => (
             <Skeleton key={i} className="h-20 w-full" />
           ))}
         </Card>
-        <Card className="p-6 space-y-3">
+        <Card className="space-y-3 p-6">
           <Skeleton className="h-5 w-24" />
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-12 w-full" />

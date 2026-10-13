@@ -31,7 +31,7 @@ export type MessageItem = {
   editedAt: Date | null;
   deletedAt: Date | null;
   parentId: string | null;
-  author: { id: string; name: string; role: string } | null;
+  author: { id: string; name: string; roles?: string[]; role?: string } | null;
 };
 
 export function MessagesTab({
@@ -78,9 +78,7 @@ export function MessagesTab({
     });
   }
 
-  const replyTarget = parentId
-    ? messages.find((m) => m.id === parentId)
-    : null;
+  const replyTarget = parentId ? messages.find((m) => m.id === parentId) : null;
 
   return (
     <div className="max-w-4xl space-y-4">
@@ -95,11 +93,11 @@ export function MessagesTab({
 
       <Card className="space-y-3 border-slate-200 bg-white p-4 shadow-sm">
         {replyTarget && (
-          <div className="text-xs bg-muted/50 rounded px-3 py-2 flex items-start justify-between gap-2">
+          <div className="flex items-start justify-between gap-2 rounded bg-muted/50 px-3 py-2 text-xs">
             <div className="min-w-0 flex-1">
               <span className="text-muted-foreground">Membalas </span>
               <span className="font-medium">{replyTarget.author?.name}</span>
-              <div className="text-muted-foreground line-clamp-1 italic">
+              <div className="line-clamp-1 text-muted-foreground italic">
                 &ldquo;{replyTarget.content}&rdquo;
               </div>
             </div>
@@ -211,7 +209,9 @@ function MessageBubble({
     });
   }
 
-  const staffRole = message.author?.role !== "CLIENT";
+  const staffRole = message.author?.roles
+    ? message.author.roles.some((r) => r !== "CLIENT")
+    : message.author?.role !== "CLIENT";
 
   return (
     <Card className="border-slate-200 bg-white p-4 shadow-sm">
@@ -229,12 +229,12 @@ function MessageBubble({
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-medium text-sm">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-medium">
               {message.author?.name ?? "Unknown"}
             </span>
             {staffRole && (
-              <span className="text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+              <span className="rounded bg-primary/10 px-1.5 py-0.5 text-xs text-primary">
                 Tim
               </span>
             )}
@@ -275,8 +275,8 @@ function MessageBubble({
           ) : (
             <p
               className={cn(
-                "text-sm mt-1 whitespace-pre-wrap break-words",
-                message.deletedAt && "italic text-muted-foreground"
+                "mt-1 text-sm break-words whitespace-pre-wrap",
+                message.deletedAt && "text-muted-foreground italic"
               )}
             >
               {message.content}
@@ -284,7 +284,7 @@ function MessageBubble({
           )}
 
           {!message.deletedAt && !editing && (
-            <div className="flex items-center gap-3 mt-2">
+            <div className="mt-2 flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => onReply(message.id)}

@@ -1,0 +1,61 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: solvo_tech_app
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-solvo}:${POSTGRES_PASSWORD:-solvosecret}@db:5432/${POSTGRES_DB:-solvo_tech}?schema=public
+      - AUTH_SECRET=${AUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      - AUTH_TRUST_HOST=true
+      - CRON_SECRET=${CRON_SECRET}
+      - ENABLE_CRON=true
+      - AUTO_MIGRATE=true
+      - WHATSAPP_API_URL=${WHATSAPP_API_URL:-https://api.fonnte.com/send}
+      - WHATSAPP_API_KEY=${WHATSAPP_API_KEY}
+      - SHARP_IGNORE_GLOBAL_LIBVIPS=1
+    volumes:
+      - uploads_data:/app/public/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  db:
+    image: postgres:16-alpine
+    container_name: solvo_tech_db
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-solvo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-solvosecret}
+      POSTGRES_DB: ${POSTGRES_DB:-solvo_tech}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-solvo} -d ${POSTGRES_DB:-solvo_tech}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    name: solvo_tech_postgres_data
+  uploads_data:
+    name: solvo_tech_uploads_data

@@ -2,10 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  StaggerContainer,
-  StaggerItem,
-} from "@/components/shared/motion";
+import { StaggerContainer, StaggerItem } from "@/components/shared/motion";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 import type { Service } from "@/lib/services-data";
 
@@ -16,11 +13,14 @@ type ServicesGridProps = {
 export function ServicesGrid({ services }: ServicesGridProps) {
   return (
     <section className="editorial-surface">
-      <div className="mx-auto max-w-screen-xxxl public-container-px py-14 sm:py-20">
+      <div className="public-container-px mx-auto max-w-screen-xxxl py-14 sm:py-20">
         <StaggerContainer className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {services.map((service, index) => (
             <StaggerItem key={service.slug}>
-              <ServiceCard service={service} featured={index === 1 || index === 4} />
+              <ServiceCard
+                service={service}
+                featured={index === 1 || index === 4}
+              />
             </StaggerItem>
           ))}
         </StaggerContainer>
@@ -82,8 +82,8 @@ function ServiceCard({
         variant={featured ? "default" : "outline"}
         className={
           featured
-            ? "w-full bg-black text-white hover:bg-black/90 group/btn"
-            : "w-full border-black/15 bg-white/70 group/btn"
+            ? "group/btn w-full bg-black text-white hover:bg-black/90"
+            : "group/btn w-full border-black/15 bg-white/70"
         }
       >
         <Link href={PUBLIC_ROUTES.contactWithService(service.slug)}>

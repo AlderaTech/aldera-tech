@@ -18,8 +18,8 @@ export function BlogArticleLayout({
 }: BlogArticleLayoutProps) {
   return (
     <div className="editorial-surface">
-      <div className="mx-auto flex max-w-screen-xxxl gap-12 public-container-px py-12">
-        <article className="mx-auto min-w-0 max-w-3xl flex-1">
+      <div className="public-container-px mx-auto flex max-w-screen-xxxl gap-12 py-12">
+        <article className="mx-auto max-w-3xl min-w-0 flex-1">
           <BlogArticleHeader post={post} minutes={minutes} />
           <BlogFeaturedImage src={featuredImage} alt={post.title} />
           <BlogArticleBody html={post.content} />

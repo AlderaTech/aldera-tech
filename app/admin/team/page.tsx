@@ -13,11 +13,11 @@ export default async function TeamWorkloadPage() {
 
   const data = await safeDb(async () => {
     const staff = await prisma.user.findMany({
-      where: { role: { in: [...STAFF_ROLES] }, isActive: true },
+      where: { roles: { hasSome: [...STAFF_ROLES] }, isActive: true },
       select: {
         id: true,
         name: true,
-        role: true,
+        roles: true,
         assignedTasks: {
           where: { status: { notIn: ["DONE"] } },
           select: { id: true, priority: true },
@@ -32,50 +32,72 @@ export default async function TeamWorkloadPage() {
       },
     });
 
-    return staff.map((u) => {
-      const hoursThisWeek = +(u.timeEntries.reduce((s, e) => s + e.durationSec, 0) / 3600).toFixed(1);
-      const activeProjects = u.projectAssignments.filter(
-        (a) => a.project.status === "IN_PROGRESS" || a.project.status === "REVIEW"
-      ).length;
-      const urgentTasks = u.assignedTasks.filter((t) => t.priority === "URGENT" || t.priority === "HIGH").length;
+    return staff
+      .map((u) => {
+        const hoursThisWeek = +(
+          u.timeEntries.reduce((s, e) => s + e.durationSec, 0) / 3600
+        ).toFixed(1);
+        const activeProjects = u.projectAssignments.filter(
+          (a) =>
+            a.project.status === "IN_PROGRESS" || a.project.status === "REVIEW"
+        ).length;
+        const urgentTasks = u.assignedTasks.filter(
+          (t) => t.priority === "URGENT" || t.priority === "HIGH"
+        ).length;
 
-      return {
-        id: u.id,
-        name: u.name,
-        role: u.role,
-        activeTasks: u.assignedTasks.length,
-        urgentTasks,
-        activeProjects,
-        hoursThisWeek,
-        capacityPct: Math.min(100, Math.round((hoursThisWeek / WEEKLY_CAPACITY_HOURS) * 100)),
-      };
-    }).sort((a, b) => b.capacityPct - a.capacityPct);
+        return {
+          id: u.id,
+          name: u.name,
+          roles: u.roles,
+          activeTasks: u.assignedTasks.length,
+          urgentTasks,
+          activeProjects,
+          hoursThisWeek,
+          capacityPct: Math.min(
+            100,
+            Math.round((hoursThisWeek / WEEKLY_CAPACITY_HOURS) * 100)
+          ),
+        };
+      })
+      .sort((a, b) => b.capacityPct - a.capacityPct);
   }, []);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Tim & Workload</h1>
-        <p className="text-muted-foreground text-sm">Beban kerja tim minggu ini (target {WEEKLY_CAPACITY_HOURS}h/minggu)</p>
+        <p className="text-sm text-muted-foreground">
+          Beban kerja tim minggu ini (target {WEEKLY_CAPACITY_HOURS}h/minggu)
+        </p>
       </div>
 
       {data.length === 0 ? (
-        <Card className="p-10 text-center text-muted-foreground">Belum ada anggota tim.</Card>
+        <Card className="p-10 text-center text-muted-foreground">
+          Belum ada anggota tim.
+        </Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {data.map((member) => (
             <Card key={member.id}>
               <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <CardTitle className="text-base">{member.name}</CardTitle>
-                  <Badge variant="secondary" className="text-xs">{ROLE_LABELS[member.role] ?? member.role}</Badge>
+                  <div className="flex flex-wrap gap-1">
+                    {member.roles.map((r) => (
+                      <Badge key={r} variant="secondary" className="text-xs">
+                        {ROLE_LABELS[r] ?? r}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <div className="flex justify-between text-sm mb-1">
+                  <div className="mb-1 flex justify-between text-sm">
                     <span>Kapasitas</span>
-                    <span className="font-medium">{member.hoursThisWeek}h / {WEEKLY_CAPACITY_HOURS}h</span>
+                    <span className="font-medium">
+                      {member.hoursThisWeek}h / {WEEKLY_CAPACITY_HOURS}h
+                    </span>
                   </div>
                   <Progress
                     value={member.capacityPct}
@@ -92,7 +114,9 @@ export default async function TeamWorkloadPage() {
                     <p className="text-xs text-muted-foreground">Proyek</p>
                   </div>
                   <div>
-                    <p className="text-lg font-bold text-destructive">{member.urgentTasks}</p>
+                    <p className="text-lg font-bold text-destructive">
+                      {member.urgentTasks}
+                    </p>
                     <p className="text-xs text-muted-foreground">Urgent</p>
                   </div>
                 </div>

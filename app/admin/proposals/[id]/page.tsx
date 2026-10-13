@@ -53,14 +53,14 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-2">
           <Button asChild variant="ghost" size="sm" className="-ml-2">
             <Link href={ADMIN_ROUTES.proposals}>
               <ArrowLeft className="size-4" /> Kembali ke Proposal
             </Link>
           </Button>
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl font-bold tracking-tight">
               {proposal.number}
             </h1>
@@ -77,7 +77,7 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <Card className="p-5 space-y-2">
+        <Card className="space-y-2 p-5">
           <div className="flex items-center gap-2 text-sm font-medium">
             <UserRound className="size-4" />
             Client
@@ -92,7 +92,7 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
             </div>
           )}
         </Card>
-        <Card className="p-5 space-y-2">
+        <Card className="space-y-2 p-5">
           <div className="flex items-center gap-2 text-sm font-medium">
             <Calendar className="size-4" />
             Timeline
@@ -117,7 +117,7 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
             </div>
           )}
         </Card>
-        <Card className="p-5 space-y-2">
+        <Card className="space-y-2 p-5">
           <div className="flex items-center gap-2 text-sm font-medium">
             <FileSignature className="size-4" />
             Signature
@@ -138,7 +138,9 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
           )}
           {proposal.convertedProject && (
             <Button asChild variant="outline" size="sm" className="mt-2">
-              <Link href={ADMIN_ROUTES.projectDetail(proposal.convertedProject.id)}>
+              <Link
+                href={ADMIN_ROUTES.projectDetail(proposal.convertedProject.id)}
+              >
                 Lihat Proyek
               </Link>
             </Button>
@@ -146,7 +148,7 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
         </Card>
       </div>
 
-      <Card className="p-6 space-y-4">
+      <Card className="space-y-4 p-6">
         <div>
           <h2 className="text-lg font-semibold">Ringkasan</h2>
           <p className="text-muted-foreground">
@@ -154,12 +156,12 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
           </p>
         </div>
         <div
-          className="prose prose-neutral max-w-none"
+          className="prose max-w-none prose-neutral"
           dangerouslySetInnerHTML={{ __html: proposal.content }}
         />
       </Card>
 
-      <Card className="p-0 overflow-hidden">
+      <Card className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow>
@@ -185,7 +187,10 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
               </TableRow>
             ))}
             <TableRow>
-              <TableCell colSpan={3} className="text-right text-muted-foreground">
+              <TableCell
+                colSpan={3}
+                className="text-right text-muted-foreground"
+              >
                 Pajak ({Number(proposal.taxRate).toLocaleString("id-ID")}%)
               </TableCell>
               <TableCell className="text-right tabular-nums">
@@ -205,7 +210,7 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
       </Card>
 
       {proposal.signatureDataUrl && (
-        <Card className="p-6 space-y-3">
+        <Card className="space-y-3 p-6">
           <h2 className="text-lg font-semibold">Bukti Tanda Tangan</h2>
           <img
             src={proposal.signatureDataUrl}

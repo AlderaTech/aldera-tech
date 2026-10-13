@@ -6,7 +6,7 @@ import { PUBLIC_ROUTES } from "@/lib/routes";
 export function PortfolioCta() {
   return (
     <section className="editorial-surface">
-      <div className="mx-auto max-w-screen-md public-container-px pb-20">
+      <div className="public-container-px mx-auto max-w-screen-md pb-20">
         <div className="rounded-xl bg-[#08090d] p-8 text-center text-white sm:p-12">
           <h2 className="editorial-display mb-3 text-3xl sm:text-4xl">
             Ingin hasil serupa untuk bisnis Anda?

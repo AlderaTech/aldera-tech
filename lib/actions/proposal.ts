@@ -11,7 +11,8 @@ import {
   proposalCreateSchema,
   signatureSchema,
 } from "@/lib/validations/proposal";
-import { sendMail } from "@/lib/email";
+import { sendWhatsApp } from "@/lib/whatsapp";
+import { waTemplates } from "@/lib/whatsapp-templates";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { logAudit } from "@/lib/actions/team";
 import { ADMIN_ROUTES, PROPOSAL_ROUTES } from "@/lib/routes";
@@ -62,6 +63,7 @@ export async function createProposalAction(
     clientName: formData.get("clientName"),
     clientEmail: formData.get("clientEmail"),
     clientCompany: formData.get("clientCompany") || "",
+    clientPhone: formData.get("clientPhone") || "",
     taxRate: formData.get("taxRate") ?? "0",
     expiresAt: formData.get("expiresAt") || "",
     items: itemsParsed,
@@ -74,10 +76,7 @@ export async function createProposalAction(
   }
   const data = parsed.data;
 
-  const subtotal = data.items.reduce(
-    (s, it) => s + it.quantity * it.price,
-    0
-  );
+  const subtotal = data.items.reduce((s, it) => s + it.quantity * it.price, 0);
   const tax = (subtotal * data.taxRate) / 100;
   const total = subtotal + tax;
 
@@ -95,6 +94,7 @@ export async function createProposalAction(
       clientName: data.clientName,
       clientEmail: data.clientEmail,
       clientCompany: data.clientCompany || null,
+      clientPhone: data.clientPhone || null,
       taxRate: data.taxRate.toString(),
       totalAmount: total.toFixed(2),
       expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
@@ -127,6 +127,7 @@ export async function sendProposalAction(id: string) {
       title: true,
       clientName: true,
       clientEmail: true,
+      clientPhone: true,
       token: true,
       totalAmount: true,
       expiresAt: true,
@@ -144,28 +145,43 @@ export async function sendProposalAction(id: string) {
     throw new Error("Proposal sudah kadaluarsa");
   }
 
+  // Lookup phone: from proposal or user account with clientEmail
+  let phone = proposal.clientPhone;
+  if (!phone) {
+    const clientUser = await prisma.user.findUnique({
+      where: { email: proposal.clientEmail },
+      select: { phone: true },
+    });
+    phone = clientUser?.phone ?? null;
+  }
+
+  if (!phone) {
+    throw new Error(
+      "Nomor WhatsApp klien belum diisi pada proposal ini. Silakan perbarui nomor WhatsApp terlebih dahulu."
+    );
+  }
+
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const viewUrl = `${appUrl}/proposal/${proposal.token}`;
 
-  await sendMail({
-    to: proposal.clientEmail,
-    subject: `Proposal ${proposal.number}, Solvo Tech`,
-    html: `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f6f6f6;padding:24px;">
-<div style="max-width:520px;margin:0 auto;background:white;border-radius:8px;overflow:hidden;">
-  <div style="background:#0ea5e9;color:white;padding:20px;">
-    <h1 style="margin:0;font-size:20px;">Proposal untuk ${proposal.clientName}</h1>
-  </div>
-  <div style="padding:24px;">
-    <p>Halo <strong>${proposal.clientName}</strong>,</p>
-    <p>Kami telah menyiapkan proposal <strong>${proposal.title}</strong> dengan nilai total <strong>${formatCurrency(Number(proposal.totalAmount))}</strong>.</p>
-    ${proposal.expiresAt ? `<p>Proposal ini berlaku hingga <strong>${formatDate(proposal.expiresAt)}</strong>.</p>` : ""}
-    <p style="text-align:center;margin:24px 0;">
-      <a href="${viewUrl}" style="background:#0ea5e9;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;">Review & Tanda Tangan</a>
-    </p>
-    <p style="color:#666;font-size:13px;">Link ini bersifat pribadi untuk Anda, jangan dibagikan.</p>
-  </div>
-</div></body></html>`,
+  const tpl = waTemplates.proposalSent({
+    clientName: proposal.clientName,
+    proposalTitle: proposal.title,
+    proposalNumber: proposal.number,
+    totalAmount: formatCurrency(Number(proposal.totalAmount)),
+    expiresAt: proposal.expiresAt ? formatDate(proposal.expiresAt) : undefined,
+    viewUrl,
   });
+
+  const res = await sendWhatsApp({
+    to: phone,
+    message: `*${tpl.title}*\n\n${tpl.message}`,
+  });
+
+  if (!res.success) {
+    console.error("Send proposal WhatsApp error:", res.error);
+    throw new Error(`Gagal mengirim WhatsApp: ${res.error ?? "Unknown error"}`);
+  }
 
   await prisma.proposal.update({
     where: { id },
@@ -307,7 +323,7 @@ export async function convertProposalToProjectAction(id: string) {
         email: proposal.clientEmail,
         name: proposal.clientName,
         password: await bcrypt.hash(tempPassword, 10),
-        role: "CLIENT",
+        roles: ["CLIENT"],
         company: proposal.clientCompany,
       },
       select: { id: true },

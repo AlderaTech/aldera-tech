@@ -9,6 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { formatDate } from "@/lib/utils";
 import { projectStatusMeta } from "@/lib/status-meta";
+import { DASHBOARD_ROUTES } from "@/lib/routes";
 
 export default async function UserProjectsPage() {
   const session = await auth();
@@ -26,7 +27,7 @@ export default async function UserProjectsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl xxxl:text-3xl font-bold tracking-tight">
+        <h1 className="text-2xl font-bold tracking-tight xxxl:text-3xl">
           Proyek Saya
         </h1>
         <p className="text-muted-foreground">
@@ -44,7 +45,7 @@ export default async function UserProjectsPage() {
             Hitung estimasi harga dan ajukan proyek Anda melalui kalkulator.
           </p>
           <Button asChild className="mt-5">
-            <Link href="/dashboard/calculator">Hitung Estimasi</Link>
+            <Link href={DASHBOARD_ROUTES.calculator}>Hitung Estimasi</Link>
           </Button>
         </Card>
       ) : (
@@ -52,24 +53,28 @@ export default async function UserProjectsPage() {
           {projects.map((p) => {
             const meta = projectStatusMeta[p.status];
             return (
-              <Link key={p.id} href={`/dashboard/projects/${p.id}`} className="block group">
-                <Card className="h-full p-5 hover:border-primary/50 hover:shadow-lg transition-all">
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <h2 className="font-semibold leading-snug group-hover:text-primary transition-colors">
+              <Link
+                key={p.id}
+                href={DASHBOARD_ROUTES.projectDetail(p.id)}
+                className="group block"
+              >
+                <Card className="h-full p-5 transition-all hover:border-primary/50 hover:shadow-lg">
+                  <div className="mb-3 flex items-start justify-between gap-3">
+                    <h2 className="leading-snug font-semibold transition-colors group-hover:text-primary">
                       {p.title}
                     </h2>
                     <Badge variant={meta.variant} className="shrink-0">
                       {meta.label}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                  <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
                     {p.description}
                   </p>
                   <div className="space-y-3">
                     <div>
-                      <div className="flex items-center justify-between text-xs mb-1">
+                      <div className="mb-1 flex items-center justify-between text-xs">
                         <span className="text-muted-foreground">Progres</span>
-                        <span className="tabular-nums font-medium">
+                        <span className="font-medium tabular-nums">
                           {p.progress}%
                         </span>
                       </div>
@@ -81,7 +86,7 @@ export default async function UserProjectsPage() {
                         {formatDate(p.deadline)}
                       </div>
                     )}
-                    <div className="flex items-center justify-end text-sm text-primary gap-1 group-hover:gap-2 transition-all">
+                    <div className="flex items-center justify-end gap-1 text-sm text-primary transition-all group-hover:gap-2">
                       Detail <ArrowRight className="size-3.5" />
                     </div>
                   </div>

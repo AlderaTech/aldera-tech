@@ -122,7 +122,7 @@ model User {
   email         String    @unique
   password      String
   name          String
-  role          Role      @default(CLIENT)
+  roles         Role[]    @default([CLIENT])
   avatar        String?
   company       String?
   phone         String?
@@ -147,7 +147,6 @@ model User {
   orderRequests       OrderRequest[]
 
   @@index([email])
-  @@index([role])
 }
 
 model Project {
@@ -581,6 +580,7 @@ model Proposal {
   clientName    String
   clientEmail   String
   clientCompany String?
+  clientPhone   String?
 
   currency    String  @default("IDR")
   taxRate     Decimal @default(0) @db.Decimal(5, 2)

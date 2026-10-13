@@ -55,7 +55,7 @@ export function ResetFormContent() {
             baru melalui halaman lupa password.
           </div>
         </CardContent>
-        <CardFooter className="px-6 pb-6 pt-5 sm:px-8 sm:pb-8">
+        <CardFooter className="px-6 pt-5 pb-6 sm:px-8 sm:pb-8">
           <Button
             asChild
             size="xl"
@@ -79,7 +79,10 @@ export function ResetFormContent() {
         <input type="hidden" name="token" value={token} />
         <CardContent className="space-y-5 px-6 pb-2 sm:px-8">
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm font-bold text-black/72">
+            <Label
+              htmlFor="password"
+              className="text-sm font-bold text-black/72"
+            >
               Password baru
             </Label>
             <PasswordInput
@@ -123,7 +126,7 @@ export function ResetFormContent() {
             )}
           </div>
         </CardContent>
-        <CardFooter className="px-6 pb-6 pt-5 sm:px-8 sm:pb-8">
+        <CardFooter className="px-6 pt-5 pb-6 sm:px-8 sm:pb-8">
           <Button
             type="submit"
             size="xl"

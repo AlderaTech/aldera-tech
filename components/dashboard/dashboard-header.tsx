@@ -24,9 +24,7 @@ type DashboardHeaderProps = {
 };
 
 function toTitleCase(s: string) {
-  return s
-    .replace(/[-_]/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return s.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function useBreadcrumbs() {
@@ -56,7 +54,7 @@ export function DashboardHeader({ session, navConfig }: DashboardHeaderProps) {
             <Menu className="size-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-72 sm:w-80">
+        <SheetContent side="left" className="w-72 p-0 sm:w-80">
           <SheetTitle className="sr-only">Navigasi Dashboard</SheetTitle>
           <DashboardSidebar
             groups={navConfig.groups}
@@ -67,23 +65,26 @@ export function DashboardHeader({ session, navConfig }: DashboardHeaderProps) {
         </SheetContent>
       </Sheet>
 
-      <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm min-w-0 flex-1">
+      <nav
+        aria-label="Breadcrumb"
+        className="flex min-w-0 flex-1 items-center gap-1 text-sm"
+      >
         {crumbs.length === 0 ? (
           <span className="font-semibold">Dashboard</span>
         ) : (
           crumbs.map((c, i) => (
             <React.Fragment key={c.href}>
               {i > 0 && (
-                <ChevronRight className="size-3.5 text-muted-foreground shrink-0" />
+                <ChevronRight className="size-3.5 shrink-0 text-muted-foreground" />
               )}
               {c.current ? (
-                <span className="font-semibold text-foreground truncate">
+                <span className="truncate font-semibold text-foreground">
                   {c.label}
                 </span>
               ) : (
                 <Link
                   href={c.href}
-                  className="text-muted-foreground hover:text-foreground transition-colors truncate"
+                  className="truncate text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {c.label}
                 </Link>
@@ -106,12 +107,12 @@ export function DashboardHeader({ session, navConfig }: DashboardHeaderProps) {
             });
             window.dispatchEvent(ev);
           }}
-          className="hidden sm:inline-flex items-center gap-2 h-9 px-3 rounded-md border text-sm text-muted-foreground hover:bg-accent transition-colors"
+          className="hidden h-9 items-center gap-2 rounded-md border px-3 text-sm text-muted-foreground transition-colors hover:bg-accent sm:inline-flex"
           aria-label="Buka pencarian"
         >
           <Search className="size-3.5" />
           <span>Cari…</span>
-          <span className="ml-2 text-xs border rounded px-1.5 py-0.5 text-muted-foreground/70">
+          <span className="ml-2 rounded border px-1.5 py-0.5 text-xs text-muted-foreground/70">
             ⌘K
           </span>
         </button>

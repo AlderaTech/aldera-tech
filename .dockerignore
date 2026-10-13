@@ -12,5 +12,6 @@ Dockerfile
 README.md
 AGENTS.md
 CLAUDE.md
+docs
 public/uploads/*
 !public/uploads/.gitkeep

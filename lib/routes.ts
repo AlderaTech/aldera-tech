@@ -1,3 +1,10 @@
+/**
+ * Sentralisasi seluruh Route Constants di aplikasi Solvo Tech.
+ *
+ * Seluruh navigasi, tautan Link, router.push, redirect, dan pemanggilan API
+ * WAJIB menggunakan konstanta ini untuk meminimalkan typo dan memudahkan refactoring.
+ */
+
 export const PUBLIC_ROUTES = {
   home: "/",
   about: "/about",
@@ -9,7 +16,8 @@ export const PUBLIC_ROUTES = {
   testimonials: "/testimonials",
   contact: "/contact",
   blogDetail: (slug: string) => `/blog/${slug}`,
-  blogCategory: (slug: string) => `/blog?category=${slug}`,
+  blogPost: (slug: string) => `/blog/${slug}`,
+  blogCategory: (slug: string) => `/blog?category=${encodeURIComponent(slug)}`,
   blogPage: (params: { page: number; category?: string; q?: string }) => {
     const searchParams = new URLSearchParams({
       ...(params.category ? { category: params.category } : {}),
@@ -19,8 +27,10 @@ export const PUBLIC_ROUTES = {
     return `/blog?${searchParams.toString()}`;
   },
   portfolioDetail: (slug: string) => `/portfolio/${slug}`,
-  contactWithService: (slug: string) => `/contact?service=${slug}`,
-  contactWithPlan: (slug: string) => `/contact?plan=${slug}`,
+  contactWithService: (slug: string) =>
+    `/contact?service=${encodeURIComponent(slug)}`,
+  contactWithPlan: (slug: string) =>
+    `/contact?plan=${encodeURIComponent(slug)}`,
 } as const;
 
 export const AUTH_ROUTES = {
@@ -30,6 +40,8 @@ export const AUTH_ROUTES = {
   resetPassword: "/reset-password",
   loginWithCallback: (callbackUrl: string) =>
     `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`,
+  resetPasswordWithToken: (token: string) =>
+    `/reset-password?token=${encodeURIComponent(token)}`,
 } as const;
 
 export const DASHBOARD_ROUTES = {
@@ -80,5 +92,27 @@ export const API_ROUTES = {
   exportInvoices: "/api/admin/export/invoices",
   exportProjects: "/api/admin/export/projects",
   exportTimesheet: "/api/admin/export/timesheet",
+  exportTimesheetWithRange: (from: string, to: string) =>
+    `/api/admin/export/timesheet?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`,
   invoicePdf: (id: string) => `/api/invoices/${id}/pdf`,
+  upload: "/api/upload",
+  search: (query?: string) =>
+    query ? `/api/search?q=${encodeURIComponent(query)}` : "/api/search",
+  cronInvoiceReminder: "/api/cron/invoice-reminder",
+  cronIssueRecurring: "/api/cron/issue-recurring",
+  cronPublishScheduled: "/api/cron/publish-scheduled",
 } as const;
+
+/**
+ * Unified namespace pengelompokan seluruh rute aplikasi
+ */
+export const ROUTES = {
+  public: PUBLIC_ROUTES,
+  auth: AUTH_ROUTES,
+  dashboard: DASHBOARD_ROUTES,
+  admin: ADMIN_ROUTES,
+  proposal: PROPOSAL_ROUTES,
+  api: API_ROUTES,
+} as const;
+
+export default ROUTES;

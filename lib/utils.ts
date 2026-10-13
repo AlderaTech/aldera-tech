@@ -23,7 +23,10 @@ export function formatCurrency(amount: number, currency = "IDR") {
 /**
  * Format date in Indonesian locale.
  */
-export function formatDate(date: Date | string, options?: Intl.DateTimeFormatOptions) {
+export function formatDate(
+  date: Date | string,
+  options?: Intl.DateTimeFormatOptions
+) {
   return new Intl.DateTimeFormat("id-ID", {
     day: "numeric",
     month: "long",

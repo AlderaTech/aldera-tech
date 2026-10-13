@@ -104,7 +104,9 @@ export function BlogTable({ posts }: { posts: BlogRow[] }) {
           <TableRow>
             <TableHead className="w-10">
               <Checkbox
-                checked={allSelected ? true : someSelected ? "indeterminate" : false}
+                checked={
+                  allSelected ? true : someSelected ? "indeterminate" : false
+                }
                 onCheckedChange={toggleAll}
                 aria-label="Select all"
               />
@@ -122,7 +124,7 @@ export function BlogTable({ posts }: { posts: BlogRow[] }) {
             <TableRow>
               <TableCell
                 colSpan={7}
-                className="text-center text-muted-foreground py-10"
+                className="py-10 text-center text-muted-foreground"
               >
                 Belum ada post. Buat yang pertama!
               </TableCell>
@@ -140,13 +142,13 @@ export function BlogTable({ posts }: { posts: BlogRow[] }) {
                     aria-label={`Select ${p.title}`}
                   />
                 </TableCell>
-                <TableCell className="font-medium max-w-xs truncate">
+                <TableCell className="max-w-xs truncate font-medium">
                   {p.title}
                 </TableCell>
-                <TableCell className="hidden md:table-cell text-muted-foreground">
+                <TableCell className="hidden text-muted-foreground md:table-cell">
                   {p.category?.name ?? "-"}
                 </TableCell>
-                <TableCell className="hidden lg:table-cell text-muted-foreground">
+                <TableCell className="hidden text-muted-foreground lg:table-cell">
                   {p.author?.name ?? "-"}
                 </TableCell>
                 <TableCell>
@@ -154,7 +156,7 @@ export function BlogTable({ posts }: { posts: BlogRow[] }) {
                     {p.published ? "Published" : "Draft"}
                   </Badge>
                 </TableCell>
-                <TableCell className="hidden md:table-cell text-muted-foreground text-sm">
+                <TableCell className="hidden text-sm text-muted-foreground md:table-cell">
                   {formatDate(p.publishedAt ?? p.createdAt)}
                 </TableCell>
                 <TableCell className="text-right">

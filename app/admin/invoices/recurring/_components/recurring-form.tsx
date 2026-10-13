@@ -56,7 +56,9 @@ export function RecurringTemplateForm({
   const total = subtotal + (subtotal * (Number(taxRate) || 0)) / 100;
 
   function updateItem(i: number, patch: Partial<Item>) {
-    setItems((prev) => prev.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
+    setItems((prev) =>
+      prev.map((it, idx) => (idx === i ? { ...it, ...patch } : it))
+    );
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -93,8 +95,8 @@ export function RecurringTemplateForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
-      <Card className="p-6 space-y-5">
+    <form onSubmit={handleSubmit} className="max-w-4xl space-y-6">
+      <Card className="space-y-5 p-6">
         <div className="space-y-2">
           <Label htmlFor="name">Nama Template</Label>
           <Input
@@ -105,7 +107,7 @@ export function RecurringTemplateForm({
             required
           />
         </div>
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label>Client</Label>
             <Select value={clientId} onValueChange={setClientId} required>
@@ -141,7 +143,7 @@ export function RecurringTemplateForm({
             </Select>
           </div>
         </div>
-        <div className="grid sm:grid-cols-3 gap-4">
+        <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-2">
             <Label>Frekuensi</Label>
             <Select value={frequency} onValueChange={setFrequency}>
@@ -178,7 +180,7 @@ export function RecurringTemplateForm({
             />
           </div>
         </div>
-        <div className="space-y-2 max-w-xs">
+        <div className="max-w-xs space-y-2">
           <Label>Pajak (%)</Label>
           <Input
             type="number"
@@ -191,7 +193,7 @@ export function RecurringTemplateForm({
         </div>
       </Card>
 
-      <Card className="p-6 space-y-4">
+      <Card className="space-y-4 p-6">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">Line Items</h2>
           <Button
@@ -210,10 +212,7 @@ export function RecurringTemplateForm({
         </div>
         <div className="space-y-3">
           {items.map((it, i) => (
-            <div
-              key={i}
-              className="grid grid-cols-[1fr_80px_140px_40px] gap-2"
-            >
+            <div key={i} className="grid grid-cols-[1fr_80px_140px_40px] gap-2">
               <Input
                 placeholder="Deskripsi"
                 value={it.description}
@@ -241,9 +240,7 @@ export function RecurringTemplateForm({
                 variant="ghost"
                 size="icon"
                 disabled={items.length === 1}
-                onClick={() =>
-                  setItems((p) => p.filter((_, idx) => idx !== i))
-                }
+                onClick={() => setItems((p) => p.filter((_, idx) => idx !== i))}
                 aria-label="Hapus item"
               >
                 <Trash2 className="size-4" />
@@ -251,7 +248,7 @@ export function RecurringTemplateForm({
             </div>
           ))}
         </div>
-        <div className="pt-3 border-t text-sm">
+        <div className="border-t pt-3 text-sm">
           <div className="flex justify-between font-semibold">
             <span>Total per periode</span>
             <span>{formatCurrency(total)}</span>
@@ -259,7 +256,7 @@ export function RecurringTemplateForm({
         </div>
       </Card>
 
-      <Card className="p-6 space-y-2">
+      <Card className="space-y-2 p-6">
         <Label htmlFor="notes">Catatan (opsional)</Label>
         <Textarea
           id="notes"

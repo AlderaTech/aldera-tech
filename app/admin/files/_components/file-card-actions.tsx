@@ -31,7 +31,12 @@ export function FileCardActions({ fileId }: { fileId: string }) {
         })
       }
       trigger={
-        <Button size="sm" variant="ghost" aria-label="Hapus" disabled={isPending}>
+        <Button
+          size="sm"
+          variant="ghost"
+          aria-label="Hapus"
+          disabled={isPending}
+        >
           <Trash2 className="size-3.5 text-destructive" />
         </Button>
       }

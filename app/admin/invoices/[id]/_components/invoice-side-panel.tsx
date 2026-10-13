@@ -26,7 +26,7 @@ export function InvoiceSidePanel({ invoice }: { invoice: InvoiceDetail }) {
           <FileText className="size-4 text-primary" />
           Catatan
         </div>
-        <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
+        <p className="text-sm leading-relaxed whitespace-pre-wrap text-slate-700">
           {invoice.notes || "Tidak ada catatan untuk invoice ini."}
         </p>
       </Card>

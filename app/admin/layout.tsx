@@ -12,7 +12,8 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  if (!session?.user) redirect(AUTH_ROUTES.loginWithCallback(ADMIN_ROUTES.home));
+  if (!session?.user)
+    redirect(AUTH_ROUTES.loginWithCallback(ADMIN_ROUTES.home));
   if (!isStaff(session.user.role)) redirect(DASHBOARD_ROUTES.home);
 
   const navConfig = getAdminNavConfig(session.user.role);
@@ -28,7 +29,7 @@ export default async function AdminLayout({
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <DashboardHeader session={session} navConfig={navConfig} />
-        <main className="container-px mx-auto w-full max-w-screen-xxxl flex-1 py-5">
+        <main className="mx-auto w-full max-w-screen-xxxl flex-1 container-px py-5">
           {children}
         </main>
       </div>

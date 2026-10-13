@@ -14,7 +14,7 @@ type PricingFaqItem = {
 export function PricingFaq({ items }: { items: PricingFaqItem[] }) {
   return (
     <section className="editorial-surface">
-      <div className="mx-auto max-w-screen-md public-container-px pb-14 sm:pb-20">
+      <div className="public-container-px mx-auto max-w-screen-md pb-14 sm:pb-20">
         <FadeUp className="mb-10 text-center">
           <h2 className="editorial-display mb-3 text-4xl sm:text-5xl">
             Pertanyaan umum

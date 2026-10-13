@@ -1,5 +1,10 @@
 import type { ReactNode } from "react";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Logo } from "@/components/shared/logo";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 
