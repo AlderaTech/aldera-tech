@@ -13,6 +13,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { formatDate, getInitials } from "@/lib/utils";
+import { ROLE_LABELS } from "@/lib/permissions";
 import { UserRowActions } from "./_components/user-row-actions";
 import { InviteUserDialog } from "./_components/invite-user-dialog";
 
@@ -91,8 +92,8 @@ export default async function AdminUsersPage() {
                     {u.email}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={u.role === "ADMIN" ? "default" : "secondary"}>
-                      {u.role}
+                    <Badge variant={u.role === "ADMIN" ? "default" : u.role === "DEVELOPER" ? "outline" : "secondary"}>
+                      {ROLE_LABELS[u.role] ?? u.role}
                     </Badge>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">

@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { ADMIN_ROUTES } from "@/lib/routes";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { OrderActions } from "./_components/order-actions";
@@ -18,7 +17,7 @@ const statusMeta: Record<string, { label: string; variant: "default" | "secondar
 
 export default async function AdminOrdersPage() {
   const session = await auth();
-  if (!session?.user || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) {
+  if (!session?.user || session.user.role !== "ADMIN") {
     redirect(ADMIN_ROUTES.home);
   }
 

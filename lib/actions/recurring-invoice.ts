@@ -4,13 +4,12 @@ import { revalidatePath } from "next/cache";
 import type { RecurringFrequency } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { isStaff } from "@/lib/permissions";
 import { ADMIN_ROUTES } from "@/lib/routes";
 import { recurringInvoiceSchema } from "@/lib/validations/recurring-invoice";
 
 async function requireAdmin() {
   const session = await auth();
-  if (!session?.user || !isStaff(session.user.role)) {
+  if (!session?.user || session.user.role !== "ADMIN") {
     throw new Error("Forbidden");
   }
   return session.user;

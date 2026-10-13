@@ -13,11 +13,8 @@ datasource db {
 // Enums
 // ----------------------------------------------------------------
 enum Role {
-  OWNER
   ADMIN
-  DESIGNER
   DEVELOPER
-  ACCOUNTANT
   CLIENT
 }
 

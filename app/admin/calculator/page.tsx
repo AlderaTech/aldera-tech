@@ -7,7 +7,7 @@ import { CalculatorAdmin } from "./_components/calculator-admin";
 
 export default async function AdminCalculatorPage() {
   const session = await auth();
-  if (!session?.user || (session.user.role !== "OWNER" && session.user.role !== "ADMIN")) {
+  if (!session?.user || session.user.role !== "ADMIN") {
     redirect(ADMIN_ROUTES.home);
   }
 

@@ -140,7 +140,7 @@ const adminNavGroups: DashboardNavGroup[] = [
         label: "Timesheet",
         icon: "clock",
         description: "Laporan jam kerja",
-        permission: PERMISSIONS.ANALYTICS_VIEW,
+        permission: PERMISSIONS.TIMESHEET_VIEW,
       },
       {
         href: ADMIN_ROUTES.files,
@@ -159,7 +159,7 @@ const adminNavGroups: DashboardNavGroup[] = [
         label: "Tim & Workload",
         icon: "users2",
         description: "Beban kerja tim",
-        permission: PERMISSIONS.ANALYTICS_VIEW,
+        permission: PERMISSIONS.TEAM_VIEW,
       },
       {
         href: ADMIN_ROUTES.analytics,

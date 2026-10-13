@@ -100,11 +100,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       // Inline helper, auth.ts runs in proxy, keep imports minimal.
       const isStaffRole = (r?: string) =>
-        r === "OWNER" ||
-        r === "ADMIN" ||
-        r === "DESIGNER" ||
-        r === "DEVELOPER" ||
-        r === "ACCOUNTANT";
+        r === "ADMIN" || r === "DEVELOPER";
 
       if (isAdmin) {
         if (!isLoggedIn) return false;

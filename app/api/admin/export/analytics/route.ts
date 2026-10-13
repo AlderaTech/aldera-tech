@@ -2,13 +2,13 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { csvResponse, toCsv } from "@/lib/csv";
-import { isStaff } from "@/lib/permissions";
+import { hasPermission, PERMISSIONS } from "@/lib/permissions";
 
 export const runtime = "nodejs";
 
 export async function GET() {
   const session = await auth();
-  if (!session?.user || !isStaff(session.user.role)) {
+  if (!session?.user || !hasPermission(session.user.role, PERMISSIONS.ANALYTICS_VIEW)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
