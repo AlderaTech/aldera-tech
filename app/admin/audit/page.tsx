@@ -28,7 +28,7 @@ export default async function AuditLogPage() {
       await prisma.auditLog.findMany({
         orderBy: { createdAt: "desc" },
         take: 200,
-        include: { user: { select: { name: true, email: true, role: true } } },
+        include: { user: { select: { name: true, email: true, roles: true } } },
       }),
     []
   );
@@ -42,7 +42,7 @@ export default async function AuditLogPage() {
         </p>
       </div>
 
-      <Card className="p-0 overflow-hidden">
+      <Card className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow>
@@ -56,7 +56,10 @@ export default async function AuditLogPage() {
           <TableBody>
             {logs.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                <TableCell
+                  colSpan={5}
+                  className="py-10 text-center text-muted-foreground"
+                >
                   Belum ada audit log.
                 </TableCell>
               </TableRow>
@@ -75,7 +78,9 @@ export default async function AuditLogPage() {
                   <TableCell>
                     <div className="text-sm">{log.user.name}</div>
                     <div className="text-xs text-muted-foreground">
-                      {ROLE_LABELS[log.user.role] ?? log.user.role}
+                      {log.user.roles
+                        .map((r) => ROLE_LABELS[r] ?? r)
+                        .join(", ")}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -83,11 +88,11 @@ export default async function AuditLogPage() {
                       {log.action}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-xs text-muted-foreground">
+                  <TableCell className="hidden text-xs text-muted-foreground md:table-cell">
                     {log.entityType}
                     {log.entityId ? `:${log.entityId.slice(0, 8)}` : ""}
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-xs text-muted-foreground font-mono">
+                  <TableCell className="hidden font-mono text-xs text-muted-foreground lg:table-cell">
                     {log.ip ?? "-"}
                   </TableCell>
                 </TableRow>

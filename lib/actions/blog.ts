@@ -31,7 +31,8 @@ function parseFormData(formData: FormData) {
     featuredImage: formData.get("featuredImage") || "",
     categoryId: formData.get("categoryId") || "",
     published:
-      formData.get("published") === "on" || formData.get("published") === "true",
+      formData.get("published") === "on" ||
+      formData.get("published") === "true",
     scheduledAt: formData.get("scheduledAt") || "",
   };
 }
@@ -74,9 +75,7 @@ export async function createBlogPostAction(
       published: Boolean(data.published),
       publishedAt: data.published ? new Date() : null,
       scheduledAt:
-        !data.published && data.scheduledAt
-          ? new Date(data.scheduledAt)
-          : null,
+        !data.published && data.scheduledAt ? new Date(data.scheduledAt) : null,
       authorId: user.id,
     },
     select: { id: true, slug: true },
@@ -139,9 +138,7 @@ export async function updateBlogPostAction(
             ? undefined
             : null,
       scheduledAt:
-        !data.published && data.scheduledAt
-          ? new Date(data.scheduledAt)
-          : null,
+        !data.published && data.scheduledAt ? new Date(data.scheduledAt) : null,
     },
     select: { id: true, slug: true },
   });
@@ -167,7 +164,11 @@ export async function togglePublishBlogPostAction(id: string) {
     where: { id },
     data: {
       published: !post.published,
-      publishedAt: !post.published ? new Date() : post.published ? null : undefined,
+      publishedAt: !post.published
+        ? new Date()
+        : post.published
+          ? null
+          : undefined,
     },
   });
   revalidatePath(PUBLIC_ROUTES.blog);

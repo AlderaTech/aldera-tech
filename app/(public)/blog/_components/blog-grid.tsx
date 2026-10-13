@@ -1,7 +1,4 @@
-import {
-  StaggerContainer,
-  StaggerItem,
-} from "@/components/shared/motion";
+import { StaggerContainer, StaggerItem } from "@/components/shared/motion";
 import type { BlogListItem } from "../_data/blog-list";
 import { BlogCard } from "./blog-card";
 

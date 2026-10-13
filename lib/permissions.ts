@@ -12,16 +12,61 @@ export const STAFF_ROLES = [
 
 export type StaffRole = (typeof STAFF_ROLES)[number];
 
-export function isStaff(role: Role | null | undefined): role is StaffRole {
-  if (!role) return false;
-  return (STAFF_ROLES as readonly Role[]).includes(role);
+export function isStaff(
+  roleOrRoles: Role | readonly Role[] | null | undefined
+): boolean {
+  if (!roleOrRoles) return false;
+  if (typeof roleOrRoles === "string") {
+    return (STAFF_ROLES as readonly Role[]).includes(roleOrRoles);
+  }
+  return roleOrRoles.some((r) => (STAFF_ROLES as readonly Role[]).includes(r));
 }
 
-export function isAdmin(role: Role | null | undefined): boolean {
-  return role === "ADMIN";
+export function isAdmin(
+  roleOrRoles: Role | readonly Role[] | null | undefined
+): boolean {
+  if (!roleOrRoles) return false;
+  if (typeof roleOrRoles === "string") {
+    return roleOrRoles === "ADMIN";
+  }
+  return roleOrRoles.includes("ADMIN");
+}
+
+export function isDeveloper(
+  roleOrRoles: Role | readonly Role[] | null | undefined
+): boolean {
+  if (!roleOrRoles) return false;
+  if (typeof roleOrRoles === "string") {
+    return roleOrRoles === "DEVELOPER";
+  }
+  return roleOrRoles.includes("DEVELOPER");
+}
+
+export function isClient(
+  roleOrRoles: Role | readonly Role[] | null | undefined
+): boolean {
+  if (!roleOrRoles) return false;
+  if (typeof roleOrRoles === "string") {
+    return roleOrRoles === "CLIENT";
+  }
+  return roleOrRoles.includes("CLIENT");
 }
 
 export const isOwnerOrAdmin = isAdmin;
+
+/**
+ * Resolves the primary role from an array of roles based on hierarchy:
+ * ADMIN > DEVELOPER > CLIENT.
+ */
+export function getPrimaryRole(
+  roleOrRoles: Role | readonly Role[] | null | undefined
+): Role {
+  if (!roleOrRoles) return "CLIENT";
+  if (typeof roleOrRoles === "string") return roleOrRoles;
+  if (roleOrRoles.includes("ADMIN")) return "ADMIN";
+  if (roleOrRoles.includes("DEVELOPER")) return "DEVELOPER";
+  return roleOrRoles[0] ?? "CLIENT";
+}
 
 /**
  * Permission keys that control UI and API access.
@@ -95,18 +140,36 @@ export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
 };
 
 export function hasPermission(
-  role: Role | null | undefined,
+  roleOrRoles: Role | readonly Role[] | null | undefined,
   permission: Permission
 ): boolean {
-  if (!role) return false;
-  return ROLE_PERMISSIONS[role].includes(permission);
+  if (!roleOrRoles) return false;
+  if (typeof roleOrRoles === "string") {
+    return ROLE_PERMISSIONS[roleOrRoles]?.includes(permission) ?? false;
+  }
+  return roleOrRoles.some((r) => ROLE_PERMISSIONS[r]?.includes(permission));
 }
 
 export function hasAnyPermission(
-  role: Role | null | undefined,
+  roleOrRoles: Role | readonly Role[] | null | undefined,
   ...permissions: Permission[]
 ): boolean {
-  return permissions.some((p) => hasPermission(role, p));
+  return permissions.some((p) => hasPermission(roleOrRoles, p));
+}
+
+export function getEffectivePermissions(
+  roleOrRoles: Role | readonly Role[] | null | undefined
+): readonly Permission[] {
+  if (!roleOrRoles) return [];
+  const list: readonly Role[] =
+    typeof roleOrRoles === "string" ? [roleOrRoles] : roleOrRoles;
+  const set = new Set<Permission>();
+  for (const r of list) {
+    for (const p of ROLE_PERMISSIONS[r] ?? []) {
+      set.add(p);
+    }
+  }
+  return Array.from(set);
 }
 
 export const ROLE_LABELS: Record<Role, string> = {

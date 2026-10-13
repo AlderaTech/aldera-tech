@@ -1,4 +1,10 @@
-import { Mail, MapPin, MessageCircle, Phone, type LucideIcon } from "lucide-react";
+import {
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  type LucideIcon,
+} from "lucide-react";
 import type { PublicSiteSettings } from "@/lib/public-settings";
 
 export type ContactInfoItem = {
@@ -8,7 +14,9 @@ export type ContactInfoItem = {
   href: string | null;
 };
 
-export function getContactInfo(settings: PublicSiteSettings): ContactInfoItem[] {
+export function getContactInfo(
+  settings: PublicSiteSettings
+): ContactInfoItem[] {
   return [
     settings.email
       ? {

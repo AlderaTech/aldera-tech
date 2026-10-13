@@ -11,7 +11,10 @@ export function BlogCard({ post }: { post: BlogListItem }) {
   const minutes = readingTime(post.content);
 
   return (
-    <Link href={PUBLIC_ROUTES.blogDetail(post.slug)} className="block h-full group">
+    <Link
+      href={PUBLIC_ROUTES.blogDetail(post.slug)}
+      className="group block h-full"
+    >
       <Card className="h-full overflow-hidden rounded-xl p-0 transition-all hover:-translate-y-1 hover:shadow-xl">
         <div className="relative aspect-[16/9] overflow-hidden bg-muted">
           {post.featuredImage ? (
@@ -24,7 +27,7 @@ export function BlogCard({ post }: { post: BlogListItem }) {
             />
           ) : null}
           {post.category && (
-            <div className="absolute left-3 top-3">
+            <div className="absolute top-3 left-3">
               <Badge className="bg-[#0b6bff] text-white hover:bg-[#0b6bff]">
                 {post.category.name}
               </Badge>
@@ -32,13 +35,11 @@ export function BlogCard({ post }: { post: BlogListItem }) {
           )}
         </div>
         <div className="space-y-3 bg-white/80 p-5">
-          <h2 className="line-clamp-2 text-xl font-black leading-snug transition-colors group-hover:text-[#0b6bff]">
+          <h2 className="line-clamp-2 text-xl leading-snug font-black transition-colors group-hover:text-[#0b6bff]">
             {post.title}
           </h2>
           {post.excerpt && (
-            <p className="line-clamp-2 text-sm text-black/60">
-              {post.excerpt}
-            </p>
+            <p className="line-clamp-2 text-sm text-black/60">{post.excerpt}</p>
           )}
           <div className="flex items-center gap-3 border-t border-black/10 pt-2 text-xs text-black/48">
             {post.publishedAt && (

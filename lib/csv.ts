@@ -21,9 +21,7 @@ export function toCsv<T extends Record<string, unknown>>(
   const header = keys.map(escape).join(",");
   const body = rows
     .map((row) =>
-      keys
-        .map((k) => escape((row as Record<string, unknown>)[k]))
-        .join(",")
+      keys.map((k) => escape((row as Record<string, unknown>)[k])).join(",")
     )
     .join("\n");
   return `${header}\n${body}`;

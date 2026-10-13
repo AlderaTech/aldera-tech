@@ -3,17 +3,15 @@ import { Check, Star, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  StaggerContainer,
-  StaggerItem,
-} from "@/components/shared/motion";
+import { StaggerContainer, StaggerItem } from "@/components/shared/motion";
 import type { PublicPricingPlan } from "@/lib/public-settings";
+import { AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 import { cn, formatCurrency } from "@/lib/utils";
 
 export function PricingGrid({ plans }: { plans: PublicPricingPlan[] }) {
   return (
     <section className="editorial-surface">
-      <div className="mx-auto max-w-screen-xxxl public-container-px py-14 sm:py-20">
+      <div className="public-container-px mx-auto max-w-screen-xxxl py-14 sm:py-20">
         <StaggerContainer className="grid gap-6 md:grid-cols-3">
           {plans.map((plan) => (
             <StaggerItem key={plan.name}>
@@ -96,12 +94,23 @@ export function PricingGrid({ plans }: { plans: PublicPricingPlan[] }) {
         </StaggerContainer>
 
         <div className="mt-10 rounded-xl border border-black/10 bg-white/70 p-6 text-center sm:p-8">
-          <h3 className="text-xl font-black sm:text-2xl">Butuh estimasi lebih detail?</h3>
+          <h3 className="text-xl font-black sm:text-2xl">
+            Butuh estimasi lebih detail?
+          </h3>
           <p className="mx-auto mt-2 max-w-md text-sm text-black/62">
-            Gunakan kalkulator harga kami untuk menghitung biaya berdasarkan fitur spesifik yang Anda butuhkan.
+            Gunakan kalkulator harga kami untuk menghitung biaya berdasarkan
+            fitur spesifik yang Anda butuhkan.
           </p>
-          <Button asChild size="lg" className="mt-5 bg-[#08090d] text-white hover:bg-black">
-            <Link href="/login?callbackUrl=/dashboard/calculator">Hitung Estimasi Detail</Link>
+          <Button
+            asChild
+            size="lg"
+            className="mt-5 bg-[#08090d] text-white hover:bg-black"
+          >
+            <Link
+              href={AUTH_ROUTES.loginWithCallback(DASHBOARD_ROUTES.calculator)}
+            >
+              Hitung Estimasi Detail
+            </Link>
           </Button>
         </div>
       </div>

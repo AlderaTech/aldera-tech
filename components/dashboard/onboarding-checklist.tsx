@@ -22,19 +22,20 @@ export async function OnboardingChecklist() {
 
   const data = await safeDb(
     async () => {
-      const [user, projectCount, messageCount, paidInvoiceCount] = await Promise.all([
-        prisma.user.findUnique({
-          where: { id: userId },
-          select: { avatar: true, company: true, phone: true },
-        }),
-        prisma.project.count({ where: { clientId: userId } }),
-        prisma.projectMessage.count({
-          where: { project: { clientId: userId }, authorId: userId },
-        }),
-        prisma.invoice.count({
-          where: { clientId: userId, status: "PAID" },
-        }),
-      ]);
+      const [user, projectCount, messageCount, paidInvoiceCount] =
+        await Promise.all([
+          prisma.user.findUnique({
+            where: { id: userId },
+            select: { avatar: true, company: true, phone: true },
+          }),
+          prisma.project.count({ where: { clientId: userId } }),
+          prisma.projectMessage.count({
+            where: { project: { clientId: userId }, authorId: userId },
+          }),
+          prisma.invoice.count({
+            where: { clientId: userId, status: "PAID" },
+          }),
+        ]);
       return { user, projectCount, messageCount, paidInvoiceCount };
     },
     { user: null, projectCount: 0, messageCount: 0, paidInvoiceCount: 0 }
@@ -83,16 +84,17 @@ export async function OnboardingChecklist() {
   const percent = Math.round((completed / total) * 100);
 
   return (
-    <Card className="p-5 sm:p-6 bg-gradient-to-br from-primary/5 via-background to-chart-4/5 border-primary/20">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+    <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-background to-chart-4/5 p-5 sm:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 text-xs text-primary font-medium uppercase tracking-wider mb-1">
+          <div className="mb-1 inline-flex items-center gap-2 text-xs font-medium tracking-wider text-primary uppercase">
             <Sparkles className="size-3.5" />
             Mulai di sini
           </div>
           <h2 className="text-lg font-semibold">Checklist Onboarding</h2>
           <p className="text-sm text-muted-foreground">
-            Selesaikan {completed} dari {total} langkah untuk memaksimalkan pengalaman Anda.
+            Selesaikan {completed} dari {total} langkah untuk memaksimalkan
+            pengalaman Anda.
           </p>
         </div>
         <div className="text-right">
@@ -100,7 +102,7 @@ export async function OnboardingChecklist() {
         </div>
       </div>
 
-      <div className="h-1.5 bg-muted rounded-full mt-4 overflow-hidden">
+      <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-muted">
         <div
           className="h-full bg-primary transition-all duration-500"
           style={{ width: `${percent}%` }}
@@ -112,15 +114,15 @@ export async function OnboardingChecklist() {
           <li
             key={step.id}
             className={cn(
-              "flex items-start gap-3 p-3 rounded-lg border transition-colors",
+              "flex items-start gap-3 rounded-lg border p-3 transition-colors",
               step.done
-                ? "bg-success/5 border-success/20"
+                ? "border-success/20 bg-success/5"
                 : "hover:bg-accent/30"
             )}
           >
             <div
               className={cn(
-                "size-6 rounded-full flex items-center justify-center shrink-0 mt-0.5",
+                "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full",
                 step.done
                   ? "bg-success text-success-foreground"
                   : "border-2 border-muted-foreground/30"
@@ -144,7 +146,7 @@ export async function OnboardingChecklist() {
             {!step.done && (
               <Link
                 href={step.cta.href}
-                className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:gap-2 transition-all shrink-0"
+                className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-primary transition-all hover:gap-2"
               >
                 {step.cta.label}
                 <ArrowRight className="size-3" />

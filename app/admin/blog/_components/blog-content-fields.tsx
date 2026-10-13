@@ -12,7 +12,7 @@ const TipTapEditor = dynamic(
   () => import("@/components/editor/tiptap-editor").then((m) => m.TipTapEditor),
   {
     ssr: false,
-    loading: () => <div className="h-96 rounded-lg border shimmer-bg" />,
+    loading: () => <div className="h-96 shimmer-bg rounded-lg border" />,
   }
 );
 

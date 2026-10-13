@@ -152,7 +152,7 @@ export function SignaturePanel({ token, disabled }: Props) {
   }
 
   return (
-    <Card className="p-6 space-y-5">
+    <Card className="space-y-5 p-6">
       <div>
         <h2 className="text-lg font-semibold">Tanda Tangan Digital</h2>
         <p className="text-sm text-muted-foreground">
@@ -171,7 +171,12 @@ export function SignaturePanel({ token, disabled }: Props) {
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-3">
           <Label>Signature Pad</Label>
-          <Button type="button" size="sm" variant="outline" onClick={clearSignature}>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={clearSignature}
+          >
             <RotateCcw className="size-4" /> Clear
           </Button>
         </div>

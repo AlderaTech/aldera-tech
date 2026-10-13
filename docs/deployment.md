@@ -1,0 +1,237 @@
+# Panduan Deployment & Arsitektur Docker: Solvo Tech
+
+Dokumen ini merupakan panduan resmi arsitektur deployment produksi dan konfigurasi Docker untuk sistem **Solvo Tech**. Dokumen ini wajib dipelajari dan dipatuhi oleh seluruh pengembang serta AI Agent.
+
+---
+
+## 1. Arsitektur Deployment
+
+Solvo Tech dibangun di atas arsitektur container modern dan efisien:
+
+```
+┌───────────────────────────────────────────────────────────────┐
+│ Host VPS / Cloud Server (Ubuntu / Debian / Alpine)            │
+│                                                               │
+│   ┌─────────────────────┐                                     │
+│   │ Reverse Proxy       │ (Nginx / Caddy / Traefik / SSL)     │
+│   │ Ports 80, 443       │                                     │
+│   └──────────┬──────────┘                                     │
+│              │ Proxy http://127.0.0.1:3000                    │
+│   ┌──────────▼────────────────────────────────────────────┐   │
+│   │ Container: solvo_tech_app (Node 22 Alpine)            │   │
+│   │                                                       │   │
+│   │   ├── Next.js 15 Standalone (node server.js :3000)    │   │
+│   │   ├── Background crond (BusyBox Cron Runner)          │   │
+│   │   └── Storage Mount: /app/public/uploads              │   │
+│   └──────────┬────────────────────────────────────────────┘   │
+│              │ Internal Network (solvo_tech_network)          │
+│   ┌──────────▼────────────────────────────────────────────┐   │
+│   │ Container: solvo_tech_db (PostgreSQL 16 Alpine)       │   │
+│   │   └── Data Mount: /var/lib/postgresql/data            │   │
+│   └───────────────────────────────────────────────────────┘   │
+└───────────────────────────────────────────────────────────────┘
+```
+
+### Karakteristik Utama
+
+1. **Next.js Standalone Build**: Ukuran image akhir sangat ramping (~180–220 MB) karena hanya menyertakan modul yang benar-benar dibutuhkan saat runtime.
+2. **Built-in Automated Cron Runner**: Daemon cron Alpine (`crond`) berjalan otomatis di latar belakang container untuk memicu endpoint cron terjadwal tanpa mengharuskan instalasi crontab di host OS.
+3. **Persistensi Data**:
+   - Volume `uploads_data` dipetakan ke `/app/public/uploads` agar berkas lampiran, PDF invoice, dan avatar tidak hilang saat container diperbarui.
+   - Volume `postgres_data` dipetakan ke `/var/lib/postgresql/data` untuk keutuhan data database.
+4. **Keamanan & Privilege Dropping**: Container dijalankan menggunakan user unprivileged `nextjs` (UID 1001) via `su-exec`.
+
+---
+
+## 2. Struktur Folder `docker/`
+
+Seluruh artefak yang berhubungan dengan containerisasi dan deployment dikelompokkan dalam direktori `docker/`:
+
+```
+docker/
+├── Dockerfile            # Multi-stage production Dockerfile (deps -> builder -> runner)
+├── docker-compose.yml    # Stack multi-container (App + PostgreSQL + Persistent Volumes)
+├── entrypoint.sh         # Script inisialisasi: jalankan crond, migrasi, dan su-exec
+├── crontab               # Definisi jadwal cron job internal
+└── .dockerignore         # Filter berkas yang diabaikan saat docker build
+```
+
+### Rincian Fungsi Berkas
+
+| Berkas                      | Fungsi Utama                                                                                                                                                                                  |
+| :-------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docker/Dockerfile`         | Blueprint image container Next.js multi-stage build dengan Alpine Linux.                                                                                                                      |
+| `docker/docker-compose.yml` | Konfigurasi orkestrasi service aplikasi dan database PostgreSQL lokal.                                                                                                                        |
+| `docker/entrypoint.sh`      | Shell script yang dieksekusi saat container start. Mengatur permission, memulai `crond`, menjalankan `prisma db push` (opsional jika `AUTO_MIGRATE=true`), dan mengeksekusi `node server.js`. |
+| `docker/crontab`            | Berkas referensi jadwal berkala pemanggilan cron internal.                                                                                                                                    |
+| `docker/.dockerignore`      | Mengabaikan `node_modules`, `.next`, `.git`, dan file sementara dari context build.                                                                                                           |
+
+---
+
+## 3. Cara Menjalankan Aplikasi
+
+### Opsi A: Menggunakan Docker Compose (Sangat Direkomendasikan)
+
+Docker Compose adalah cara tercepat untuk menjalankan Solvo Tech beserta database PostgreSQL dalam satu perintah.
+
+1. **Siapkan Environment Variables**:
+   Salin berkas `.env.example` menjadi `.env` di root direktori proyek:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Pastikan variabel penting telah diisi:
+   - `AUTH_SECRET` (generate dengan `openssl rand -base64 32`)
+   - `CRON_SECRET` (string acak aman untuk mengamankan cron)
+   - `WHATSAPP_API_KEY` (token Fonnte API untuk notifikasi WhatsApp)
+
+2. **Jalankan Stack Container**:
+
+   ```bash
+   # Menggunakan npm/bun script
+   bun run docker:up
+
+   # Atau menggunakan perintah Docker langsung
+   docker compose -f docker/docker-compose.yml up -d --build
+   ```
+
+3. **Periksa Status & Log**:
+
+   ```bash
+   docker compose -f docker/docker-compose.yml ps
+   docker compose -f docker/docker-compose.yml logs -f app
+   ```
+
+4. **Hentikan Stack**:
+   ```bash
+   bun run docker:down
+   # atau
+   docker compose -f docker/docker-compose.yml down
+   ```
+
+---
+
+### Opsi B: Build & Run Mandiri (Single Container)
+
+Jika database PostgreSQL di-host secara terpisah (misal AWS RDS, Supabase, Neon, atau database VPS yang sudah ada):
+
+1. **Build Docker Image**:
+
+   ```bash
+   # Menggunakan npm/bun script
+   bun run docker:build
+
+   # Atau menggunakan perintah Docker langsung
+   docker build -f docker/Dockerfile -t solvo-tech:latest .
+   ```
+
+2. **Jalankan Container**:
+   ```bash
+   docker run -d \
+     --name solvo-tech \
+     --restart unless-stopped \
+     -p 3000:3000 \
+     --env-file .env \
+     -v solvo_tech_uploads:/app/public/uploads \
+     solvo-tech:latest
+   ```
+
+---
+
+## 4. Mekanisme Otomatisasi Cron di Docker
+
+Solvo Tech memiliki 3 cron endpoint aktif:
+
+| Endpoint                      | Frekuensi                      | Deskripsi                                                   |
+| :---------------------------- | :----------------------------- | :---------------------------------------------------------- |
+| `/api/cron/invoice-reminder`  | Harian (09:00 WIB / 02:00 UTC) | Kirim pengingat invoice jatuh tempo via WhatsApp Fonnte.    |
+| `/api/cron/issue-recurring`   | Harian (00:01 WIB / 17:01 UTC) | Terbitkan invoice rutin baru sesuai jadwal template.        |
+| `/api/cron/publish-scheduled` | Per 15 Menit                   | Publikasikan artikel blog yang tanggal rilisnya telah tiba. |
+
+### Bagaimana Cron Bekerja dalam Container:
+
+1. Saat container menyala, `docker/entrypoint.sh` memeriksa apakah `ENABLE_CRON=true` dan `CRON_SECRET` tersedia.
+2. Script membuat wrapper `/app/run-cron.sh` yang membawa variabel otorisasi `Bearer $CRON_SECRET`.
+3. Daemon BusyBox `crond -b -l 8` dijalankan di background.
+4. Setiap jadwal tiba, `curl` internal memicu rute `http://127.0.0.1:3000/api/cron/...`.
+5. Jika Anda ingin menonaktifkan cron internal (misal ingin menggunakan cron eksternal atau cron-job.org), set environment variable `ENABLE_CRON=false`.
+
+---
+
+## 5. Konfigurasi Reverse Proxy Produksi
+
+Di server produksi (VPS), jalankan reverse proxy di depan container Solvo Tech untuk menangani SSL Let's Encrypt dan kompresi:
+
+### Contoh Nginx Configuration (`/etc/nginx/sites-available/solvo.conf`)
+
+```nginx
+server {
+    listen 80;
+    server_name solvo-tech.site www.solvo-tech.site;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name solvo-tech.site www.solvo-tech.site;
+
+    ssl_certificate /etc/letsencrypt/live/solvo-tech.site/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/solvo-tech.site/privkey.pem;
+
+    client_max_body_size 25M; # Mendukung upload file/proposal hingga 20MB
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Cache untuk asset statis Next.js
+    location /_next/static/ {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_cache_valid 200 365d;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+}
+```
+
+### Contoh Caddy Configuration (`Caddyfile`)
+
+```caddy
+solvo-tech.site {
+    encode gzip zstd
+    request_body {
+        max_size 25MB
+    }
+    reverse_proxy 127.0.0.1:3000
+}
+```
+
+---
+
+## 6. Protokol & SOP Sinkronisasi Deployment (Wajib untuk AI Agent & Pengembang)
+
+Setiap kali melakukan pengembangan atau perubahan fitur pada codebase, pengembang dan AI Agent **WAJIB** mengevaluasi dampaknya terhadap konfigurasi deployment:
+
+### Aturan Sinkronisasi:
+
+1. **Penambahan Fitur Cron Baru**:
+   - Jika Anda menambahkan route baru di `app/api/cron/<nama-fitur>/route.ts`, Anda **WAJIB**:
+     - Mendaftarkan jadwal baru di `docker/crontab`.
+     - Memperbarui skrip pendaftaran cron di `docker/entrypoint.sh`.
+     - Menambahkan rincian endpoint dan frekuensi cron pada tabel Bagian 4 dokumen ini (`docs/deployment.md`).
+2. **Penambahan Dependensi Sistem / Binary OS**:
+   - Jika ada library baru yang membutuhkan binary level OS (misalnya `ffmpeg`, `libvips`, `ghostscript`), **WAJIB** menambahkannya ke baris `RUN apk add --no-cache ...` di `docker/Dockerfile`.
+3. **Perubahan Storage & Mount Volume**:
+   - Jika ada folder baru yang memerlukan persistensi data (misal `/app/storage`), **WAJIB** menambahkannya ke instruksi `VOLUME` di `docker/Dockerfile` dan daftar `volumes` di `docker/docker-compose.yml`.
+4. **Penambahan Environment Variables**:
+   - Jika ada env var baru yang esensial untuk runtime, **WAJIB** mencatatnya pada [`.env.example`](../.env.example) dan menyertakannya di blok `environment` pada `docker/docker-compose.yml`.
+5. **Perubahan Port Aplikasi**:
+   - Jika port default diubah dari 3000, sesuaikan variabel `PORT`, `EXPOSE`, dan `HEALTHCHECK` pada `docker/Dockerfile` serta `docker/docker-compose.yml`.

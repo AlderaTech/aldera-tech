@@ -2,7 +2,14 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Copy, ExternalLink, Loader2, Mail, Trash2 } from "lucide-react";
+import {
+  CheckCircle2,
+  Copy,
+  ExternalLink,
+  Loader2,
+  MessageSquare,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -53,7 +60,7 @@ export function ProposalActions({
   function handleSend() {
     runAction("send", async () => {
       await sendProposalAction(proposalId);
-      toast.success("Proposal dikirim");
+      toast.success("Proposal dikirim via WhatsApp");
     });
   }
 
@@ -92,9 +99,9 @@ export function ProposalActions({
       </Button>
       {canSend && (
         <ConfirmDialog
-          title="Kirim proposal?"
-          description="Proposal akan dikirim ke client melalui email dan status penawaran akan diperbarui."
-          confirmLabel="Kirim proposal"
+          title="Kirim proposal via WhatsApp?"
+          description="Proposal akan dikirim ke nomor WhatsApp client dan status penawaran akan diperbarui."
+          confirmLabel="Kirim WhatsApp"
           pending={isBusy}
           onConfirm={handleSend}
           trigger={
@@ -102,9 +109,9 @@ export function ProposalActions({
               {pendingAction === "send" ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : (
-                <Mail className="size-4" />
+                <MessageSquare className="size-4" />
               )}
-              Kirim
+              Kirim WhatsApp
             </Button>
           }
         />

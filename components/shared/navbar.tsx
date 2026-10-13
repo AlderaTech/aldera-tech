@@ -38,7 +38,7 @@ export function Navbar({ session }: { session: Session | null }) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full border-b public-container-px backdrop-blur-xl transition-all",
+        "public-container-px sticky top-0 z-40 w-full border-b backdrop-blur-xl transition-all",
         transparent
           ? "border-transparent bg-transparent shadow-none"
           : "border-black/10 bg-[#f4f2ea]/95",
@@ -133,13 +133,19 @@ export function Navbar({ session }: { session: Session | null }) {
               <Button
                 variant="ghost"
                 size="icon"
-                className={cn("xl:hidden", transparent ? "hover:bg-white/10" : "hover:bg-black/5")}
+                className={cn(
+                  "xl:hidden",
+                  transparent ? "hover:bg-white/10" : "hover:bg-black/5"
+                )}
                 aria-label="Buka menu"
               >
                 <Menu className="size-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="flex w-[85%] flex-col xs:w-80">
+            <SheetContent
+              side="right"
+              className="flex w-[85%] flex-col xs:w-80"
+            >
               <SheetTitle className="sr-only">Menu Navigasi</SheetTitle>
               <Logo size="md" />
               <nav className="mt-6 flex flex-1 flex-col gap-1">

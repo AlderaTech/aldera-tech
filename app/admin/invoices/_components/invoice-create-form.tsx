@@ -70,7 +70,10 @@ export function InvoiceCreateForm({
   }
 
   function addItem() {
-    setItems((prev) => [...prev, { description: "", quantity: "1", price: "0" }]);
+    setItems((prev) => [
+      ...prev,
+      { description: "", quantity: "1", price: "0" },
+    ]);
   }
 
   function removeItem(i: number) {
@@ -110,9 +113,9 @@ export function InvoiceCreateForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
-      <Card className="p-6 space-y-5">
-        <div className="grid sm:grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} className="max-w-4xl space-y-6">
+      <Card className="space-y-5 p-6">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label>Client</Label>
             <Select value={clientId} onValueChange={setClientId} required>
@@ -130,9 +133,15 @@ export function InvoiceCreateForm({
           </div>
           <div className="space-y-2">
             <Label>Proyek (opsional)</Label>
-            <Select value={projectId} onValueChange={setProjectId} disabled={!clientId}>
+            <Select
+              value={projectId}
+              onValueChange={setProjectId}
+              disabled={!clientId}
+            >
               <SelectTrigger>
-                <SelectValue placeholder={clientId ? "Pilih proyek…" : "Pilih client dulu"} />
+                <SelectValue
+                  placeholder={clientId ? "Pilih proyek…" : "Pilih client dulu"}
+                />
               </SelectTrigger>
               <SelectContent>
                 {filteredProjects.map((p) => (
@@ -145,7 +154,7 @@ export function InvoiceCreateForm({
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-3 gap-4">
+        <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-2">
             <Label htmlFor="issueDate">Tanggal Terbit</Label>
             <Input
@@ -183,7 +192,7 @@ export function InvoiceCreateForm({
         </div>
       </Card>
 
-      <Card className="p-6 space-y-4">
+      <Card className="space-y-4 p-6">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">Line Items</h2>
           <Button type="button" size="sm" variant="outline" onClick={addItem}>
@@ -194,7 +203,7 @@ export function InvoiceCreateForm({
           {items.map((it, i) => (
             <div
               key={i}
-              className="grid grid-cols-1 sm:grid-cols-[1fr_80px_140px_40px] gap-2 items-start"
+              className="grid grid-cols-1 items-start gap-2 sm:grid-cols-[1fr_80px_140px_40px]"
             >
               <Input
                 placeholder="Deskripsi"
@@ -231,7 +240,7 @@ export function InvoiceCreateForm({
             </div>
           ))}
         </div>
-        <div className="border-t pt-4 space-y-1 text-sm">
+        <div className="space-y-1 border-t pt-4 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Subtotal</span>
             <span>{formatCurrency(subtotal)}</span>
@@ -240,14 +249,14 @@ export function InvoiceCreateForm({
             <span className="text-muted-foreground">Pajak ({taxRate}%)</span>
             <span>{formatCurrency(taxAmount)}</span>
           </div>
-          <div className="flex justify-between pt-2 border-t font-bold text-base">
+          <div className="flex justify-between border-t pt-2 text-base font-bold">
             <span>Total</span>
             <span>{formatCurrency(total)}</span>
           </div>
         </div>
       </Card>
 
-      <Card className="p-6 space-y-3">
+      <Card className="space-y-3 p-6">
         <Label htmlFor="notes">Catatan (opsional)</Label>
         <Textarea
           id="notes"

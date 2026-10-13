@@ -38,7 +38,7 @@ export function HomeHero() {
       <div className="absolute inset-0 z-10 bg-[linear-gradient(90deg,rgba(8,9,13,0.94)_0%,rgba(8,9,13,0.82)_38%,rgba(8,9,13,0.46)_68%,rgba(8,9,13,0.22)_100%)]" />
       <div className="absolute inset-0 z-10 bg-[radial-gradient(circle_at_22%_22%,rgba(11,107,255,0.28),transparent_32%)]" />
 
-      <div className="relative z-20 mx-auto flex h-full max-w-screen-xxxl flex-col justify-center public-container-px py-8 sm:py-10">
+      <div className="public-container-px relative z-20 mx-auto flex h-full max-w-screen-xxxl flex-col justify-center py-8 sm:py-10">
         <motion.div
           initial={initialUp}
           animate={{ opacity: 1, y: 0 }}
@@ -53,9 +53,10 @@ export function HomeHero() {
           initial={initialUp}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.08 }}
-          className="editorial-display mt-7 max-w-5xl text-5xl text-balance sm:text-6xl lg:text-7xl xxxl:text-8xl"
+          className="editorial-display mt-7 max-w-5xl text-5xl text-balance xxxl:text-8xl sm:text-6xl lg:text-7xl"
         >
-          Bangun website & aplikasi yang mendatangkan pelanggan — bukan sekadar terlihat rapi.
+          Bangun website & aplikasi yang mendatangkan pelanggan — bukan sekadar
+          terlihat rapi.
         </motion.h1>
 
         <motion.p
@@ -105,10 +106,10 @@ export function HomeHero() {
                 <signal.icon className="size-4.5" />
               </div>
               <div>
-                <div className="text-2xl font-black leading-none">
+                <div className="text-2xl leading-none font-black">
                   {signal.value}
                 </div>
-                <div className="mt-1 text-xs font-bold uppercase tracking-[0.1em] text-white/64">
+                <div className="mt-1 text-xs font-bold tracking-[0.1em] text-white/64 uppercase">
                   {signal.label}
                 </div>
               </div>

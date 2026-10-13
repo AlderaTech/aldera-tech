@@ -240,7 +240,9 @@ function filterItemByRole(
   };
 }
 
-export function getAdminNavConfig(role: Role | null | undefined): DashboardNavConfig {
+export function getAdminNavConfig(
+  role: Role | null | undefined
+): DashboardNavConfig {
   const groups = adminNavGroups
     .map((group) => ({
       ...group,

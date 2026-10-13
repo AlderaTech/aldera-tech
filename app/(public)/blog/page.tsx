@@ -29,7 +29,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
     <>
       <BlogHero />
       <section className="editorial-surface">
-        <div className="mx-auto max-w-screen-xxxl public-container-px py-10">
+        <div className="public-container-px mx-auto max-w-screen-xxxl py-10">
           <CategoryFilter categories={categories} activeCategory={category} />
           <BlogGrid posts={posts} />
           <BlogPagination

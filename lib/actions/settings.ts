@@ -33,7 +33,9 @@ function clean(value: unknown) {
   return text || null;
 }
 
-function collectErrors(error: { issues: { path: PropertyKey[]; message: string }[] }) {
+function collectErrors(error: {
+  issues: { path: PropertyKey[]; message: string }[];
+}) {
   const errors: Record<string, string> = {};
   for (const issue of error.issues) {
     const key = issue.path.join(".");
@@ -127,8 +129,12 @@ export async function updatePricingSettingsAction(
     featured: formData.get("featuredPlan") === fallback.slug,
     ctaLabel: formData.get(`${fallback.slug}.ctaLabel`),
     ctaHref: formData.get(`${fallback.slug}.ctaHref`),
-    includedFeatures: splitLines(formData.get(`${fallback.slug}.includedFeatures`)),
-    excludedFeatures: splitLines(formData.get(`${fallback.slug}.excludedFeatures`)),
+    includedFeatures: splitLines(
+      formData.get(`${fallback.slug}.includedFeatures`)
+    ),
+    excludedFeatures: splitLines(
+      formData.get(`${fallback.slug}.excludedFeatures`)
+    ),
   }));
 
   const parsed = pricingSettingsSchema.safeParse({ plans });
@@ -142,7 +148,9 @@ export async function updatePricingSettingsAction(
 
   await prisma.$transaction(async (tx) => {
     for (const plan of parsed.data.plans) {
-      const fallback = defaultPricingPlans.find((item) => item.slug === plan.slug);
+      const fallback = defaultPricingPlans.find(
+        (item) => item.slug === plan.slug
+      );
       const saved = await tx.pricingPlan.upsert({
         where: { slug: plan.slug },
         create: {
@@ -221,7 +229,7 @@ function splitLines(value: FormDataEntryValue | null) {
 }
 
 function revalidateSettingsPaths() {
-  revalidatePath("/", "layout");
+  revalidatePath(PUBLIC_ROUTES.home, "layout");
   revalidatePath(PUBLIC_ROUTES.pricing);
   revalidatePath(PUBLIC_ROUTES.contact);
   revalidatePath(ADMIN_ROUTES.settings);

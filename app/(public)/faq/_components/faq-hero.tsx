@@ -3,7 +3,7 @@ import { FadeUp } from "@/components/shared/motion";
 export function FaqHero() {
   return (
     <section className="editorial-surface">
-      <div className="mx-auto max-w-screen-xxxl public-container-px py-10 text-center sm:py-14">
+      <div className="public-container-px mx-auto max-w-screen-xxxl py-10 text-center sm:py-14">
         <FadeUp>
           <div className="editorial-kicker mx-auto border-black/20 text-black/60">
             FAQ

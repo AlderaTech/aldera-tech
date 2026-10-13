@@ -104,7 +104,9 @@ export function InvoiceTable({ invoices }: { invoices: InvoiceRow[] }) {
           <TableRow>
             <TableHead className="w-10">
               <Checkbox
-                checked={allSelected ? true : someSelected ? "indeterminate" : false}
+                checked={
+                  allSelected ? true : someSelected ? "indeterminate" : false
+                }
                 onCheckedChange={toggleAll}
                 aria-label="Select all"
               />
@@ -121,7 +123,10 @@ export function InvoiceTable({ invoices }: { invoices: InvoiceRow[] }) {
         <TableBody>
           {invoices.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={8} className="text-center py-10 text-muted-foreground">
+              <TableCell
+                colSpan={8}
+                className="py-10 text-center text-muted-foreground"
+              >
                 Belum ada invoice.
               </TableCell>
             </TableRow>
@@ -144,9 +149,7 @@ export function InvoiceTable({ invoices }: { invoices: InvoiceRow[] }) {
                       aria-label={`Select ${inv.number}`}
                     />
                   </TableCell>
-                  <TableCell className="font-medium">
-                    {inv.number}
-                  </TableCell>
+                  <TableCell className="font-medium">{inv.number}</TableCell>
                   <TableCell className="hidden md:table-cell">
                     <div className="text-sm">{inv.client.name}</div>
                     {inv.client.company && (
@@ -155,7 +158,7 @@ export function InvoiceTable({ invoices }: { invoices: InvoiceRow[] }) {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className="hidden xl:table-cell text-sm text-muted-foreground truncate max-w-xs">
+                  <TableCell className="hidden max-w-xs truncate text-sm text-muted-foreground xl:table-cell">
                     {inv.project?.title ?? "-"}
                   </TableCell>
                   <TableCell className="font-semibold">
@@ -166,7 +169,7 @@ export function InvoiceTable({ invoices }: { invoices: InvoiceRow[] }) {
                       {overdue ? "Overdue" : m.label}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                  <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
                     {formatDate(inv.dueDate)}
                   </TableCell>
                   <TableCell className="text-right">

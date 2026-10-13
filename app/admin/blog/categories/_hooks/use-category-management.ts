@@ -20,9 +20,8 @@ import {
 export function useCategoryManagement() {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const [deleteTarget, setDeleteTarget] = React.useState<BlogCategoryRow | null>(
-    null
-  );
+  const [deleteTarget, setDeleteTarget] =
+    React.useState<BlogCategoryRow | null>(null);
   const [values, setValues] =
     React.useState<CategoryFormValues>(emptyCategoryForm);
   const [errors, setErrors] = React.useState<Record<string, string>>({});

@@ -16,7 +16,7 @@ export function PortfolioDetailContent({ item }: PortfolioDetailContentProps) {
 
   return (
     <article className="editorial-surface">
-      <div className="mx-auto max-w-screen-md public-container-px space-y-12 py-10 pb-20">
+      <div className="public-container-px mx-auto max-w-screen-md space-y-12 py-10 pb-20">
         {sections.map((section) => (
           <FadeUp key={section.title}>
             <div className="mb-3 flex items-center gap-3">
@@ -25,7 +25,7 @@ export function PortfolioDetailContent({ item }: PortfolioDetailContentProps) {
               </div>
               <h2 className="text-3xl font-black">{section.title}</h2>
             </div>
-            <div className="prose prose-neutral max-w-none">
+            <div className="prose max-w-none prose-neutral">
               <p>{section.text}</p>
             </div>
           </FadeUp>

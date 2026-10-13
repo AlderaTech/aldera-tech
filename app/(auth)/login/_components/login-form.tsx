@@ -69,7 +69,10 @@ export function LoginForm() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-4">
-            <Label htmlFor="password" className="text-sm font-bold text-black/72">
+            <Label
+              htmlFor="password"
+              className="text-sm font-bold text-black/72"
+            >
               Password
             </Label>
             <Link
@@ -98,7 +101,7 @@ export function LoginForm() {
           )}
         </div>
       </CardContent>
-      <CardFooter className="flex-col gap-4 px-6 pb-6 pt-5 sm:px-8 sm:pb-8">
+      <CardFooter className="flex-col gap-4 px-6 pt-5 pb-6 sm:px-8 sm:pb-8">
         <Button
           type="submit"
           size="xl"

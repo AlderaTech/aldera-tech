@@ -36,7 +36,8 @@ export function CategoryManagement({
                 Manajemen Kategori Blog
               </CardTitle>
               <p className="mt-1 text-sm text-slate-500">
-                Atur nama, slug, dan deskripsi kategori yang tampil di halaman blog.
+                Atur nama, slug, dan deskripsi kategori yang tampil di halaman
+                blog.
               </p>
             </div>
             {permissions.canCreate && (

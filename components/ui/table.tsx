@@ -15,7 +15,7 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
 function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
-      className={cn("[&_tr]:border-b bg-muted/30", className)}
+      className={cn("bg-muted/30 [&_tr]:border-b", className)}
       {...props}
     />
   );
@@ -23,10 +23,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
 
 function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
   return (
-    <tbody
-      className={cn("[&_tr:last-child]:border-0", className)}
-      {...props}
-    />
+    <tbody className={cn("[&_tr:last-child]:border-0", className)} {...props} />
   );
 }
 

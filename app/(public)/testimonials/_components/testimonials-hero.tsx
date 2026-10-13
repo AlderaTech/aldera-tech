@@ -7,7 +7,7 @@ type TestimonialsHeroProps = {
 export function TestimonialsHero({ count }: TestimonialsHeroProps) {
   return (
     <section className="editorial-ink">
-      <div className="mx-auto max-w-screen-xxxl public-container-px py-10 text-center sm:py-14">
+      <div className="public-container-px mx-auto max-w-screen-xxxl py-10 text-center sm:py-14">
         <FadeUp>
           <div className="editorial-kicker mx-auto border-white/20 text-white/64">
             Testimoni

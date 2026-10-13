@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
+import { PUBLIC_ROUTES } from "@/lib/routes";
 
 export const SITE_SETTING_ID = "site";
 
@@ -60,13 +61,17 @@ export const defaultPricingPlans: PublicPricingPlan[] = [
     priceFrom: 7_500_000,
     featured: false,
     ctaLabel: "Mulai Starter",
-    ctaHref: "/contact?plan=starter",
+    ctaHref: PUBLIC_ROUTES.contactWithPlan("starter"),
     order: 1,
     features: [
       { text: "Landing page hingga 5 halaman", included: true, order: 1 },
       { text: "Desain responsif", included: true, order: 2 },
       { text: "SEO on-page dasar", included: true, order: 3 },
-      { text: "Form kontak dan integrasi kanal pesan", included: true, order: 4 },
+      {
+        text: "Form kontak dan integrasi kanal pesan",
+        included: true,
+        order: 4,
+      },
       { text: "Blog / CMS sederhana", included: false, order: 5 },
       { text: "Payment gateway", included: false, order: 6 },
       { text: "Dashboard admin", included: false, order: 7 },
@@ -79,7 +84,7 @@ export const defaultPricingPlans: PublicPricingPlan[] = [
     priceFrom: 25_000_000,
     featured: true,
     ctaLabel: "Mulai Professional",
-    ctaHref: "/contact?plan=professional",
+    ctaHref: PUBLIC_ROUTES.contactWithPlan("professional"),
     order: 2,
     features: [
       { text: "Semua fitur Starter", included: true, order: 1 },
@@ -98,7 +103,7 @@ export const defaultPricingPlans: PublicPricingPlan[] = [
     priceFrom: 75_000_000,
     featured: false,
     ctaLabel: "Hubungi Sales",
-    ctaHref: "/contact?plan=enterprise",
+    ctaHref: PUBLIC_ROUTES.contactWithPlan("enterprise"),
     order: 3,
     features: [
       { text: "Semua fitur Professional", included: true, order: 1 },

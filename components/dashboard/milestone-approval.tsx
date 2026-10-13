@@ -7,13 +7,18 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { approveMilestoneAction, rejectMilestoneAction } from "@/lib/actions/milestone";
+import {
+  approveMilestoneAction,
+  rejectMilestoneAction,
+} from "@/lib/actions/milestone";
 
 export function MilestoneApproval({ milestoneId }: { milestoneId: string }) {
   const router = useRouter();
   const [showReject, setShowReject] = React.useState(false);
   const [feedback, setFeedback] = React.useState("");
-  const [loading, setLoading] = React.useState<"approve" | "reject" | null>(null);
+  const [loading, setLoading] = React.useState<"approve" | "reject" | null>(
+    null
+  );
 
   async function handleApprove() {
     setLoading("approve");
@@ -49,10 +54,19 @@ export function MilestoneApproval({ milestoneId }: { milestoneId: string }) {
       </p>
       <div className="flex gap-2">
         <Button size="sm" onClick={handleApprove} disabled={!!loading}>
-          {loading === "approve" ? <Loader2 className="size-3.5 animate-spin" /> : <CheckCircle2 className="size-3.5" />}
+          {loading === "approve" ? (
+            <Loader2 className="size-3.5 animate-spin" />
+          ) : (
+            <CheckCircle2 className="size-3.5" />
+          )}
           Setujui
         </Button>
-        <Button size="sm" variant="outline" onClick={() => setShowReject(!showReject)} disabled={!!loading}>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => setShowReject(!showReject)}
+          disabled={!!loading}
+        >
           <XCircle className="size-3.5" /> Tolak
         </Button>
       </div>
@@ -64,8 +78,15 @@ export function MilestoneApproval({ milestoneId }: { milestoneId: string }) {
             onChange={(e) => setFeedback(e.target.value)}
             rows={2}
           />
-          <Button size="sm" variant="destructive" onClick={handleReject} disabled={!!loading}>
-            {loading === "reject" && <Loader2 className="size-3.5 animate-spin" />}
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={handleReject}
+            disabled={!!loading}
+          >
+            {loading === "reject" && (
+              <Loader2 className="size-3.5 animate-spin" />
+            )}
             Kirim Penolakan
           </Button>
         </div>

@@ -12,6 +12,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { PUBLIC_ROUTES } from "@/lib/routes";
 
 export const runtime = "nodejs";
 
@@ -31,7 +32,12 @@ export async function GET(req: NextRequest) {
     select: { id: true, slug: true, title: true },
   });
 
-  const results: Array<{ id: string; slug: string; ok: boolean; error?: string }> = [];
+  const results: Array<{
+    id: string;
+    slug: string;
+    ok: boolean;
+    error?: string;
+  }> = [];
 
   for (const post of due) {
     try {
@@ -43,8 +49,8 @@ export async function GET(req: NextRequest) {
           scheduledAt: null,
         },
       });
-      revalidatePath("/blog");
-      revalidatePath(`/blog/${post.slug}`);
+      revalidatePath(PUBLIC_ROUTES.blog);
+      revalidatePath(PUBLIC_ROUTES.blogPost(post.slug));
       results.push({ id: post.id, slug: post.slug, ok: true });
     } catch (err) {
       results.push({

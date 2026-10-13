@@ -14,7 +14,7 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
   return (
     <Link
       href={PUBLIC_ROUTES.portfolioDetail(item.slug)}
-      className="block h-full group"
+      className="group block h-full"
     >
       <Card className="h-full overflow-hidden rounded-xl p-0 transition-all hover:-translate-y-1 hover:shadow-2xl">
         <div className="relative aspect-[4/3] overflow-hidden bg-muted">
@@ -28,18 +28,18 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
             />
           ) : null}
           <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-transparent to-transparent opacity-80 transition-opacity group-hover:opacity-100" />
-          <div className="absolute left-3 top-3 flex gap-2">
+          <div className="absolute top-3 left-3 flex gap-2">
             <Badge className="bg-[#0b6bff] text-white hover:bg-[#0b6bff]">
               {item.industry}
             </Badge>
           </div>
-          <div className="absolute bottom-3 right-3 flex size-9 translate-y-2 items-center justify-center rounded-full bg-white text-black opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100">
+          <div className="absolute right-3 bottom-3 flex size-9 translate-y-2 items-center justify-center rounded-full bg-white text-black opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100">
             <ArrowUpRight className="size-4" />
           </div>
         </div>
         <div className="space-y-3 bg-white/80 p-5">
-          <div className="text-xs uppercase text-black/62">{item.client}</div>
-          <h2 className="text-xl font-black leading-snug transition-colors group-hover:text-[#0b6bff]">
+          <div className="text-xs text-black/62 uppercase">{item.client}</div>
+          <h2 className="text-xl leading-snug font-black transition-colors group-hover:text-[#0b6bff]">
             {item.title}
           </h2>
           <p className="line-clamp-2 text-sm text-black/60">{item.summary}</p>

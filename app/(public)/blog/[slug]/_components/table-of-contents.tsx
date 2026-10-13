@@ -71,9 +71,9 @@ export function TableOfContents({ containerId }: { containerId: string }) {
   return (
     <nav
       aria-label="Daftar isi"
-      className="sticky top-20 hidden xl:block w-60 shrink-0"
+      className="sticky top-20 hidden w-60 shrink-0 xl:block"
     >
-      <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3 inline-flex items-center gap-1.5">
+      <div className="mb-3 inline-flex items-center gap-1.5 text-xs font-medium tracking-wider text-muted-foreground uppercase">
         <ListTree className="size-3.5" />
         Daftar Isi
       </div>
@@ -83,11 +83,11 @@ export function TableOfContents({ containerId }: { containerId: string }) {
             <a
               href={`#${h.id}`}
               className={cn(
-                "block py-1 text-sm transition-colors pl-4 -ml-px border-l-2",
+                "-ml-px block border-l-2 py-1 pl-4 text-sm transition-colors",
                 h.level === 3 && "pl-7",
                 activeId === h.id
-                  ? "text-primary border-primary font-medium"
-                  : "text-muted-foreground hover:text-foreground border-transparent"
+                  ? "border-primary font-medium text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
               {h.text}

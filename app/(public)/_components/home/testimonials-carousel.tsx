@@ -53,19 +53,19 @@ export function TestimonialsCarousel({ items }: { items: TestimonialCard[] }) {
   return (
     <div className="relative">
       <div ref={emblaRef} className="overflow-hidden">
-        <div className="flex -ml-4">
+        <div className="-ml-4 flex">
           {items.map((t) => (
             <div
               key={t.id}
-              className="shrink-0 pl-4 w-full sm:w-1/2 lg:w-1/3 xxxl:w-1/4"
+              className="w-full shrink-0 pl-4 xxxl:w-1/4 sm:w-1/2 lg:w-1/3"
             >
               <Card className="editorial-card-dark relative h-full gap-0 rounded-xl p-6 text-white transition-all duration-200 hover:-translate-y-1">
                 <Quote
-                  className="absolute right-4 top-4 size-6 text-[#0b6bff]/30"
+                  className="absolute top-4 right-4 size-6 text-[#0b6bff]/30"
                   aria-hidden
                 />
                 <div
-                  className="flex items-center gap-0.5 mb-3"
+                  className="mb-3 flex items-center gap-0.5"
                   aria-label={`${t.rating} dari 5 bintang`}
                 >
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -92,7 +92,9 @@ export function TestimonialsCarousel({ items }: { items: TestimonialCard[] }) {
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0">
-                    <div className="font-medium text-sm truncate">{t.clientName}</div>
+                    <div className="truncate text-sm font-medium">
+                      {t.clientName}
+                    </div>
                     <div className="truncate text-xs text-white/64">
                       {[t.clientRole, t.company].filter(Boolean).join(" · ")}
                     </div>
@@ -104,7 +106,7 @@ export function TestimonialsCarousel({ items }: { items: TestimonialCard[] }) {
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-2 mt-6">
+      <div className="mt-6 flex items-center justify-end gap-2">
         <Button
           variant="outline"
           size="icon"

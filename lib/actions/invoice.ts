@@ -6,7 +6,7 @@ import type { InvoiceStatus } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { invoiceCreateSchema } from "@/lib/validations/invoice";
-import { sendMail, invoiceEmailHtml } from "@/lib/email";
+import { sendWhatsApp } from "@/lib/whatsapp";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { notify } from "@/lib/notifications";
@@ -128,30 +128,32 @@ export async function updateInvoiceStatusAction(
   return invoice;
 }
 
-export async function sendInvoiceEmailAction(invoiceId: string) {
+export async function sendInvoiceWhatsAppAction(invoiceId: string) {
   await requireAdmin();
   const invoice = await prisma.invoice.findUnique({
     where: { id: invoiceId },
     include: { client: true },
   });
   if (!invoice) throw new Error("Invoice not found");
+  if (!invoice.client.phone) {
+    throw new Error(
+      "Nomor WhatsApp klien belum terdaftar. Lengkapi nomor telepon klien terlebih dahulu."
+    );
+  }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  try {
-    await sendMail({
-      to: invoice.client.email,
-      subject: `Invoice ${invoice.number}, Solvo Tech`,
-      html: invoiceEmailHtml({
-        number: invoice.number,
-        clientName: invoice.client.name,
-        total: formatCurrency(Number(invoice.total)),
-        dueDate: formatDate(invoice.dueDate),
-        viewUrl: `${appUrl}/dashboard/invoices`,
-      }),
-    });
-  } catch (err) {
-    console.error("Send invoice email error:", err);
-    throw new Error("Gagal mengirim email");
+  const tpl = waTemplates.invoiceSent(
+    invoice.number,
+    formatCurrency(Number(invoice.total)),
+    formatDate(invoice.dueDate)
+  );
+
+  const res = await sendWhatsApp({
+    to: invoice.client.phone,
+    message: `*${tpl.title}*\n\n${tpl.message}`,
+  });
+  if (!res.success) {
+    console.error("Send invoice WhatsApp error:", res.error);
+    throw new Error(`Gagal mengirim WhatsApp: ${res.error ?? "Unknown error"}`);
   }
 
   await prisma.invoice.update({
@@ -161,13 +163,19 @@ export async function sendInvoiceEmailAction(invoiceId: string) {
     },
   });
 
-  // WhatsApp notification
-  const tpl = waTemplates.invoiceSent(invoice.number, formatCurrency(Number(invoice.total)), formatDate(invoice.dueDate));
-  notify({ userId: invoice.clientId, type: "INVOICE_SENT", ...tpl }).catch(() => {});
+  // Also log notification record
+  await notify({
+    userId: invoice.clientId,
+    type: "INVOICE_SENT",
+    ...tpl,
+  }).catch(() => {});
 
   revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
   revalidatePath(ADMIN_ROUTES.invoices);
 }
+
+// Backward-compatible alias
+export const sendInvoiceEmailAction = sendInvoiceWhatsAppAction;
 
 export async function sendReminderAction(invoiceId: string) {
   await requireAdmin();
@@ -176,30 +184,39 @@ export async function sendReminderAction(invoiceId: string) {
     include: { client: true },
   });
   if (!invoice) throw new Error("Invoice not found");
+  if (!invoice.client.phone) {
+    throw new Error(
+      "Nomor WhatsApp klien belum terdaftar. Lengkapi nomor telepon klien terlebih dahulu."
+    );
+  }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  try {
-    await sendMail({
-      to: invoice.client.email,
-      subject: `Pengingat: Invoice ${invoice.number}, Solvo Tech`,
-      html: invoiceEmailHtml({
-        number: invoice.number,
-        clientName: invoice.client.name,
-        total: formatCurrency(Number(invoice.total)),
-        dueDate: formatDate(invoice.dueDate),
-        viewUrl: `${appUrl}${DASHBOARD_ROUTES.invoices}`,
-        isReminder: true,
-      }),
-    });
-  } catch (err) {
-    console.error("Send reminder error:", err);
-    throw new Error("Gagal mengirim reminder");
+  const tpl = waTemplates.invoiceReminder(
+    invoice.number,
+    formatCurrency(Number(invoice.total)),
+    formatDate(invoice.dueDate)
+  );
+
+  const res = await sendWhatsApp({
+    to: invoice.client.phone,
+    message: `*${tpl.title}*\n\n${tpl.message}`,
+  });
+  if (!res.success) {
+    console.error("Send reminder WhatsApp error:", res.error);
+    throw new Error(
+      `Gagal mengirim reminder WhatsApp: ${res.error ?? "Unknown error"}`
+    );
   }
 
   await prisma.invoice.update({
     where: { id: invoiceId },
     data: { lastReminderSentAt: new Date() },
   });
+
+  await notify({
+    userId: invoice.clientId,
+    type: "INVOICE_SENT",
+    ...tpl,
+  }).catch(() => {});
 
   revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
 }

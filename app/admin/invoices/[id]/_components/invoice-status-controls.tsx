@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Mail, Bell, Loader2, Trash2 } from "lucide-react";
+import { MessageSquare, Bell, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { InvoiceStatus } from "@prisma/client";
 
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import {
   updateInvoiceStatusAction,
-  sendInvoiceEmailAction,
+  sendInvoiceWhatsAppAction,
   sendReminderAction,
   deleteInvoiceAction,
 } from "@/lib/actions/invoice";
@@ -54,8 +54,8 @@ export function InvoiceStatusControls({
   function handleSend() {
     startTransition(async () => {
       try {
-        await sendInvoiceEmailAction(invoiceId);
-        toast.success("Invoice dikirim via email");
+        await sendInvoiceWhatsAppAction(invoiceId);
+        toast.success("Invoice dikirim via WhatsApp");
         router.refresh();
       } catch (err) {
         toast.error((err as Error).message);
@@ -67,7 +67,7 @@ export function InvoiceStatusControls({
     startTransition(async () => {
       try {
         await sendReminderAction(invoiceId);
-        toast.success("Reminder terkirim");
+        toast.success("Reminder terkirim via WhatsApp");
         router.refresh();
       } catch (err) {
         toast.error((err as Error).message);
@@ -90,15 +90,19 @@ export function InvoiceStatusControls({
     <>
       <div
         className={cn(
-          "flex items-end gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm flex-wrap",
+          "flex flex-wrap items-end gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm",
           className
         )}
       >
         <div className="min-w-44 space-y-1.5">
-          <span className="text-xs font-medium uppercase tracking-[0.12em] text-slate-500">
+          <span className="text-xs font-medium tracking-[0.12em] text-slate-500 uppercase">
             Status
           </span>
-          <Select value={status} onValueChange={handleStatus} disabled={isPending}>
+          <Select
+            value={status}
+            onValueChange={handleStatus}
+            disabled={isPending}
+          >
             <SelectTrigger className="h-10 w-full">
               <SelectValue placeholder="Pilih status invoice" />
             </SelectTrigger>
@@ -120,9 +124,9 @@ export function InvoiceStatusControls({
           {isPending ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (
-            <Mail className="size-4" />
+            <MessageSquare className="size-4" />
           )}
-          Kirim Email
+          Kirim WhatsApp
         </Button>
         <Button
           variant="outline"
@@ -146,9 +150,9 @@ export function InvoiceStatusControls({
         onOpenChange={(open) => {
           if (!open) setConfirmAction(null);
         }}
-        title="Kirim invoice ke email client?"
-        description="Invoice akan dikirim ke email client yang terdaftar."
-        confirmLabel="Kirim email"
+        title="Kirim invoice ke WhatsApp klien?"
+        description="Invoice akan dikirim ke nomor WhatsApp klien yang terdaftar."
+        confirmLabel="Kirim WhatsApp"
         pending={isPending}
         onConfirm={handleSend}
       />
@@ -157,8 +161,8 @@ export function InvoiceStatusControls({
         onOpenChange={(open) => {
           if (!open) setConfirmAction(null);
         }}
-        title="Kirim reminder pembayaran?"
-        description="Reminder pembayaran akan dikirim ke client untuk invoice ini."
+        title="Kirim reminder pembayaran via WhatsApp?"
+        description="Reminder pembayaran akan dikirim via WhatsApp ke klien untuk invoice ini."
         confirmLabel="Kirim reminder"
         pending={isPending}
         onConfirm={handleReminder}

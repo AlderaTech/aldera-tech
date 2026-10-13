@@ -22,7 +22,7 @@ const projectDetailInclude = {
   invoices: { orderBy: { issueDate: "desc" } },
   messages: {
     orderBy: { createdAt: "asc" },
-    include: { author: { select: { id: true, name: true, role: true } } },
+    include: { author: { select: { id: true, name: true, roles: true } } },
   },
   timeEntries: {
     orderBy: { startedAt: "desc" },
@@ -42,7 +42,9 @@ export function getProjectDetailStats(project: AdminProjectDetail) {
   const completedMilestones = project.milestones.filter(
     (milestone) => milestone.status === "COMPLETED"
   ).length;
-  const openTasks = project.tasks.filter((task) => task.status !== "DONE").length;
+  const openTasks = project.tasks.filter(
+    (task) => task.status !== "DONE"
+  ).length;
   const completedTimeEntries = project.timeEntries.filter(
     (entry) => entry.endedAt
   );
@@ -50,7 +52,9 @@ export function getProjectDetailStats(project: AdminProjectDetail) {
     (total, entry) => total + entry.durationSec,
     0
   );
-  const activeMessages = project.messages.filter((message) => !message.deletedAt);
+  const activeMessages = project.messages.filter(
+    (message) => !message.deletedAt
+  );
 
   return {
     completedMilestones,

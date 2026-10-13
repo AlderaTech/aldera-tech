@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { API_ROUTES } from "@/lib/routes";
 
 type ToolbarButtonProps = {
   editor: Editor;
@@ -37,7 +38,13 @@ type ToolbarButtonProps = {
   disabled?: boolean;
 };
 
-function ToolbarButton({ onClick, active, label, icon, disabled }: ToolbarButtonProps) {
+function ToolbarButton({
+  onClick,
+  active,
+  label,
+  icon,
+  disabled,
+}: ToolbarButtonProps) {
   return (
     <Button
       type="button"
@@ -129,7 +136,7 @@ export function TipTapEditor({
       const formData = new FormData();
       formData.append("file", file);
       try {
-        const res = await fetch("/api/upload", {
+        const res = await fetch(API_ROUTES.upload, {
           method: "POST",
           body: formData,
         });
@@ -145,15 +152,20 @@ export function TipTapEditor({
 
   if (!editor) {
     return (
-      <div className={cn("border rounded-lg min-h-[400px]", className)}>
-        <div className="h-10 border-b bg-muted/30 animate-pulse" />
+      <div className={cn("min-h-[400px] rounded-lg border", className)}>
+        <div className="h-10 animate-pulse border-b bg-muted/30" />
       </div>
     );
   }
 
   return (
-    <div className={cn("border rounded-lg overflow-hidden bg-background", className)}>
-      <div className="flex flex-wrap items-center gap-0.5 p-1.5 border-b bg-muted/30 sticky top-0 z-10">
+    <div
+      className={cn(
+        "overflow-hidden rounded-lg border bg-background",
+        className
+      )}
+    >
+      <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 border-b bg-muted/30 p-1.5">
         <ToolbarButton
           editor={editor}
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -182,29 +194,35 @@ export function TipTapEditor({
           label="Inline code"
           icon={<Code className="size-4" />}
         />
-        <Separator orientation="vertical" className="!h-5 mx-1" />
+        <Separator orientation="vertical" className="mx-1 !h-5" />
         <ToolbarButton
           editor={editor}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
           active={editor.isActive("heading", { level: 1 })}
           label="Heading 1"
           icon={<Heading1 className="size-4" />}
         />
         <ToolbarButton
           editor={editor}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
           active={editor.isActive("heading", { level: 2 })}
           label="Heading 2"
           icon={<Heading2 className="size-4" />}
         />
         <ToolbarButton
           editor={editor}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
           active={editor.isActive("heading", { level: 3 })}
           label="Heading 3"
           icon={<Heading3 className="size-4" />}
         />
-        <Separator orientation="vertical" className="!h-5 mx-1" />
+        <Separator orientation="vertical" className="mx-1 !h-5" />
         <ToolbarButton
           editor={editor}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -226,7 +244,7 @@ export function TipTapEditor({
           label="Blockquote"
           icon={<Quote className="size-4" />}
         />
-        <Separator orientation="vertical" className="!h-5 mx-1" />
+        <Separator orientation="vertical" className="mx-1 !h-5" />
         <ToolbarButton
           editor={editor}
           onClick={setLink}
@@ -247,7 +265,7 @@ export function TipTapEditor({
           label="Insert image"
           icon={<ImageIcon className="size-4" />}
         />
-        <Separator orientation="vertical" className="!h-5 mx-1" />
+        <Separator orientation="vertical" className="mx-1 !h-5" />
         <ToolbarButton
           editor={editor}
           onClick={() => editor.chain().focus().undo().run()}

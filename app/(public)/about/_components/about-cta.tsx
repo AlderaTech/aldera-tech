@@ -6,7 +6,7 @@ import { PUBLIC_ROUTES } from "@/lib/routes";
 export function AboutCta() {
   return (
     <section className="editorial-surface">
-      <div className="mx-auto max-w-screen-xxxl public-container-px pb-14 sm:pb-20">
+      <div className="public-container-px mx-auto max-w-screen-xxxl pb-14 sm:pb-20">
         <FadeUp>
           <div className="rounded-xl bg-[#08090d] p-8 text-center text-white sm:p-12">
             <h2 className="editorial-display mb-4 text-4xl sm:text-5xl">

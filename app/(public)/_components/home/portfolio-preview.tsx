@@ -10,7 +10,10 @@ import {
   StaggerItem,
 } from "@/components/shared/motion";
 import { prisma } from "@/lib/prisma";
-import { publicCaseStudies, resolveCaseStudyImage } from "@/lib/public-fallbacks";
+import {
+  publicCaseStudies,
+  resolveCaseStudyImage,
+} from "@/lib/public-fallbacks";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
 
@@ -54,7 +57,7 @@ export async function PortfolioPreview() {
 
   return (
     <section className="editorial-surface">
-      <div className="mx-auto max-w-screen-xxxl public-container-px py-14 sm:py-20">
+      <div className="public-container-px mx-auto max-w-screen-xxxl py-14 sm:py-20">
         <FadeUp className="mb-6 grid gap-5 lg:grid-cols-[0.8fr_1fr] lg:items-end">
           <div className="max-w-2xl">
             <div className="editorial-kicker border-black/20 text-black/60">
@@ -65,8 +68,8 @@ export async function PortfolioPreview() {
             </h2>
           </div>
           <p className="max-w-2xl text-base leading-relaxed text-black/60 lg:justify-self-end">
-            Preview produk dibuat sebagai studi visual: layar, alur, dan
-            konteks bisnis terlihat sejak kartu pertama.
+            Preview produk dibuat sebagai studi visual: layar, alur, dan konteks
+            bisnis terlihat sejak kartu pertama.
           </p>
         </FadeUp>
 
@@ -93,19 +96,19 @@ export async function PortfolioPreview() {
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/88 via-black/24 to-transparent" />
-                    <div className="absolute left-3 top-3">
+                    <div className="absolute top-3 left-3">
                       <Badge className="bg-[#0b6bff] text-white hover:bg-[#0b6bff]">
                         {item.industry}
                       </Badge>
                     </div>
-                    <div className="absolute right-3 top-3 flex size-9 translate-y-1 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white opacity-0 backdrop-blur transition-all group-hover:translate-y-0 group-hover:opacity-100">
+                    <div className="absolute top-3 right-3 flex size-9 translate-y-1 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white opacity-0 backdrop-blur transition-all group-hover:translate-y-0 group-hover:opacity-100">
                       <ArrowUpRight className="size-4" />
                     </div>
                     <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-6">
-                      <div className="mb-2 text-xs uppercase text-white/64">
+                      <div className="mb-2 text-xs text-white/64 uppercase">
                         {item.client}
                       </div>
-                      <h3 className="text-2xl font-black leading-tight text-balance lg:text-3xl">
+                      <h3 className="text-2xl leading-tight font-black text-balance lg:text-3xl">
                         {item.title}
                       </h3>
                       <div className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white/80">

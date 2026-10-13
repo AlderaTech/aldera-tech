@@ -6,7 +6,7 @@ import { PUBLIC_ROUTES } from "@/lib/routes";
 export function ServicesCta() {
   return (
     <section className="editorial-surface">
-      <div className="mx-auto max-w-screen-xxxl public-container-px pb-14 sm:pb-20">
+      <div className="public-container-px mx-auto max-w-screen-xxxl pb-14 sm:pb-20">
         <FadeUp>
           <div className="rounded-xl border border-black/10 bg-white/75 p-8 text-center shadow-xl sm:p-12">
             <h2 className="editorial-display mb-3 text-4xl sm:text-5xl">

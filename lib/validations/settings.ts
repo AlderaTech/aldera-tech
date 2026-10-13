@@ -10,7 +10,12 @@ const optionalUrl = z
 export const siteSettingsSchema = z.object({
   brandName: z.string().trim().min(2).max(80),
   footerDescription: z.string().trim().min(20).max(600),
-  email: z.string().trim().email("Email tidak valid").optional().or(z.literal("")),
+  email: z
+    .string()
+    .trim()
+    .email("Email tidak valid")
+    .optional()
+    .or(z.literal("")),
   phone: z.string().trim().max(40).optional().or(z.literal("")),
   whatsapp: z.string().trim().max(40).optional().or(z.literal("")),
   address: z.string().trim().max(240).optional().or(z.literal("")),

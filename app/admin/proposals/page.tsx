@@ -31,14 +31,15 @@ export default async function AdminProposalsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
             <FileSignature className="size-6" />
             Proposal
           </h1>
           <p className="text-muted-foreground">
-            Kirim proposal dengan e-signature. Setelah ditandatangani, konversi menjadi proyek.
+            Kirim proposal dengan e-signature. Setelah ditandatangani, konversi
+            menjadi proyek.
           </p>
         </div>
         <Button asChild>
@@ -48,7 +49,7 @@ export default async function AdminProposalsPage() {
         </Button>
       </div>
 
-      <Card className="p-0 overflow-hidden">
+      <Card className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow>
@@ -65,9 +66,10 @@ export default async function AdminProposalsPage() {
               <TableRow>
                 <TableCell
                   colSpan={6}
-                  className="text-center py-10 text-muted-foreground"
+                  className="py-10 text-center text-muted-foreground"
                 >
-                  Belum ada proposal. Buat yang pertama untuk mulai sales pipeline.
+                  Belum ada proposal. Buat yang pertama untuk mulai sales
+                  pipeline.
                 </TableCell>
               </TableRow>
             ) : (
@@ -100,7 +102,7 @@ export default async function AdminProposalsPage() {
                     <TableCell>
                       <Badge variant={meta.variant}>{meta.label}</Badge>
                     </TableCell>
-                    <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                    <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
                       {formatDate(p.createdAt)}
                     </TableCell>
                   </TableRow>

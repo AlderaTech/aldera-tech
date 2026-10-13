@@ -1,6 +1,6 @@
 import "server-only";
 
-const API_URL = process.env.WHATSAPP_API_URL;
+const API_URL = process.env.WHATSAPP_API_URL || "https://api.fonnte.com/send";
 const API_KEY = process.env.WHATSAPP_API_KEY;
 
 export type SendWhatsAppArgs = {
@@ -9,15 +9,18 @@ export type SendWhatsAppArgs = {
 };
 
 /**
- * Send a WhatsApp message via configured API provider (Fonnte/Wablas/etc).
- * Falls back to console.log if credentials are not configured.
+ * Send a WhatsApp message via Fonnte API (https://api.fonnte.com/send).
+ * Falls back to console.log if WHATSAPP_API_KEY is not configured.
  */
 export async function sendWhatsApp({ to, message }: SendWhatsAppArgs) {
   const phone = normalizePhone(to);
   if (!phone) return { success: false, error: "Invalid phone number" };
 
   if (!API_URL || !API_KEY) {
-    console.log("[WhatsApp] No API configured. Message:", { to: phone, message });
+    console.log("[WhatsApp] No API configured. Message:", {
+      to: phone,
+      message,
+    });
     return { success: true, simulated: true };
   }
 

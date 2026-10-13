@@ -16,9 +16,7 @@ export default async function NewBlogPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Post Baru</h1>
-        <p className="text-muted-foreground">
-          Tulis dan publish artikel baru.
-        </p>
+        <p className="text-muted-foreground">Tulis dan publish artikel baru.</p>
       </div>
       <BlogForm categories={categories} />
     </div>

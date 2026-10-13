@@ -1,11 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import {
-  MoreHorizontal,
-  Power,
-  Shield,
-} from "lucide-react";
+import { Check, MoreHorizontal, Power, Shield } from "lucide-react";
 import { toast } from "sonner";
 import type { Role } from "@prisma/client";
 
@@ -24,7 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   toggleUserActiveAction,
-  updateUserRoleAction,
+  toggleUserRoleAction,
 } from "@/lib/actions/admin";
 import { ROLE_LABELS, STAFF_ROLES } from "@/lib/permissions";
 
@@ -32,22 +28,27 @@ const ASSIGNABLE_ROLES: Role[] = [...STAFF_ROLES, "CLIENT"];
 
 export function UserRowActions({
   userId,
-  role,
+  roles,
   isActive,
 }: {
   userId: string;
-  role: Role;
+  roles: Role[];
   isActive: boolean;
 }) {
   const [isPending, startTransition] = useTransition();
   const [roleTarget, setRoleTarget] = useState<Role | null>(null);
   const [activeOpen, setActiveOpen] = useState(false);
 
-  function handleRoleChange(nextRole: Role) {
+  function handleToggleRole(role: Role) {
     startTransition(async () => {
       try {
-        await updateUserRoleAction(userId, nextRole);
-        toast.success(`Role diubah menjadi ${ROLE_LABELS[nextRole]}`);
+        await toggleUserRoleAction(userId, role);
+        const willHave = !roles.includes(role);
+        toast.success(
+          willHave
+            ? `Role ${ROLE_LABELS[role]} ditambahkan.`
+            : `Role ${ROLE_LABELS[role]} dihapus.`
+        );
         setRoleTarget(null);
       } catch (err) {
         toast.error((err as Error).message);
@@ -81,29 +82,36 @@ export function UserRowActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>Ubah Role</DropdownMenuLabel>
+          <DropdownMenuLabel>Kelola Role</DropdownMenuLabel>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
-              <Shield className="size-4" /> Pilih Role
+              <Shield className="size-4" /> Toggle Role
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              {ASSIGNABLE_ROLES.map((r) => (
-                <DropdownMenuItem
-                  key={r}
-                  disabled={r === role}
-                  onSelect={(event) => {
-                    event.preventDefault();
-                    setRoleTarget(r);
-                  }}
-                >
-                  {ROLE_LABELS[r]}
-                  {r === role && (
-                    <span className="ml-auto text-xs text-muted-foreground">
-                      aktif
+              {ASSIGNABLE_ROLES.map((r) => {
+                const hasRole = roles.includes(r);
+                return (
+                  <DropdownMenuItem
+                    key={r}
+                    onSelect={(event) => {
+                      event.preventDefault();
+                      setRoleTarget(r);
+                    }}
+                  >
+                    <span className="flex items-center gap-2">
+                      {hasRole && <Check className="size-3.5 text-primary" />}
+                      <span className={hasRole ? "font-medium" : ""}>
+                        {ROLE_LABELS[r]}
+                      </span>
                     </span>
-                  )}
-                </DropdownMenuItem>
-              ))}
+                    {hasRole && (
+                      <span className="ml-auto text-xs text-muted-foreground">
+                        aktif
+                      </span>
+                    )}
+                  </DropdownMenuItem>
+                );
+              })}
             </DropdownMenuSubContent>
           </DropdownMenuSub>
           <DropdownMenuSeparator />
@@ -125,11 +133,17 @@ export function UserRowActions({
           if (!open) setRoleTarget(null);
         }}
         title="Ubah role pengguna?"
-        description={`Role pengguna akan diubah menjadi ${roleTarget ? ROLE_LABELS[roleTarget] : ""}. Perubahan ini memengaruhi akses dashboard.`}
-        confirmLabel="Ubah role"
+        description={
+          roleTarget
+            ? roles.includes(roleTarget)
+              ? `Hapus role "${ROLE_LABELS[roleTarget]}" dari pengguna ini?`
+              : `Tambahkan role "${ROLE_LABELS[roleTarget]}" ke pengguna ini?`
+            : ""
+        }
+        confirmLabel="Konfirmasi"
         pending={isPending}
         onConfirm={() => {
-          if (roleTarget) handleRoleChange(roleTarget);
+          if (roleTarget) handleToggleRole(roleTarget);
         }}
       />
       <ConfirmDialog

@@ -10,79 +10,158 @@ import {
 async function main() {
   console.log("🌱 Seeding database…");
 
-  const adminEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@solvo.tech";
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? "password";
-  const clientPassword = "password";
+  const defaultPassword = "password";
+  const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
   // Clean up legacy seeded users that may linger from older seed runs.
-  await prisma.user.deleteMany({ where: { email: "budi@example.com" } });
+  await prisma.user.deleteMany({
+    where: {
+      email: {
+        in: [
+          "budi@example.com",
+          "admin@solvo.tech",
+          "dev@solvo.tech",
+          "siti@example.com",
+        ],
+      },
+    },
+  });
 
   // ----------------------------------------------------------------
-  // Users
+  // 1. Staff Users (ADMIN & DEVELOPER)
   // ----------------------------------------------------------------
-  const admin = await prisma.user.upsert({
-    where: { email: adminEmail },
+  const staffGading = await prisma.user.upsert({
+    where: { email: "gading@gmail.com" },
     update: {
-      password: await bcrypt.hash(adminPassword, 10),
+      name: "Alfian Gading Saputra",
+      phone: "0895363116378",
+      roles: ["ADMIN", "DEVELOPER"],
+      password: hashedPassword,
+      isActive: true,
     },
     create: {
-      email: adminEmail,
-      name: "Solvo Admin",
-      password: await bcrypt.hash(adminPassword, 10),
-      role: "ADMIN",
+      email: "gading@gmail.com",
+      name: "Alfian Gading Saputra",
+      phone: "0895363116378",
       company: "Solvo Tech",
+      roles: ["ADMIN", "DEVELOPER"],
+      password: hashedPassword,
       isActive: true,
       emailVerified: new Date(),
     },
   });
 
   await prisma.user.upsert({
-    where: { email: "dev@solvo.tech" },
+    where: { email: "dery@gmail.com" },
     update: {
-      password: await bcrypt.hash("password", 10),
+      name: "Dery Wahyu Perdana",
+      phone: "082377341268",
+      roles: ["ADMIN", "DEVELOPER"],
+      password: hashedPassword,
+      isActive: true,
     },
     create: {
-      email: "dev@solvo.tech",
-      name: "Alex Developer",
-      password: await bcrypt.hash("password", 10),
-      role: "DEVELOPER",
+      email: "dery@gmail.com",
+      name: "Dery Wahyu Perdana",
+      phone: "082377341268",
       company: "Solvo Tech",
+      roles: ["ADMIN", "DEVELOPER"],
+      password: hashedPassword,
       isActive: true,
       emailVerified: new Date(),
     },
   });
 
-  const client1 = await prisma.user.upsert({
-    where: { email: "gading@gmail.com" },
+  await prisma.user.upsert({
+    where: { email: "rafli@gmail.com" },
     update: {
-      password: await bcrypt.hash(clientPassword, 10),
+      name: "Rafli Maulana",
+      phone: "085367271303",
+      roles: ["ADMIN", "DEVELOPER"],
+      password: hashedPassword,
+      isActive: true,
     },
     create: {
-      email: "gading@gmail.com",
-      name: "Gading Pratama",
-      password: await bcrypt.hash(clientPassword, 10),
-      role: "CLIENT",
-      company: "Kopi Kenangan Nusantara",
-      phone: "+62 812-3456-7890",
+      email: "rafli@gmail.com",
+      name: "Rafli Maulana",
+      phone: "085367271303",
+      company: "Solvo Tech",
+      roles: ["ADMIN", "DEVELOPER"],
+      password: hashedPassword,
       isActive: true,
+      emailVerified: new Date(),
     },
   });
 
-  const client2 = await prisma.user.upsert({
-    where: { email: "siti@example.com" },
+  // ----------------------------------------------------------------
+  // 2. Client Users (CLIENT)
+  // ----------------------------------------------------------------
+  const clientGading = await prisma.user.upsert({
+    where: { email: "gading-client@gmail.com" },
     update: {
-      password: await bcrypt.hash(clientPassword, 10),
-    },
-    create: {
-      email: "siti@example.com",
-      name: "Siti Rahayu",
-      password: await bcrypt.hash(clientPassword, 10),
-      role: "CLIENT",
-      company: "Batik Nusantara Collective",
-      phone: "+62 811-9988-7766",
+      name: "Gading",
+      phone: "0895363116378",
+      roles: ["CLIENT"],
+      password: hashedPassword,
       isActive: true,
     },
+    create: {
+      email: "gading-client@gmail.com",
+      name: "Gading",
+      phone: "0895363116378",
+      company: "Kopi Kenangan Nusantara",
+      roles: ["CLIENT"],
+      password: hashedPassword,
+      isActive: true,
+      emailVerified: new Date(),
+    },
   });
+
+  const clientDery = await prisma.user.upsert({
+    where: { email: "dery-client@gmail.com" },
+    update: {
+      name: "Dery",
+      phone: "082377341268",
+      roles: ["CLIENT"],
+      password: hashedPassword,
+      isActive: true,
+    },
+    create: {
+      email: "dery-client@gmail.com",
+      name: "Dery",
+      phone: "082377341268",
+      company: "Batik Nusantara Collective",
+      roles: ["CLIENT"],
+      password: hashedPassword,
+      isActive: true,
+      emailVerified: new Date(),
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: "rafli-client@gmail.com" },
+    update: {
+      name: "Rafli",
+      phone: "085367271303",
+      roles: ["CLIENT"],
+      password: hashedPassword,
+      isActive: true,
+    },
+    create: {
+      email: "rafli-client@gmail.com",
+      name: "Rafli",
+      phone: "085367271303",
+      company: "FinSmart Digital",
+      roles: ["CLIENT"],
+      password: hashedPassword,
+      isActive: true,
+      emailVerified: new Date(),
+    },
+  });
+
+  const admin = staffGading;
+  const client1 = clientGading;
+  const client2 = clientDery;
 
   console.log("✔ Users seeded");
 
@@ -146,8 +225,12 @@ async function main() {
 
   // ----------------------------------------------------------------
   // Projects + Milestones + Activity Logs
-  // ----------------------------------------------------------------
-  await prisma.project.deleteMany({ where: { clientId: { in: [client1.id, client2.id] } } });
+  await prisma.activityLog.deleteMany();
+  await prisma.task.deleteMany();
+  await prisma.milestone.deleteMany();
+  await prisma.invoiceItem.deleteMany();
+  await prisma.invoice.deleteMany();
+  await prisma.project.deleteMany();
 
   const project1 = await prisma.project.create({
     data: {
@@ -171,7 +254,8 @@ async function main() {
           },
           {
             title: "UI/UX Design",
-            description: "Desain high-fidelity di Figma, siap untuk development.",
+            description:
+              "Desain high-fidelity di Figma, siap untuk development.",
             status: "COMPLETED",
             order: 2,
             dueDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
@@ -270,7 +354,8 @@ async function main() {
         projectId: project1.id,
         userId: admin.id,
         action: "NOTE_ADDED",
-        description: "Integrasi Midtrans terkonfirmasi, menunggu approval API key.",
+        description:
+          "Integrasi Midtrans terkonfirmasi, menunggu approval API key.",
       },
     ],
   });
@@ -283,17 +368,29 @@ async function main() {
   const catDev = await prisma.blogCategory.upsert({
     where: { slug: "development" },
     update: {},
-    create: { slug: "development", name: "Development", description: "Tips pengembangan." },
+    create: {
+      slug: "development",
+      name: "Development",
+      description: "Tips pengembangan.",
+    },
   });
   const catDesign = await prisma.blogCategory.upsert({
     where: { slug: "design" },
     update: {},
-    create: { slug: "design", name: "Design", description: "UI/UX dan design system." },
+    create: {
+      slug: "design",
+      name: "Design",
+      description: "UI/UX dan design system.",
+    },
   });
   const catBiz = await prisma.blogCategory.upsert({
     where: { slug: "business" },
     update: {},
-    create: { slug: "business", name: "Business", description: "Strategi digital untuk bisnis." },
+    create: {
+      slug: "business",
+      name: "Business",
+      description: "Strategi digital untuk bisnis.",
+    },
   });
 
   const blogSeeds = [
@@ -376,8 +473,7 @@ async function main() {
         clientName: "Ridho Pratama",
         clientRole: "Product Manager",
         company: "FinSmart",
-        content:
-          "Kualitas kode dan desainnya jempolan. Worth every rupiah.",
+        content: "Kualitas kode dan desainnya jempolan. Worth every rupiah.",
         rating: 5,
         order: 3,
       },
@@ -404,14 +500,16 @@ async function main() {
       title: "TechNova: Platform B2B yang Men-Triple Revenue",
       client: "TechNova Indonesia",
       industry: "B2B SaaS",
-      summary: "Membangun platform B2B lengkap yang meningkatkan konversi enterprise lead 3x.",
+      summary:
+        "Membangun platform B2B lengkap yang meningkatkan konversi enterprise lead 3x.",
       challenge:
         "TechNova mengalami bottleneck pada proses sales enterprise, dari lead ke deal butuh 6+ bulan dengan banyak touchpoint manual.",
       solution:
         "Kami membangun dashboard B2B dengan self-serve onboarding, usage analytics real-time, dan integrasi billing. Sales team dibebaskan dari tugas administratif.",
       result:
         "Konversi lead ke deal naik 300%. Waktu onboarding turun dari 14 hari ke 2 hari. NPS customer naik dari 32 ke 68.",
-      featuredImage: "/generated/solvo-tech/portfolio/technova-b2b-platform.png",
+      featuredImage:
+        "/generated/solvo-tech/portfolio/technova-b2b-platform.png",
       techStack: ["Next.js", "PostgreSQL", "Stripe", "Tailwind CSS"],
       published: true,
       order: 1,
@@ -421,7 +519,8 @@ async function main() {
       title: "Kopi Kita: E-Commerce yang Menggandakan Penjualan Online",
       client: "Kopi Kita",
       industry: "F&B E-Commerce",
-      summary: "Storefront modern dengan integrasi payment + delivery yang mulus.",
+      summary:
+        "Storefront modern dengan integrasi payment + delivery yang mulus.",
       challenge:
         "Kopi Kita hanya mengandalkan marketplace. Margin tipis dan tidak bisa membangun relationship langsung dengan customer.",
       solution:
@@ -438,7 +537,8 @@ async function main() {
       title: "FinSmart: Mobile App yang Meraih 100K Download",
       client: "FinSmart",
       industry: "FinTech",
-      summary: "Aplikasi finance personal dengan UX yang membuat budgeting jadi mudah.",
+      summary:
+        "Aplikasi finance personal dengan UX yang membuat budgeting jadi mudah.",
       challenge:
         "Kompetitor banyak, fitur sudah commodity. FinSmart butuh diferensiasi yang kuat.",
       solution:
@@ -467,8 +567,6 @@ async function main() {
   // ----------------------------------------------------------------
   // Invoices
   // ----------------------------------------------------------------
-  await prisma.invoice.deleteMany({ where: { clientId: { in: [client1.id, client2.id] } } });
-
   const year = new Date().getFullYear();
 
   // Paid invoice
@@ -574,7 +672,7 @@ async function main() {
     update: {},
     create: {
       featureDisclaimer:
-        "Satu input = satu fitur spesifik.\n✓ Contoh benar: \"Login dengan Google\"\n✗ Contoh salah: \"Sistem login lengkap dengan social media, 2FA, dan forgot password\"\n\nJika fitur terlalu besar, tim kami akan memecahnya saat review.",
+        'Satu input = satu fitur spesifik.\n✓ Contoh benar: "Login dengan Google"\n✗ Contoh salah: "Sistem login lengkap dengan social media, 2FA, dan forgot password"\n\nJika fitur terlalu besar, tim kami akan memecahnya saat review.',
       revisionPolicy:
         "• Bug dari Solvo Tech = revisi gratis tanpa batas\n• Revisi dari Anda = 2x gratis (1 revisi = 1 fitur)\n• Revisi tambahan = Rp 300.000/fitur\n• Contoh: Jika Anda ingin merevisi 3 fitur sekaligus, itu menggunakan 3 jatah revisi.",
       freeRevisions: 2,
@@ -585,6 +683,10 @@ async function main() {
     },
   });
 
+  await prisma.featureOption.deleteMany();
+  await prisma.addOnOption.deleteMany();
+  await prisma.projectType.deleteMany();
+
   await prisma.projectType.create({
     data: {
       name: "Website",
@@ -593,7 +695,14 @@ async function main() {
       basePrice: 5000000,
       icon: "code2",
       dependentFields: [
-        { label: "Jumlah Halaman", type: "number", pricePerUnit: 500000, unit: "halaman", min: 1, max: 50 },
+        {
+          label: "Jumlah Halaman",
+          type: "number",
+          pricePerUnit: 500000,
+          unit: "halaman",
+          min: 1,
+          max: 50,
+        },
       ],
       order: 0,
     },
@@ -607,7 +716,14 @@ async function main() {
       basePrice: 8000000,
       icon: "smartphone",
       dependentFields: [
-        { label: "Jumlah Screen", type: "number", pricePerUnit: 600000, unit: "screen", min: 1, max: 40 },
+        {
+          label: "Jumlah Screen",
+          type: "number",
+          pricePerUnit: 600000,
+          unit: "screen",
+          min: 1,
+          max: 40,
+        },
       ],
       order: 1,
     },
@@ -621,7 +737,14 @@ async function main() {
       basePrice: 500000,
       icon: "fileText",
       dependentFields: [
-        { label: "Jumlah Modul/BAB", type: "number", pricePerUnit: 200000, unit: "modul", min: 1, max: 20 },
+        {
+          label: "Jumlah Modul/BAB",
+          type: "number",
+          pricePerUnit: 200000,
+          unit: "modul",
+          min: 1,
+          max: 20,
+        },
       ],
       order: 2,
     },
@@ -657,15 +780,29 @@ async function main() {
 
   // Major features
   const majorFeatures = [
-    { name: "Integrasi Payment Gateway", price: 3000000, disclaimer: "Termasuk Midtrans/Xendit. Stripe atau gateway lain mungkin berbeda harga." },
-    { name: "Integrasi API Pihak Ketiga", price: 2000000, disclaimer: "Satu integrasi per item. Jika butuh 3 API berbeda, tambahkan 3x." },
+    {
+      name: "Integrasi Payment Gateway",
+      price: 3000000,
+      disclaimer:
+        "Termasuk Midtrans/Xendit. Stripe atau gateway lain mungkin berbeda harga.",
+    },
+    {
+      name: "Integrasi API Pihak Ketiga",
+      price: 2000000,
+      disclaimer:
+        "Satu integrasi per item. Jika butuh 3 API berbeda, tambahkan 3x.",
+    },
     { name: "Real-time Chat", price: 2500000 },
     { name: "Multi-language (i18n)", price: 1500000 },
     { name: "Sistem Role & Permission", price: 1500000 },
   ];
   for (let i = 0; i < majorFeatures.length; i++) {
     await prisma.featureOption.create({
-      data: { ...majorFeatures[i], order: standardFeatures.length + i, isMajor: true },
+      data: {
+        ...majorFeatures[i],
+        order: standardFeatures.length + i,
+        isMajor: true,
+      },
     });
   }
 
@@ -694,10 +831,26 @@ async function main() {
   console.log("✔ Calculator config & data seeded");
 
   console.log("\n✅ Seeding complete!");
-  console.log(`\n   Admin login    : ${adminEmail} / ${adminPassword}`);
-  console.log(`   Developer login: dev@solvo.tech / password`);
-  console.log(`   Client 1       : gading@gmail.com / ${clientPassword}`);
-  console.log(`   Client 2       : siti@example.com / ${clientPassword}`);
+  console.log("\n--- Akun Staf (ADMIN & DEVELOPER) ---");
+  console.log(
+    "1. Alfian Gading Saputra : gading@gmail.com / password (0895363116378)"
+  );
+  console.log(
+    "2. Dery Wahyu Perdana    : dery@gmail.com / password (082377341268)"
+  );
+  console.log(
+    "3. Rafli Maulana         : rafli@gmail.com / password (085367271303)"
+  );
+  console.log("\n--- Akun Klien (CLIENT) ---");
+  console.log(
+    "1. Gading                : gading-client@gmail.com / password (0895363116378)"
+  );
+  console.log(
+    "2. Dery                  : dery-client@gmail.com / password (082377341268)"
+  );
+  console.log(
+    "3. Rafli                 : rafli-client@gmail.com / password (085367271303)"
+  );
 }
 
 main()

@@ -26,11 +26,11 @@ Open http://localhost:3000.
 
 ## Default Credentials (after seed)
 
-| Role   | Email                | Password   |
-|--------|----------------------|------------|
-| Admin  | admin@solvo.tech     | password   |
-| Client | gading@gmail.com     | password   |
-| Client | siti@example.com     | password   |
+| Role   | Email            | Password |
+| ------ | ---------------- | -------- |
+| Admin  | admin@solvo.tech | password |
+| Client | gading@gmail.com | password |
+| Client | siti@example.com | password |
 
 Override the admin credentials by setting `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` in `.env` before running `db:seed`.
 
@@ -41,6 +41,7 @@ npm run dev         # start dev server
 npm run build       # production build (Turbopack)
 npm run start       # run production build
 npm run lint        # run ESLint
+npm run format      # run Prettier + Tailwind class sorter
 npm run db:push     # sync schema to DB
 npm run db:seed     # seed demo data
 npm run db:studio   # open Prisma Studio
@@ -94,6 +95,7 @@ prisma.config.ts          # Prisma 7 config (datasource.url lives here)
 ## Features
 
 ### Public
+
 - Home hero + animated sections, features, testimonials carousel, CTA
 - About with story, values, tech stack
 - Services grid (6 services)
@@ -106,6 +108,7 @@ prisma.config.ts          # Prisma 7 config (datasource.url lives here)
 - Contact form (server-action-based)
 
 ### Admin Dashboard
+
 - Overview with animated counters, activity feed, quick actions
 - Project CRUD with milestones, activity log, files, invoices per project
 - Blog CRUD with TipTap rich editor + image upload + publish toggle
@@ -114,72 +117,81 @@ prisma.config.ts          # Prisma 7 config (datasource.url lives here)
 - Invoice creation with dynamic line items, auto-numbering, PDF generation, email send, reminder
 
 ### User (Client) Dashboard
+
 - Overview with active projects, pending invoices, total paid
 - Project list with progress bars
 - Project detail: animated progress, timeline, activity feed, files (download), invoices (PDF)
 - Invoice list with PDF download
 - Read-only for client data (admin can view any)
 
-## SMTP Setup
+## WhatsApp Setup (Fonnte API)
 
-For invoice emails and reminders, configure SMTP in `.env`:
+Semua notifikasi transaksi (pengiriman invoice, pengingat jatuh tempo, tautan penawaran proposal, dan tautan reset password) dikirimkan melalui WhatsApp menggunakan **Fonnte API**. Konfigurasikan pada `.env`:
 
-```
-SMTP_HOST="smtp.gmail.com"
-SMTP_PORT="587"
-SMTP_USER="your-gmail@gmail.com"
-SMTP_PASSWORD="your-app-password"  # Gmail App Password
-SMTP_FROM="Solvo Tech <no-reply@solvo.tech>"
+```bash
+WHATSAPP_API_URL="https://api.fonnte.com/send"
+WHATSAPP_API_KEY="your-fonnte-token-here"
 ```
 
-If SMTP env vars are missing, emails are logged to console (jsonTransport mode), handy for development.
+Jika `WHATSAPP_API_KEY` belum diisi (misalnya pada local development), pengiriman pesan disimulasikan secara otomatis dan dicetak ke konsol terminal tanpa menyebabkan kegagalan sistem.
 
-## Cron Setup (Invoice Reminders)
+## Cron Setup
 
-On your VPS, set up a daily cron to hit the reminder endpoint:
+Aplikasi memiliki 3 background cron endpoints:
+
+- `/api/cron/invoice-reminder` (Harian 09:00 WIB — kirim pengingat jatuh tempo via WhatsApp)
+- `/api/cron/issue-recurring` (Harian 00:01 WIB — penerbitan tagihan berkala)
+- `/api/cron/publish-scheduled` (Per 15 Menit — penerbitan blog terjadwal)
+
+> **Catatan Docker:** Jika menjalankan menggunakan Docker (`docker/Dockerfile` atau `docker-compose.yml`), daemon cron internal (BusyBox `crond`) sudah otomatis aktif di latar belakang container.
+
+Jika menjalankan mandiri di host VPS tanpa Docker, pasang crontab:
 
 ```bash
 crontab -e
-# Add:
-0 9 * * * curl -s -H "Authorization: Bearer $CRON_SECRET" https://yourdomain.com/api/cron/invoice-reminder
+# Tambahkan:
+0 2 * * * curl -s -H "Authorization: Bearer $CRON_SECRET" https://yourdomain.com/api/cron/invoice-reminder
+1 17 * * * curl -s -H "Authorization: Bearer $CRON_SECRET" https://yourdomain.com/api/cron/issue-recurring
+*/15 * * * * curl -s -H "Authorization: Bearer $CRON_SECRET" https://yourdomain.com/api/cron/publish-scheduled
 ```
 
-The endpoint will:
-- Mark SENT invoices past their due date as OVERDUE
-- Send reminder emails for invoices due within 3 days or already overdue
-- Skip invoices that had a reminder sent in the last 72 hours
+## Deployment
 
-## Deployment (VPS)
+Panduan deployment produksi lengkap, arsitektur container, dan konfigurasi Nginx/Caddy tersedia di [**`docs/deployment.md`**](docs/deployment.md).
 
-1. **Server prep**, Node.js 20+ installed, PostgreSQL accessible
-2. **Clone + install**:
-   ```bash
-   git clone <repo>
-   cd solvo-tech
-   npm ci
-   ```
-3. **Environment**, create `.env.production` with your production values
-4. **Database**, run `npx prisma db push` once
-5. **Build**, `npm run build`
-6. **Process manager**, use PM2 or systemd:
-   ```bash
-   npm install -g pm2
-   pm2 start npm --name "solvo-tech" -- start
-   pm2 save
-   ```
-7. **Reverse proxy**, nginx pointing to `localhost:3000`, with HTTPS via Let's Encrypt
-8. **Cron**, set up the invoice reminder cron as above
+### Menjalankan dengan Docker Compose (Direkomendasikan)
+
+```bash
+# 1. Siapkan environment file
+cp .env.example .env
+
+# 2. Jalankan stack aplikasi & PostgreSQL
+bun run docker:up
+# atau: docker compose -f docker/docker-compose.yml up -d
+
+# 3. Pantau log
+docker compose -f docker/docker-compose.yml logs -f app
+```
+
+### Menjalankan Mandiri (Bare Metal VPS)
+
+1. **Server prep**: Node.js 20+, PostgreSQL 16
+2. **Install**: `bun install` (atau `npm ci`)
+3. **Database**: `bun run db:push`
+4. **Build & Start**: `bun run build && bun run start` (atau kelola via PM2)
+5. **Reverse proxy**: Nginx / Caddy pointing to `127.0.0.1:3000` dengan SSL Let's Encrypt
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 (App Router, Turbopack, Proxy-based route protection)
-- **UI**: Tailwind CSS 4 + custom shadcn-style primitives + Radix UI + Lucide icons
+- **Framework**: Next.js (App Router, Standalone build)
+- **UI**: Tailwind CSS + custom shadcn-style primitives + Radix UI + Lucide icons
 - **Animation**: Framer Motion
-- **Auth**: NextAuth v5 (JWT + credentials + bcryptjs)
-- **Database**: PostgreSQL + Prisma 7 (with `@prisma/adapter-pg` driver)
+- **Auth**: NextAuth v5 (Multi-Role Support: ADMIN, DEVELOPER, CLIENT)
+- **Database**: PostgreSQL + Prisma (dengan `@prisma/adapter-pg` driver)
 - **Editor**: TipTap with StarterKit + Image + Link + Placeholder
 - **PDF**: @react-pdf/renderer
-- **Email**: nodemailer
+- **Messaging / Outbound**: WhatsApp API (Fonnte)
+- **Container**: Docker Multi-stage + Docker Compose (di folder `docker/`)
 - **Validation**: Zod
 - **Forms**: react-hook-form (where needed) + native FormData + Server Actions
 - **Dark mode**: next-themes with dark/light/system
@@ -188,6 +200,7 @@ The endpoint will:
 ## Notes on Next.js 16 Breaking Changes
 
 This project uses Next.js 16, which introduces several breaking changes from v15:
+
 1. **`middleware.ts` → `proxy.ts`**: our route protection lives in `/proxy.ts`
 2. **Async Request APIs**: `params` and `searchParams` are awaited
 3. **Turbopack default**: no more `--turbopack` flag

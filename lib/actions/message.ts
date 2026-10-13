@@ -28,8 +28,7 @@ export async function postMessageAction(
 ): Promise<{ ok: boolean; error?: string }> {
   const { session } = await getAuthContext(projectId);
   const content = String(formData.get("content") ?? "").trim();
-  const parentId =
-    (formData.get("parentId") as string | null) || null;
+  const parentId = (formData.get("parentId") as string | null) || null;
   if (content.length < 1 || content.length > 5000) {
     return { ok: false, error: "Pesan harus 1-5000 karakter." };
   }
@@ -55,16 +54,28 @@ export async function postMessageAction(
   // Notify: if staff posted → notify client; if client posted → notify team
   const project = await prisma.project.findUnique({
     where: { id: projectId },
-    select: { clientId: true, title: true, assignments: { select: { userId: true } } },
+    select: {
+      clientId: true,
+      title: true,
+      assignments: { select: { userId: true } },
+    },
   });
   if (project) {
-    const tpl = waTemplates.newMessage(session.user.name ?? "Seseorang", project.title, projectId);
+    const tpl = waTemplates.newMessage(
+      session.user.name ?? "Seseorang",
+      project.title,
+      projectId
+    );
     if (isStaff(session.user.role)) {
-      notify({ userId: project.clientId, type: "MESSAGE_NEW", ...tpl }).catch(() => {});
+      notify({ userId: project.clientId, type: "MESSAGE_NEW", ...tpl }).catch(
+        () => {}
+      );
     } else {
       for (const a of project.assignments) {
         if (a.userId !== session.user.id) {
-          notify({ userId: a.userId, type: "MESSAGE_NEW", ...tpl }).catch(() => {});
+          notify({ userId: a.userId, type: "MESSAGE_NEW", ...tpl }).catch(
+            () => {}
+          );
         }
       }
     }
@@ -85,7 +96,8 @@ export async function editMessageAction(messageId: string, content: string) {
     throw new Error("Forbidden");
   }
   const trimmed = content.trim();
-  if (trimmed.length < 1 || trimmed.length > 5000) throw new Error("Invalid length");
+  if (trimmed.length < 1 || trimmed.length > 5000)
+    throw new Error("Invalid length");
   await prisma.projectMessage.update({
     where: { id: messageId },
     data: { content: trimmed, editedAt: new Date() },

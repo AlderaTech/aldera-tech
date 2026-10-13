@@ -168,5 +168,7 @@ export function resolveBlogPostImage(slug: string, image: string | null) {
   ) {
     return image;
   }
-  return blogImageBySlug[slug] ?? getFallbackBlogPost(slug)?.featuredImage ?? image;
+  return (
+    blogImageBySlug[slug] ?? getFallbackBlogPost(slug)?.featuredImage ?? image
+  );
 }

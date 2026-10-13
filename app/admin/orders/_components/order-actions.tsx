@@ -20,14 +20,24 @@ export function OrderActions({ id, status }: { id: string; status: string }) {
   return (
     <div className="mt-2 flex gap-2">
       {status === "PENDING" && (
-        <Button size="sm" variant="outline" onClick={() => handle("REVIEWED")} disabled={pending}>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => handle("REVIEWED")}
+          disabled={pending}
+        >
           Mark Reviewed
         </Button>
       )}
       <Button size="sm" onClick={() => handle("CONVERTED")} disabled={pending}>
         Convert
       </Button>
-      <Button size="sm" variant="ghost" onClick={() => handle("CANCELLED")} disabled={pending}>
+      <Button
+        size="sm"
+        variant="ghost"
+        onClick={() => handle("CANCELLED")}
+        disabled={pending}
+      >
         Cancel
       </Button>
     </div>

@@ -9,7 +9,16 @@ import type {
 
 export const projectStatusMeta: Record<
   ProjectStatus,
-  { label: string; variant: "default" | "secondary" | "destructive" | "success" | "warning" | "outline" }
+  {
+    label: string;
+    variant:
+      | "default"
+      | "secondary"
+      | "destructive"
+      | "success"
+      | "warning"
+      | "outline";
+  }
 > = {
   PENDING: { label: "Pending", variant: "secondary" },
   IN_PROGRESS: { label: "Berjalan", variant: "default" },
@@ -20,7 +29,16 @@ export const projectStatusMeta: Record<
 
 export const milestoneStatusMeta: Record<
   MilestoneStatus,
-  { label: string; variant: "default" | "secondary" | "destructive" | "success" | "warning" | "outline" }
+  {
+    label: string;
+    variant:
+      | "default"
+      | "secondary"
+      | "destructive"
+      | "success"
+      | "warning"
+      | "outline";
+  }
 > = {
   PENDING: { label: "Pending", variant: "secondary" },
   IN_PROGRESS: { label: "Berjalan", variant: "default" },
@@ -30,7 +48,16 @@ export const milestoneStatusMeta: Record<
 
 export const invoiceStatusMeta: Record<
   InvoiceStatus,
-  { label: string; variant: "default" | "secondary" | "destructive" | "success" | "warning" | "outline" }
+  {
+    label: string;
+    variant:
+      | "default"
+      | "secondary"
+      | "destructive"
+      | "success"
+      | "warning"
+      | "outline";
+  }
 > = {
   DRAFT: { label: "Draft", variant: "secondary" },
   SENT: { label: "Terkirim", variant: "default" },
@@ -41,7 +68,16 @@ export const invoiceStatusMeta: Record<
 
 export const proposalStatusMeta: Record<
   ProposalStatus,
-  { label: string; variant: "default" | "secondary" | "destructive" | "success" | "warning" | "outline" }
+  {
+    label: string;
+    variant:
+      | "default"
+      | "secondary"
+      | "destructive"
+      | "success"
+      | "warning"
+      | "outline";
+  }
 > = {
   DRAFT: { label: "Draft", variant: "secondary" },
   SENT: { label: "Terkirim", variant: "default" },
@@ -54,7 +90,16 @@ export const proposalStatusMeta: Record<
 
 export const taskStatusMeta: Record<
   TaskStatus,
-  { label: string; variant: "default" | "secondary" | "destructive" | "success" | "warning" | "outline" }
+  {
+    label: string;
+    variant:
+      | "default"
+      | "secondary"
+      | "destructive"
+      | "success"
+      | "warning"
+      | "outline";
+  }
 > = {
   BACKLOG: { label: "Backlog", variant: "secondary" },
   TODO: { label: "Todo", variant: "outline" },
@@ -65,7 +110,16 @@ export const taskStatusMeta: Record<
 
 export const taskPriorityMeta: Record<
   TaskPriority,
-  { label: string; variant: "default" | "secondary" | "destructive" | "success" | "warning" | "outline" }
+  {
+    label: string;
+    variant:
+      | "default"
+      | "secondary"
+      | "destructive"
+      | "success"
+      | "warning"
+      | "outline";
+  }
 > = {
   LOW: { label: "Low", variant: "outline" },
   MEDIUM: { label: "Medium", variant: "secondary" },

@@ -1,0 +1,12 @@
+# Crontab configuration for Solvo Tech Next.js App
+# Note: In Alpine BusyBox crond, environment variables are loaded or passed via script wrapper.
+# Times are in UTC.
+#
+# 1. Invoice Reminder (Daily 09:00 WIB / 02:00 UTC)
+0 2 * * * curl -s -f -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/invoice-reminder > /dev/null 2>&1
+#
+# 2. Issue Recurring Invoices (Daily 00:01 WIB / 17:01 UTC)
+1 17 * * * curl -s -f -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/issue-recurring > /dev/null 2>&1
+#
+# 3. Publish Scheduled Blog Posts (Every 15 minutes)
+*/15 * * * * curl -s -f -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/publish-scheduled > /dev/null 2>&1

@@ -11,7 +11,7 @@ export function ContactSection({ settings }: { settings: PublicSiteSettings }) {
 
   return (
     <section className="editorial-surface">
-      <div className="mx-auto max-w-screen-xxxl public-container-px py-14 sm:py-20">
+      <div className="public-container-px mx-auto max-w-screen-xxxl py-14 sm:py-20">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
           <FadeUp>
             <Card className="editorial-card gap-0 rounded-xl p-6 shadow-lg sm:p-8">

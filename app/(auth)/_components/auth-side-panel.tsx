@@ -21,7 +21,7 @@ export function AuthSidePanel({ variant }: AuthSidePanelProps) {
       <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(8,9,13,0.96)_0%,rgba(8,9,13,0.74)_42%,rgba(8,9,13,0.35)_100%)]" />
       <div className="relative z-10 flex h-full flex-col justify-between rounded-lg border border-white/12 bg-[#08090d]/48 p-5 backdrop-blur-md">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/18 bg-white/8 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.12em] text-white/72">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/18 bg-white/8 px-3 py-1.5 text-xs font-bold tracking-[0.12em] text-white/72 uppercase">
             <span className="size-2 rounded-full bg-[#0b6bff]" />
             {copy.status}
           </div>
@@ -47,14 +47,14 @@ export function AuthSidePanel({ variant }: AuthSidePanelProps) {
             <div className="rounded-lg bg-[#0b6bff] p-4">
               <Layers3 className="mb-4 size-5" />
               <div className="text-2xl font-black">1</div>
-              <div className="mt-1 text-xs font-semibold uppercase text-white/70">
+              <div className="mt-1 text-xs font-semibold text-white/70 uppercase">
                 Papan kerja
               </div>
             </div>
             <div className="rounded-lg border border-white/10 bg-white/[0.07] p-4">
               <ShieldCheck className="mb-4 size-5 text-[#0b6bff]" />
               <div className="text-2xl font-black">24/7</div>
-              <div className="mt-1 text-xs font-semibold uppercase text-white/64">
+              <div className="mt-1 text-xs font-semibold text-white/64 uppercase">
                 Akses aman
               </div>
             </div>

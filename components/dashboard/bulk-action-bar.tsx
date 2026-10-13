@@ -42,7 +42,7 @@ export function BulkActionBar({
     <>
       <div
         className={cn(
-          "sticky top-[72px] z-20 flex items-center flex-wrap gap-2 rounded-lg border bg-background/95 backdrop-blur px-4 py-2 shadow-md",
+          "sticky top-[72px] z-20 flex flex-wrap items-center gap-2 rounded-lg border bg-background/95 px-4 py-2 shadow-md backdrop-blur",
           "animate-in fade-in-0 slide-in-from-top-2 duration-200"
         )}
       >

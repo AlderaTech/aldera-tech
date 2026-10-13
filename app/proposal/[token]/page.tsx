@@ -36,8 +36,11 @@ export default async function PublicProposalPage({ params }: PageProps) {
 
   if (!proposal) notFound();
 
-  const isExpired = Boolean(proposal.expiresAt && proposal.expiresAt < new Date());
-  const status = isExpired && proposal.status !== "SIGNED" ? "EXPIRED" : proposal.status;
+  const isExpired = Boolean(
+    proposal.expiresAt && proposal.expiresAt < new Date()
+  );
+  const status =
+    isExpired && proposal.status !== "SIGNED" ? "EXPIRED" : proposal.status;
   const meta = proposalStatusMeta[status];
   const subtotal = proposal.items.reduce(
     (sum, item) => sum + Number(item.total),
@@ -59,8 +62,8 @@ export default async function PublicProposalPage({ params }: PageProps) {
         </div>
 
         <div className="space-y-6">
-          <Card className="p-6 space-y-4">
-            <div className="flex items-start justify-between gap-4 flex-wrap">
+          <Card className="space-y-4 p-6">
+            <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <div className="text-sm text-muted-foreground">
                   {proposal.number}
@@ -95,12 +98,12 @@ export default async function PublicProposalPage({ params }: PageProps) {
 
           <Card className="p-6">
             <div
-              className="prose prose-neutral max-w-none"
+              className="prose max-w-none prose-neutral"
               dangerouslySetInnerHTML={{ __html: proposal.content }}
             />
           </Card>
 
-          <Card className="p-0 overflow-hidden">
+          <Card className="overflow-hidden p-0">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -149,7 +152,7 @@ export default async function PublicProposalPage({ params }: PageProps) {
           </Card>
 
           {proposal.signedAt ? (
-            <Card className="p-6 space-y-3">
+            <Card className="space-y-3 p-6">
               <div className="flex items-center gap-2 text-lg font-semibold">
                 <FileSignature className="size-5" />
                 Sudah Ditandatangani

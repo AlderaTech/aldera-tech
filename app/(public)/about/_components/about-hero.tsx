@@ -4,7 +4,7 @@ import { FadeUp } from "@/components/shared/motion";
 export function AboutHero() {
   return (
     <section className="editorial-surface">
-      <div className="mx-auto max-w-screen-xxxl public-container-px py-10 sm:py-14">
+      <div className="public-container-px mx-auto max-w-screen-xxxl py-10 sm:py-14">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <FadeUp className="space-y-5">
             <div className="editorial-kicker border-black/20 text-black/60">

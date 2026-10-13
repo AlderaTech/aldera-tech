@@ -31,7 +31,7 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Pengguna</h1>
           <p className="text-muted-foreground">
@@ -39,13 +39,13 @@ export default async function AdminUsersPage() {
           </p>
         </div>
         <InviteUserDialog>
-          <button className="inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium shadow-xs hover:bg-primary/90 transition-colors">
+          <button className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90">
             <UserPlus className="size-4" /> Invite User
           </button>
         </InviteUserDialog>
       </div>
 
-      <Card className="p-0 overflow-hidden">
+      <Card className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow>
@@ -61,7 +61,10 @@ export default async function AdminUsersPage() {
           <TableBody>
             {users.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
+                <TableCell
+                  colSpan={7}
+                  className="py-10 text-center text-muted-foreground"
+                >
                   Belum ada user.
                 </TableCell>
               </TableRow>
@@ -74,32 +77,45 @@ export default async function AdminUsersPage() {
                         {u.avatar ? (
                           <AvatarImage src={u.avatar} alt={u.name} />
                         ) : null}
-                        <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                        <AvatarFallback className="bg-primary/10 text-xs text-primary">
                           {getInitials(u.name)}
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0">
-                        <div className="font-medium truncate">{u.name}</div>
+                        <div className="truncate font-medium">{u.name}</div>
                         {u.company && (
-                          <div className="text-xs text-muted-foreground truncate">
+                          <div className="truncate text-xs text-muted-foreground">
                             {u.company}
                           </div>
                         )}
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-muted-foreground text-sm">
+                  <TableCell className="hidden text-sm text-muted-foreground md:table-cell">
                     {u.email}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={u.role === "ADMIN" ? "default" : u.role === "DEVELOPER" ? "outline" : "secondary"}>
-                      {ROLE_LABELS[u.role] ?? u.role}
-                    </Badge>
+                    <div className="flex flex-wrap gap-1">
+                      {u.roles.map((r) => (
+                        <Badge
+                          key={r}
+                          variant={
+                            r === "ADMIN"
+                              ? "default"
+                              : r === "DEVELOPER"
+                                ? "outline"
+                                : "secondary"
+                          }
+                        >
+                          {ROLE_LABELS[r] ?? r}
+                        </Badge>
+                      ))}
+                    </div>
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                  <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
                     {u._count.projects}
                   </TableCell>
-                  <TableCell className="hidden xl:table-cell text-sm text-muted-foreground">
+                  <TableCell className="hidden text-sm text-muted-foreground xl:table-cell">
                     {formatDate(u.createdAt)}
                   </TableCell>
                   <TableCell>
@@ -110,7 +126,7 @@ export default async function AdminUsersPage() {
                   <TableCell className="text-right">
                     <UserRowActions
                       userId={u.id}
-                      role={u.role}
+                      roles={u.roles}
                       isActive={u.isActive}
                     />
                   </TableCell>

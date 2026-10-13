@@ -43,8 +43,7 @@ async function optimizeImageBuffer(
     }
 
     // PNG with transparency → keep PNG; everything else → WebP for smaller size.
-    const hasAlpha =
-      mimeType === "image/png" && metadata.hasAlpha === true;
+    const hasAlpha = mimeType === "image/png" && metadata.hasAlpha === true;
 
     if (hasAlpha) {
       const out = await image
@@ -53,16 +52,19 @@ async function optimizeImageBuffer(
       return { buffer: out, mimeType: "image/png", ext: ".png" };
     }
 
-    const out = await image
-      .webp({ quality: 82, effort: 4 })
-      .toBuffer();
+    const out = await image.webp({ quality: 82, effort: 4 }).toBuffer();
     return { buffer: out, mimeType: "image/webp", ext: ".webp" };
   } catch (err) {
     console.warn("[upload] sharp optimize failed, using original:", err);
     return {
       buffer,
       mimeType,
-      ext: mimeType === "image/jpeg" ? ".jpg" : mimeType === "image/png" ? ".png" : ".bin",
+      ext:
+        mimeType === "image/jpeg"
+          ? ".jpg"
+          : mimeType === "image/png"
+            ? ".png"
+            : ".bin",
     };
   }
 }
@@ -88,7 +90,11 @@ export async function POST(req: NextRequest) {
   }
 
   // Validate client can only upload to their own project
-  if (typeof projectId === "string" && projectId && session.user.role === "CLIENT") {
+  if (
+    typeof projectId === "string" &&
+    projectId &&
+    session.user.role === "CLIENT"
+  ) {
     const project = await prisma.project.findUnique({
       where: { id: projectId },
       select: { clientId: true },
@@ -160,7 +166,8 @@ export async function POST(req: NextRequest) {
         path: relativePath,
         url,
         uploaderId: session.user.id,
-        projectId: typeof projectId === "string" && projectId ? projectId : null,
+        projectId:
+          typeof projectId === "string" && projectId ? projectId : null,
       },
       select: { id: true },
     });

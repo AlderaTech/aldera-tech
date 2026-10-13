@@ -3,7 +3,12 @@
 import Link from "next/link";
 import * as React from "react";
 import { signOut } from "next-auth/react";
-import { LogOut, LayoutDashboard, User as UserIcon, Shield } from "lucide-react";
+import {
+  LogOut,
+  LayoutDashboard,
+  User as UserIcon,
+  Shield,
+} from "lucide-react";
 import type { Session } from "next-auth";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -49,7 +54,7 @@ export function UserMenu({ session }: { session: Session }) {
           <DropdownMenuLabel>
             <div className="flex flex-col space-y-0.5">
               <span className="text-sm font-medium">{user.name}</span>
-              <span className="text-xs text-muted-foreground truncate">
+              <span className="truncate text-xs text-muted-foreground">
                 {user.email}
               </span>
             </div>

@@ -9,19 +9,16 @@ import { safeDb } from "@/lib/safe-db";
 export type BlogDetailPost = PublicBlogPost;
 
 export async function getBlogDetailPost(slug: string) {
-  return safeDb<BlogDetailPost | null>(
-    async () => {
-      const post = await prisma.blogPost.findFirst({
-        where: { slug, published: true },
-        include: {
-          author: { select: { name: true, avatar: true } },
-          category: { select: { name: true, slug: true } },
-        },
-      });
-      return post ?? getFallbackBlogPost(slug);
-    },
-    getFallbackBlogPost(slug)
-  );
+  return safeDb<BlogDetailPost | null>(async () => {
+    const post = await prisma.blogPost.findFirst({
+      where: { slug, published: true },
+      include: {
+        author: { select: { name: true, avatar: true } },
+        category: { select: { name: true, slug: true } },
+      },
+    });
+    return post ?? getFallbackBlogPost(slug);
+  }, getFallbackBlogPost(slug));
 }
 
 export async function getBlogStaticParams() {

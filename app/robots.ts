@@ -1,4 +1,10 @@
 import type { MetadataRoute } from "next";
+import {
+  PUBLIC_ROUTES,
+  ADMIN_ROUTES,
+  DASHBOARD_ROUTES,
+  AUTH_ROUTES,
+} from "@/lib/routes";
 
 export default function robots(): MetadataRoute.Robots {
   const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
@@ -6,8 +12,16 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
-        disallow: ["/api/", "/admin", "/admin/", "/dashboard", "/dashboard/", "/login", "/register"],
+        allow: PUBLIC_ROUTES.home,
+        disallow: [
+          "/api/",
+          ADMIN_ROUTES.home,
+          `${ADMIN_ROUTES.home}/`,
+          DASHBOARD_ROUTES.home,
+          `${DASHBOARD_ROUTES.home}/`,
+          AUTH_ROUTES.login,
+          AUTH_ROUTES.register,
+        ],
       },
     ],
     sitemap: `${base}/sitemap.xml`,

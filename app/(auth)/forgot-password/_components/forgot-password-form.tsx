@@ -3,7 +3,7 @@
 import { useActionState, useTransition } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Loader2, Mail } from "lucide-react";
+import { Loader2, MessageSquare } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { CardContent, CardFooter } from "@/components/ui/card";
@@ -24,7 +24,7 @@ export function ForgotPasswordForm() {
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
       const result = await requestPasswordResetAction(state, formData);
-      if (result.ok) toast.success(result.message ?? "Cek email Anda.");
+      if (result.ok) toast.success(result.message ?? "Cek WhatsApp Anda.");
       else toast.error(result.message ?? "Gagal mengirim link reset.");
     });
   }
@@ -53,7 +53,7 @@ export function ForgotPasswordForm() {
           )}
         </div>
       </CardContent>
-      <CardFooter className="flex-col gap-4 px-6 pb-6 pt-5 sm:px-8 sm:pb-8">
+      <CardFooter className="flex-col gap-4 px-6 pt-5 pb-6 sm:px-8 sm:pb-8">
         <Button
           type="submit"
           size="xl"
@@ -66,7 +66,7 @@ export function ForgotPasswordForm() {
             </>
           ) : (
             <>
-              <Mail className="size-4" /> Kirim link reset
+              <MessageSquare className="size-4" /> Kirim link via WhatsApp
             </>
           )}
         </Button>

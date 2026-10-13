@@ -152,9 +152,9 @@ export function ProjectOverviewTab({ project }: Props) {
                 type="button"
                 onClick={() => setAutoProgress((p) => !p)}
                 className={cn(
-                  "flex items-center gap-2 text-xs px-2.5 py-1 rounded-md border transition-colors w-fit",
+                  "flex w-fit items-center gap-2 rounded-md border px-2.5 py-1 text-xs transition-colors",
                   autoProgress
-                    ? "bg-primary/10 border-primary/50 text-primary"
+                    ? "border-primary/50 bg-primary/10 text-primary"
                     : "hover:bg-accent"
                 )}
               >
@@ -203,7 +203,7 @@ export function ProjectOverviewTab({ project }: Props) {
         </div>
       </Card>
 
-      <div className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm flex-wrap">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
         <ConfirmDialog
           title="Hapus proyek?"
           description={`Proyek "${project.title}" akan dihapus permanen beserta data terkait. Aksi ini tidak bisa di-undo.`}

@@ -40,34 +40,31 @@ const fallback: TestimonialCard[] = [
 ];
 
 export async function TestimonialsSection() {
-  const items = await safeDb<TestimonialCard[]>(
-    async () => {
-      const data = await prisma.testimonial.findMany({
-        where: { published: true },
-        orderBy: { order: "asc" },
-        take: 9,
-        select: {
-          id: true,
-          clientName: true,
-          clientRole: true,
-          company: true,
-          content: true,
-          rating: true,
-          avatar: true,
-        },
-      });
-      return data.length ? data : fallback;
-    },
-    fallback,
-  );
+  const items = await safeDb<TestimonialCard[]>(async () => {
+    const data = await prisma.testimonial.findMany({
+      where: { published: true },
+      orderBy: { order: "asc" },
+      take: 9,
+      select: {
+        id: true,
+        clientName: true,
+        clientRole: true,
+        company: true,
+        content: true,
+        rating: true,
+        avatar: true,
+      },
+    });
+    return data.length ? data : fallback;
+  }, fallback);
 
   return (
     <section className="editorial-ink">
-      <div className="mx-auto max-w-screen-xxxl public-container-px py-14 sm:py-20">
+      <div className="public-container-px mx-auto max-w-screen-xxxl py-14 sm:py-20">
         <FadeUp className="mb-10 grid gap-5 lg:grid-cols-[0.85fr_1fr] lg:items-end">
           <div>
             <div className="editorial-kicker border-white/20 text-white/64">
-            Testimoni
+              Testimoni
             </div>
             <h2 className="editorial-display mt-5 text-4xl text-balance sm:text-5xl lg:text-6xl">
               Bukti kerja dari bisnis yang sudah rilis.

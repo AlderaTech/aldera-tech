@@ -19,7 +19,7 @@ export function InvoiceLineItems({ invoice }: { invoice: InvoiceDetail }) {
       <div className="border-b border-slate-200 bg-slate-50/80 px-5 py-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+            <div className="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">
               Bill to
             </div>
             <div className="mt-2 space-y-0.5">
@@ -44,7 +44,7 @@ export function InvoiceLineItems({ invoice }: { invoice: InvoiceDetail }) {
 
           {invoice.project && (
             <div className="max-w-sm text-left sm:text-right">
-              <div className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+              <div className="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">
                 Proyek
               </div>
               <Link

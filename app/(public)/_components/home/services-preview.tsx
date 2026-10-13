@@ -22,7 +22,7 @@ export function ServicesPreview() {
   const preview = services.slice(0, 6);
   return (
     <section className="editorial-ink">
-      <div className="mx-auto grid max-w-screen-xxxl items-center gap-5 public-container-px py-14 sm:py-20 xl:grid-cols-[0.82fr_1.18fr]">
+      <div className="public-container-px mx-auto grid max-w-screen-xxxl items-center gap-5 py-14 sm:py-20 xl:grid-cols-[0.82fr_1.18fr]">
         <FadeUp className="flex flex-col">
           <div className="editorial-kicker border-white/20 text-white/64">
             Layanan
@@ -99,7 +99,7 @@ export function ServicesPreview() {
                       <ArrowRight className="size-4 shrink-0 text-white/64 transition-transform group-hover:translate-x-1" />
                     </div>
                     <div className="mt-auto pt-5">
-                      <h3 className="text-base font-black leading-tight xl:text-lg">
+                      <h3 className="text-base leading-tight font-black xl:text-lg">
                         {service.title}
                       </h3>
                       <p

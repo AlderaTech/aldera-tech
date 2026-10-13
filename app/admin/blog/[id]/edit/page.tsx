@@ -45,9 +45,7 @@ export default async function EditBlogPage({ params }: PageProps) {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Edit Post</h1>
-        <p className="text-muted-foreground">
-          Perbarui konten artikel ini.
-        </p>
+        <p className="text-muted-foreground">Perbarui konten artikel ini.</p>
       </div>
       <BlogForm
         initial={{
@@ -60,7 +58,10 @@ export default async function EditBlogPage({ params }: PageProps) {
           categoryId: post.categoryId ?? "",
           published: post.published,
           scheduledAt: post.scheduledAt
-            ? new Date(post.scheduledAt.getTime() - post.scheduledAt.getTimezoneOffset() * 60_000)
+            ? new Date(
+                post.scheduledAt.getTime() -
+                  post.scheduledAt.getTimezoneOffset() * 60_000
+              )
                 .toISOString()
                 .slice(0, 16)
             : "",

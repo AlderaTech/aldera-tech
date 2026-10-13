@@ -34,9 +34,9 @@ export async function Footer() {
 
   return (
     <footer className="editorial-ink">
-      <div className="mx-auto w-full max-w-screen-xxxl public-container-px py-6">
+      <div className="public-container-px mx-auto w-full max-w-screen-xxxl py-6">
         <div className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.04]">
-          <div className="grid gap-10 p-6 md:grid-cols-2 sm:p-8 lg:grid-cols-[1.55fr_repeat(3,1fr)] lg:p-10">
+          <div className="grid gap-10 p-6 sm:p-8 md:grid-cols-2 lg:grid-cols-[1.55fr_repeat(3,1fr)] lg:p-10">
             <div className="space-y-5">
               <Logo size="md" variant="dark" />
               <p className="max-w-md text-sm leading-relaxed text-white/68">
@@ -51,7 +51,8 @@ export async function Footer() {
               {socialLinks.length > 0 && (
                 <div className="flex gap-3 pt-2">
                   {socialLinks.map((link) => {
-                    const Icon = socialIcons[link.label as keyof typeof socialIcons];
+                    const Icon =
+                      socialIcons[link.label as keyof typeof socialIcons];
                     return (
                       <a
                         key={link.label}

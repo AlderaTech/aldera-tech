@@ -27,15 +27,30 @@ export function ProfileForm({ defaultValues }: Props) {
     <form action={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="name">Nama Lengkap</Label>
-        <Input id="name" name="name" required defaultValue={defaultValues.name} />
+        <Input
+          id="name"
+          name="name"
+          required
+          defaultValue={defaultValues.name}
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="phone">Telepon / WhatsApp</Label>
-        <Input id="phone" name="phone" placeholder="+62..." defaultValue={defaultValues.phone} />
+        <Input
+          id="phone"
+          name="phone"
+          placeholder="+62..."
+          defaultValue={defaultValues.phone}
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="company">Perusahaan</Label>
-        <Input id="company" name="company" placeholder="Nama perusahaan (opsional)" defaultValue={defaultValues.company} />
+        <Input
+          id="company"
+          name="company"
+          placeholder="Nama perusahaan (opsional)"
+          defaultValue={defaultValues.company}
+        />
       </div>
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 className="size-4 animate-spin" />}

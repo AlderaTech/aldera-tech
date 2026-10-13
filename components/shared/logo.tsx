@@ -27,7 +27,10 @@ export function Logo({
   const s = sizes[size];
   const content = (
     <div className={cn("flex items-center gap-2.5", className)}>
-      <div className="relative shrink-0 rounded-md overflow-hidden bg-white ring-1 ring-border" style={{ width: s.px, height: s.px }}>
+      <div
+        className="relative shrink-0 overflow-hidden rounded-md bg-white ring-1 ring-border"
+        style={{ width: s.px, height: s.px }}
+      >
         <Image
           src="/logo.png"
           alt="Solvo Tech"
@@ -37,15 +40,29 @@ export function Logo({
         />
       </div>
       {showText && (
-        <span className={cn("font-bold tracking-tight", s.text, variant === "dark" ? "text-white" : undefined)}>
-          Solvo<span className={variant === "dark" ? "text-[#61a3ff]" : "text-primary"}>Tech</span>
+        <span
+          className={cn(
+            "font-bold tracking-tight",
+            s.text,
+            variant === "dark" ? "text-white" : undefined
+          )}
+        >
+          Solvo
+          <span
+            className={variant === "dark" ? "text-[#61a3ff]" : "text-primary"}
+          >
+            Tech
+          </span>
         </span>
       )}
     </div>
   );
   if (!href) return content;
   return (
-    <Link href={href} className="inline-flex transition-opacity hover:opacity-80">
+    <Link
+      href={href}
+      className="inline-flex transition-opacity hover:opacity-80"
+    >
       {content}
     </Link>
   );

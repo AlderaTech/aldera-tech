@@ -3,7 +3,7 @@ import { FadeUp } from "@/components/shared/motion";
 export function AboutStory() {
   return (
     <section className="editorial-surface">
-      <div className="mx-auto max-w-screen-xxxl public-container-px py-14 sm:py-20">
+      <div className="public-container-px mx-auto max-w-screen-xxxl py-14 sm:py-20">
         <div className="grid gap-10 lg:grid-cols-2">
           <FadeUp>
             <div className="editorial-kicker border-black/20 text-black/60">
@@ -14,7 +14,7 @@ export function AboutStory() {
             </h2>
           </FadeUp>
           <FadeUp delay={0.1}>
-            <div className="prose prose-neutral max-w-none">
+            <div className="prose max-w-none prose-neutral">
               <p>
                 Bertahun-tahun bekerja sebagai pengembang dan desainer untuk
                 startup dan korporat, kami sering melihat pola yang sama: klien

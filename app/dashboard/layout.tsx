@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { clientNavConfig } from "@/lib/dashboard-nav";
+import { AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 
 export default async function DashboardLayout({
   children,
@@ -10,7 +11,8 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  if (!session?.user) redirect("/login?callbackUrl=/dashboard");
+  if (!session?.user)
+    redirect(AUTH_ROUTES.loginWithCallback(DASHBOARD_ROUTES.home));
 
   return (
     <div className="flex min-h-svh bg-slate-50">
@@ -23,7 +25,7 @@ export default async function DashboardLayout({
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <DashboardHeader session={session} navConfig={clientNavConfig} />
-        <main className="container-px mx-auto w-full max-w-screen-xxxl flex-1 py-5">
+        <main className="mx-auto w-full max-w-screen-xxxl flex-1 container-px py-5">
           {children}
         </main>
       </div>

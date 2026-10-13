@@ -119,7 +119,7 @@ export function ProjectDetailHeader({
           <div className="min-w-0 flex-1">
             <div className="mb-2 flex items-center gap-2">
               <span className="text-sm font-medium">Progres</span>
-              <span className="text-sm tabular-nums text-muted-foreground">
+              <span className="text-sm text-muted-foreground tabular-nums">
                 {project.progress}%
               </span>
             </div>

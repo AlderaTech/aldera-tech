@@ -16,15 +16,17 @@ export type PortfolioItem = Pick<
 
 export type PortfolioDetail = PublicCaseStudy;
 
-const fallbackPortfolioItems: PortfolioItem[] = publicCaseStudies.map((item) => ({
-  slug: item.slug,
-  title: item.title,
-  client: item.client,
-  industry: item.industry,
-  summary: item.summary,
-  featuredImage: item.featuredImage,
-  techStack: item.techStack,
-}));
+const fallbackPortfolioItems: PortfolioItem[] = publicCaseStudies.map(
+  (item) => ({
+    slug: item.slug,
+    title: item.title,
+    client: item.client,
+    industry: item.industry,
+    summary: item.summary,
+    featuredImage: item.featuredImage,
+    techStack: item.techStack,
+  })
+);
 
 export async function getPortfolioItems() {
   return safeDb<PortfolioItem[]>(async () => {
