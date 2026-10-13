@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Star } from "lucide-react";
+import { Loader2, Trash2, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,12 +18,60 @@ import {
   updateCalculatorConfig,
 } from "@/lib/actions/calculator";
 
+export type AdminProjectType = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  basePrice: number;
+  icon: string;
+  dependentFields: unknown;
+  order: number;
+  active: boolean;
+};
+
+export type AdminFeature = {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  isMajor: boolean;
+  disclaimer: string | null;
+  order: number;
+  active: boolean;
+  projectTypeId: string | null;
+  projectType?: { name: string } | null;
+};
+
+export type AdminAddOn = {
+  id: string;
+  name: string;
+  description: string | null;
+  pricePerMonth: number;
+  minMonths: number;
+  maxMonths: number;
+  order: number;
+  active: boolean;
+  projectTypeId: string | null;
+};
+
+export type AdminConfig = {
+  id: string;
+  featureDisclaimer: string;
+  revisionPolicy: string;
+  freeRevisions: number;
+  revisionPricePerItem: number;
+  urgencyMultiplier: number;
+  urgencyThresholdDays: number;
+  dpPercentage: number;
+} | null;
+
 type Props = {
   data: {
-    projectTypes: any[];
-    features: any[];
-    addOns: any[];
-    config: any;
+    projectTypes: AdminProjectType[];
+    features: AdminFeature[];
+    addOns: AdminAddOn[];
+    config: AdminConfig;
   };
 };
 
@@ -54,9 +102,9 @@ export function CalculatorAdmin({ data }: Props) {
 }
 
 // --- Project Types Tab ---
-function ProjectTypesTab({ items }: { items: any[] }) {
+function ProjectTypesTab({ items }: { items: AdminProjectType[] }) {
   const [pending, start] = useTransition();
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<AdminProjectType | null>(null);
 
   function handleSubmit(fd: FormData) {
     const depFields = fd.get("dependentFields") as string;
@@ -89,7 +137,7 @@ function ProjectTypesTab({ items }: { items: any[] }) {
           <div><Label>Slug</Label><Input name="slug" required defaultValue={editing?.slug} key={editing?.id + "s"} /></div>
           <div><Label>Base Price</Label><Input name="basePrice" type="number" required defaultValue={editing?.basePrice} key={editing?.id + "p"} /></div>
           <div><Label>Icon</Label><Input name="icon" defaultValue={editing?.icon || "code2"} key={editing?.id + "i"} /></div>
-          <div className="sm:col-span-2"><Label>Deskripsi</Label><Input name="description" defaultValue={editing?.description} key={editing?.id + "d"} /></div>
+          <div className="sm:col-span-2"><Label>Deskripsi</Label><Input name="description" defaultValue={editing?.description ?? ""} key={editing?.id + "d"} /></div>
           <div><Label>Order</Label><Input name="order" type="number" defaultValue={editing?.order || 0} key={editing?.id + "o"} /></div>
           <div className="sm:col-span-2 lg:col-span-4">
             <Label>Dependent Fields (JSON)</Label>
@@ -120,9 +168,9 @@ function ProjectTypesTab({ items }: { items: any[] }) {
 }
 
 // --- Features Tab ---
-function FeaturesTab({ items, projectTypes }: { items: any[]; projectTypes: any[] }) {
+function FeaturesTab({ items, projectTypes }: { items: AdminFeature[]; projectTypes: AdminProjectType[] }) {
   const [pending, start] = useTransition();
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<AdminFeature | null>(null);
 
   function handleSubmit(fd: FormData) {
     start(async () => {
@@ -153,7 +201,7 @@ function FeaturesTab({ items, projectTypes }: { items: any[]; projectTypes: any[
           <div><Label>Nama</Label><Input name="name" required defaultValue={editing?.name} key={editing?.id + "n"} /></div>
           <div><Label>Harga</Label><Input name="price" type="number" required defaultValue={editing?.price} key={editing?.id + "p"} /></div>
           <div><Label>Order</Label><Input name="order" type="number" defaultValue={editing?.order || 0} key={editing?.id + "o"} /></div>
-          <div><Label>Deskripsi</Label><Input name="description" defaultValue={editing?.description} key={editing?.id + "d"} /></div>
+          <div><Label>Deskripsi</Label><Input name="description" defaultValue={editing?.description ?? ""} key={editing?.id + "d"} /></div>
           <div>
             <Label>Jenis Proyek (opsional)</Label>
             <select name="projectTypeId" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm" defaultValue={editing?.projectTypeId || ""} key={editing?.id + "pt"}>
@@ -164,7 +212,7 @@ function FeaturesTab({ items, projectTypes }: { items: any[]; projectTypes: any[
           <div className="flex items-end gap-4">
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isMajor" defaultChecked={editing?.isMajor} key={editing?.id + "m"} /> Major</label>
           </div>
-          <div className="sm:col-span-2 lg:col-span-3"><Label>Disclaimer</Label><Textarea name="disclaimer" rows={2} defaultValue={editing?.disclaimer} key={editing?.id + "dis"} /></div>
+          <div className="sm:col-span-2 lg:col-span-3"><Label>Disclaimer</Label><Textarea name="disclaimer" rows={2} defaultValue={editing?.disclaimer ?? ""} key={editing?.id + "dis"} /></div>
           <div className="flex gap-2">
             <Button type="submit" disabled={pending}>{pending && <Loader2 className="size-4 animate-spin" />}{editing ? "Update" : "Tambah"}</Button>
             {editing && <Button type="button" variant="ghost" onClick={() => setEditing(null)}>Batal</Button>}
@@ -194,9 +242,9 @@ function FeaturesTab({ items, projectTypes }: { items: any[]; projectTypes: any[
 }
 
 // --- Add-Ons Tab ---
-function AddOnsTab({ items }: { items: any[] }) {
+function AddOnsTab({ items }: { items: AdminAddOn[] }) {
   const [pending, start] = useTransition();
-  const [editing, setEditing] = useState<any>(null);
+  const [editing, setEditing] = useState<AdminAddOn | null>(null);
 
   function handleSubmit(fd: FormData) {
     start(async () => {
@@ -228,7 +276,7 @@ function AddOnsTab({ items }: { items: any[] }) {
           <div><Label>Min Bulan</Label><Input name="minMonths" type="number" defaultValue={editing?.minMonths || 1} key={editing?.id + "min"} /></div>
           <div><Label>Max Bulan</Label><Input name="maxMonths" type="number" defaultValue={editing?.maxMonths || 12} key={editing?.id + "max"} /></div>
           <div><Label>Order</Label><Input name="order" type="number" defaultValue={editing?.order || 0} key={editing?.id + "o"} /></div>
-          <div className="sm:col-span-2 lg:col-span-3"><Label>Deskripsi</Label><Input name="description" defaultValue={editing?.description} key={editing?.id + "d"} /></div>
+          <div className="sm:col-span-2 lg:col-span-3"><Label>Deskripsi</Label><Input name="description" defaultValue={editing?.description ?? ""} key={editing?.id + "d"} /></div>
           <div className="flex gap-2">
             <Button type="submit" disabled={pending}>{pending && <Loader2 className="size-4 animate-spin" />}{editing ? "Update" : "Tambah"}</Button>
             {editing && <Button type="button" variant="ghost" onClick={() => setEditing(null)}>Batal</Button>}
@@ -254,7 +302,7 @@ function AddOnsTab({ items }: { items: any[] }) {
 }
 
 // --- Config Tab ---
-function ConfigTab({ config }: { config: any }) {
+function ConfigTab({ config }: { config: AdminConfig }) {
   const [pending, start] = useTransition();
 
   function handleSubmit(fd: FormData) {
