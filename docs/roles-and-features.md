@@ -295,6 +295,7 @@ Pemetaan pola URL ke peran dan izin yang disyaratkan:
 | `/api/admin/export/projects`                  | `ADMIN`, `DEVELOPER`                    | `project.viewAll`                | Download data rekap proyek berformat CSV.                                                 |
 | `/api/admin/export/invoices`                  | `ADMIN`                                 | `invoice.view`                   | Download data seluruh invoice berformat CSV.                                              |
 | `/api/admin/export/analytics`                 | `ADMIN`                                 | `analytics.view`                 | Download laporan analitik profitabilitas berformat CSV.                                   |
+| `/api/webhooks/payment`                       | Payment Gateway (Midtrans)              | `Signature SHA-512`              | Rekonsiliasi notifikasi pembayaran otomatis Midtrans Snap real-time.                      |
 | `/api/cron/*`                                 | Background Worker / Scheduler           | `CRON_SECRET`                    | Eksekusi otomatisasi terjadwal.                                                           |
 
 ---
@@ -332,6 +333,10 @@ Pemetaan pola URL ke peran dan izin yang disyaratkan:
   - Kalkulasi otomatis tanggal terbit berikutnya (`nextIssueDate`) dan masa tenggang jatuh tempo (`dueDays`).
 - **Dokumen PDF Resmi**:
   - Kompilasi PDF dinamis via `@react-pdf/renderer` pada rute `/api/invoices/[id]/pdf`.
+- **Payment Gateway Midtrans (Online & Manual Transfer)**:
+  - Pembayaran online instan via **Midtrans Snap API** (QRIS GoPay/ShopeePay, Virtual Account BCA/Mandiri/BRI/BNI/Permata, Kartu Kredit).
+  - Verifikasi otomatis secara real-time melalui webhook `/api/webhooks/payment` dengan validasi signature SHA-512 `timingSafeEqual`.
+  - Dukungan jalur transfer bank manual dengan pengunggahan bukti transfer (`UploadProofDialog`) dan verifikasi oleh Admin.
 
 ### 4.3 Estimasi, Penjualan, & Proposal (Sales & Proposals)
 

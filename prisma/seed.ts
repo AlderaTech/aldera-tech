@@ -807,8 +807,7 @@ async function main() {
     {
       name: "Integrasi Payment Gateway",
       price: 3000000,
-      disclaimer:
-        "Termasuk Midtrans/Xendit. Stripe atau gateway lain mungkin berbeda harga.",
+      disclaimer: "Termasuk Midtrans. Gateway lain mungkin berbeda harga.",
     },
     {
       name: "Integrasi API Pihak Ketiga",

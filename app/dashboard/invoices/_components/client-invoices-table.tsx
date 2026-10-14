@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Download, UploadCloud, Eye } from "lucide-react";
+import { Download, Eye, CreditCard } from "lucide-react";
 import type { InvoiceStatus } from "@prisma/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -124,8 +124,8 @@ export function ClientInvoicesTable({
                               </>
                             ) : (
                               <>
-                                <UploadCloud className="size-3.5" /> Bayar /
-                                Bukti
+                                <CreditCard className="size-3.5" /> Bayar
+                                Tagihan
                               </>
                             )}
                           </Button>
@@ -152,6 +152,7 @@ export function ClientInvoicesTable({
 
       {selectedInvoice && (
         <UploadProofDialog
+          key={selectedInvoice.id}
           invoice={selectedInvoice}
           open={isDialogOpen}
           onOpenChange={setIsDialogOpen}

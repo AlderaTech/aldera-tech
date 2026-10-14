@@ -91,7 +91,7 @@ export const defaultPricingPlans: PublicPricingPlan[] = [
       { text: "Halaman fleksibel dan CMS lengkap", included: true, order: 2 },
       { text: "SEO teknis mendalam", included: true, order: 3 },
       { text: "Dashboard admin kustom", included: true, order: 4 },
-      { text: "Payment gateway (Midtrans/Xendit)", included: true, order: 5 },
+      { text: "Payment gateway (Midtrans)", included: true, order: 5 },
       { text: "Integrasi email marketing", included: true, order: 6 },
       { text: "Multi-tenancy", included: false, order: 7 },
     ],

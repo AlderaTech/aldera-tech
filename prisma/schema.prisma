@@ -53,7 +53,6 @@ enum PaymentStatus {
 enum PaymentMethod {
   MANUAL_TRANSFER
   GATEWAY_MIDTRANS
-  GATEWAY_XENDIT
   CREDIT_CARD
   BANK_TRANSFER
   EWALLET
@@ -340,8 +339,8 @@ model Payment {
   paymentMethod   PaymentMethod @default(MANUAL_TRANSFER)
 
   // Payment Gateway specifics
-  gateway         String?       // "midtrans" | "xendit" | "manual"
-  transactionId   String?       @unique // Midtrans transaction_id / Xendit id
+  gateway         String?       // "midtrans" | "manual"
+  transactionId   String?       @unique // Midtrans transaction_id / token / internal id
   paymentType     String?       // e.g. "qris", "bank_transfer", "cstore", "credit_card"
   gatewayResponse Json?         // Raw webhook payload for audit
 
