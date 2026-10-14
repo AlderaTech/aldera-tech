@@ -7,6 +7,7 @@ const invoiceDetailInclude = {
   client: true,
   project: { select: { title: true, id: true } },
   items: { orderBy: { order: "asc" } },
+  payments: { orderBy: { createdAt: "desc" } },
 } satisfies Prisma.InvoiceInclude;
 
 export type InvoiceDetail = Prisma.InvoiceGetPayload<{

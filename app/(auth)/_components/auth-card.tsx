@@ -22,17 +22,17 @@ export function AuthCard({
   children,
 }: AuthCardProps) {
   return (
-    <Card className="gap-0 rounded-none border-0 bg-white/88 p-0 shadow-none lg:h-full lg:overflow-y-auto">
-      <CardHeader className="space-y-3 p-5 pb-3 sm:p-6 sm:pb-3">
+    <Card className="gap-0 rounded-none border-0 bg-white p-0 shadow-none lg:h-full lg:overflow-y-auto">
+      <CardHeader className="space-y-3 p-6 pb-2 sm:p-8 sm:pb-3">
         <Logo size="md" href={PUBLIC_ROUTES.home} />
-        <div>
-          <div className="editorial-kicker border-black/20 text-black/60">
+        <div className="pt-2">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-slate-50 px-3 py-1 text-xs font-bold tracking-[0.08em] text-[#0F263A] uppercase">
             {eyebrow}
           </div>
-          <CardTitle className="editorial-display mt-4 text-3xl text-balance text-black sm:text-4xl">
+          <CardTitle className="mt-3 text-2xl font-extrabold tracking-tight text-balance text-[#0F263A] sm:text-3xl">
             {title}
           </CardTitle>
-          <CardDescription className="mt-3 text-sm leading-relaxed text-black/60">
+          <CardDescription className="mt-2 text-sm leading-relaxed text-muted-foreground">
             {description}
           </CardDescription>
         </div>

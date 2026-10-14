@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, Clock, XCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -49,8 +49,9 @@ export function MilestoneApproval({ milestoneId }: { milestoneId: string }) {
 
   return (
     <div className="mt-3 space-y-2">
-      <p className="text-xs font-medium text-amber-600">
-        ⏳ Menunggu persetujuan Anda
+      <p className="flex items-center gap-1.5 text-xs font-medium text-amber-600">
+        <Clock className="size-3.5 shrink-0" />
+        Menunggu persetujuan Anda
       </p>
       <div className="flex gap-2">
         <Button size="sm" onClick={handleApprove} disabled={!!loading}>

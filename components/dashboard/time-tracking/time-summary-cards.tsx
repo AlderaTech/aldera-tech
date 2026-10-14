@@ -11,7 +11,7 @@ export function TimeSummaryCards({
   completedCount: number;
 }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+    <div className="grid gap-3 sm:grid-cols-3">
       <Card className="border-slate-200 bg-white p-4 shadow-sm">
         <div className="text-xs text-muted-foreground">Total Waktu</div>
         <div className="text-xl font-bold tabular-nums">

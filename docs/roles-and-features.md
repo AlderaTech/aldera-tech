@@ -38,7 +38,7 @@ roles:
     allowed_routes:
       - "/admin/projects/*"
       - "/admin/timesheet"
-      - "/admin/team"
+      - "/admin/users"
       - "/admin/files"
       - "/admin/blog"
       - "/admin/blog/new"
@@ -56,6 +56,9 @@ roles:
       - "blog.edit"
       - "timesheet.view"
       - "team.view"
+      - "portfolio.view"
+      - "portfolio.manage"
+      - "testimonial.view"
     responsibilities:
       - "Pelaksanaan delivery proyek dan manajemen milestone"
       - "Manajemen tugas teknis & desain pada Kanban Board"
@@ -228,7 +231,7 @@ permissions_registry:
     granted_to: ["ADMIN", "DEVELOPER"]
 
   team.view:
-    description: "Melihat pemantauan kapasitas dan beban kerja tim mingguan."
+    description: "Melihat pemantauan kapasitas dan beban kerja tim mingguan pada modul Pengguna & Tim."
     module: "Team"
     granted_to: ["ADMIN", "DEVELOPER"]
 
@@ -238,7 +241,7 @@ permissions_registry:
     granted_to: ["ADMIN"]
 
   settings.manage:
-    description: "Mengelola profil brand, SEO, kontak, dan master kalkulator."
+    description: "Mengelola profil brand, SEO, dan kontak."
     module: "Settings"
     granted_to: ["ADMIN"]
 ```
@@ -252,48 +255,47 @@ permissions_registry:
 
 Pemetaan pola URL ke peran dan izin yang disyaratkan:
 
-| Pola URL                                      | Akses Peran                             | Izin Diperlukan                  | Aksi yang Tersedia                                                               |
-| :-------------------------------------------- | :-------------------------------------- | :------------------------------- | :------------------------------------------------------------------------------- |
-| `/*` (Public marketing)                       | `GUEST`, `CLIENT`, `DEVELOPER`, `ADMIN` | `-`                              | Akses publik landing page, about, services, faq, testimonials.                   |
-| `/portfolio`, `/portfolio/[slug]`             | `GUEST`, `CLIENT`, `DEVELOPER`, `ADMIN` | `-`                              | Baca etalase portofolio dan studi kasus proyek.                                  |
-| `/pricing`                                    | `GUEST`, `CLIENT`, `DEVELOPER`, `ADMIN` | `-`                              | Tinjau paket harga publik dan komparasi fitur.                                   |
-| `/blog`, `/blog/[slug]`                       | `GUEST`, `CLIENT`, `DEVELOPER`, `ADMIN` | `-`                              | Baca artikel blog publik, pencarian judul, filter kategori.                      |
-| `/contact`                                    | `GUEST`, `CLIENT`, `DEVELOPER`, `ADMIN` | `-`                              | Kirim pesan kontak, klik CTA WhatsApp konsultasi.                                |
-| `/proposal/[token]`                           | `GUEST`, `CLIENT`, `DEVELOPER`, `ADMIN` | Token Unik                       | Tinjau proposal resmi, tanda tangan digital via canvas, terima/tolak.            |
-| `/login`, `/register`                         | `GUEST` (redirect jika login)           | `-`                              | Autentikasi sesi dan pembuatan akun klien baru.                                  |
-| `/forgot-password`, `/reset-password`         | `GUEST`                                 | Token Reset                      | Pemulihan akses kata sandi via WhatsApp API (Fonnte).                            |
-| `/dashboard`                                  | `CLIENT`                                | `-`                              | Overview portal klien, KPI proyek aktif, tagihan unpaid.                         |
-| `/dashboard/calculator`                       | `CLIENT`                                | `-`                              | Simulasi estimasi biaya mandiri, kirim order request.                            |
-| `/dashboard/orders`                           | `CLIENT`                                | `-`                              | Riwayat status order request (`PENDING`, `REVIEWED`, `CONVERTED`).               |
-| `/dashboard/projects`                         | `CLIENT`                                | `-`                              | Daftar proyek pribadi klien dan ringkasan progres.                               |
-| `/dashboard/projects/[id]`                    | `CLIENT` (Khusus Pemilik Proyek)        | `-`                              | Timeline milestone, persetujuan milestone, Kanban, diskusi, files, invoice.      |
-| `/dashboard/invoices`                         | `CLIENT`                                | `-`                              | Daftar invoice klien, rincian biaya, unduh PDF.                                  |
-| `/dashboard/profile`, `/dashboard/settings`   | `CLIENT`                                | `-`                              | Edit data diri, upload avatar, ganti kata sandi.                                 |
-| `/admin`                                      | `ADMIN`, `DEVELOPER`                    | `-`                              | Overview metrik operasional dan aktivitas agensi.                                |
-| `/admin/projects`                             | `ADMIN`, `DEVELOPER`                    | `project.viewAll`                | Pipeline delivery proyek, filter status, form proyek baru.                       |
-| `/admin/projects/[id]`                        | `ADMIN`, `DEVELOPER`                    | `project.viewAll`                | Detail overview, Kanban tasks, milestones, timer jam kerja, files, chat.         |
-| `/admin/timesheet`                            | `ADMIN`, `DEVELOPER`                    | `timesheet.view`                 | Laporan akumulasi jam kerja staf/proyek, filter tanggal, export CSV.             |
-| `/admin/team`                                 | `ADMIN`, `DEVELOPER`                    | `team.view`                      | Monitor kapasitas jam kerja mingguan (kuota 40h), beban tugas aktif.             |
-| `/admin/files`                                | `ADMIN`, `DEVELOPER`                    | `file.manage`                    | File manager, filter mime type, unggah aset, hapus berkas.                       |
-| `/admin/blog`                                 | `ADMIN`, `DEVELOPER`                    | `blog.view`                      | Daftar artikel blog internal, status draft/scheduled/published.                  |
-| `/admin/blog/new`, `/admin/blog/[id]/edit`    | `ADMIN`, `DEVELOPER`                    | `blog.create`, `blog.edit`       | Editor TipTap rich text, simpan draf, upload featured image.                     |
-| `/admin/blog/categories`                      | `ADMIN`                                 | `blog.delete` (Admin-only)       | CRUD kategori blog dan manajemen slug.                                           |
-| `/admin/invoices`                             | `ADMIN`                                 | `invoice.view`                   | Manajemen tagihan, filter status, dispatch WhatsApp (Fonnte).                    |
-| `/admin/invoices/new`, `/admin/invoices/[id]` | `ADMIN`                                 | `invoice.create`, `invoice.edit` | Pembuatan & penyuntingan invoice, input line items, mark paid.                   |
-| `/admin/invoices/recurring`                   | `ADMIN`                                 | `invoice.create`                 | Konfigurasi jadwal invoice berulang (mingguan s/d tahunan).                      |
-| `/admin/proposals`                            | `ADMIN`                                 | `proposal.manage`                | Manajemen proposal penawaran, dispatch link token, konversi ke proyek.           |
-| `/admin/orders`                               | `ADMIN`                                 | `project.viewAll`                | Tinjau order request dari kalkulator, ubah status, konversi proposal.            |
-| `/admin/calculator`                           | `ADMIN`                                 | `settings.manage`                | Kelola Project Types, Feature Options, Add-on Options, Kebijakan revisi/DP.      |
-| `/admin/analytics`                            | `ADMIN`                                 | `analytics.view`                 | Analitik Revenue, Profitabilitas Proyek (Revenue vs Cost of Time), LTV Klien.    |
-| `/admin/users`                                | `ADMIN`                                 | `user.manage`                    | CRUD pengguna, ganti role (Admin/Developer/Client), toggle akun aktif.           |
-| `/admin/settings`                             | `ADMIN`                                 | `settings.manage`                | Identitas brand, SEO, kontak, WhatsApp API key, tarif per jam, pricing plans.    |
-| `/admin/audit`                                | `ADMIN`                                 | `audit.view`                     | Log audit 200 aksi terakhir, timestamp presisi, user, aksi, entitas, IP address. |
-| `/api/invoices/[id]/pdf`                      | `CLIENT` (Pemilik Tagihan), `ADMIN`     | `-`                              | Unduh file faktur PDF resmi.                                                     |
-| `/api/admin/export/timesheet`                 | `ADMIN`, `DEVELOPER`                    | `timesheet.view`                 | Download data timesheet berformat CSV.                                           |
-| `/api/admin/export/projects`                  | `ADMIN`, `DEVELOPER`                    | `project.viewAll`                | Download data rekap proyek berformat CSV.                                        |
-| `/api/admin/export/invoices`                  | `ADMIN`                                 | `invoice.view`                   | Download data seluruh invoice berformat CSV.                                     |
-| `/api/admin/export/analytics`                 | `ADMIN`                                 | `analytics.view`                 | Download laporan analitik profitabilitas berformat CSV.                          |
-| `/api/cron/*`                                 | Background Worker / Scheduler           | `CRON_SECRET`                    | Eksekusi otomatisasi terjadwal.                                                  |
+| Pola URL                                      | Akses Peran                             | Izin Diperlukan                  | Aksi yang Tersedia                                                                        |
+| :-------------------------------------------- | :-------------------------------------- | :------------------------------- | :---------------------------------------------------------------------------------------- |
+| `/*` (Public marketing)                       | `GUEST`, `CLIENT`, `DEVELOPER`, `ADMIN` | `-`                              | Akses publik landing page, about, services, faq, testimonials.                            |
+| `/portfolio`, `/portfolio/[slug]`             | `GUEST`, `CLIENT`, `DEVELOPER`, `ADMIN` | `-`                              | Baca etalase portofolio dan studi kasus proyek.                                           |
+| `/pricing`                                    | `GUEST`, `CLIENT`, `DEVELOPER`, `ADMIN` | `-`                              | Tinjau paket harga publik, komparasi fitur, dan kalkulator estimasi proyek (#calculator). |
+| `/blog`, `/blog/[slug]`                       | `GUEST`, `CLIENT`, `DEVELOPER`, `ADMIN` | `-`                              | Baca artikel blog publik, pencarian judul, filter kategori.                               |
+| `/contact`                                    | `GUEST`, `CLIENT`, `DEVELOPER`, `ADMIN` | `-`                              | Kirim pesan kontak, klik CTA WhatsApp konsultasi.                                         |
+| `/proposal/[token]`                           | `GUEST`, `CLIENT`, `DEVELOPER`, `ADMIN` | Token Unik                       | Tinjau proposal resmi, tanda tangan digital via canvas, terima/tolak.                     |
+| `/login`, `/register`                         | `GUEST` (redirect jika login)           | `-`                              | Autentikasi sesi dan pembuatan akun klien baru.                                           |
+| `/forgot-password`, `/reset-password`         | `GUEST`                                 | Token Reset                      | Pemulihan akses kata sandi via WhatsApp API (Fonnte).                                     |
+| `/dashboard`                                  | `CLIENT`                                | `-`                              | Overview portal klien, KPI proyek aktif, tagihan unpaid.                                  |
+| `/dashboard/calculator`                       | `GUEST`, `CLIENT`                       | `-`                              | Rute legacy kalkulator, dialihkan (redirect) ke `/pricing#calculator`.                    |
+| `/dashboard/orders`                           | `CLIENT`                                | `-`                              | Riwayat status order request (`PENDING`, `REVIEWED`, `CONVERTED`).                        |
+| `/dashboard/projects`                         | `CLIENT`                                | `-`                              | Daftar proyek pribadi klien dan ringkasan progres.                                        |
+| `/dashboard/projects/[id]`                    | `CLIENT` (Khusus Pemilik Proyek)        | `-`                              | Timeline milestone, persetujuan milestone, Kanban, diskusi, files, invoice.               |
+| `/dashboard/invoices`                         | `CLIENT`                                | `-`                              | Daftar invoice klien, rincian biaya, unduh PDF.                                           |
+| `/dashboard/profile`, `/dashboard/settings`   | `CLIENT`                                | `-`                              | Edit data diri, upload avatar, ganti kata sandi.                                          |
+| `/admin`                                      | `ADMIN`, `DEVELOPER`                    | `-`                              | Overview metrik operasional dan aktivitas agensi.                                         |
+| `/admin/projects`                             | `ADMIN`, `DEVELOPER`                    | `project.viewAll`                | Pipeline delivery proyek, filter status, form proyek baru.                                |
+| `/admin/projects/[id]`                        | `ADMIN`, `DEVELOPER`                    | `project.viewAll`                | Detail overview, Kanban tasks, milestones, timesheet jam kerja, files, chat.              |
+| `/admin/timesheet`                            | `ADMIN`, `DEVELOPER`                    | `timesheet.view`                 | Laporan akumulasi jam kerja staf/proyek, filter tanggal, export CSV.                      |
+| `/admin/files`                                | `ADMIN`, `DEVELOPER`                    | `file.manage`                    | File manager, filter mime type, unggah aset, hapus berkas.                                |
+| `/admin/blog`                                 | `ADMIN`, `DEVELOPER`                    | `blog.view`                      | Daftar artikel blog internal, status draft/scheduled/published.                           |
+| `/admin/blog/new`, `/admin/blog/[id]/edit`    | `ADMIN`, `DEVELOPER`                    | `blog.create`, `blog.edit`       | Editor TipTap rich text, simpan draf, upload featured image.                              |
+| `/admin/blog/categories`                      | `ADMIN`                                 | `blog.delete` (Admin-only)       | CRUD kategori blog dan manajemen slug.                                                    |
+| `/admin/invoices`                             | `ADMIN`                                 | `invoice.view`                   | Manajemen tagihan, filter status, dispatch WhatsApp (Fonnte).                             |
+| `/admin/invoices/new`, `/admin/invoices/[id]` | `ADMIN`                                 | `invoice.create`, `invoice.edit` | Pembuatan & penyuntingan invoice, input line items, mark paid.                            |
+| `/admin/invoices/recurring`                   | `ADMIN`                                 | `invoice.create`                 | Konfigurasi jadwal invoice berulang (mingguan s/d tahunan).                               |
+| `/admin/proposals`                            | `ADMIN`                                 | `proposal.manage`                | Manajemen proposal penawaran, dispatch link token, konversi ke proyek.                    |
+| `/admin/orders`                               | `ADMIN`                                 | `project.viewAll`                | Tinjau order request dari kalkulator, ubah status, konversi proposal.                     |
+| `/admin/calculator`                           | `ADMIN`                                 | `settings.manage`                | Single source of truth: Project Types, Feature Options, Add-on, Kebijakan DP.             |
+| `/admin/analytics`                            | `ADMIN`                                 | `analytics.view`                 | Analitik Revenue, Profitabilitas Proyek (Revenue vs Cost of Time), LTV Klien.             |
+| `/admin/users`                                | `ADMIN`, `DEVELOPER`                    | `team.view`, `user.manage`       | Manajemen pengguna, role tabs (All/Admin/Dev/Client), monitoring kapasitas tim.           |
+| `/admin/settings`                             | `ADMIN`                                 | `settings.manage`                | Identitas brand, SEO, kontak, jam operasional, link sosial media.                         |
+| `/admin/audit`                                | `ADMIN`                                 | `audit.view`                     | Log audit 200 aksi terakhir, timestamp presisi, user, aksi, entitas, IP address.          |
+| `/api/invoices/[id]/pdf`                      | `CLIENT` (Pemilik Tagihan), `ADMIN`     | `-`                              | Unduh file faktur PDF resmi.                                                              |
+| `/api/admin/export/timesheet`                 | `ADMIN`, `DEVELOPER`                    | `timesheet.view`                 | Download data timesheet berformat CSV.                                                    |
+| `/api/admin/export/projects`                  | `ADMIN`, `DEVELOPER`                    | `project.viewAll`                | Download data rekap proyek berformat CSV.                                                 |
+| `/api/admin/export/invoices`                  | `ADMIN`                                 | `invoice.view`                   | Download data seluruh invoice berformat CSV.                                              |
+| `/api/admin/export/analytics`                 | `ADMIN`                                 | `analytics.view`                 | Download laporan analitik profitabilitas berformat CSV.                                   |
+| `/api/cron/*`                                 | Background Worker / Scheduler           | `CRON_SECRET`                    | Eksekusi otomatisasi terjadwal.                                                           |
 
 ---
 
@@ -311,7 +313,7 @@ Pemetaan pola URL ke peran dan izin yang disyaratkan:
   - Urutan pengerjaan (_order_), tenggat waktu, dan tanggal penyelesaian.
   - Opsi `requiresClientApproval`: Memerlukan persetujuan eksplisit klien sebelum milestone ditutup.
 - **Pencatat Waktu Kerja (Time Tracking)**:
-  - Stopwatch/timer digital dengan penghitungan detik presisi (`durationSec`).
+  - Pencatatan timesheet jam kerja manual (deskripsi, durasi menit, status billable) terintegrasi pada tab proyek.
   - Penandaan status jam kerja: `billable` (tertagih) atau `non-billable`.
 - **Diskusi Proyek (Threaded Discussions)**:
   - Komunikasi berbalas (_parent-reply_) antara tim dan klien di dalam proyek.
@@ -360,6 +362,7 @@ Pemetaan pola URL ke peran dan izin yang disyaratkan:
   - Akun terikat pada salah satu role: `ADMIN`, `DEVELOPER`, `CLIENT`.
   - Dukungan aktivasi/penonaktifan akun secara instan (`isActive`).
 - **Monitoring Beban Kerja Tim (Team Capacity)**:
+  - Terintegrasi langsung pada rute `/admin/users` (tab `Developer & Tim` -> opsi `Beban Kerja`).
   - Target kapasitas dasar: 40 jam/minggu per staf.
   - Indikator visual kapasitas: Normal (<70%), Waspada (70–90%), Overload (>90%).
   - Agregasi jumlah tugas aktif, tugas prioritas mendesak (_urgent_), dan proyek berjalan.
@@ -417,18 +420,18 @@ Format deterministik untuk transisi status antar entitas sistem:
 
 ### 6.1 Alur Penjualan ke Delivery Proyek (Sales-to-Delivery Pipeline)
 
-|            Tahap             |       Pelaku       |   Titik Akses / Trigger    |              Data Masukan (Input)               |                    Perubahan Status (Output)                     |  Tahap Berikutnya   |
-| :--------------------------: | :----------------: | :------------------------: | :---------------------------------------------: | :--------------------------------------------------------------: | :-----------------: |
-|       **1. Estimasi**        | `GUEST` / `CLIENT` |  `/dashboard/calculator`   | Jenis proyek, opsi fitur, add-on, tenggat waktu |                  `OrderRequest: PENDING` dibuat                  |    **2. Review**    |
-|    **2. Review Estimasi**    |      `ADMIN`       |      `/admin/orders`       |           Tinjauan permohonan pesanan           |                     `OrderRequest: REVIEWED`                     |   **3. Proposal**   |
-|  **3. Terbitkan Proposal**   |      `ADMIN`       |   `/admin/proposals/new`   |  Line items, nominal biaya, term, masa berlaku  |           `Proposal: DRAFT -> SENT` (Token & WA rilis)           | **4. Tanda Tangan** |
-|      **4. E-Signature**      | `GUEST` / `CLIENT` |    `/proposal/[token]`     |  Canvas tanda tangan digital / nama, alamat IP  |                    `Proposal: SENT -> SIGNED`                    |   **5. Konversi**   |
-|    **5. Konversi Proyek**    |      `ADMIN`       |  `/admin/proposals/[id]`   |           Tombol "Convert to Project"           |  `Proposal: SIGNED -> CONVERTED`<br/>`Project: PENDING` dibuat   |  **6. Penugasan**   |
-|     **6. Penugasan Tim**     |      `ADMIN`       |   `/admin/projects/[id]`   |     Assign staf pengembang, susun milestone     | `Project: PENDING -> IN_PROGRESS`<br/>`ProjectAssignment` dibuat |  **7. Pengerjaan**  |
-|   **7. Pengerjaan Teknis**   |    `DEVELOPER`     |   `/admin/projects/[id]`   |    Kerjakan task Kanban, catat jam di timer     |          `Task: TODO -> DONE`<br/>`TimeEntry` tersimpan          |  **8. Verifikasi**  |
-| **8. Persetujuan Milestone** |      `CLIENT`      | `/dashboard/projects/[id]` |       Review deliverable, tombol Approve        |              `Milestone: IN_PROGRESS -> COMPLETED`               |  **9. Penagihan**   |
-|  **9. Penerbitan Tagihan**   |      `ADMIN`       |   `/admin/invoices/new`    |         Input item invoice, jatuh tempo         |          `Invoice: DRAFT -> SENT` (Dispatch WA Fonnte)           | **10. Pembayaran**  |
-|      **10. Pelunasan**       | `ADMIN` / `CLIENT` |   `/admin/invoices/[id]`   |           Konfirmasi pembayaran lunas           |         `Invoice: SENT -> PAID`<br/>`Project: COMPLETED`         |     **Selesai**     |
+|            Tahap             |       Pelaku       |         Titik Akses / Trigger         |              Data Masukan (Input)               |                    Perubahan Status (Output)                     |  Tahap Berikutnya   |
+| :--------------------------: | :----------------: | :-----------------------------------: | :---------------------------------------------: | :--------------------------------------------------------------: | :-----------------: |
+|       **1. Estimasi**        | `GUEST` / `CLIENT` | `/pricing#calculator` / `/calculator` | Jenis proyek, opsi fitur, add-on, tenggat waktu |                  `OrderRequest: PENDING` dibuat                  |    **2. Review**    |
+|    **2. Review Estimasi**    |      `ADMIN`       |            `/admin/orders`            |           Tinjauan permohonan pesanan           |                     `OrderRequest: REVIEWED`                     |   **3. Proposal**   |
+|  **3. Terbitkan Proposal**   |      `ADMIN`       |        `/admin/proposals/new`         |  Line items, nominal biaya, term, masa berlaku  |           `Proposal: DRAFT -> SENT` (Token & WA rilis)           | **4. Tanda Tangan** |
+|      **4. E-Signature**      | `GUEST` / `CLIENT` |          `/proposal/[token]`          |  Canvas tanda tangan digital / nama, alamat IP  |                    `Proposal: SENT -> SIGNED`                    |   **5. Konversi**   |
+|    **5. Konversi Proyek**    |      `ADMIN`       |        `/admin/proposals/[id]`        |           Tombol "Convert to Project"           |  `Proposal: SIGNED -> CONVERTED`<br/>`Project: PENDING` dibuat   |  **6. Penugasan**   |
+|     **6. Penugasan Tim**     |      `ADMIN`       |        `/admin/projects/[id]`         |     Assign staf pengembang, susun milestone     | `Project: PENDING -> IN_PROGRESS`<br/>`ProjectAssignment` dibuat |  **7. Pengerjaan**  |
+|   **7. Pengerjaan Teknis**   |    `DEVELOPER`     |        `/admin/projects/[id]`         |  Kerjakan task Kanban, catat jam di timesheet   |          `Task: TODO -> DONE`<br/>`TimeEntry` tersimpan          |  **8. Verifikasi**  |
+| **8. Persetujuan Milestone** |      `CLIENT`      |      `/dashboard/projects/[id]`       |       Review deliverable, tombol Approve        |              `Milestone: IN_PROGRESS -> COMPLETED`               |  **9. Penagihan**   |
+|  **9. Penerbitan Tagihan**   |      `ADMIN`       |         `/admin/invoices/new`         |         Input item invoice, jatuh tempo         |          `Invoice: DRAFT -> SENT` (Dispatch WA Fonnte)           | **10. Pembayaran**  |
+|      **10. Pelunasan**       | `ADMIN` / `CLIENT` |        `/admin/invoices/[id]`         |           Konfirmasi pembayaran lunas           |         `Invoice: SENT -> PAID`<br/>`Project: COMPLETED`         |     **Selesai**     |
 
 ### 6.2 Alur Persetujuan Milestone (Milestone Approval Workflow)
 

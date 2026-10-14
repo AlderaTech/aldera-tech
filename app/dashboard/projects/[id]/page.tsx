@@ -13,6 +13,7 @@ import { ProjectFilesTab } from "./_components/project-files-tab";
 import { ProjectHeader } from "./_components/project-header";
 import { ProjectInvoicesTab } from "./_components/project-invoices-tab";
 import { ProjectTimelineTab } from "./_components/project-timeline-tab";
+import { ProjectReviewPrompt } from "./_components/project-review-prompt";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -42,6 +43,7 @@ export default async function UserProjectDetail({ params }: PageProps) {
             take: 30,
             include: { user: { select: { name: true } } },
           },
+          testimonial: true,
           files: { orderBy: { createdAt: "desc" } },
           invoices: { orderBy: { issueDate: "desc" } },
           messages: {
@@ -69,6 +71,14 @@ export default async function UserProjectDetail({ params }: PageProps) {
         budget={project.budget}
         progress={project.progress}
       />
+
+      {project.status === "COMPLETED" && (
+        <ProjectReviewPrompt
+          projectId={project.id}
+          projectTitle={project.title}
+          existingReview={project.testimonial}
+        />
+      )}
 
       <Tabs defaultValue="timeline">
         <TabsList className="w-full justify-start overflow-x-auto">

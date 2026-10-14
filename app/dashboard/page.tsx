@@ -80,7 +80,7 @@ export default async function DashboardHome() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight xxxl:text-3xl">
-          Halo, {session?.user?.name?.split(" ")[0] ?? "User"} 👋
+          Halo, {session?.user?.name?.split(" ")[0] ?? "User"}
         </h1>
         <p className="text-muted-foreground">
           Berikut ringkasan aktivitas proyek Anda.

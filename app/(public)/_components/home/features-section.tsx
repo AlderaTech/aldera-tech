@@ -1,10 +1,9 @@
 import {
-  ArrowRight,
   CheckCircle2,
-  ClipboardList,
+  Clock,
   Code2,
-  MessageSquareText,
-  Rocket,
+  Layers,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -13,100 +12,130 @@ import {
   StaggerItem,
 } from "@/components/shared/motion";
 
-type ProcessStep = {
+type ChallengeCard = {
   icon: LucideIcon;
   title: string;
-  description: string;
+  badge: string;
+  items: string[];
 };
 
-const processSteps: ProcessStep[] = [
+const challengeCards: ChallengeCard[] = [
   {
-    icon: MessageSquareText,
-    title: "Discovery",
-    description:
-      "Kami memetakan tujuan bisnis, pengguna, prioritas fitur, dan risiko awal.",
+    icon: Clock,
+    title: "Siklus Rilis & Waktu",
+    badge: "Kecepatan Eksekusi",
+    items: [
+      "Sprint terencana & deliverable jelas",
+      "Estimasi milestone tepat waktu",
+      "Tanpa bottleneck komunikasi",
+    ],
   },
   {
-    icon: ClipboardList,
-    title: "Scope & proposal",
-    description:
-      "Cakupan, milestone, estimasi, dan deliverable dibuat jelas sebelum masuk build.",
+    icon: Layers,
+    title: "Arsitektur & Skalabilitas",
+    badge: "Fondasi Sistem",
+    items: [
+      "Clean architecture modular",
+      "Performa Core Web Vitals optimal",
+      "Siap menangani jutaan request",
+    ],
   },
   {
     icon: Code2,
-    title: "Build sprint",
-    description:
-      "Desain, pengembangan, review, dan QA berjalan bertahap dengan komunikasi rutin.",
+    title: "Transparansi Biaya & Scope",
+    badge: "Kepastian Investasi",
+    items: [
+      "Rincian scope transparan tanpa hidden fee",
+      "Pelacakan jam kerja & commit real-time",
+      "Revisi terstruktur & terkelola",
+    ],
   },
   {
-    icon: Rocket,
-    title: "Release & handoff",
-    description:
-      "Produk dirilis dengan dokumentasi, checklist, dan rekomendasi iterasi berikutnya.",
+    icon: ShieldCheck,
+    title: "Kualitas Kode & Standar",
+    badge: "Jaminan Mutu",
+    items: [
+      "100% Type-safe TypeScript & Next.js 16",
+      "Audit keamanan & validasi Zod ketat",
+      "Dokumentasi handoff menyeluruh",
+    ],
   },
 ];
 
 const deliverables = [
-  "Brief dan prioritas fitur",
-  "Roadmap sprint",
-  "Board progres bersama",
-  "Dokumentasi handoff",
+  "Brief & Prioritas Fitur Jelas",
+  "Roadmap Sprint Mingguan",
+  "Dashboard Progres Real-Time",
+  "Dokumentasi & Handoff Rapi",
 ];
 
 export function FeaturesSection() {
   return (
-    <section className="editorial-surface">
-      <div className="public-container-px mx-auto max-w-screen-xxxl py-14 sm:py-20">
-        <FadeUp className="grid gap-5 border-b border-black/10 pb-6 lg:grid-cols-[0.75fr_1fr] lg:items-end">
-          <div>
-            <div className="editorial-kicker border-black/20 text-black/60">
-              Cara kerja
-            </div>
-            <h2 className="editorial-display mt-4 max-w-3xl text-4xl text-balance sm:text-5xl lg:text-6xl">
-              Anda selalu tahu apa yang sedang dikerjakan.
-            </h2>
-          </div>
-          <p className="max-w-2xl text-base leading-relaxed text-black/60 sm:text-lg lg:justify-self-end">
-            Dari obrolan pertama sampai handoff, setiap tahap punya output yang
-            bisa dilihat dan dipakai untuk mengambil keputusan.
+    <section className="border-y border-slate-100 bg-white py-16 sm:py-24">
+      <div className="public-container-px mx-auto max-w-screen-xxxl">
+        {/* Section Header with Reference Styling */}
+        <FadeUp className="mx-auto mb-14 max-w-3xl text-center">
+          <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-[#00B1E1]" />
+          <h2 className="font-serif text-3xl font-extrabold tracking-tight text-[#0F263A] sm:text-4xl lg:text-5xl">
+            Tantangan & Solusi Rekayasa Digital
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">
+            Apakah bisnis Anda ingin mempercepat rilis tanpa mengorbankan
+            kualitas arsitektur dan stabilitas jangka panjang?
           </p>
         </FadeUp>
 
-        <StaggerContainer className="grid gap-4 pt-6 md:grid-cols-2 xl:grid-cols-4">
-          {processSteps.map((step, index) => (
-            <StaggerItem key={step.title}>
-              <div className="group relative h-full overflow-hidden rounded-xl border border-black/10 bg-white/78 p-5 shadow-[0_18px_55px_rgba(8,9,13,0.06)] transition-all duration-200 hover:-translate-y-1 hover:border-[#0b6bff]/25 hover:bg-white">
-                <div className="mb-6 flex items-center justify-between gap-4">
-                  <div className="flex size-11 items-center justify-center rounded-lg bg-[#0b6bff] text-white">
-                    <step.icon className="size-5" />
+        {/* Challenge Cards Grid */}
+        <StaggerContainer className="grid gap-6 md:grid-cols-2">
+          {challengeCards.map((card) => (
+            <StaggerItem key={card.title}>
+              <div className="group relative flex flex-col justify-between rounded-3xl border border-slate-200/80 bg-[#F8FAFC] p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#00B1E1]/40 hover:bg-white hover:shadow-xl sm:p-8">
+                <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+                  {/* Left: Badge & Title */}
+                  <div className="flex items-start gap-4">
+                    <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-[#00B1E1] shadow-sm transition-transform group-hover:scale-105">
+                      <card.icon className="size-6" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold tracking-wider text-[#00B1E1] uppercase">
+                        {card.badge}
+                      </div>
+                      <h3 className="mt-1 font-serif text-xl font-bold text-[#0F263A] sm:text-2xl">
+                        {card.title}
+                      </h3>
+                    </div>
                   </div>
-                  <div className="text-xs font-black tracking-[0.14em] text-black/50 uppercase">
-                    0{index + 1}
-                  </div>
+
+                  {/* Right: Checklist Items */}
+                  <ul className="space-y-2.5 sm:max-w-xs">
+                    {card.items.map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-center gap-2.5 text-sm font-medium text-slate-700"
+                      >
+                        <CheckCircle2 className="size-4 shrink-0 text-[#00B1E1]" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <h3 className="text-2xl leading-tight font-black text-black">
-                  {step.title}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-black/60">
-                  {step.description}
-                </p>
-                {index < processSteps.length - 1 && (
-                  <ArrowRight className="absolute right-5 bottom-5 size-5 text-black/22 transition-transform group-hover:translate-x-1 group-hover:text-[#0b6bff]" />
-                )}
               </div>
             </StaggerItem>
           ))}
         </StaggerContainer>
 
-        <FadeUp delay={0.1} className="mt-5">
-          <div className="grid gap-3 rounded-xl border border-black/10 bg-[#f5f8ff] p-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Deliverables Banner */}
+        <FadeUp delay={0.15} className="mt-8">
+          <div className="grid gap-4 rounded-2xl border border-slate-200/90 bg-[#F8FAFC] p-5 sm:grid-cols-2 lg:grid-cols-4">
             {deliverables.map((item) => (
               <div
                 key={item}
-                className="flex items-center gap-3 text-sm font-semibold text-black/68"
+                className="flex items-center gap-3 text-sm font-semibold text-[#0F263A]"
               >
-                <CheckCircle2 className="size-4 shrink-0 text-[#0b6bff]" />
-                {item}
+                <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#00B1E1]/15 text-[#00B1E1]">
+                  <CheckCircle2 className="size-4" />
+                </div>
+                <span>{item}</span>
               </div>
             ))}
           </div>

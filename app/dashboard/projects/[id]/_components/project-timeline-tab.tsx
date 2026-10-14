@@ -1,5 +1,12 @@
 import type { MilestoneStatus } from "@prisma/client";
-import { AlertCircle, CheckCircle2, Circle, Clock } from "lucide-react";
+import {
+  AlertCircle,
+  Check,
+  CheckCircle2,
+  Circle,
+  Clock,
+  X,
+} from "lucide-react";
 
 import { MilestoneApproval } from "@/components/dashboard/milestone-approval";
 import { StaggerContainer, StaggerItem } from "@/components/shared/motion";
@@ -92,14 +99,20 @@ export function ProjectTimelineTab({ milestones }: ProjectTimelineTabProps) {
                           <MilestoneApproval milestoneId={m.id} />
                         )}
                       {m.clientApprovedAt && (
-                        <p className="mt-2 text-xs text-success">
-                          ✓ Disetujui {formatDate(m.clientApprovedAt)}
+                        <p className="mt-2 flex items-center gap-1 text-xs text-success">
+                          <Check className="size-3.5 shrink-0" />
+                          <span>
+                            Disetujui {formatDate(m.clientApprovedAt)}
+                          </span>
                         </p>
                       )}
                       {m.clientRejectedAt && (
                         <div className="mt-2 text-xs">
-                          <p className="text-destructive">
-                            ✗ Ditolak {formatDate(m.clientRejectedAt)}
+                          <p className="flex items-center gap-1 text-destructive">
+                            <X className="size-3.5 shrink-0" />
+                            <span>
+                              Ditolak {formatDate(m.clientRejectedAt)}
+                            </span>
                           </p>
                           {m.clientFeedback && (
                             <p className="mt-1 text-muted-foreground">

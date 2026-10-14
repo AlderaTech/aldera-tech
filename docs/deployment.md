@@ -18,9 +18,9 @@ Aldera Tech dibangun di atas arsitektur container modern dan efisien:
 │   └──────────┬──────────┘                                     │
 │              │ Proxy http://127.0.0.1:3000                    │
 │   ┌──────────▼────────────────────────────────────────────┐   │
-│   │ Container: aldera_tech_app (Node 22 Alpine)            │   │
+│   │ Container: aldera_tech_app (oven/bun:1-alpine)         │   │
 │   │                                                       │   │
-│   │   ├── Next.js 15 Standalone (node server.js :3000)    │   │
+│   │   ├── Next.js 16 Standalone (bun server.js :3000)     │   │
 │   │   ├── Background crond (BusyBox Cron Runner)          │   │
 │   │   └── Storage Mount: /app/public/uploads              │   │
 │   └──────────┬────────────────────────────────────────────┘   │
@@ -58,13 +58,13 @@ docker/
 
 ### Rincian Fungsi Berkas
 
-| Berkas                      | Fungsi Utama                                                                                                                                                                                  |
-| :-------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `docker/Dockerfile`         | Blueprint image container Next.js multi-stage build dengan Alpine Linux.                                                                                                                      |
-| `docker/docker-compose.yml` | Konfigurasi orkestrasi service aplikasi dan database PostgreSQL lokal.                                                                                                                        |
-| `docker/entrypoint.sh`      | Shell script yang dieksekusi saat container start. Mengatur permission, memulai `crond`, menjalankan `prisma db push` (opsional jika `AUTO_MIGRATE=true`), dan mengeksekusi `node server.js`. |
-| `docker/crontab`            | Berkas referensi jadwal berkala pemanggilan cron internal.                                                                                                                                    |
-| `docker/.dockerignore`      | Mengabaikan `node_modules`, `.next`, `.git`, dan file sementara dari context build.                                                                                                           |
+| Berkas                      | Fungsi Utama                                                                                                                                                                                 |
+| :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docker/Dockerfile`         | Blueprint image container Next.js multi-stage build dengan Alpine Linux.                                                                                                                     |
+| `docker/docker-compose.yml` | Konfigurasi orkestrasi service aplikasi dan database PostgreSQL lokal.                                                                                                                       |
+| `docker/entrypoint.sh`      | Shell script yang dieksekusi saat container start. Mengatur permission, memulai `crond`, menjalankan `prisma db push` (opsional jika `AUTO_MIGRATE=true`), dan mengeksekusi `bun server.js`. |
+| `docker/crontab`            | Berkas referensi jadwal berkala pemanggilan cron internal.                                                                                                                                   |
+| `docker/.dockerignore`      | Mengabaikan `node_modules`, `.next`, `.git`, dan file sementara dari context build.                                                                                                          |
 
 ---
 

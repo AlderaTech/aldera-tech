@@ -3,24 +3,24 @@ import { FadeUp } from "@/components/shared/motion";
 
 export function ServicesHero() {
   return (
-    <section className="editorial-ink">
+    <section className="bg-[#0F263A] text-white">
       <div className="public-container-px mx-auto grid max-w-screen-xxxl gap-4 py-10 sm:py-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <FadeUp>
-          <div className="editorial-kicker border-white/20 text-white/64">
+          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold tracking-[0.08em] text-[#00B1E1] uppercase">
             Layanan
           </div>
-          <h1 className="editorial-display mt-6 max-w-3xl text-5xl text-balance sm:text-6xl lg:text-7xl">
+          <h1 className="mt-6 max-w-3xl text-4xl font-extrabold tracking-tight text-balance text-white sm:text-5xl lg:text-6xl">
             Solusi menyeluruh untuk kebutuhan digital Anda
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-white/72">
+          <p className="mt-5 max-w-2xl text-lg text-slate-300">
             Dari ide hingga rilis, dari rilis hingga bertumbuh. Pilih yang
             paling cocok untuk fase bisnis Anda sekarang.
           </p>
         </FadeUp>
         <FadeUp delay={0.1}>
-          <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-white/10 shadow-2xl">
+          <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-white/15 shadow-2xl">
             <Image
-              src="/generated/solvo-tech/services-blue-suite.png"
+              src="/images/services/services-suite.webp"
               alt="Mockup layanan web, mobile, dan e-commerce"
               fill
               sizes="(min-width: 1024px) 55vw, 100vw"

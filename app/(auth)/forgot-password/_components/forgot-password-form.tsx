@@ -33,7 +33,10 @@ export function ForgotPasswordForm() {
     <form action={handleSubmit}>
       <CardContent className="space-y-5 px-6 pb-2 sm:px-8">
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm font-bold text-black/72">
+          <Label
+            htmlFor="email"
+            className="text-sm font-semibold text-[#0F263A]"
+          >
             Email
           </Label>
           <Input
@@ -44,7 +47,7 @@ export function ForgotPasswordForm() {
             autoComplete="email"
             required
             aria-invalid={!!state.errors?.email}
-            className="h-12 border-black/12 bg-white text-black shadow-none focus-visible:border-[#0b6bff] focus-visible:ring-[#0b6bff]/25"
+            className="h-12 rounded-xl border-slate-200 bg-white text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
           />
           {state.errors?.email && (
             <p role="alert" className="text-xs font-medium text-destructive">
@@ -58,11 +61,12 @@ export function ForgotPasswordForm() {
           type="submit"
           size="xl"
           disabled={isPending}
-          className="w-full bg-[#08090d] text-white hover:bg-black"
+          className="w-full rounded-full bg-[#00B1E1] font-bold text-[#0F263A] shadow-md shadow-[#00B1E1]/25 hover:bg-[#0094BD]"
         >
           {isPending ? (
             <>
-              <Loader2 className="size-4 animate-spin" /> Mengirim...
+              <Loader2 className="size-4 animate-spin text-[#0F263A]" />{" "}
+              Mengirim...
             </>
           ) : (
             <>
@@ -70,11 +74,11 @@ export function ForgotPasswordForm() {
             </>
           )}
         </Button>
-        <p className="text-center text-sm text-black/58">
+        <p className="text-center text-sm text-slate-500">
           Ingat password Anda?{" "}
           <Link
             href={AUTH_ROUTES.login}
-            className="font-bold text-[#0b6bff] transition-colors hover:text-[#075bd8]"
+            className="font-bold text-[#00B1E1] transition-colors hover:text-[#0094BD]"
           >
             Masuk
           </Link>

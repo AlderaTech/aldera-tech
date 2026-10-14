@@ -2,6 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { contactSchema } from "@/lib/validations/contact";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 export type ContactActionState = {
   ok: boolean;
@@ -13,6 +15,16 @@ export async function submitContactMessage(
   _: ContactActionState,
   formData: FormData
 ): Promise<ContactActionState> {
+  const turnstileToken =
+    (formData.get("cf-turnstile-response") as string) || "";
+  const turnstileResult = await verifyTurnstileToken(turnstileToken);
+  if (!turnstileResult.success) {
+    return {
+      ok: false,
+      message: turnstileResult.error || "Verifikasi anti-spam gagal.",
+    };
+  }
+
   const parsed = contactSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
@@ -27,6 +39,14 @@ export async function submitContactMessage(
       if (issue.path[0]) errors[issue.path[0] as string] = issue.message;
     }
     return { ok: false, message: "Periksa kembali input Anda.", errors };
+  }
+
+  const rateCheck = checkRateLimit(`contact:${parsed.data.email}`, 5, 60);
+  if (!rateCheck.allowed) {
+    return {
+      ok: false,
+      message: `Terlalu banyak permintaan pesan. Silakan coba lagi dalam ${rateCheck.retryAfter ?? 60} detik.`,
+    };
   }
 
   try {

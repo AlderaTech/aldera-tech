@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Trash2, Sparkles } from "lucide-react";
+import { Loader2, Trash2, Cpu } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -158,7 +158,7 @@ export function ProjectOverviewTab({ project }: Props) {
                     : "hover:bg-accent"
                 )}
               >
-                <Sparkles
+                <Cpu
                   className={cn("size-3.5", autoProgress && "text-primary")}
                 />
                 Auto dari milestone

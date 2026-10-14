@@ -109,6 +109,9 @@ export function InvoiceStatusControls({
             <SelectContent>
               <SelectItem value="DRAFT">Draft</SelectItem>
               <SelectItem value="SENT">Terkirim</SelectItem>
+              <SelectItem value="PENDING_VERIFICATION">
+                Menunggu Verifikasi
+              </SelectItem>
               <SelectItem value="PAID">Lunas</SelectItem>
               <SelectItem value="OVERDUE">Lewat Tempo</SelectItem>
               <SelectItem value="CANCELLED">Dibatalkan</SelectItem>

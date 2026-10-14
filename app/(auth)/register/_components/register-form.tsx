@@ -42,7 +42,10 @@ export function RegisterForm() {
       <CardContent className="space-y-4 px-5 pb-2 sm:px-6">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="name" className="text-sm font-bold text-black/72">
+            <Label
+              htmlFor="name"
+              className="text-sm font-semibold text-[#0F263A]"
+            >
               Nama lengkap
             </Label>
             <Input
@@ -52,7 +55,7 @@ export function RegisterForm() {
               autoComplete="name"
               required
               aria-invalid={!!state.errors?.name}
-              className="h-11 border-black/12 bg-white text-black shadow-none focus-visible:border-[#0b6bff] focus-visible:ring-[#0b6bff]/25"
+              className="h-11 rounded-xl border-slate-200 bg-white text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
             />
             {state.errors?.name && (
               <p role="alert" className="text-xs font-medium text-destructive">
@@ -61,7 +64,10 @@ export function RegisterForm() {
             )}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="email" className="text-sm font-bold text-black/72">
+            <Label
+              htmlFor="email"
+              className="text-sm font-semibold text-[#0F263A]"
+            >
               Email
             </Label>
             <Input
@@ -72,7 +78,7 @@ export function RegisterForm() {
               autoComplete="email"
               required
               aria-invalid={!!state.errors?.email}
-              className="h-11 border-black/12 bg-white text-black shadow-none focus-visible:border-[#0b6bff] focus-visible:ring-[#0b6bff]/25"
+              className="h-11 rounded-xl border-slate-200 bg-white text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
             />
             {state.errors?.email && (
               <p role="alert" className="text-xs font-medium text-destructive">
@@ -82,9 +88,15 @@ export function RegisterForm() {
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="phone" className="text-sm font-bold text-black/72">
+          <Label
+            htmlFor="phone"
+            className="text-sm font-semibold text-[#0F263A]"
+          >
             Telepon
-            <span className="font-medium text-black/42"> opsional</span>
+            <span className="font-normal text-muted-foreground">
+              {" "}
+              (opsional)
+            </span>
           </Label>
           <Input
             id="phone"
@@ -92,14 +104,14 @@ export function RegisterForm() {
             type="tel"
             placeholder="+62 812 3456 7890"
             autoComplete="tel"
-            className="h-11 border-black/12 bg-white text-black shadow-none focus-visible:border-[#0b6bff] focus-visible:ring-[#0b6bff]/25"
+            className="h-11 rounded-xl border-slate-200 bg-white text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
           />
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label
               htmlFor="password"
-              className="text-sm font-bold text-black/72"
+              className="text-sm font-semibold text-[#0F263A]"
             >
               Password
             </Label>
@@ -112,7 +124,7 @@ export function RegisterForm() {
               aria-invalid={!!state.errors?.password}
               showPassword={showPassword}
               onTogglePassword={togglePassword}
-              className="h-11 border-black/12 bg-white pr-10 text-black shadow-none focus-visible:border-[#0b6bff] focus-visible:ring-[#0b6bff]/25"
+              className="h-11 rounded-xl border-slate-200 bg-white pr-10 text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
             />
             {state.errors?.password && (
               <p role="alert" className="text-xs font-medium text-destructive">
@@ -123,7 +135,7 @@ export function RegisterForm() {
           <div className="space-y-1.5">
             <Label
               htmlFor="confirmPassword"
-              className="text-sm font-bold text-black/72"
+              className="text-sm font-semibold text-[#0F263A]"
             >
               Konfirmasi password
             </Label>
@@ -135,7 +147,7 @@ export function RegisterForm() {
               autoComplete="new-password"
               required
               aria-invalid={!!state.errors?.confirmPassword}
-              className="h-11 border-black/12 bg-white text-black shadow-none focus-visible:border-[#0b6bff] focus-visible:ring-[#0b6bff]/25"
+              className="h-11 rounded-xl border-slate-200 bg-white text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
             />
             {state.errors?.confirmPassword && (
               <p role="alert" className="text-xs font-medium text-destructive">
@@ -150,11 +162,12 @@ export function RegisterForm() {
           type="submit"
           size="xl"
           disabled={isPending}
-          className="w-full bg-[#0b6bff] text-white hover:bg-[#075bd8]"
+          className="w-full rounded-full bg-[#00B1E1] font-bold text-[#0F263A] shadow-md shadow-[#00B1E1]/25 hover:bg-[#0094BD]"
         >
           {isPending ? (
             <>
-              <Loader2 className="size-4 animate-spin" /> Memproses...
+              <Loader2 className="size-4 animate-spin text-[#0F263A]" />{" "}
+              Memproses...
             </>
           ) : (
             <>
@@ -162,11 +175,11 @@ export function RegisterForm() {
             </>
           )}
         </Button>
-        <p className="text-center text-sm text-black/58">
+        <p className="text-center text-sm text-slate-500">
           Sudah punya akun?{" "}
           <Link
             href={AUTH_ROUTES.login}
-            className="font-bold text-[#0b6bff] transition-colors hover:text-[#075bd8]"
+            className="font-bold text-[#00B1E1] transition-colors hover:text-[#0094BD]"
           >
             Masuk
           </Link>

@@ -3,10 +3,23 @@ import { Building2, CalendarClock, FileText, Mail } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
 import type { InvoiceDetail } from "../_data/invoice-detail";
+import { InvoiceProofVerifier } from "./invoice-proof-verifier";
 
 export function InvoiceSidePanel({ invoice }: { invoice: InvoiceDetail }) {
+  const latestPayment = invoice.payments?.[0] ?? null;
+
   return (
     <div className="space-y-4">
+      {(invoice.paymentProofUrl || latestPayment) && (
+        <InvoiceProofVerifier
+          invoiceId={invoice.id}
+          invoiceNumber={invoice.number}
+          status={invoice.status}
+          paymentProofUrl={invoice.paymentProofUrl}
+          paymentMethod={invoice.paymentMethod}
+          payment={latestPayment}
+        />
+      )}
       <Card className="border-slate-200 bg-white p-4 shadow-sm">
         <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-950">
           <Building2 className="size-4 text-primary" />

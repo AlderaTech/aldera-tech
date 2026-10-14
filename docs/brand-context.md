@@ -89,3 +89,90 @@ Direktori `public/logo/` berisi aset identitas visual resmi Aldera Tech yang tel
 
 - **Dilarang menggunakan berkas logo lama di root `public/`** karena telah dihapus dan digantikan oleh keluarga varian aset di dalam folder `public/logo/`.
 - Komponen web dan metadata wajib mereferensikan aset logo baru dengan path relatif/root: `/logo/logo-transparent.png` atau varian yang sesuai.
+
+---
+
+## 6. Sistem Desain & Token Warna (Design System & Color Tokens)
+
+Sistem warna Aldera Tech diekstraksi secara presisi dari identitas visual logo resmi untuk memancarkan otoritas teknis, keandalan enterprise, dan modernitas:
+
+| Token Desain                      | Kode Hex / Variabel              | Peran & Penggunaan Visual                                                             | Standar Kontras (WCAG 2.1)                               |
+| :-------------------------------- | :------------------------------- | :------------------------------------------------------------------------------------ | :------------------------------------------------------- |
+| **Deep Navy (Brand Dark)**        | `#0F263A` / `--brand-navy`       | Warna dasar brand dark, teks judul utama, kontainer kartu dark, dan sidebar navigasi. | Kontras **11:1+** terhadap putih (`#FFFFFF`)             |
+| **Deep Navy Light**               | `#1A3B54` / `--brand-navy-light` | State hover untuk elemen dark, gradien sekunder dark tech.                            | Kontras tinggi                                           |
+| **Electric Cyan (Brand Primary)** | `#00B1E1` / `--primary`          | Warna aksen utama, tombol CTA primer, indikator aktif, dan aksen garis pil.           | Kontras **7.8:1** terhadap teks `#0F263A` (**WCAG AAA**) |
+| **Cyan Hover / Active**           | `#0094BD` / `--primary-hover`    | State hover dan active pada tombol Electric Cyan.                                     | Kontras tinggi                                           |
+| **Canvas Light**                  | `#F8FAFC` / `--background`       | Warna latar belakang kanvas halaman publik dan workspace auth.                        | Latar terang bersih                                      |
+| **Surface White**                 | `#FFFFFF` / `--card`             | Latar belakang kartu, modal dialog, formulir input, dan popover.                      | Kontras maksimum                                         |
+| **Divider / Border**              | `#E2E8F0` / `--border`           | Garis pemisah struktural, batas input, dan border kartu minimalis.                    | Border halus                                             |
+
+### Aturan Kontras Tinggi (High Contrast Rule)
+
+- **Tombol Primer Electric Cyan**: Wajib menggunakan teks tebal Deep Navy (`bg-[#00B1E1] text-[#0F263A] font-bold`) dengan rasio kontras 7.8:1 (memenuhi standar WCAG AAA). Dilarang menggunakan teks putih pada latar `#00B1E1` karena rasio kontrasnya hanya 2.4:1.
+- **Tombol Dark**: Menggunakan latar Deep Navy dengan teks putih dan hover ke navy light (`bg-[#0F263A] text-white hover:bg-[#1A3B54]`).
+- **Elemen Interaktif Dark**: Menggunakan aksen glow Electric Cyan (`#00B1E1`) di atas canvas Deep Navy (`#0F263A`) dengan rasio kontras tajam > 11:1.
+
+---
+
+## 7. Sistem Tipografi (Typography System)
+
+Mengadopsi hierarki tipografi editorial modern yang menggabungkan otoritas tinggi dan kemudahan membaca (_high legibility_):
+
+1. **Display Headings (Judul Utama & Hero Display)**:
+   - Font: **Serif / Slab Display Face** (`font-serif`, Georgia / Playfair Display style) dengan font-weight 800/900 (`font-extrabold`).
+   - Warna: Deep Navy (`#0F263A`) pada latar terang, atau Pure White (`#FFFFFF`) pada latar gelap.
+   - Memberikan impresi elegan, kredibel, dan berwibawa (_high-authority editorial feel_).
+
+2. **Body Text & Interface Elements**:
+   - Font: **Geist Sans** (`font-sans`), sans-serif geometris modern.
+   - Warna: Slate 600 (`#475569`) untuk body text umum, Slate 500 untuk caption/keterangan sekunder.
+
+3. **Technical Data & Telemetry**:
+   - Font: **Geist Mono** (`font-mono`) untuk kode program, metrik token, ID sistem, dan log terminal.
+
+4. **Massive Stat Callouts (Kalout Metrik Raksasa)**:
+   - Angka statistik penting (`98%`, `50+`, `1x24`, `30m`) ditampilkan dalam ukuran font raksasa (`text-6xl` hingga `text-8xl`) menggunakan display serif yang kontras dan eye-catching.
+
+---
+
+## 8. Bahasa Bentuk, Kontainer & Kartu Organik (Shape & Organic Container Language)
+
+Bahasa visual Aldera Tech terinspirasi dari referensi desain visual modern:
+
+1. **Sudut Membulat Lebar (Organic Broad Radii)**:
+   - Seluruh kontainer kartu utama menggunakan `rounded-2xl` (16px) hingga `rounded-3xl` (24px) atau `rounded-[2.5rem]` (40px) pada hero showcase dan CTA banner.
+2. **Aksen Garis Pil Horizontal (Horizontal Cyan Pill Accent)**:
+   - Penanda aksen horizontal berukuran `w-12 h-1.5 bg-[#00B1E1] rounded-full` diletakkan di atas atau di samping judul section sebagai pemandu visual pengunjung.
+3. **Tombol Berbentuk Pil (Pill CTA Buttons)**:
+   - Tombol aksi utama menggunakan bentuk pil penuh (`rounded-full`) dengan padding nyaman (`px-8 py-3.5`).
+4. **Kartu Mengambang Terpusat (Floating Centered Split-Card)**:
+   - Pada halaman otentikasi (`/login`, `/register`, `/forgot-password`, `/reset-password`), seluruh alur dibungkus dalam kartu mengambang terpusat (`rounded-3xl`, `shadow-2xl shadow-slate-900/10`) di atas canvas bersih `#F8FAFC`.
+   - Sisi kiri: Formulir minimalis berlatar putih dengan input berbingkai halus dan ring Electric Cyan.
+   - Sisi kanan: Panel visual rekayasa cloud berlatar Deep Navy `#0F263A`.
+
+---
+
+## 9. Kebijakan Ketat No-Emoji & No-AI-Mascot (Strict No-Emoji & No-AI Policy)
+
+Untuk menjaga reputasi Aldera Tech sebagai konsultan rekayasa perangkat lunak papan atas bagi klien enterprise dan startup bertumbuh:
+
+1. **Larangan Penggunaan Emoji Unicode (Zero Unicode Emojis)**:
+   - Dilarang keras menaruh karakter emoji unicode (seperti `👋`, `🎉`, `⏳`, `✓`, `✗`) di antarmuka web, judul halaman, badge status, email template, maupun notifikasi toast.
+   - Seluruh indikator status wajib menggunakan **ikon Lucide semantik** (seperti `Clock`, `CheckCircle2`, `Check`, `X`, `Layers`, `ShieldCheck`).
+2. **Larangan Maskot Robot AI & Gimmick AI Logo**:
+   - Dilarang menampilkan maskot kartun 3D robot AI atau ikon gimmick seperti `Sparkles` untuk merepresentasikan sistem.
+   - Seluruh visualisasi teknis wajib merefleksikan rekayasa sistem nyata: topologi arsitektur cloud, mikroservis terdistribusi, telemetri real-time, terminal log, dan dashboard metrik performa.
+
+---
+
+## 10. Standar Format & Performa Aset Gambar (Asset Performance & LCP Optimization)
+
+1. **Format Wajib**: Seluruh aset gambar fotografi, render mockup, dan studi kasus wajib disimpan dalam format **WebP** terkompresi (kualitas 80–85%) atau format vektor **SVG**.
+2. **Batas Ukuran Berkas**:
+   - Gambar Hero & Showcase: Maksimal `< 100 KB` per berkas.
+   - Thumbnail Portfolio & Blog: Maksimal `< 70 KB` per berkas.
+   - Ikon & Vektor: Maksimal `< 20 KB` per berkas.
+3. **Larangan Berkas PNG Raksasa**: Dilarang menyimpan atau meng-commit gambar PNG uncompressed berukuran megabyte ke dalam repositori publik.
+4. **Optimasi LCP (Largest Contentful Paint)**:
+   - Elemen gambar kandidat LCP utama (seperti gambar hero di halaman depan) wajib menggunakan atribut `priority` (mengaktifkan `fetchpriority="high"` dan preload).
+   - Gambar di bawah viewport (_below the fold_) wajib menggunakan `loading="lazy"` tanpa atribut priority.

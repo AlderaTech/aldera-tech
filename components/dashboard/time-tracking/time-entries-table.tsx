@@ -82,7 +82,7 @@ export function TimeEntriesTable({
                     variant="ghost"
                     aria-label="Hapus"
                     onClick={() => onSelectDeleteTarget(e)}
-                    disabled={isPending || !!(e.endedAt === null)}
+                    disabled={isPending}
                   >
                     <Trash2 className="size-3.5" />
                   </Button>

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PUBLIC_ROUTES } from "@/lib/routes";
+import { Turnstile } from "@/components/shared/turnstile";
 
 import {
   submitContactMessage,
@@ -138,6 +139,7 @@ export function ContactForm() {
           </p>
         )}
       </div>
+      <Turnstile className="my-2" />
       <Button type="submit" size="lg" className="w-full" disabled={isPending}>
         {isPending ? (
           <>

@@ -88,7 +88,7 @@ lib/
 └── utils.ts              # cn, formatCurrency, formatDate, slugify, etc.
 
 auth.ts                   # NextAuth v5 config (root-level)
-proxy.ts                  # route protection (Next.js 16 middleware replacement)
+middleware.ts             # route protection (standard Next.js middleware)
 prisma.config.ts          # Prisma 7 config (datasource.url lives here)
 ```
 
@@ -201,7 +201,7 @@ docker compose -f docker/docker-compose.yml logs -f app
 
 This project uses Next.js 16, which introduces several breaking changes from v15:
 
-1. **`middleware.ts` → `proxy.ts`**: our route protection lives in `/proxy.ts`
+1. **`middleware.ts`**: standard route protection lives in `/middleware.ts` guarding `/admin/:path*`, `/dashboard/:path*`, and `/api/admin/:path*`
 2. **Async Request APIs**: `params` and `searchParams` are awaited
 3. **Turbopack default**: no more `--turbopack` flag
 4. **No `next lint`**: use `eslint` directly

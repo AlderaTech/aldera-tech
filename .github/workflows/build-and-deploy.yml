@@ -18,8 +18,29 @@ env:
   IMAGE_NAME: alderatech/aldera-tech
 
 jobs:
+  validate:
+    name: Validate Code & Types
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Lint check
+        run: bun run lint
+
+      - name: Type check
+        run: bunx tsc --noEmit
+
   docker:
     name: Build and Publish Docker Image
+    needs: validate
     runs-on: ubuntu-latest
 
     steps:
@@ -52,7 +73,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: Dockerfile
+          file: docker/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

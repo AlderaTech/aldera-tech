@@ -2,37 +2,22 @@
 
 import * as React from "react";
 import { useActionState } from "react";
-import { Building2, Share2, Tags } from "lucide-react";
+import { Building2, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  updatePricingSettingsAction,
   updateSiteSettingsAction,
   type SettingsActionState,
 } from "@/lib/actions/settings";
-import type {
-  PublicPricingPlan,
-  PublicSiteSettings,
-} from "@/lib/public-settings";
+import type { PublicSiteSettings } from "@/lib/public-settings";
 import { ProfileSettingsTab } from "./profile-settings-tab";
 import { ContactSettingsTab } from "./contact-settings-tab";
-import { PricingSettingsTab } from "./pricing-settings-tab";
 
 const initialState: SettingsActionState = { ok: false };
 
-export function SettingsForm({
-  settings,
-  pricingPlans,
-}: {
-  settings: PublicSiteSettings;
-  pricingPlans: PublicPricingPlan[];
-}) {
+export function SettingsForm({ settings }: { settings: PublicSiteSettings }) {
   const [siteState, siteAction, sitePending] = useActionState(
     updateSiteSettingsAction,
-    initialState
-  );
-  const [pricingState, pricingAction, pricingPending] = useActionState(
-    updatePricingSettingsAction,
     initialState
   );
 
@@ -42,13 +27,6 @@ export function SettingsForm({
       else toast.error(siteState.message);
     }
   }, [siteState]);
-
-  React.useEffect(() => {
-    if (pricingState.message) {
-      if (pricingState.ok) toast.success(pricingState.message);
-      else toast.error(pricingState.message);
-    }
-  }, [pricingState]);
 
   return (
     <Tabs defaultValue="profile" className="gap-0">
@@ -61,10 +39,6 @@ export function SettingsForm({
           <TabsTrigger value="contact" className="gap-2">
             <Share2 className="size-4" />
             Sosial & Kontak
-          </TabsTrigger>
-          <TabsTrigger value="pricing" className="gap-2">
-            <Tags className="size-4" />
-            Harga
           </TabsTrigger>
         </TabsList>
       </div>
@@ -82,14 +56,6 @@ export function SettingsForm({
           settings={settings}
           action={siteAction}
           pending={sitePending}
-        />
-      </TabsContent>
-
-      <TabsContent value="pricing">
-        <PricingSettingsTab
-          pricingPlans={pricingPlans}
-          action={pricingAction}
-          pending={pricingPending}
         />
       </TabsContent>
     </Tabs>

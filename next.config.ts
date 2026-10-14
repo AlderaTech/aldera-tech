@@ -27,6 +27,25 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/admin/team",
+        destination: "/admin/users?role=DEVELOPER&view=workload",
+        permanent: true,
+      },
+      {
+        source: "/calculator",
+        destination: "/pricing#calculator",
+        permanent: true,
+      },
+      {
+        source: "/dashboard/calculator",
+        destination: "/pricing#calculator",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

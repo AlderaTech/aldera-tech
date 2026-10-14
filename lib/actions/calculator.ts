@@ -5,7 +5,7 @@ import type { Prisma } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { isStaff } from "@/lib/permissions";
-import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
+import { ADMIN_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 
 // --- Helpers ---
 async function requireAdmin() {
@@ -13,6 +13,11 @@ async function requireAdmin() {
   if (!session?.user || !isStaff(session.user.role))
     throw new Error("Unauthorized");
   return session;
+}
+
+function revalidateCalculator() {
+  revalidatePath(ADMIN_ROUTES.calculator);
+  revalidatePath(PUBLIC_ROUTES.pricing);
 }
 
 // --- ProjectType CRUD ---
@@ -36,13 +41,13 @@ export async function upsertProjectType(
   } else {
     await prisma.projectType.create({ data: payload });
   }
-  revalidatePath(ADMIN_ROUTES.calculator);
+  revalidateCalculator();
 }
 
 export async function deleteProjectType(id: string) {
   await requireAdmin();
   await prisma.projectType.delete({ where: { id } });
-  revalidatePath(ADMIN_ROUTES.calculator);
+  revalidateCalculator();
 }
 
 // --- FeatureOption CRUD ---
@@ -65,13 +70,13 @@ export async function upsertFeatureOption(
   } else {
     await prisma.featureOption.create({ data });
   }
-  revalidatePath(ADMIN_ROUTES.calculator);
+  revalidateCalculator();
 }
 
 export async function deleteFeatureOption(id: string) {
   await requireAdmin();
   await prisma.featureOption.delete({ where: { id } });
-  revalidatePath(ADMIN_ROUTES.calculator);
+  revalidateCalculator();
 }
 
 // --- AddOnOption CRUD ---
@@ -94,13 +99,13 @@ export async function upsertAddOnOption(
   } else {
     await prisma.addOnOption.create({ data });
   }
-  revalidatePath(ADMIN_ROUTES.calculator);
+  revalidateCalculator();
 }
 
 export async function deleteAddOnOption(id: string) {
   await requireAdmin();
   await prisma.addOnOption.delete({ where: { id } });
-  revalidatePath(ADMIN_ROUTES.calculator);
+  revalidateCalculator();
 }
 
 // --- CalculatorConfig ---
@@ -119,7 +124,7 @@ export async function updateCalculatorConfig(data: {
     update: data,
     create: { id: "calculator", ...data },
   });
-  revalidatePath(ADMIN_ROUTES.calculator);
+  revalidateCalculator();
 }
 
 // --- OrderRequest ---
@@ -151,7 +156,8 @@ export async function submitOrderRequest(data: {
       estimatedTotal: data.estimatedTotal,
     },
   });
-  revalidatePath(DASHBOARD_ROUTES.calculator);
+  revalidatePath(PUBLIC_ROUTES.pricing);
+  revalidatePath(DASHBOARD_ROUTES.orders);
 }
 
 export async function updateOrderRequestStatus(
