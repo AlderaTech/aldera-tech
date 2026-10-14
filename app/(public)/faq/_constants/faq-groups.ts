@@ -13,11 +13,11 @@ export const faqGroups: FaqGroup[] = [
     title: "Umum",
     items: [
       {
-        q: "Apa itu Solvo Tech?",
-        a: "Solvo Tech adalah partner teknologi yang membantu bisnis Indonesia membangun web, aplikasi mobile, dan solusi digital lainnya, dengan transparansi penuh melalui dashboard langsung.",
+        q: "Apa itu Aldera Tech?",
+        a: "Aldera Tech adalah partner teknologi yang membantu bisnis Indonesia membangun web, aplikasi mobile, dan solusi digital lainnya, dengan transparansi penuh melalui dashboard langsung.",
       },
       {
-        q: "Dari mana Solvo Tech berasal?",
+        q: "Dari mana Aldera Tech berasal?",
         a: "Kami berbasis di Indonesia dan melayani klien di seluruh nusantara serta regional Asia Tenggara.",
       },
       {

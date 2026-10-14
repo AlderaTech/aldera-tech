@@ -64,8 +64,8 @@ export const waTemplates = {
   passwordReset(args: { name: string; resetUrl: string; ttlHours?: number }) {
     const hours = args.ttlHours ?? 2;
     return {
-      title: "Reset Password Solvo Tech",
-      message: `Halo *${args.name}*,\n\nKami menerima permintaan untuk mereset password akun Solvo Tech Anda. Klik tautan di bawah dalam ${hours} jam ke depan untuk melanjutkan:\n\n${args.resetUrl}\n\nJika Anda tidak meminta reset, abaikan pesan ini.`,
+      title: "Reset Password Aldera Tech",
+      message: `Halo *${args.name}*,\n\nKami menerima permintaan untuk mereset password akun Aldera Tech Anda. Klik tautan di bawah dalam ${hours} jam ke depan untuk melanjutkan:\n\n${args.resetUrl}\n\nJika Anda tidak meminta reset, abaikan pesan ini.`,
     };
   },
 
@@ -82,7 +82,7 @@ export const waTemplates = {
       : "";
     return {
       title: "Penawaran Proposal Baru",
-      message: `Halo *${args.clientName}*,\n\nKami telah menyiapkan proposal *${args.proposalTitle}* (${args.proposalNumber}) dengan total nilai *${args.totalAmount}*.${expiryLine}\n\nSilakan review dan tandatangani melalui tautan berikut:\n${args.viewUrl}\n\nTerima kasih,\nTim Solvo Tech`,
+      message: `Halo *${args.clientName}*,\n\nKami telah menyiapkan proposal *${args.proposalTitle}* (${args.proposalNumber}) dengan total nilai *${args.totalAmount}*.${expiryLine}\n\nSilakan review dan tandatangani melalui tautan berikut:\n${args.viewUrl}\n\nTerima kasih,\nTim Aldera Tech`,
     };
   },
 } as const;

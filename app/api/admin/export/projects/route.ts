@@ -15,7 +15,7 @@ export async function GET() {
   const projects = await prisma.project.findMany({
     orderBy: { createdAt: "desc" },
     include: {
-      client: { select: { name: true, email: true, company: true } },
+      client: { select: { name: true, email: true } },
       _count: { select: { milestones: true, invoices: true } },
     },
   });
@@ -26,7 +26,6 @@ export async function GET() {
     progress: p.progress,
     autoProgress: p.autoProgress,
     clientName: p.client.name,
-    clientCompany: p.client.company ?? "",
     clientEmail: p.client.email,
     budget: p.budget ? Number(p.budget).toFixed(2) : "",
     startDate: p.startDate.toISOString().slice(0, 10),

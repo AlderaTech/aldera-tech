@@ -17,6 +17,6 @@ export const config = {
      *  - favicon.ico, /uploads, /api/auth (auth.js handles its own)
      *  - common image/asset extensions
      */
-    "/((?!api/auth|_next/static|_next/image|uploads|favicon.ico|logo.png|logo.jpg|robots.txt|sitemap.xml|manifest.webmanifest|.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico|css|js|woff2?|ttf)).*)",
+    "/((?!api/auth|_next/static|_next/image|uploads|logo|favicon.ico|robots.txt|sitemap.xml|manifest.webmanifest|.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico|css|js|woff2?|ttf)).*)",
   ],
 };

@@ -74,7 +74,6 @@ export default async function PublicProposalPage({ params }: PageProps) {
               </div>
               <div className="text-right text-sm text-muted-foreground">
                 <div>Untuk {proposal.clientName}</div>
-                {proposal.clientCompany && <div>{proposal.clientCompany}</div>}
               </div>
             </div>
             {proposal.summary && (

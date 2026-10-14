@@ -13,7 +13,7 @@ export function AuthSidePanel({ variant }: AuthSidePanelProps) {
     <aside className="relative hidden h-full overflow-hidden bg-[#08090d] p-4 text-white lg:block">
       <Image
         src="/generated/solvo-tech/hero-blue-editorial-v2.png"
-        alt="Workspace dashboard digital Solvo Tech"
+        alt="Workspace dashboard digital Aldera Tech"
         fill
         sizes="(min-width: 1024px) 52vw, 100vw"
         className="object-cover opacity-72"

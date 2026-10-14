@@ -12,7 +12,7 @@ export function OverviewHero({ actions }: { actions: QuickAction[] }) {
       <div className="grid gap-5 p-5 lg:grid-cols-[1fr_auto] lg:items-center">
         <AdminPageHeader
           eyebrow="Admin Console"
-          title="Dashboard operasional Solvo Tech"
+          title="Dashboard operasional Aldera Tech"
           description="Pantau proyek, invoice, konten, dan aktivitas tim dari satu area kerja yang ringkas."
           actions={
             actions.length > 0 ? (

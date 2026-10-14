@@ -26,11 +26,6 @@ export function InvoiceLineItems({ invoice }: { invoice: InvoiceDetail }) {
               <div className="font-semibold text-slate-950">
                 {invoice.client.name}
               </div>
-              {invoice.client.company && (
-                <div className="text-sm text-slate-700">
-                  {invoice.client.company}
-                </div>
-              )}
               <div className="text-sm text-slate-500">
                 {invoice.client.email}
               </div>

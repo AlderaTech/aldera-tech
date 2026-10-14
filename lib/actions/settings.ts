@@ -204,7 +204,13 @@ export async function updatePricingSettingsAction(
 export async function ensureDefaultSettings() {
   await prisma.siteSetting.upsert({
     where: { id: SITE_SETTING_ID },
-    update: {},
+    update: {
+      brandName: defaultSiteSettings.brandName,
+      footerDescription: defaultSiteSettings.footerDescription,
+      email: clean(defaultSiteSettings.email),
+      seoTitle: defaultSiteSettings.seoTitle,
+      seoDescription: defaultSiteSettings.seoDescription,
+    },
     create: {
       id: SITE_SETTING_ID,
       ...defaultSiteSettings,

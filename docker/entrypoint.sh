@@ -2,13 +2,13 @@
 set -e
 
 # ==============================================================================
-# Solvo Tech Container Entrypoint
+# Aldera Tech Container Entrypoint
 # ==============================================================================
 
 PORT="${PORT:-3000}"
 ENABLE_CRON="${ENABLE_CRON:-true}"
 
-echo "[Entrypoint] Initializing Solvo Tech application..."
+echo "[Entrypoint] Initializing Aldera Tech application..."
 
 # 1. Run database migration if AUTO_MIGRATE=true
 if [ "${AUTO_MIGRATE}" = "true" ]; then

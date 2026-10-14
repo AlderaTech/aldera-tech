@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { updateProfile } from "@/lib/actions/profile";
 
 type Props = {
-  defaultValues: { name: string; phone: string; company: string };
+  defaultValues: { name: string; phone: string };
 };
 
 export function ProfileForm({ defaultValues }: Props) {
@@ -41,15 +41,6 @@ export function ProfileForm({ defaultValues }: Props) {
           name="phone"
           placeholder="+62..."
           defaultValue={defaultValues.phone}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="company">Perusahaan</Label>
-        <Input
-          id="company"
-          name="company"
-          placeholder="Nama perusahaan (opsional)"
-          defaultValue={defaultValues.company}
         />
       </div>
       <Button type="submit" disabled={pending}>

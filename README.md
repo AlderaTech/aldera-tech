@@ -1,4 +1,4 @@
-# Solvo Tech
+# Aldera Tech
 
 Freelance tech partner platform, marketing website + project management + blog + invoice system built with Next.js 16, React 19, Tailwind CSS 4, Prisma 7, and NextAuth v5.
 
@@ -26,11 +26,11 @@ Open http://localhost:3000.
 
 ## Default Credentials (after seed)
 
-| Role   | Email            | Password |
-| ------ | ---------------- | -------- |
-| Admin  | admin@solvo.tech | password |
-| Client | gading@gmail.com | password |
-| Client | siti@example.com | password |
+| Role   | Email                   | Password |
+| ------ | ----------------------- | -------- |
+| Admin  | admin@aldera.tech       | password |
+| Admin  | gading@gmail.com        | password |
+| Client | gading-client@gmail.com | password |
 
 Override the admin credentials by setting `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` in `.env` before running `db:seed`.
 

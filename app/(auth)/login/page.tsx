@@ -6,7 +6,7 @@ import { LoginForm } from "./_components/login-form";
 export const metadata: Metadata = {
   title: "Masuk",
   description:
-    "Masuk ke dashboard Solvo Tech untuk melihat progres proyek Anda.",
+    "Masuk ke dashboard Aldera Tech untuk melihat progres proyek Anda.",
 };
 
 export default function LoginPage() {

@@ -1,5 +1,5 @@
 /**
- * Sentralisasi seluruh Route Constants di aplikasi Solvo Tech.
+ * Sentralisasi seluruh Route Constants di aplikasi Aldera Tech.
  *
  * Seluruh navigasi, tautan Link, router.push, redirect, dan pemanggilan API
  * WAJIB menggunakan konstanta ini untuk meminimalkan typo dan memudahkan refactoring.

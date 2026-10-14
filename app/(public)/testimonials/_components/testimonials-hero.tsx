@@ -17,7 +17,7 @@ export function TestimonialsHero({ count }: TestimonialsHeroProps) {
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-white/68">
             Sekitar {count}+ testimoni tulus dari bisnis yang telah
-            mempercayakan proyek mereka ke Solvo Tech.
+            mempercayakan proyek mereka ke Aldera Tech.
           </p>
         </FadeUp>
       </div>

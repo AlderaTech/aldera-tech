@@ -34,7 +34,7 @@ export function ContactSettingsTab({
               name="email"
               defaultValue={settings.email}
               type="email"
-              placeholder="hello@solvotech.id"
+              placeholder="hello@aldera.tech"
             />
             <Field
               label="Nomor telepon"
@@ -89,21 +89,21 @@ export function ContactSettingsTab({
               name="githubUrl"
               defaultValue={settings.githubUrl}
               type="url"
-              placeholder="https://github.com/solvotech"
+              placeholder="https://github.com/alderatech"
             />
             <Field
               label="LinkedIn URL"
               name="linkedinUrl"
               defaultValue={settings.linkedinUrl}
               type="url"
-              placeholder="https://linkedin.com/company/solvotech"
+              placeholder="https://linkedin.com/company/alderatech"
             />
             <Field
               label="Instagram URL"
               name="instagramUrl"
               defaultValue={settings.instagramUrl}
               type="url"
-              placeholder="https://instagram.com/solvotech"
+              placeholder="https://instagram.com/alderatech"
             />
           </div>
         </SettingsSection>

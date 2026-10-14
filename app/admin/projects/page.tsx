@@ -23,7 +23,7 @@ export default async function AdminProjectsList() {
     async () =>
       await prisma.project.findMany({
         orderBy: { updatedAt: "desc" },
-        include: { client: { select: { name: true, company: true } } },
+        include: { client: { select: { name: true } } },
       }),
     []
   );
@@ -84,15 +84,8 @@ export default async function AdminProjectsList() {
                     <TableCell className="max-w-xs truncate font-medium">
                       {p.title}
                     </TableCell>
-                    <TableCell className="hidden text-muted-foreground md:table-cell">
-                      <div className="flex flex-col">
-                        <span className="text-sm">{p.client.name}</span>
-                        {p.client.company && (
-                          <span className="text-xs text-muted-foreground">
-                            {p.client.company}
-                          </span>
-                        )}
-                      </div>
+                    <TableCell className="hidden text-sm text-muted-foreground md:table-cell">
+                      {p.client.name}
                     </TableCell>
                     <TableCell>
                       <Badge variant={meta.variant}>{meta.label}</Badge>

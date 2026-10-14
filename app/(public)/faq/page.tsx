@@ -8,7 +8,7 @@ import { faqGroups } from "./_constants/faq-groups";
 export const metadata: Metadata = {
   title: "FAQ",
   description:
-    "Pertanyaan yang sering ditanyakan tentang layanan, proses kerja, dan kerjasama dengan Solvo Tech.",
+    "Pertanyaan yang sering ditanyakan tentang layanan, proses kerja, dan kerjasama dengan Aldera Tech.",
   alternates: { canonical: PUBLIC_ROUTES.faq },
 };
 

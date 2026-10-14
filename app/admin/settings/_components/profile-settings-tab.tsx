@@ -33,7 +33,7 @@ export function ProfileSettingsTab({
               label="Nama brand"
               name="brandName"
               defaultValue={settings.brandName}
-              placeholder="Solvo Tech"
+              placeholder="Aldera Tech"
             />
             <Field
               label="Waktu respon"
@@ -61,7 +61,7 @@ export function ProfileSettingsTab({
               label="SEO title"
               name="seoTitle"
               defaultValue={settings.seoTitle}
-              placeholder="Solvo Tech - Digital Product Studio"
+              placeholder="Aldera Tech - Digital Product Studio"
             />
             <TextField
               label="SEO description"

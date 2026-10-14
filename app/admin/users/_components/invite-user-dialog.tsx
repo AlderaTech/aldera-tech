@@ -124,14 +124,6 @@ export function InviteUserDialog({ children }: { children: React.ReactNode }) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="inv-company">Perusahaan (opsional)</Label>
-                <Input
-                  id="inv-company"
-                  name="company"
-                  placeholder="Nama perusahaan"
-                />
-              </div>
-              <div className="space-y-2">
                 <Label htmlFor="inv-role">Role</Label>
                 <Select name="role" defaultValue="CLIENT">
                   <SelectTrigger id="inv-role">

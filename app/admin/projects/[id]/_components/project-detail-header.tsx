@@ -74,9 +74,6 @@ export function ProjectDetailHeader({
                   </AvatarFallback>
                 </Avatar>
                 {project.client.name}
-                {project.client.company && (
-                  <span className="text-xs">({project.client.company})</span>
-                )}
               </div>
               {project.deadline && (
                 <span className="inline-flex items-center gap-1">

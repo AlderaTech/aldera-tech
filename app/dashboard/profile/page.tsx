@@ -24,7 +24,6 @@ export default async function ProfilePage() {
           email: true,
           roles: true,
           avatar: true,
-          company: true,
           phone: true,
           createdAt: true,
         },
@@ -77,7 +76,6 @@ export default async function ProfilePage() {
             defaultValues={{
               name: user?.name ?? "",
               phone: user?.phone ?? "",
-              company: user?.company ?? "",
             }}
           />
         </CardContent>

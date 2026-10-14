@@ -4,7 +4,7 @@ import { ForgotPasswordForm } from "./_components/forgot-password-form";
 
 export const metadata: Metadata = {
   title: "Lupa Password",
-  description: "Minta link reset password untuk akun Solvo Tech Anda.",
+  description: "Minta link reset password untuk akun Aldera Tech Anda.",
 };
 
 export default function ForgotPasswordPage() {

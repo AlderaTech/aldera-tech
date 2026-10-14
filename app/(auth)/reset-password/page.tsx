@@ -3,7 +3,7 @@ import { ResetPasswordForm } from "./_components/reset-password-form";
 
 export const metadata: Metadata = {
   title: "Reset Password",
-  description: "Buat password baru untuk akun Solvo Tech Anda.",
+  description: "Buat password baru untuk akun Aldera Tech Anda.",
 };
 
 export default function ResetPasswordPage() {

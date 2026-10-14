@@ -144,11 +144,11 @@ export default async function AnalyticsPage() {
       }
       const clients = await prisma.user.findMany({
         where: { id: { in: [...clientRevenue.keys()] } },
-        select: { id: true, name: true, company: true },
+        select: { id: true, name: true },
       });
       const clientLTV = clients
         .map((c) => ({
-          name: c.company || c.name,
+          name: c.name,
           ltv: clientRevenue.get(c.id) ?? 0,
         }))
         .sort((a, b) => b.ltv - a.ltv)
@@ -198,7 +198,7 @@ export default async function AnalyticsPage() {
             Revenue & Profitability
           </h1>
           <p className="text-sm text-muted-foreground">
-            Analisis performa bisnis Solvo Tech
+            Analisis performa bisnis Aldera Tech
           </p>
         </div>
         <Button asChild variant="outline" size="sm">

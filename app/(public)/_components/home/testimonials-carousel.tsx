@@ -12,7 +12,6 @@ export type TestimonialCard = {
   id: string;
   clientName: string;
   clientRole: string | null;
-  company: string | null;
   content: string;
   rating: number;
   avatar: string | null;
@@ -95,9 +94,11 @@ export function TestimonialsCarousel({ items }: { items: TestimonialCard[] }) {
                     <div className="truncate text-sm font-medium">
                       {t.clientName}
                     </div>
-                    <div className="truncate text-xs text-white/64">
-                      {[t.clientRole, t.company].filter(Boolean).join(" · ")}
-                    </div>
+                    {t.clientRole && (
+                      <div className="truncate text-xs text-white/64">
+                        {t.clientRole}
+                      </div>
+                    )}
                   </div>
                 </div>
               </Card>

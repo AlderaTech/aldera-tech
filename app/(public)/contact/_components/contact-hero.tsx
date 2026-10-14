@@ -21,7 +21,7 @@ export function ContactHero({ responseTime }: { responseTime: string }) {
           <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-white/10 shadow-2xl">
             <Image
               src="/generated/solvo-tech/contact-blue-console.png"
-              alt="Mockup dashboard konsultasi proyek Solvo Tech"
+              alt="Mockup dashboard konsultasi proyek Aldera Tech"
               fill
               sizes="(min-width: 1024px) 55vw, 100vw"
               className="object-cover"

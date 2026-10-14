@@ -48,3 +48,7 @@ next-env.d.ts
 # prisma
 /prisma/*.db
 /prisma/*.db-journal
+
+# agents telemetry
+/.agents/
+

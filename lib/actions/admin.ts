@@ -31,7 +31,6 @@ export async function inviteUserAction(
   const singleRole = (formData.get("role") as Role) ?? "CLIENT";
   const roles: Role[] =
     formRoles.length > 0 ? formRoles : singleRole ? [singleRole] : ["CLIENT"];
-  const company = (formData.get("company") as string | null) || null;
 
   if (!email || !name) {
     return { ok: false, message: "Nama dan email wajib diisi." };
@@ -49,7 +48,6 @@ export async function inviteUserAction(
       email,
       name,
       roles,
-      company,
       password: await bcrypt.hash(tempPassword, 10),
     },
   });

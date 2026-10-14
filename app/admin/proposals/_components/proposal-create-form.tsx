@@ -126,7 +126,7 @@ export function ProposalCreateForm() {
 
       <Card className="space-y-5 p-6">
         <h2 className="font-semibold">Client</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-2">
             <Label htmlFor="clientName">Nama</Label>
             <Input
@@ -153,14 +153,6 @@ export function ProposalCreateForm() {
               name="clientPhone"
               type="tel"
               placeholder="081234567890"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="clientCompany">Perusahaan</Label>
-            <Input
-              id="clientCompany"
-              name="clientCompany"
-              placeholder="PT Contoh Teknologi"
             />
           </div>
         </div>

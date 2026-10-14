@@ -17,7 +17,6 @@ export async function updateProfile(fd: FormData) {
     data: {
       name,
       phone: (fd.get("phone") as string)?.trim() || null,
-      company: (fd.get("company") as string)?.trim() || null,
     },
   });
 

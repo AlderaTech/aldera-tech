@@ -17,8 +17,8 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-ARG NEXT_PUBLIC_APP_URL=https://solvo-tech.site
-ARG NEXTAUTH_URL=https://solvo-tech.site
+ARG NEXT_PUBLIC_APP_URL=https://aldera.tech
+ARG NEXTAUTH_URL=https://aldera.tech
 
 ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
 ENV NEXTAUTH_URL=${NEXTAUTH_URL}

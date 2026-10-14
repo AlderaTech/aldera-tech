@@ -32,8 +32,8 @@ export function Logo({
         style={{ width: s.px, height: s.px }}
       >
         <Image
-          src="/logo.png"
-          alt="Solvo Tech"
+          src="/logo/logo-transparent.png"
+          alt="Aldera Tech"
           fill
           sizes={`${s.px}px`}
           className="object-contain p-0.5"
@@ -47,7 +47,7 @@ export function Logo({
             variant === "dark" ? "text-white" : undefined
           )}
         >
-          Solvo
+          Aldera{" "}
           <span
             className={variant === "dark" ? "text-[#61a3ff]" : "text-primary"}
           >

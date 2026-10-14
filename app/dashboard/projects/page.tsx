@@ -31,7 +31,7 @@ export default async function UserProjectsPage() {
           Proyek Saya
         </h1>
         <p className="text-muted-foreground">
-          Pantau semua proyek Anda dengan Solvo Tech.
+          Pantau semua proyek Anda dengan Aldera Tech.
         </p>
       </div>
 

@@ -55,7 +55,6 @@ export async function GET(req: NextRequest) {
             OR: [
               { name: { contains: q, mode: "insensitive" } },
               { email: { contains: q, mode: "insensitive" } },
-              { company: { contains: q, mode: "insensitive" } },
             ],
           },
           take: 5,

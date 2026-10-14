@@ -62,7 +62,6 @@ export async function createProposalAction(
     content: formData.get("content"),
     clientName: formData.get("clientName"),
     clientEmail: formData.get("clientEmail"),
-    clientCompany: formData.get("clientCompany") || "",
     clientPhone: formData.get("clientPhone") || "",
     taxRate: formData.get("taxRate") ?? "0",
     expiresAt: formData.get("expiresAt") || "",
@@ -93,7 +92,6 @@ export async function createProposalAction(
       content: data.content,
       clientName: data.clientName,
       clientEmail: data.clientEmail,
-      clientCompany: data.clientCompany || null,
       clientPhone: data.clientPhone || null,
       taxRate: data.taxRate.toString(),
       totalAmount: total.toFixed(2),
@@ -324,7 +322,6 @@ export async function convertProposalToProjectAction(id: string) {
         name: proposal.clientName,
         password: await bcrypt.hash(tempPassword, 10),
         roles: ["CLIENT"],
-        company: proposal.clientCompany,
       },
       select: { id: true },
     });

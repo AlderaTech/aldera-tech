@@ -1,6 +1,6 @@
 # Standard Operating Procedure (SOP): Alur Kerja & Penyelesaian Task AI Agent
 
-Dokumen ini merupakan panduan operasional standar (_Standard Operating Procedure_) bagi AI Agent yang bekerja pada repositori Solvo Tech. Dokumen ini merinci langkah-langkah wajib yang harus dieksekusi sebelum dan sesudah menyelesaikan setiap tugas (_task_).
+Dokumen ini merupakan panduan operasional standar (_Standard Operating Procedure_) bagi AI Agent yang bekerja pada repositori Aldera Tech. Dokumen ini merinci langkah-langkah wajib yang harus dieksekusi sebelum dan sesudah menyelesaikan setiap tugas (_task_).
 
 ---
 

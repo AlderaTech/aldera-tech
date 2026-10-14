@@ -81,37 +81,19 @@ export function RegisterForm() {
             )}
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label
-              htmlFor="company"
-              className="text-sm font-bold text-black/72"
-            >
-              Perusahaan
-              <span className="font-medium text-black/42"> opsional</span>
-            </Label>
-            <Input
-              id="company"
-              name="company"
-              placeholder="Nama perusahaan"
-              autoComplete="organization"
-              className="h-11 border-black/12 bg-white text-black shadow-none focus-visible:border-[#0b6bff] focus-visible:ring-[#0b6bff]/25"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="phone" className="text-sm font-bold text-black/72">
-              Telepon
-              <span className="font-medium text-black/42"> opsional</span>
-            </Label>
-            <Input
-              id="phone"
-              name="phone"
-              type="tel"
-              placeholder="+62 812 3456 7890"
-              autoComplete="tel"
-              className="h-11 border-black/12 bg-white text-black shadow-none focus-visible:border-[#0b6bff] focus-visible:ring-[#0b6bff]/25"
-            />
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="phone" className="text-sm font-bold text-black/72">
+            Telepon
+            <span className="font-medium text-black/42"> opsional</span>
+          </Label>
+          <Input
+            id="phone"
+            name="phone"
+            type="tel"
+            placeholder="+62 812 3456 7890"
+            autoComplete="tel"
+            className="h-11 border-black/12 bg-white text-black shadow-none focus-visible:border-[#0b6bff] focus-visible:ring-[#0b6bff]/25"
+          />
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">

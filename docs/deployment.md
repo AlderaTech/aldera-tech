@@ -1,12 +1,12 @@
-# Panduan Deployment & Arsitektur Docker: Solvo Tech
+# Panduan Deployment & Arsitektur Docker: Aldera Tech
 
-Dokumen ini merupakan panduan resmi arsitektur deployment produksi dan konfigurasi Docker untuk sistem **Solvo Tech**. Dokumen ini wajib dipelajari dan dipatuhi oleh seluruh pengembang serta AI Agent.
+Dokumen ini merupakan panduan resmi arsitektur deployment produksi dan konfigurasi Docker untuk sistem **Aldera Tech**. Dokumen ini wajib dipelajari dan dipatuhi oleh seluruh pengembang serta AI Agent.
 
 ---
 
 ## 1. Arsitektur Deployment
 
-Solvo Tech dibangun di atas arsitektur container modern dan efisien:
+Aldera Tech dibangun di atas arsitektur container modern dan efisien:
 
 ```
 ┌───────────────────────────────────────────────────────────────┐
@@ -18,15 +18,15 @@ Solvo Tech dibangun di atas arsitektur container modern dan efisien:
 │   └──────────┬──────────┘                                     │
 │              │ Proxy http://127.0.0.1:3000                    │
 │   ┌──────────▼────────────────────────────────────────────┐   │
-│   │ Container: solvo_tech_app (Node 22 Alpine)            │   │
+│   │ Container: aldera_tech_app (Node 22 Alpine)            │   │
 │   │                                                       │   │
 │   │   ├── Next.js 15 Standalone (node server.js :3000)    │   │
 │   │   ├── Background crond (BusyBox Cron Runner)          │   │
 │   │   └── Storage Mount: /app/public/uploads              │   │
 │   └──────────┬────────────────────────────────────────────┘   │
-│              │ Internal Network (solvo_tech_network)          │
+│              │ Internal Network (aldera_tech_network)          │
 │   ┌──────────▼────────────────────────────────────────────┐   │
-│   │ Container: solvo_tech_db (PostgreSQL 16 Alpine)       │   │
+│   │ Container: aldera_tech_db (PostgreSQL 16 Alpine)       │   │
 │   │   └── Data Mount: /var/lib/postgresql/data            │   │
 │   └───────────────────────────────────────────────────────┘   │
 └───────────────────────────────────────────────────────────────┘
@@ -72,7 +72,7 @@ docker/
 
 ### Opsi A: Menggunakan Docker Compose (Sangat Direkomendasikan)
 
-Docker Compose adalah cara tercepat untuk menjalankan Solvo Tech beserta database PostgreSQL dalam satu perintah.
+Docker Compose adalah cara tercepat untuk menjalankan Aldera Tech beserta database PostgreSQL dalam satu perintah.
 
 1. **Siapkan Environment Variables**:
    Salin berkas `.env.example` menjadi `.env` di root direktori proyek:
@@ -123,25 +123,25 @@ Jika database PostgreSQL di-host secara terpisah (misal AWS RDS, Supabase, Neon,
    bun run docker:build
 
    # Atau menggunakan perintah Docker langsung
-   docker build -f docker/Dockerfile -t solvo-tech:latest .
+   docker build -f docker/Dockerfile -t aldera-tech:latest .
    ```
 
 2. **Jalankan Container**:
    ```bash
    docker run -d \
-     --name solvo-tech \
+     --name aldera-tech \
      --restart unless-stopped \
      -p 3000:3000 \
      --env-file .env \
-     -v solvo_tech_uploads:/app/public/uploads \
-     solvo-tech:latest
+     -v aldera_tech_uploads:/app/public/uploads \
+     aldera-tech:latest
    ```
 
 ---
 
 ## 4. Mekanisme Otomatisasi Cron di Docker
 
-Solvo Tech memiliki 3 cron endpoint aktif:
+Aldera Tech memiliki 3 cron endpoint aktif:
 
 | Endpoint                      | Frekuensi                      | Deskripsi                                                   |
 | :---------------------------- | :----------------------------- | :---------------------------------------------------------- |
@@ -161,23 +161,23 @@ Solvo Tech memiliki 3 cron endpoint aktif:
 
 ## 5. Konfigurasi Reverse Proxy Produksi
 
-Di server produksi (VPS), jalankan reverse proxy di depan container Solvo Tech untuk menangani SSL Let's Encrypt dan kompresi:
+Di server produksi (VPS), jalankan reverse proxy di depan container Aldera Tech untuk menangani SSL Let's Encrypt dan kompresi:
 
-### Contoh Nginx Configuration (`/etc/nginx/sites-available/solvo.conf`)
+### Contoh Nginx Configuration (`/etc/nginx/sites-available/aldera.conf`)
 
 ```nginx
 server {
     listen 80;
-    server_name solvo-tech.site www.solvo-tech.site;
+    server_name aldera.tech www.aldera.tech;
     return 301 https://$host$request_uri;
 }
 
 server {
     listen 443 ssl http2;
-    server_name solvo-tech.site www.solvo-tech.site;
+    server_name aldera.tech www.aldera.tech;
 
-    ssl_certificate /etc/letsencrypt/live/solvo-tech.site/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/solvo-tech.site/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/aldera.tech/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/aldera.tech/privkey.pem;
 
     client_max_body_size 25M; # Mendukung upload file/proposal hingga 20MB
 
@@ -205,7 +205,7 @@ server {
 ### Contoh Caddy Configuration (`Caddyfile`)
 
 ```caddy
-solvo-tech.site {
+aldera.tech {
     encode gzip zstd
     request_body {
         max_size 25MB

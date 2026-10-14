@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 
 const projectDetailInclude = {
-  client: { select: { id: true, name: true, email: true, company: true } },
+  client: { select: { id: true, name: true, email: true } },
   milestones: { orderBy: { order: "asc" } },
   tasks: {
     orderBy: [{ status: "asc" }, { order: "asc" }],

@@ -72,7 +72,6 @@ export async function registerAction(
     email: formData.get("email"),
     password: formData.get("password"),
     confirmPassword: formData.get("confirmPassword"),
-    company: formData.get("company") || undefined,
     phone: formData.get("phone") || undefined,
   });
 
@@ -84,7 +83,7 @@ export async function registerAction(
     return { ok: false, message: "Periksa kembali input Anda.", errors };
   }
 
-  const { name, email, password, company, phone } = parsed.data;
+  const { name, email, password, phone } = parsed.data;
 
   const existing = await prisma.user.findUnique({
     where: { email },
@@ -105,7 +104,6 @@ export async function registerAction(
       name,
       password: hashed,
       roles: ["CLIENT"],
-      company: company || null,
       phone: phone || null,
     },
   });

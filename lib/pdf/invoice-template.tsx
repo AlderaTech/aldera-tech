@@ -10,7 +10,6 @@ export type InvoicePdfData = {
   client: {
     name: string;
     email: string;
-    company?: string | null;
     phone?: string | null;
   };
   items: Array<{
@@ -128,9 +127,9 @@ export function InvoicePdf({ invoice }: { invoice: InvoicePdfData }) {
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.brand}>Solvo Tech</Text>
+            <Text style={styles.brand}>Aldera Tech</Text>
             <Text style={{ fontSize: 9, color: "#666", marginTop: 4 }}>
-              hello@solvo.tech
+              hello@aldera.tech
             </Text>
             <Text style={{ fontSize: 9, color: "#666" }}>
               Jakarta, Indonesia
@@ -147,9 +146,6 @@ export function InvoicePdf({ invoice }: { invoice: InvoicePdfData }) {
           <View>
             <Text style={styles.colTitle}>Bill To</Text>
             <Text style={styles.colValue}>{invoice.client.name}</Text>
-            {invoice.client.company ? (
-              <Text>{invoice.client.company}</Text>
-            ) : null}
             <Text style={{ color: "#666" }}>{invoice.client.email}</Text>
             {invoice.client.phone ? (
               <Text style={{ color: "#666" }}>{invoice.client.phone}</Text>
@@ -202,7 +198,7 @@ export function InvoicePdf({ invoice }: { invoice: InvoicePdfData }) {
         ) : null}
 
         <Text style={styles.footer}>
-          Terima kasih atas kepercayaan Anda kepada Solvo Tech.
+          Terima kasih atas kepercayaan Anda kepada Aldera Tech.
         </Text>
       </Page>
     </Document>

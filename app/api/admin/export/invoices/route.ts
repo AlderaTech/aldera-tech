@@ -18,7 +18,7 @@ export async function GET() {
   const invoices = await prisma.invoice.findMany({
     orderBy: { issueDate: "desc" },
     include: {
-      client: { select: { name: true, email: true, company: true } },
+      client: { select: { name: true, email: true } },
       project: { select: { title: true } },
     },
   });
@@ -28,7 +28,6 @@ export async function GET() {
     status: inv.status,
     clientName: inv.client.name,
     clientEmail: inv.client.email,
-    clientCompany: inv.client.company ?? "",
     project: inv.project?.title ?? "",
     currency: inv.currency,
     subtotal: Number(inv.subtotal).toFixed(2),

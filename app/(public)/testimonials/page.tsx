@@ -6,7 +6,7 @@ import { getPublicTestimonials } from "./_data/testimonials";
 
 export const metadata: Metadata = {
   title: "Testimoni",
-  description: "Cerita dari klien yang sudah bekerja dengan Solvo Tech.",
+  description: "Cerita dari klien yang sudah bekerja dengan Aldera Tech.",
   alternates: { canonical: PUBLIC_ROUTES.testimonials },
 };
 

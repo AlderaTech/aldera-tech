@@ -39,7 +39,6 @@ export async function GET(
     client: {
       name: invoice.client.name,
       email: invoice.client.email,
-      company: invoice.client.company,
       phone: invoice.client.phone,
     },
     items: invoice.items.map((it) => ({

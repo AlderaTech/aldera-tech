@@ -23,7 +23,7 @@ export async function OrganizationLd({ appUrl }: { appUrl: string }) {
         "@type": "Organization",
         name: settings.brandName,
         url: appUrl,
-        logo: `${appUrl}/logo.png`,
+        logo: `${appUrl}/logo/logo-transparent.png`,
         description: settings.seoDescription,
         sameAs: sameAs.length ? sameAs : undefined,
         contactPoint: {
