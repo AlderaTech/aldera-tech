@@ -22,16 +22,16 @@ export function AuthShell({
   children,
 }: AuthShellProps) {
   return (
-    <div className="mx-auto w-full max-w-[1080px]">
+    <div className="mx-auto w-full max-w-[1040px]">
       <Link
         href={PUBLIC_ROUTES.home}
-        className="mb-3 inline-flex items-center gap-2 text-sm font-semibold text-black/58 transition-colors hover:text-black"
+        className="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition-colors hover:text-[#0F263A]"
       >
         <ArrowLeft className="size-4" />
         Kembali ke beranda
       </Link>
 
-      <div className="grid overflow-hidden rounded-xl border border-black/10 bg-white/45 shadow-2xl shadow-black/10 lg:h-[calc(100dvh-4rem)] lg:max-h-[680px] lg:min-h-[560px] lg:grid-cols-[minmax(0,460px)_minmax(0,1fr)]">
+      <div className="grid overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-2xl shadow-slate-900/10 lg:min-h-[580px] lg:grid-cols-[minmax(0,480px)_minmax(0,1fr)]">
         <AuthCard eyebrow={eyebrow} title={title} description={description}>
           {children}
         </AuthCard>

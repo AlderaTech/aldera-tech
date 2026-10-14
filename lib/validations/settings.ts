@@ -29,21 +29,4 @@ export const siteSettingsSchema = z.object({
   seoDescription: z.string().trim().min(30).max(240),
 });
 
-export const pricingPlanSettingsSchema = z.object({
-  slug: z.enum(["starter", "professional", "enterprise"]),
-  name: z.string().trim().min(2).max(80),
-  tagline: z.string().trim().min(10).max(240),
-  priceFrom: z.coerce.number().min(0),
-  featured: z.boolean().default(false),
-  ctaLabel: z.string().trim().min(2).max(80),
-  ctaHref: z.string().trim().min(1).max(160),
-  includedFeatures: z.array(z.string().trim().min(1).max(180)).max(20),
-  excludedFeatures: z.array(z.string().trim().min(1).max(180)).max(20),
-});
-
-export const pricingSettingsSchema = z.object({
-  plans: z.array(pricingPlanSettingsSchema).length(3),
-});
-
 export type SiteSettingsInput = z.infer<typeof siteSettingsSchema>;
-export type PricingSettingsInput = z.infer<typeof pricingSettingsSchema>;

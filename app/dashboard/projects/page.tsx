@@ -9,7 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { formatDate } from "@/lib/utils";
 import { projectStatusMeta } from "@/lib/status-meta";
-import { DASHBOARD_ROUTES } from "@/lib/routes";
+import { DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 
 export default async function UserProjectsPage() {
   const session = await auth();
@@ -45,7 +45,7 @@ export default async function UserProjectsPage() {
             Hitung estimasi harga dan ajukan proyek Anda melalui kalkulator.
           </p>
           <Button asChild className="mt-5">
-            <Link href={DASHBOARD_ROUTES.calculator}>Hitung Estimasi</Link>
+            <Link href={PUBLIC_ROUTES.calculator}>Hitung Estimasi</Link>
           </Button>
         </Card>
       ) : (

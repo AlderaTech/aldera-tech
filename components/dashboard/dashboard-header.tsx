@@ -1,9 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ChevronRight, Menu, Bell, Search } from "lucide-react";
+import { Menu, Bell, Search } from "lucide-react";
 import type { Session } from "next-auth";
 
 import { Button } from "@/components/ui/button";
@@ -23,23 +21,8 @@ type DashboardHeaderProps = {
   navConfig: DashboardNavConfig;
 };
 
-function toTitleCase(s: string) {
-  return s.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function useBreadcrumbs() {
-  const pathname = usePathname();
-  const segments = pathname.split("/").filter(Boolean);
-  return segments.map((seg, idx) => ({
-    label: toTitleCase(decodeURIComponent(seg)),
-    href: "/" + segments.slice(0, idx + 1).join("/"),
-    current: idx === segments.length - 1,
-  }));
-}
-
 export function DashboardHeader({ session, navConfig }: DashboardHeaderProps) {
   const [open, setOpen] = React.useState(false);
-  const crumbs = useBreadcrumbs();
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-slate-200/80 bg-white/90 px-4 shadow-sm shadow-slate-950/[0.02] backdrop-blur-md sm:px-6">
@@ -65,34 +48,7 @@ export function DashboardHeader({ session, navConfig }: DashboardHeaderProps) {
         </SheetContent>
       </Sheet>
 
-      <nav
-        aria-label="Breadcrumb"
-        className="flex min-w-0 flex-1 items-center gap-1 text-sm"
-      >
-        {crumbs.length === 0 ? (
-          <span className="font-semibold">Dashboard</span>
-        ) : (
-          crumbs.map((c, i) => (
-            <React.Fragment key={c.href}>
-              {i > 0 && (
-                <ChevronRight className="size-3.5 shrink-0 text-muted-foreground" />
-              )}
-              {c.current ? (
-                <span className="truncate font-semibold text-foreground">
-                  {c.label}
-                </span>
-              ) : (
-                <Link
-                  href={c.href}
-                  className="truncate text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  {c.label}
-                </Link>
-              )}
-            </React.Fragment>
-          ))
-        )}
-      </nav>
+      <div className="flex-1" />
 
       <div className="flex items-center gap-1">
         <button

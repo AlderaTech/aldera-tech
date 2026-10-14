@@ -136,10 +136,10 @@ const adminQuickNav: QuickNavItem[] = [
     permission: PERMISSIONS.FILE_MANAGE,
   },
   {
-    label: "Pengguna",
+    label: "Pengguna & Tim",
     href: ADMIN_ROUTES.users,
     icon: Users,
-    permission: PERMISSIONS.USER_MANAGE,
+    permission: PERMISSIONS.TEAM_VIEW,
   },
   {
     label: "Settings Website",

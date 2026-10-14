@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { Check, ArrowRight, Sparkles } from "lucide-react";
+import { Check, ArrowRight, Layers } from "lucide-react";
 import { auth } from "@/auth";
 import { Card } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
-import { DASHBOARD_ROUTES } from "@/lib/routes";
+import { DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +56,7 @@ export async function OnboardingChecklist() {
       title: "Miliki proyek pertama",
       description: "Hitung estimasi harga dan ajukan proyek Anda.",
       done: data.projectCount > 0,
-      cta: { label: "Hitung Estimasi", href: DASHBOARD_ROUTES.calculator },
+      cta: { label: "Hitung Estimasi", href: PUBLIC_ROUTES.calculator },
     },
     {
       id: "message",
@@ -87,7 +87,7 @@ export async function OnboardingChecklist() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="mb-1 inline-flex items-center gap-2 text-xs font-medium tracking-wider text-primary uppercase">
-            <Sparkles className="size-3.5" />
+            <Layers className="size-3.5" />
             Mulai di sini
           </div>
           <h2 className="text-lg font-semibold">Checklist Onboarding</h2>

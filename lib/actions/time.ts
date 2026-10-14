@@ -14,65 +14,6 @@ async function requireStaff() {
   return session.user;
 }
 
-export async function startTimerAction(projectId: string, description: string) {
-  const user = await requireStaff();
-  // Stop any currently-running entry for this user
-  const running = await prisma.timeEntry.findFirst({
-    where: { userId: user.id, endedAt: null },
-    select: { id: true, startedAt: true },
-  });
-  if (running) {
-    const now = new Date();
-    const durationSec = Math.floor(
-      (now.getTime() - running.startedAt.getTime()) / 1000
-    );
-    await prisma.timeEntry.update({
-      where: { id: running.id },
-      data: { endedAt: now, durationSec },
-    });
-  }
-  const entry = await prisma.timeEntry.create({
-    data: {
-      projectId,
-      userId: user.id,
-      description: description || "Tidak tersedia",
-      startedAt: new Date(),
-    },
-    select: { id: true },
-  });
-  revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
-  return { ok: true, id: entry.id };
-}
-
-export async function stopTimerAction(entryId: string) {
-  const user = await requireStaff();
-  const entry = await prisma.timeEntry.findUnique({
-    where: { id: entryId },
-    select: { userId: true, projectId: true, startedAt: true, endedAt: true },
-  });
-  if (!entry) return { ok: false };
-  if (entry.userId !== user.id) throw new Error("Forbidden");
-  if (entry.endedAt) return { ok: true };
-  const now = new Date();
-  const durationSec = Math.floor(
-    (now.getTime() - entry.startedAt.getTime()) / 1000
-  );
-  await prisma.timeEntry.update({
-    where: { id: entryId },
-    data: { endedAt: now, durationSec },
-  });
-  await prisma.activityLog.create({
-    data: {
-      projectId: entry.projectId,
-      userId: user.id,
-      action: "TIME_LOGGED",
-      description: `Waktu tercatat: ${Math.round(durationSec / 60)} menit.`,
-    },
-  });
-  revalidatePath(ADMIN_ROUTES.projectDetail(entry.projectId));
-  return { ok: true };
-}
-
 export async function addManualEntryAction(
   projectId: string,
   formData: FormData
@@ -87,6 +28,7 @@ export async function addManualEntryAction(
   const durationSec = Math.floor(minutes * 60);
   const now = new Date();
   const startedAt = new Date(now.getTime() - durationSec * 1000);
+
   await prisma.timeEntry.create({
     data: {
       projectId,
@@ -98,6 +40,16 @@ export async function addManualEntryAction(
       billable,
     },
   });
+
+  await prisma.activityLog.create({
+    data: {
+      projectId,
+      userId: user.id,
+      action: "TIME_LOGGED",
+      description: `Waktu tercatat: ${minutes} menit (${description}).`,
+    },
+  });
+
   revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
   return { ok: true };
 }

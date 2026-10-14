@@ -85,4 +85,58 @@ export const waTemplates = {
       message: `Halo *${args.clientName}*,\n\nKami telah menyiapkan proposal *${args.proposalTitle}* (${args.proposalNumber}) dengan total nilai *${args.totalAmount}*.${expiryLine}\n\nSilakan review dan tandatangani melalui tautan berikut:\n${args.viewUrl}\n\nTerima kasih,\nTim Aldera Tech`,
     };
   },
+
+  invoicePaid(invoiceNumber: string, total: string) {
+    return {
+      title: "Pembayaran Diterima (Lunas)",
+      message: `Pembayaran invoice ${invoiceNumber} sebesar ${total} telah berhasil diverifikasi dan berstatus LUNAS. Terima kasih atas kerja sama Anda.\n\nLihat invoice: ${APP_URL}${DASHBOARD_ROUTES.invoices}`,
+    };
+  },
+
+  paymentProofReceived(invoiceNumber: string, total: string) {
+    return {
+      title: "Bukti Pembayaran Diterima",
+      message: `Bukti transfer untuk invoice ${invoiceNumber} sebesar ${total} telah kami terima dan sedang dalam antrean verifikasi tim finance Aldera Tech.\n\nLihat status: ${APP_URL}${DASHBOARD_ROUTES.invoices}`,
+    };
+  },
+
+  paymentProofRejected(invoiceNumber: string, reason: string) {
+    return {
+      title: "Bukti Pembayaran Ditolak",
+      message: `Mohon maaf, bukti transfer untuk invoice ${invoiceNumber} belum dapat diverifikasi dengan catatan: ${reason}. Silakan unggah kembali bukti pembayaran yang valid.\n\nUnggah ulang: ${APP_URL}${DASHBOARD_ROUTES.invoices}`,
+    };
+  },
+
+  verificationOtp(args: { code: string; ttlMinutes?: number }) {
+    const mins = args.ttlMinutes ?? 10;
+    return {
+      title: "Kode Verifikasi Aldera Tech",
+      message: `Kode verifikasi WhatsApp Anda adalah *${args.code}*.\n\nKode ini berlaku selama ${mins} menit. JANGAN bagikan kode ini kepada siapa pun demi keamanan akun dan transaksi Anda.`,
+    };
+  },
+
+  proposalSignatureOtp(args: {
+    clientName: string;
+    proposalNumber: string;
+    code: string;
+    ttlMinutes?: number;
+  }) {
+    const mins = args.ttlMinutes ?? 10;
+    return {
+      title: "Verifikasi Tanda Tangan Proposal",
+      message: `Halo *${args.clientName}*,\n\nKode OTP untuk menyetujui dan menandatangani proposal *${args.proposalNumber}* adalah: *${args.code}*.\n\nKode ini berlaku selama ${mins} menit. Masukkan kode ini pada halaman penandatanganan untuk menyelesaikan proses.`,
+    };
+  },
+
+  proposalSignedConfirmation(args: {
+    clientName: string;
+    proposalTitle: string;
+    proposalNumber: string;
+    signedAt: string;
+  }) {
+    return {
+      title: "Proposal Berhasil Ditandatangani",
+      message: `Halo *${args.clientName}*,\n\nTerima kasih! Proposal *${args.proposalTitle}* (${args.proposalNumber}) telah berhasil ditandatangani secara digital pada *${args.signedAt}*.\n\nTim Aldera Tech akan segera menghubungi Anda untuk tahap onboarding dan peluncuran proyek.\n\nSalam hangat,\nTim Aldera Tech`,
+    };
+  },
 } as const;

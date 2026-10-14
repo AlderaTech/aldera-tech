@@ -34,11 +34,8 @@ export function TestimonialsCarousel({ items }: { items: TestimonialCard[] }) {
 
   React.useEffect(() => {
     if (!embla) return;
-    // Subscribe first, then let embla emit initial state to avoid a
-    // synchronous setState during the effect body.
     embla.on("select", onSelect);
     embla.on("reInit", onSelect);
-    // Sync initial values on next microtask.
     const timer = setTimeout(onSelect, 0);
     return () => {
       clearTimeout(timer);
@@ -52,50 +49,49 @@ export function TestimonialsCarousel({ items }: { items: TestimonialCard[] }) {
   return (
     <div className="relative">
       <div ref={emblaRef} className="overflow-hidden">
-        <div className="-ml-4 flex">
+        <div className="-ml-5 flex">
           {items.map((t) => (
-            <div
-              key={t.id}
-              className="w-full shrink-0 pl-4 xxxl:w-1/4 sm:w-1/2 lg:w-1/3"
-            >
-              <Card className="editorial-card-dark relative h-full gap-0 rounded-xl p-6 text-white transition-all duration-200 hover:-translate-y-1">
+            <div key={t.id} className="w-full shrink-0 pl-5 sm:w-1/2 lg:w-1/3">
+              <Card className="relative flex h-full flex-col justify-between rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#00B1E1]/40 hover:shadow-xl sm:p-7">
                 <Quote
-                  className="absolute top-4 right-4 size-6 text-[#0b6bff]/30"
+                  className="absolute top-6 right-6 size-7 text-[#00B1E1]/20"
                   aria-hidden
                 />
-                <div
-                  className="mb-3 flex items-center gap-0.5"
-                  aria-label={`${t.rating} dari 5 bintang`}
-                >
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={
-                        i < t.rating
-                          ? "size-4 fill-[#0b6bff] text-[#0b6bff]"
-                          : "size-4 text-white/20"
-                      }
-                    />
-                  ))}
+                <div>
+                  <div
+                    className="mb-4 flex items-center gap-1"
+                    aria-label={`${t.rating} dari 5 bintang`}
+                  >
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className={
+                          i < t.rating
+                            ? "size-4 fill-[#00B1E1] text-[#00B1E1]"
+                            : "size-4 text-slate-200"
+                        }
+                      />
+                    ))}
+                  </div>
+                  <p className="mb-6 text-sm leading-relaxed text-slate-700">
+                    &ldquo;{t.content}&rdquo;
+                  </p>
                 </div>
-                <p className="mb-5 min-h-20 text-sm leading-relaxed text-white/72">
-                  &ldquo;{t.content}&rdquo;
-                </p>
-                <div className="flex items-center gap-3 border-t border-white/10 pt-4">
-                  <Avatar className="size-10">
+                <div className="flex items-center gap-3 border-t border-slate-100 pt-4">
+                  <Avatar className="size-11 border border-slate-200">
                     {t.avatar ? (
                       <AvatarImage src={t.avatar} alt={t.clientName} />
                     ) : null}
-                    <AvatarFallback className="bg-[#0b6bff] text-xs text-white">
+                    <AvatarFallback className="bg-[#0F263A] text-xs font-bold text-white">
                       {getInitials(t.clientName)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-medium">
+                    <div className="truncate text-sm font-bold text-[#0F263A]">
                       {t.clientName}
                     </div>
                     {t.clientRole && (
-                      <div className="truncate text-xs text-white/64">
+                      <div className="truncate text-xs font-medium text-slate-500">
                         {t.clientRole}
                       </div>
                     )}
@@ -107,11 +103,11 @@ export function TestimonialsCarousel({ items }: { items: TestimonialCard[] }) {
         </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-end gap-2">
+      <div className="mt-8 flex items-center justify-end gap-3">
         <Button
           variant="outline"
           size="icon"
-          className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+          className="rounded-full border-slate-200 bg-white text-[#0F263A] shadow-sm hover:border-[#00B1E1] hover:text-[#00B1E1]"
           onClick={() => embla?.scrollPrev()}
           disabled={!canPrev}
           aria-label="Testimoni sebelumnya"
@@ -121,7 +117,7 @@ export function TestimonialsCarousel({ items }: { items: TestimonialCard[] }) {
         <Button
           variant="outline"
           size="icon"
-          className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+          className="rounded-full border-slate-200 bg-white text-[#0F263A] shadow-sm hover:border-[#00B1E1] hover:text-[#00B1E1]"
           onClick={() => embla?.scrollNext()}
           disabled={!canNext}
           aria-label="Testimoni berikutnya"

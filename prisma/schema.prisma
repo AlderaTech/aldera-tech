@@ -36,9 +36,29 @@ enum MilestoneStatus {
 enum InvoiceStatus {
   DRAFT
   SENT
+  PENDING_VERIFICATION
   PAID
   OVERDUE
   CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  EXPIRED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  MANUAL_TRANSFER
+  GATEWAY_MIDTRANS
+  GATEWAY_XENDIT
+  CREDIT_CARD
+  BANK_TRANSFER
+  EWALLET
+  QRIS
+  OTHER
 }
 
 enum ActivityAction {
@@ -125,6 +145,7 @@ model User {
   roles         Role[]    @default([CLIENT])
   avatar        String?
   phone         String?
+  phoneVerified DateTime?
   isActive      Boolean   @default(true)
   emailVerified DateTime?
   createdAt     DateTime  @default(now())
@@ -144,6 +165,8 @@ model User {
   passwordResetTokens PasswordResetToken[]
   notifications       Notification[]
   orderRequests       OrderRequest[]
+  verifiedPayments    Payment[]            @relation("PaymentVerifier")
+  testimonials        Testimonial[]        @relation("ClientTestimonials")
 
   @@index([email])
 }
@@ -172,6 +195,7 @@ model Project {
   timeEntries            TimeEntry[]
   assignments            ProjectAssignment[]
   convertedFromProposals Proposal[]          @relation("ProposalConvertedProject")
+  testimonial            Testimonial?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -264,6 +288,10 @@ model Invoice {
   currency  String  @default("IDR")
   notes     String? @db.Text
 
+  paymentProofUrl    String?
+  paymentMethod      String?
+  payments           Payment[]
+
   pdfPath            String?
   lastReminderSentAt DateTime?
 
@@ -299,6 +327,42 @@ model InvoiceItem {
   invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 
   @@index([invoiceId])
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  invoiceId       String
+  invoice         Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  amount          Decimal       @db.Decimal(14, 2)
+  currency        String        @default("IDR")
+  status          PaymentStatus @default(PENDING)
+  paymentMethod   PaymentMethod @default(MANUAL_TRANSFER)
+
+  // Payment Gateway specifics
+  gateway         String?       // "midtrans" | "xendit" | "manual"
+  transactionId   String?       @unique // Midtrans transaction_id / Xendit id
+  paymentType     String?       // e.g. "qris", "bank_transfer", "cstore", "credit_card"
+  gatewayResponse Json?         // Raw webhook payload for audit
+
+  // Manual Receipt specifics
+  proofUrl        String?       // Path to uploaded receipt
+  proofUploadedAt DateTime?
+  notes           String?       @db.Text
+
+  // Staff verification specifics
+  verifiedAt      DateTime?
+  verifiedById    String?
+  verifiedBy      User?         @relation("PaymentVerifier", fields: [verifiedById], references: [id], onDelete: SetNull)
+  rejectionReason String?       @db.Text
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([invoiceId])
+  @@index([status])
+  @@index([gateway])
+  @@index([transactionId])
 }
 
 model RecurringInvoiceTemplate {
@@ -366,17 +430,25 @@ model BlogPost {
 }
 
 model Testimonial {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   clientName String
   clientRole String?
-  content    String   @db.Text
-  rating     Int      @default(5)
+  content    String    @db.Text
+  rating     Int       @default(5)
   avatar     String?
-  published  Boolean  @default(true)
-  order      Int      @default(0)
-  createdAt  DateTime @default(now())
+  published  Boolean   @default(true)
+  order      Int       @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now()) @updatedAt
+
+  projectId  String?   @unique
+  project    Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  clientId   String?
+  client     User?     @relation("ClientTestimonials", fields: [clientId], references: [id], onDelete: SetNull)
 
   @@index([published, order])
+  @@index([clientId])
 }
 
 model CaseStudy {
@@ -589,10 +661,11 @@ model Proposal {
   rejectedAt DateTime?
   expiresAt  DateTime?
 
-  signatureDataUrl   String? @db.Text
-  signatureName      String?
-  signatureIp        String?
-  signatureUserAgent String?
+  signatureDataUrl       String? @db.Text
+  signatureName          String?
+  signatureIp            String?
+  signatureUserAgent     String?
+  signaturePhoneVerified Boolean @default(false)
 
   createdById String
   createdBy   User   @relation("CreatedProposals", fields: [createdById], references: [id], onDelete: Cascade)
@@ -766,3 +839,19 @@ model OrderRequest {
   @@index([userId])
   @@index([status])
 }
+
+model VerificationToken {
+  id         String    @id @default(cuid())
+  identifier String    // Phone number or proposal token
+  token      String    // numeric OTP code
+  type       String    @default("WHATSAPP_OTP") // "WHATSAPP_OTP" | "PROPOSAL_SIGN" | "PHONE_VERIFY"
+  expiresAt  DateTime
+  attempts   Int       @default(0)
+  verifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@unique([identifier, token])
+  @@index([identifier, type])
+  @@index([expiresAt])
+}
+

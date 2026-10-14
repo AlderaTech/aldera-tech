@@ -1,8 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { blogPostSchema } from "@/lib/validations/blog";
 import { isStaff } from "@/lib/permissions";
 import { ADMIN_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
@@ -189,11 +191,28 @@ export async function deleteBlogPostAction(id: string) {
 }
 
 /**
- * Increment view counter. Called client-side from blog detail.
- * Fire-and-forget, errors are swallowed since this is non-critical.
+ * Increment view counter with cookie & rate-limiting deduplication.
+ * Prevents view inflation on page reload, prefetch, or bot scraping.
  */
 export async function incrementBlogViewAction(slug: string) {
   try {
+    const cookieStore = await cookies();
+    const cookieName = `viewed_post_${slug}`;
+    if (cookieStore.has(cookieName)) {
+      return;
+    }
+
+    const rate = checkRateLimit(`blog_view:${slug}`, 30, 60);
+    if (!rate.allowed) return;
+
+    cookieStore.set(cookieName, "1", {
+      maxAge: 86400,
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+    });
+
     await prisma.blogPost.update({
       where: { slug },
       data: { views: { increment: 1 } },

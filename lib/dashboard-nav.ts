@@ -7,6 +7,7 @@ export type DashboardNavIcon =
   | "activity"
   | "archive"
   | "barChart3"
+  | "briefcase"
   | "clock"
   | "fileSignature"
   | "fileText"
@@ -19,6 +20,7 @@ export type DashboardNavIcon =
   | "repeat"
   | "settings"
   | "shieldCheck"
+  | "star"
   | "tags"
   | "trendingUp"
   | "users"
@@ -54,11 +56,6 @@ export const clientNavConfig: DashboardNavConfig = {
           href: DASHBOARD_ROUTES.home,
           label: "Overview",
           icon: "layoutDashboard",
-        },
-        {
-          href: DASHBOARD_ROUTES.calculator,
-          label: "Kalkulator Harga",
-          icon: "barChart3",
         },
         {
           href: DASHBOARD_ROUTES.orders,
@@ -155,13 +152,6 @@ const adminNavGroups: DashboardNavGroup[] = [
     label: "Analitik",
     items: [
       {
-        href: ADMIN_ROUTES.team,
-        label: "Tim & Workload",
-        icon: "users2",
-        description: "Beban kerja tim",
-        permission: PERMISSIONS.TEAM_VIEW,
-      },
-      {
         href: ADMIN_ROUTES.analytics,
         label: "Revenue & Profitability",
         icon: "trendingUp",
@@ -187,6 +177,20 @@ const adminNavGroups: DashboardNavGroup[] = [
         description: "Taxonomy artikel",
         permission: PERMISSIONS.BLOG_VIEW,
       },
+      {
+        href: ADMIN_ROUTES.portfolio,
+        label: "Portfolio",
+        icon: "briefcase",
+        description: "Studi kasus dan proyek publik",
+        permission: PERMISSIONS.PORTFOLIO_VIEW,
+      },
+      {
+        href: ADMIN_ROUTES.testimonials,
+        label: "Testimoni",
+        icon: "star",
+        description: "Ulasan dan rating klien",
+        permission: PERMISSIONS.TESTIMONIAL_VIEW,
+      },
     ],
   },
   {
@@ -194,16 +198,16 @@ const adminNavGroups: DashboardNavGroup[] = [
     items: [
       {
         href: ADMIN_ROUTES.users,
-        label: "Pengguna",
+        label: "Pengguna & Tim",
         icon: "users",
-        description: "Client dan staff",
-        permission: PERMISSIONS.USER_MANAGE,
+        description: "Client, admin & beban kerja tim",
+        permission: PERMISSIONS.TEAM_VIEW,
       },
       {
         href: ADMIN_ROUTES.settings,
         label: "Settings Website",
         icon: "settings",
-        description: "Kontak, harga, sosial",
+        description: "Kontak, identitas, sosial",
         permission: PERMISSIONS.SETTINGS_MANAGE,
       },
     ],

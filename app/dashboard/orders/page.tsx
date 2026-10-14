@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { DASHBOARD_ROUTES } from "@/lib/routes";
+import { PUBLIC_ROUTES } from "@/lib/routes";
 
 const statusMeta: Record<
   string,
@@ -48,7 +48,7 @@ export default async function OrderHistoryPage() {
           </p>
         </div>
         <Button asChild>
-          <Link href={DASHBOARD_ROUTES.calculator}>
+          <Link href={PUBLIC_ROUTES.calculator}>
             <Calculator className="size-4" /> Estimasi Baru
           </Link>
         </Button>
@@ -62,7 +62,7 @@ export default async function OrderHistoryPage() {
             Gunakan kalkulator harga untuk menghitung estimasi proyek Anda.
           </p>
           <Button asChild className="mt-4">
-            <Link href={DASHBOARD_ROUTES.calculator}>Hitung Estimasi</Link>
+            <Link href={PUBLIC_ROUTES.calculator}>Hitung Estimasi</Link>
           </Button>
         </Card>
       ) : (

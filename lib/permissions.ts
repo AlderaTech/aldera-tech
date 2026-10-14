@@ -95,6 +95,14 @@ export const PERMISSIONS = {
   BLOG_DELETE: "blog.delete",
   BLOG_PUBLISH: "blog.publish",
 
+  // Portfolio
+  PORTFOLIO_VIEW: "portfolio.view",
+  PORTFOLIO_MANAGE: "portfolio.manage",
+
+  // Testimonials
+  TESTIMONIAL_VIEW: "testimonial.view",
+  TESTIMONIAL_MANAGE: "testimonial.manage",
+
   // Files
   FILE_MANAGE: "file.manage",
 
@@ -132,6 +140,9 @@ export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
     PERMISSIONS.BLOG_VIEW,
     PERMISSIONS.BLOG_CREATE,
     PERMISSIONS.BLOG_EDIT,
+    PERMISSIONS.PORTFOLIO_VIEW,
+    PERMISSIONS.PORTFOLIO_MANAGE,
+    PERMISSIONS.TESTIMONIAL_VIEW,
     PERMISSIONS.FILE_MANAGE,
     PERMISSIONS.TIMESHEET_VIEW,
     PERMISSIONS.TEAM_VIEW,

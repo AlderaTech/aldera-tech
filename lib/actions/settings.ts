@@ -3,15 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import {
-  defaultPricingPlans,
-  defaultSiteSettings,
-  SITE_SETTING_ID,
-} from "@/lib/public-settings";
-import {
-  pricingSettingsSchema,
-  siteSettingsSchema,
-} from "@/lib/validations/settings";
+import { defaultSiteSettings, SITE_SETTING_ID } from "@/lib/public-settings";
+import { siteSettingsSchema } from "@/lib/validations/settings";
 import { ADMIN_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 
 export type SettingsActionState = {
@@ -116,91 +109,6 @@ export async function updateSiteSettingsAction(
   return { ok: true, message: "Informasi website berhasil disimpan." };
 }
 
-export async function updatePricingSettingsAction(
-  _: SettingsActionState,
-  formData: FormData
-): Promise<SettingsActionState> {
-  await requireSettingsAdmin();
-  const plans = defaultPricingPlans.map((fallback) => ({
-    slug: fallback.slug,
-    name: formData.get(`${fallback.slug}.name`),
-    tagline: formData.get(`${fallback.slug}.tagline`),
-    priceFrom: formData.get(`${fallback.slug}.priceFrom`),
-    featured: formData.get("featuredPlan") === fallback.slug,
-    ctaLabel: formData.get(`${fallback.slug}.ctaLabel`),
-    ctaHref: formData.get(`${fallback.slug}.ctaHref`),
-    includedFeatures: splitLines(
-      formData.get(`${fallback.slug}.includedFeatures`)
-    ),
-    excludedFeatures: splitLines(
-      formData.get(`${fallback.slug}.excludedFeatures`)
-    ),
-  }));
-
-  const parsed = pricingSettingsSchema.safeParse({ plans });
-  if (!parsed.success) {
-    return {
-      ok: false,
-      message: "Periksa kembali input harga.",
-      errors: collectErrors(parsed.error),
-    };
-  }
-
-  await prisma.$transaction(async (tx) => {
-    for (const plan of parsed.data.plans) {
-      const fallback = defaultPricingPlans.find(
-        (item) => item.slug === plan.slug
-      );
-      const saved = await tx.pricingPlan.upsert({
-        where: { slug: plan.slug },
-        create: {
-          slug: plan.slug,
-          name: plan.name,
-          tagline: plan.tagline,
-          priceFrom: plan.priceFrom,
-          featured: plan.featured,
-          ctaLabel: plan.ctaLabel,
-          ctaHref: plan.ctaHref,
-          order: fallback?.order ?? 0,
-        },
-        update: {
-          name: plan.name,
-          tagline: plan.tagline,
-          priceFrom: plan.priceFrom,
-          featured: plan.featured,
-          ctaLabel: plan.ctaLabel,
-          ctaHref: plan.ctaHref,
-          order: fallback?.order ?? 0,
-        },
-        select: { id: true },
-      });
-
-      await tx.pricingPlanFeature.deleteMany({
-        where: { planId: saved.id },
-      });
-      await tx.pricingPlanFeature.createMany({
-        data: [
-          ...plan.includedFeatures.map((text, index) => ({
-            planId: saved.id,
-            text,
-            included: true,
-            order: index + 1,
-          })),
-          ...plan.excludedFeatures.map((text, index) => ({
-            planId: saved.id,
-            text,
-            included: false,
-            order: plan.includedFeatures.length + index + 1,
-          })),
-        ],
-      });
-    }
-  });
-
-  revalidateSettingsPaths();
-  return { ok: true, message: "Harga berhasil disimpan." };
-}
-
 export async function ensureDefaultSettings() {
   await prisma.siteSetting.upsert({
     where: { id: SITE_SETTING_ID },
@@ -225,13 +133,6 @@ export async function ensureDefaultSettings() {
       instagramUrl: clean(defaultSiteSettings.instagramUrl),
     },
   });
-}
-
-function splitLines(value: FormDataEntryValue | null) {
-  return String(value ?? "")
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
 }
 
 function revalidateSettingsPaths() {

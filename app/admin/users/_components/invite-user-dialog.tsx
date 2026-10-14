@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Copy, Loader2 } from "lucide-react";
+import { Check, CheckCircle2, Copy, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -69,7 +69,10 @@ export function InviteUserDialog({ children }: { children: React.ReactNode }) {
         {tempPassword ? (
           <>
             <DialogHeader>
-              <DialogTitle>User dibuat 🎉</DialogTitle>
+              <DialogTitle className="flex items-center gap-2">
+                <CheckCircle2 className="size-5 text-emerald-500" />
+                User Berhasil Dibuat
+              </DialogTitle>
               <DialogDescription>
                 Berikan password sementara berikut ke user. Mereka harus
                 mengubahnya setelah login pertama.

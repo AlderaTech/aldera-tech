@@ -14,14 +14,17 @@ import { prisma } from "@/lib/prisma";
 import { sendWhatsApp } from "@/lib/whatsapp";
 import { waTemplates } from "@/lib/whatsapp-templates";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { verifyCronSecret } from "@/lib/cron";
 
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("authorization") ?? "";
-  const expected = `Bearer ${process.env.CRON_SECRET ?? ""}`;
-  if (!process.env.CRON_SECRET || authHeader !== expected) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authResult = verifyCronSecret(req);
+  if (!authResult.authorized) {
+    return NextResponse.json(
+      { error: authResult.error ?? "Unauthorized" },
+      { status: 401 }
+    );
   }
 
   const now = new Date();

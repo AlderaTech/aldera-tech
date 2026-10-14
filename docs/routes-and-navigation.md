@@ -33,6 +33,7 @@ PUBLIC_ROUTES.about; // "/about"
 PUBLIC_ROUTES.services; // "/services"
 PUBLIC_ROUTES.portfolio; // "/portfolio"
 PUBLIC_ROUTES.pricing; // "/pricing"
+PUBLIC_ROUTES.calculator; // "/pricing#calculator"
 PUBLIC_ROUTES.faq; // "/faq"
 PUBLIC_ROUTES.blog; // "/blog"
 PUBLIC_ROUTES.testimonials; // "/testimonials"
@@ -72,7 +73,7 @@ import { DASHBOARD_ROUTES } from "@/lib/routes";
 
 DASHBOARD_ROUTES.home; // "/dashboard"
 DASHBOARD_ROUTES.projects; // "/dashboard/projects"
-DASHBOARD_ROUTES.calculator; // "/dashboard/calculator"
+DASHBOARD_ROUTES.calculator; // "/dashboard/calculator" (legacy redirect ke /pricing#calculator)
 DASHBOARD_ROUTES.orders; // "/dashboard/orders"
 DASHBOARD_ROUTES.invoices; // "/dashboard/invoices"
 DASHBOARD_ROUTES.profile; // "/dashboard/profile"
@@ -100,12 +101,15 @@ ADMIN_ROUTES.invoiceNew; // "/admin/invoices/new"
 ADMIN_ROUTES.invoicesRecurring; // "/admin/invoices/recurring"
 ADMIN_ROUTES.invoiceRecurringNew; // "/admin/invoices/recurring/new"
 ADMIN_ROUTES.orders; // "/admin/orders"
+ADMIN_ROUTES.portfolio; // "/admin/portfolio"
+ADMIN_ROUTES.portfolioNew; // "/admin/portfolio/new"
 ADMIN_ROUTES.projects; // "/admin/projects"
 ADMIN_ROUTES.projectNew; // "/admin/projects/new"
 ADMIN_ROUTES.proposals; // "/admin/proposals"
 ADMIN_ROUTES.proposalNew; // "/admin/proposals/new"
 ADMIN_ROUTES.settings; // "/admin/settings"
-ADMIN_ROUTES.team; // "/admin/team"
+ADMIN_ROUTES.team; // "/admin/users?role=DEVELOPER&view=workload" (legacy alias ke Pengguna & Tim)
+ADMIN_ROUTES.testimonials; // "/admin/testimonials"
 ADMIN_ROUTES.timesheet; // "/admin/timesheet"
 ADMIN_ROUTES.users; // "/admin/users"
 
@@ -174,13 +178,11 @@ import { PUBLIC_ROUTES, DASHBOARD_ROUTES, AUTH_ROUTES } from "@/lib/routes";
 
 // ❌ DILARANG: String hardcoded
 <Link href="/dashboard/projects">Proyek Saya</Link>
-<Link href="/login?callbackUrl=/dashboard/calculator">Hitung Estimasi</Link>
+<Link href="/pricing#calculator">Hitung Estimasi</Link>
 
 // ✅ BENAR: Menggunakan konstanta
 <Link href={DASHBOARD_ROUTES.projects}>Proyek Saya</Link>
-<Link href={AUTH_ROUTES.loginWithCallback(DASHBOARD_ROUTES.calculator)}>
-  Hitung Estimasi
-</Link>
+<Link href={PUBLIC_ROUTES.calculator}>Hitung Estimasi</Link>
 ```
 
 ### B. Pengalihan Rute (`redirect()` pada Server Component & Server Action)

@@ -61,6 +61,7 @@ export const invoiceStatusMeta: Record<
 > = {
   DRAFT: { label: "Draft", variant: "secondary" },
   SENT: { label: "Terkirim", variant: "default" },
+  PENDING_VERIFICATION: { label: "Menunggu Verifikasi", variant: "warning" },
   PAID: { label: "Lunas", variant: "success" },
   OVERDUE: { label: "Lewat Jatuh Tempo", variant: "destructive" },
   CANCELLED: { label: "Dibatalkan", variant: "outline" },

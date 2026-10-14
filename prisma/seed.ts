@@ -423,7 +423,7 @@ async function main() {
       content:
         "<h2>Website sebagai Aset Bisnis</h2><p>Di era digital, kehadiran online bukan lagi opsional. Pelanggan mencari informasi, membandingkan harga, dan mengambil keputusan pembelian, semuanya online.</p><p>Website modern bukan sekedar tampil cantik. Ia perlu <strong>cepat</strong>, <strong>mobile-friendly</strong>, dan <strong>SEO-optimized</strong> agar ditemukan oleh audiens yang tepat.</p><h3>Manfaat Konkret</h3><ul><li>Meningkatkan kredibilitas brand.</li><li>Menghasilkan leads otomatis.</li><li>Mengurangi beban customer service.</li></ul><p>Aldera Tech membantu bisnis Indonesia membangun website yang bukan sekedar ada, tapi <em>bekerja</em>.</p>",
       categoryId: catBiz.id,
-      featuredImage: "/generated/solvo-tech/blog/modern-website-strategy.png",
+      featuredImage: "/images/blog/modern-website-strategy.webp",
       published: true,
     },
     {
@@ -432,9 +432,9 @@ async function main() {
       excerpt:
         "Turbopack default, async request APIs, dan proxy menggantikan middleware. Inilah yang perlu Anda tahu.",
       content:
-        "<h2>Turbopack Stable</h2><p>Dimulai dari v16, Turbopack menjadi default untuk <code>next dev</code> dan <code>next build</code>. Kecepatan compile meningkat drastis.</p><h2>Async Request APIs</h2><p>Semua <code>cookies()</code>, <code>headers()</code>, <code>params</code>, dan <code>searchParams</code> sekarang Promises. Wajib di-await.</p><h2>middleware → proxy</h2><p>File <code>middleware.ts</code> sekarang bernama <code>proxy.ts</code>. Tidak lagi mendukung edge runtime secara default.</p>",
+        "<h2>Turbopack Stable</h2><p>Di Next.js 16, Turbopack telah menjadi bundler default yang menghadirkan kompilasi instan dan Hot Module Replacement yang jauh lebih responsif.</p><h2>Async Request APIs & React 19</h2><p>Semua request API seperti <code>cookies()</code>, <code>headers()</code>, dan dynamic route params kini sepenuhnya asinkron (Promises), terintegrasi mulus dengan fitur React 19 Server Actions.</p><h2>Proteksi Route Terstandarisasi</h2><p>Proteksi rute sensitif diimplementasikan melalui <code>middleware.ts</code> standar untuk mengamankan area dashboard, admin, dan endpoint API secara konsisten.</p>",
       categoryId: catDev.id,
-      featuredImage: "/generated/solvo-tech/blog/nextjs-16-development.png",
+      featuredImage: "/images/blog/nextjs-16-development.webp",
       published: true,
     },
     {
@@ -445,7 +445,7 @@ async function main() {
       content:
         "<h2>Apa itu Micro-interactions?</h2><p>Animasi kecil yang memberikan feedback atau guidance ke user, tombol yang 'menekan', progress bar yang halus, toast yang slide-in.</p><h3>Top 5 Pilihan</h3><ol><li>Hover scale pada card (scale: 1.02).</li><li>Progress bar dengan easing smooth.</li><li>Skeleton loading menggantikan spinner.</li><li>Stagger animation pada list items.</li><li>Active state yang spring-based.</li></ol>",
       categoryId: catDesign.id,
-      featuredImage: "/generated/solvo-tech/blog/micro-interactions-ux.png",
+      featuredImage: "/images/blog/micro-interactions-ux.webp",
       published: true,
     },
   ];
@@ -528,8 +528,7 @@ async function main() {
         "Kami membangun dashboard B2B dengan self-serve onboarding, usage analytics real-time, dan integrasi billing. Sales team dibebaskan dari tugas administratif.",
       result:
         "Konversi lead ke deal naik 300%. Waktu onboarding turun dari 14 hari ke 2 hari. NPS customer naik dari 32 ke 68.",
-      featuredImage:
-        "/generated/solvo-tech/portfolio/technova-b2b-platform.png",
+      featuredImage: "/images/portfolio/technova-b2b-platform.webp",
       techStack: ["Next.js", "PostgreSQL", "Stripe", "Tailwind CSS"],
       published: true,
       order: 1,
@@ -547,7 +546,7 @@ async function main() {
         "Storefront custom dengan Midtrans, integrasi kurir, loyalty program, dan newsletter otomatis untuk repeat customer.",
       result:
         "Penjualan online naik 2x dalam 3 bulan. 40% repeat purchase rate. CAC turun 35%.",
-      featuredImage: "/generated/solvo-tech/portfolio/kopi-kita-ecommerce.png",
+      featuredImage: "/images/portfolio/kopi-kita-ecommerce.webp",
       techStack: ["Next.js", "Prisma", "Midtrans", "PostgreSQL"],
       published: true,
       order: 2,
@@ -565,7 +564,7 @@ async function main() {
         "Fokus pada micro-interactions dan visualisasi data yang delightful. Setiap aksi memberi feedback yang memuaskan.",
       result:
         "100K+ download dalam 6 bulan. Rating 4.8 di App Store. Featured di 'Editor's Choice'.",
-      featuredImage: "/generated/solvo-tech/portfolio/finsmart-mobile-app.png",
+      featuredImage: "/images/portfolio/finsmart-mobile-app.webp",
       techStack: ["React Native", "TypeScript", "Firebase", "Framer Motion"],
       published: true,
       order: 3,
@@ -691,13 +690,13 @@ async function main() {
     where: { id: "calculator" },
     update: {
       featureDisclaimer:
-        'Satu input = satu fitur spesifik.\n✓ Contoh benar: "Login dengan Google"\n✗ Contoh salah: "Sistem login lengkap dengan social media, 2FA, dan forgot password"\n\nJika fitur terlalu besar, tim kami akan memecahnya saat review.',
+        'Satu input = satu fitur spesifik.\n[BENAR] Contoh: "Login dengan Google"\n[SALAH] Contoh: "Sistem login lengkap dengan social media, 2FA, dan forgot password"\n\nJika fitur terlalu besar, tim kami akan memecahnya saat review.',
       revisionPolicy:
         "• Bug dari Aldera Tech = revisi gratis tanpa batas\n• Revisi dari Anda = 2x gratis (1 revisi = 1 fitur)\n• Revisi tambahan = Rp 300.000/fitur\n• Contoh: Jika Anda ingin merevisi 3 fitur sekaligus, itu menggunakan 3 jatah revisi.",
     },
     create: {
       featureDisclaimer:
-        'Satu input = satu fitur spesifik.\n✓ Contoh benar: "Login dengan Google"\n✗ Contoh salah: "Sistem login lengkap dengan social media, 2FA, dan forgot password"\n\nJika fitur terlalu besar, tim kami akan memecahnya saat review.',
+        'Satu input = satu fitur spesifik.\n[BENAR] Contoh: "Login dengan Google"\n[SALAH] Contoh: "Sistem login lengkap dengan social media, 2FA, dan forgot password"\n\nJika fitur terlalu besar, tim kami akan memecahnya saat review.',
       revisionPolicy:
         "• Bug dari Aldera Tech = revisi gratis tanpa batas\n• Revisi dari Anda = 2x gratis (1 revisi = 1 fitur)\n• Revisi tambahan = Rp 300.000/fitur\n• Contoh: Jika Anda ingin merevisi 3 fitur sekaligus, itu menggunakan 3 jatah revisi.",
       freeRevisions: 2,

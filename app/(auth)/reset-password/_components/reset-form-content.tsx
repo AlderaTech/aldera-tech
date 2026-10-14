@@ -50,7 +50,7 @@ export function ResetFormContent() {
         variant="reset"
       >
         <CardContent className="px-6 pb-2 sm:px-8">
-          <div className="rounded-lg border border-black/10 bg-[#f5f8ff] p-4 text-sm leading-relaxed text-black/62">
+          <div className="rounded-2xl border border-border bg-slate-50 p-4 text-sm leading-relaxed text-slate-600">
             Token reset tidak ditemukan pada URL. Untuk keamanan, minta link
             baru melalui halaman lupa password.
           </div>
@@ -59,7 +59,7 @@ export function ResetFormContent() {
           <Button
             asChild
             size="xl"
-            className="w-full bg-[#08090d] text-white hover:bg-black"
+            className="w-full rounded-full bg-[#00B1E1] font-bold text-[#0F263A] shadow-md shadow-[#00B1E1]/25 hover:bg-[#0094BD]"
           >
             <Link href={AUTH_ROUTES.forgotPassword}>Minta link baru</Link>
           </Button>
@@ -81,7 +81,7 @@ export function ResetFormContent() {
           <div className="space-y-2">
             <Label
               htmlFor="password"
-              className="text-sm font-bold text-black/72"
+              className="text-sm font-semibold text-[#0F263A]"
             >
               Password baru
             </Label>
@@ -94,7 +94,7 @@ export function ResetFormContent() {
               aria-invalid={!!state.errors?.password}
               showPassword={showPassword}
               onTogglePassword={togglePassword}
-              className="h-12 border-black/12 bg-white pr-11 text-black shadow-none focus-visible:border-[#0b6bff] focus-visible:ring-[#0b6bff]/25"
+              className="h-12 rounded-xl border-slate-200 bg-white pr-11 text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
             />
             {state.errors?.password && (
               <p role="alert" className="text-xs font-medium text-destructive">
@@ -105,7 +105,7 @@ export function ResetFormContent() {
           <div className="space-y-2">
             <Label
               htmlFor="confirmPassword"
-              className="text-sm font-bold text-black/72"
+              className="text-sm font-semibold text-[#0F263A]"
             >
               Konfirmasi password
             </Label>
@@ -117,7 +117,7 @@ export function ResetFormContent() {
               autoComplete="new-password"
               required
               aria-invalid={!!state.errors?.confirmPassword}
-              className="h-12 border-black/12 bg-white text-black shadow-none focus-visible:border-[#0b6bff] focus-visible:ring-[#0b6bff]/25"
+              className="h-12 rounded-xl border-slate-200 bg-white text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
             />
             {state.errors?.confirmPassword && (
               <p role="alert" className="text-xs font-medium text-destructive">
@@ -131,11 +131,12 @@ export function ResetFormContent() {
             type="submit"
             size="xl"
             disabled={isPending}
-            className="w-full bg-[#08090d] text-white hover:bg-black"
+            className="w-full rounded-full bg-[#00B1E1] font-bold text-[#0F263A] shadow-md shadow-[#00B1E1]/25 hover:bg-[#0094BD]"
           >
             {isPending ? (
               <>
-                <Loader2 className="size-4 animate-spin" /> Memproses...
+                <Loader2 className="size-4 animate-spin text-[#0F263A]" />{" "}
+                Memproses...
               </>
             ) : (
               <>

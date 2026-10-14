@@ -3,17 +3,17 @@
 # ==============================================================================
 # Stage 1: Dependencies
 # ==============================================================================
-FROM node:22-alpine AS deps
+FROM oven/bun:1-alpine AS deps
 
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-RUN npm ci --legacy-peer-deps
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
 # ==============================================================================
 # Stage 2: Builder
 # ==============================================================================
-FROM node:22-alpine AS builder
+FROM oven/bun:1-alpine AS builder
 
 WORKDIR /app
 
@@ -27,13 +27,13 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN npx prisma generate --no-hints
-RUN npm run build
+RUN bunx prisma generate --no-hints
+RUN bun run build
 
 # ==============================================================================
 # Stage 3: Runner
 # ==============================================================================
-FROM node:22-alpine AS runner
+FROM oven/bun:1-alpine AS runner
 
 WORKDIR /app
 
@@ -43,7 +43,7 @@ ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
 # Install runtime utilities: curl (healthcheck/cron) and su-exec (privilege dropping)
-RUN apk add --no-cache curl su-exec busybox
+RUN apk add --no-cache curl su-exec busybox nodejs
 
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
@@ -52,7 +52,7 @@ COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/package.json /app/package-lock.json* ./
+COPY --from=builder --chown=nextjs:nodejs /app/package.json /app/bun.lock ./
 COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
 COPY --from=builder --chown=nextjs:nodejs /app/lib ./lib
 COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
@@ -76,4 +76,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
 
-CMD ["node", "server.js"]
+CMD ["bun", "server.js"]

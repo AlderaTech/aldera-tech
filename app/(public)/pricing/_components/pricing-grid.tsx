@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { StaggerContainer, StaggerItem } from "@/components/shared/motion";
 import type { PublicPricingPlan } from "@/lib/public-settings";
-import { AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
+import { PUBLIC_ROUTES } from "@/lib/routes";
 import { cn, formatCurrency } from "@/lib/utils";
 
 export function PricingGrid({ plans }: { plans: PublicPricingPlan[] }) {
@@ -106,11 +106,7 @@ export function PricingGrid({ plans }: { plans: PublicPricingPlan[] }) {
             size="lg"
             className="mt-5 bg-[#08090d] text-white hover:bg-black"
           >
-            <Link
-              href={AUTH_ROUTES.loginWithCallback(DASHBOARD_ROUTES.calculator)}
-            >
-              Hitung Estimasi Detail
-            </Link>
+            <Link href={PUBLIC_ROUTES.calculator}>Hitung Estimasi Detail</Link>
           </Button>
         </div>
       </div>

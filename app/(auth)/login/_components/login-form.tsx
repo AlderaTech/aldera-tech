@@ -48,7 +48,10 @@ export function LoginForm() {
     <form action={handleSubmit}>
       <CardContent className="space-y-5 px-6 pb-2 sm:px-8">
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm font-bold text-black/72">
+          <Label
+            htmlFor="email"
+            className="text-sm font-semibold text-[#0F263A]"
+          >
             Email
           </Label>
           <Input
@@ -59,7 +62,7 @@ export function LoginForm() {
             autoComplete="email"
             required
             aria-invalid={!!state.errors?.email}
-            className="h-12 border-black/12 bg-white text-black shadow-none focus-visible:border-[#0b6bff] focus-visible:ring-[#0b6bff]/25"
+            className="h-12 rounded-xl border-slate-200 bg-white text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
           />
           {state.errors?.email && (
             <p role="alert" className="text-xs font-medium text-destructive">
@@ -71,13 +74,13 @@ export function LoginForm() {
           <div className="flex items-center justify-between gap-4">
             <Label
               htmlFor="password"
-              className="text-sm font-bold text-black/72"
+              className="text-sm font-semibold text-[#0F263A]"
             >
               Password
             </Label>
             <Link
               href={AUTH_ROUTES.forgotPassword}
-              className="text-xs font-semibold text-black/48 transition-colors hover:text-[#0b6bff]"
+              className="text-xs font-semibold text-[#00B1E1] transition-colors hover:text-[#0094BD]"
               tabIndex={-1}
             >
               Lupa password?
@@ -92,7 +95,7 @@ export function LoginForm() {
             aria-invalid={!!state.errors?.password}
             showPassword={showPassword}
             onTogglePassword={togglePassword}
-            className="h-12 border-black/12 bg-white pr-11 text-black shadow-none focus-visible:border-[#0b6bff] focus-visible:ring-[#0b6bff]/25"
+            className="h-12 rounded-xl border-slate-200 bg-white pr-11 text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
           />
           {state.errors?.password && (
             <p role="alert" className="text-xs font-medium text-destructive">
@@ -106,11 +109,12 @@ export function LoginForm() {
           type="submit"
           size="xl"
           disabled={isPending}
-          className="w-full bg-[#08090d] text-white hover:bg-black"
+          className="w-full rounded-full bg-[#00B1E1] font-bold text-[#0F263A] shadow-md shadow-[#00B1E1]/25 hover:bg-[#0094BD]"
         >
           {isPending ? (
             <>
-              <Loader2 className="size-4 animate-spin" /> Memproses...
+              <Loader2 className="size-4 animate-spin text-[#0F263A]" />{" "}
+              Memproses...
             </>
           ) : (
             <>
@@ -118,11 +122,11 @@ export function LoginForm() {
             </>
           )}
         </Button>
-        <p className="text-center text-sm text-black/58">
+        <p className="text-center text-sm text-slate-500">
           Belum punya akun?{" "}
           <Link
             href={AUTH_ROUTES.register}
-            className="font-bold text-[#0b6bff] transition-colors hover:text-[#075bd8]"
+            className="font-bold text-[#00B1E1] transition-colors hover:text-[#0094BD]"
           >
             Daftar sekarang
           </Link>

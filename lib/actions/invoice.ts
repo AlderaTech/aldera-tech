@@ -11,6 +11,7 @@ import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { notify } from "@/lib/notifications";
 import { waTemplates } from "@/lib/whatsapp-templates";
+import { calculateInvoiceTotals } from "@/lib/invoice-utils";
 
 async function requireAdmin() {
   const session = await auth();
@@ -69,12 +70,10 @@ export async function createInvoiceAction(
   }
   const data = parsed.data;
 
-  const subtotal = data.items.reduce(
-    (sum, it) => sum + it.quantity * it.price,
-    0
+  const { subtotal, taxAmount, total } = calculateInvoiceTotals(
+    data.items,
+    data.taxRate
   );
-  const taxAmount = (subtotal * data.taxRate) / 100;
-  const total = subtotal + taxAmount;
   const number = await generateInvoiceNumber();
 
   const invoice = await prisma.invoice.create({
@@ -226,4 +225,255 @@ export async function deleteInvoiceAction(invoiceId: string) {
   await prisma.invoice.delete({ where: { id: invoiceId } });
   revalidatePath(ADMIN_ROUTES.invoices);
   redirect(ADMIN_ROUTES.invoices);
+}
+
+export async function submitPaymentProofAction(input: {
+  invoiceId: string;
+  proofUrl: string;
+  notes?: string;
+}): Promise<{ ok: boolean; message?: string }> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { ok: false, message: "Sesi tidak valid. Silakan login kembali." };
+  }
+
+  const invoice = await prisma.invoice.findUnique({
+    where: { id: input.invoiceId },
+    include: { client: true },
+  });
+
+  if (!invoice) {
+    return { ok: false, message: "Invoice tidak ditemukan." };
+  }
+
+  if (invoice.clientId !== session.user.id && session.user.role !== "ADMIN") {
+    return { ok: false, message: "Anda tidak memiliki akses ke invoice ini." };
+  }
+
+  if (invoice.status === "PAID") {
+    return { ok: false, message: "Invoice ini sudah lunas." };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.invoice.update({
+      where: { id: invoice.id },
+      data: {
+        status: "PENDING_VERIFICATION",
+        paymentProofUrl: input.proofUrl,
+        paymentMethod: "MANUAL_TRANSFER",
+      },
+    });
+
+    await tx.payment.create({
+      data: {
+        invoiceId: invoice.id,
+        amount: invoice.total,
+        currency: invoice.currency,
+        status: "PENDING",
+        paymentMethod: "MANUAL_TRANSFER",
+        gateway: "manual",
+        proofUrl: input.proofUrl,
+        proofUploadedAt: new Date(),
+        notes: input.notes || null,
+      },
+    });
+
+    if (invoice.projectId) {
+      await tx.activityLog.create({
+        data: {
+          projectId: invoice.projectId,
+          userId: session.user.id,
+          action: "FILE_UPLOADED",
+          description: `Bukti transfer untuk invoice ${invoice.number} telah diunggah.`,
+          metadata: {
+            invoiceId: invoice.id,
+            invoiceNumber: invoice.number,
+            proofUrl: input.proofUrl,
+          },
+        },
+      });
+    }
+  });
+
+  if (invoice.client.phone) {
+    const tpl = waTemplates.paymentProofReceived(
+      invoice.number,
+      formatCurrency(Number(invoice.total))
+    );
+    sendWhatsApp({
+      to: invoice.client.phone,
+      message: `*${tpl.title}*\n\n${tpl.message}`,
+    }).catch(() => {});
+  }
+
+  revalidatePath(DASHBOARD_ROUTES.invoices);
+  revalidatePath(ADMIN_ROUTES.invoices);
+  revalidatePath(ADMIN_ROUTES.invoiceDetail(invoice.id));
+
+  return {
+    ok: true,
+    message: "Bukti pembayaran berhasil diunggah dan menunggu verifikasi.",
+  };
+}
+
+export async function verifyPaymentProofAction(
+  invoiceId: string
+): Promise<{ ok: boolean; message?: string }> {
+  const admin = await requireAdmin();
+
+  const invoice = await prisma.invoice.findUnique({
+    where: { id: invoiceId },
+    include: { client: true },
+  });
+
+  if (!invoice) {
+    return { ok: false, message: "Invoice tidak ditemukan." };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.invoice.update({
+      where: { id: invoiceId },
+      data: {
+        status: "PAID",
+        paidAt: new Date(),
+      },
+    });
+
+    const pendingPayment = await tx.payment.findFirst({
+      where: { invoiceId, status: "PENDING" },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (pendingPayment) {
+      await tx.payment.update({
+        where: { id: pendingPayment.id },
+        data: {
+          status: "SUCCESS",
+          verifiedAt: new Date(),
+          verifiedById: admin.id,
+        },
+      });
+    } else {
+      await tx.payment.create({
+        data: {
+          invoiceId: invoice.id,
+          amount: invoice.total,
+          currency: invoice.currency,
+          status: "SUCCESS",
+          paymentMethod: "MANUAL_TRANSFER",
+          gateway: "manual",
+          proofUrl: invoice.paymentProofUrl,
+          verifiedAt: new Date(),
+          verifiedById: admin.id,
+        },
+      });
+    }
+
+    if (invoice.projectId) {
+      await tx.activityLog.create({
+        data: {
+          projectId: invoice.projectId,
+          userId: admin.id,
+          action: "INVOICE_PAID",
+          description: `Pembayaran invoice ${invoice.number} senilai ${formatCurrency(Number(invoice.total))} telah diverifikasi lunas.`,
+          metadata: {
+            invoiceId: invoice.id,
+            invoiceNumber: invoice.number,
+            amount: Number(invoice.total),
+          },
+        },
+      });
+    }
+  });
+
+  if (invoice.client.phone) {
+    const tpl = waTemplates.invoicePaid(
+      invoice.number,
+      formatCurrency(Number(invoice.total))
+    );
+    sendWhatsApp({
+      to: invoice.client.phone,
+      message: `*${tpl.title}*\n\n${tpl.message}`,
+    }).catch(() => {});
+  }
+
+  await notify({
+    userId: invoice.clientId,
+    type: "INVOICE_SENT",
+    title: "Pembayaran Lunas",
+    message: `Invoice ${invoice.number} telah diverifikasi dan lunas.`,
+  }).catch(() => {});
+
+  revalidatePath(ADMIN_ROUTES.invoices);
+  revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
+  revalidatePath(DASHBOARD_ROUTES.invoices);
+
+  return {
+    ok: true,
+    message: "Pembayaran berhasil diverifikasi menjadi Lunas.",
+  };
+}
+
+export async function rejectPaymentProofAction(
+  invoiceId: string,
+  reason: string
+): Promise<{ ok: boolean; message?: string }> {
+  const admin = await requireAdmin();
+
+  const invoice = await prisma.invoice.findUnique({
+    where: { id: invoiceId },
+    include: { client: true },
+  });
+
+  if (!invoice) {
+    return { ok: false, message: "Invoice tidak ditemukan." };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.invoice.update({
+      where: { id: invoiceId },
+      data: {
+        status: "SENT",
+        paymentProofUrl: null,
+      },
+    });
+
+    const pendingPayment = await tx.payment.findFirst({
+      where: { invoiceId, status: "PENDING" },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (pendingPayment) {
+      await tx.payment.update({
+        where: { id: pendingPayment.id },
+        data: {
+          status: "FAILED",
+          rejectionReason: reason,
+          verifiedAt: new Date(),
+          verifiedById: admin.id,
+        },
+      });
+    }
+  });
+
+  if (invoice.client.phone) {
+    const tpl = waTemplates.paymentProofRejected(invoice.number, reason);
+    sendWhatsApp({
+      to: invoice.client.phone,
+      message: `*${tpl.title}*\n\n${tpl.message}`,
+    }).catch(() => {});
+  }
+
+  await notify({
+    userId: invoice.clientId,
+    type: "INVOICE_SENT",
+    title: "Bukti Pembayaran Ditolak",
+    message: `Bukti pembayaran invoice ${invoice.number} ditolak: ${reason}`,
+  }).catch(() => {});
+
+  revalidatePath(ADMIN_ROUTES.invoices);
+  revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
+  revalidatePath(DASHBOARD_ROUTES.invoices);
+
+  return { ok: true, message: "Bukti pembayaran ditolak." };
 }

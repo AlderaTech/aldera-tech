@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, Send, Trash2, MoreHorizontal, Pencil } from "lucide-react";
+import { Loader2, Send, Trash2, MoreHorizontal, Pencil, X } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -107,7 +107,7 @@ export function MessagesTab({
               className="text-muted-foreground hover:text-foreground"
               aria-label="Batal balas"
             >
-              ✕
+              <X className="size-3.5" />
             </button>
           </div>
         )}

@@ -54,7 +54,7 @@ export const publicCaseStudies: PublicCaseStudy[] = [
       "Kami merancang platform B2B berbasis Next.js dengan onboarding mandiri, workflow approval, dashboard analytics, dan integrasi billing. Setiap milestone dikirim sebagai sprint kecil agar tim TechNova bisa memberi feedback tanpa menunggu fase besar selesai.",
     result:
       "Konversi demo ke trial naik 3x, waktu onboarding turun dari 10 hari menjadi 2 hari, dan tim leadership mendapat visibilitas funnel langsung untuk mengambil keputusan komersial lebih cepat.",
-    featuredImage: "/generated/solvo-tech/portfolio/technova-b2b-platform.png",
+    featuredImage: "/images/portfolio/technova-b2b-platform.webp",
     techStack: ["Next.js", "PostgreSQL", "Prisma", "Stripe"],
     published: true,
     order: 1,
@@ -75,7 +75,7 @@ export const publicCaseStudies: PublicCaseStudy[] = [
       "Kami membangun storefront mobile-first dengan katalog modular, checkout dua langkah, Midtrans, integrasi kurir, dan CMS promo. Sistem dibuat ringan agar campaign flash sale tetap cepat diakses dari mobile.",
     result:
       "Penjualan direct-to-consumer naik 2.1x dalam tiga bulan, repeat order meningkat 38%, dan tim marketing mulai menjalankan promo berbasis segmentasi pelanggan.",
-    featuredImage: "/generated/solvo-tech/portfolio/kopi-kita-ecommerce.png",
+    featuredImage: "/images/portfolio/kopi-kita-ecommerce.webp",
     techStack: ["Next.js", "Prisma", "Midtrans", "Tailwind CSS"],
     published: true,
     order: 2,
@@ -96,7 +96,7 @@ export const publicCaseStudies: PublicCaseStudy[] = [
       "Kami menyusun ulang onboarding, membangun design system mobile, menambahkan insight pengeluaran yang mudah dipindai, dan memasang analytics event untuk tiap langkah aktivasi.",
     result:
       "Aktivasi pengguna baru naik 52%, aplikasi mencapai 100K+ download, dan rating store stabil di 4.8 berkat pengalaman onboarding yang lebih jelas.",
-    featuredImage: "/generated/solvo-tech/portfolio/finsmart-mobile-app.png",
+    featuredImage: "/images/portfolio/finsmart-mobile-app.webp",
     techStack: ["React Native", "TypeScript", "Firebase", "Recharts"],
     published: true,
     order: 3,
@@ -122,7 +122,7 @@ export const publicBlogPosts: PublicBlogPost[] = [
       <h2>Website adalah aset yang bisa diukur</h2>
       <p>Dengan analytics, formulir yang benar, dan funnel yang rapi, website menjadi sumber data. Tim bisa melihat halaman mana yang bekerja, penawaran mana yang menarik, dan bagian mana yang perlu diperbaiki.</p>
     `,
-    featuredImage: "/generated/solvo-tech/blog/modern-website-strategy.png",
+    featuredImage: "/images/blog/modern-website-strategy.webp",
     published: true,
     publishedAt: fallbackDate,
     scheduledAt: null,
@@ -153,18 +153,17 @@ export function getFallbackBlogPost(slug: string) {
 
 const blogImageBySlug: Record<string, string> = {
   "kenapa-bisnis-anda-butuh-website-modern":
-    "/generated/solvo-tech/blog/modern-website-strategy.png",
-  "next-js-16-apa-yang-baru":
-    "/generated/solvo-tech/blog/nextjs-16-development.png",
+    "/images/blog/modern-website-strategy.webp",
+  "next-js-16-apa-yang-baru": "/images/blog/nextjs-16-development.webp",
   "micro-interactions-yang-meningkatkan-ux":
-    "/generated/solvo-tech/blog/micro-interactions-ux.png",
+    "/images/blog/micro-interactions-ux.webp",
 };
 
 export function resolveBlogPostImage(slug: string, image: string | null) {
   if (
     image &&
     image !== "/logo/logo-transparent.png" &&
-    !image.startsWith("/generated/solvo-tech/portfolio/")
+    !image.startsWith("/images/portfolio/")
   ) {
     return image;
   }
