@@ -22,7 +22,7 @@ export function AboutStory() {
                 tidak terduga, dan proyek yang molor tanpa penjelasan.
               </p>
               <p>
-                Kami pikir, ini bisa lebih baik. Solvo Tech dibangun dengan
+                Kami pikir, ini bisa lebih baik. Aldera Tech dibangun dengan
                 prinsip <strong>transparansi radikal</strong>. Setiap klien
                 mendapat akses dashboard langsung. Setiap milestone
                 dikomunikasikan. Setiap invoice punya rincian jelas.

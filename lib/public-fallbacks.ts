@@ -129,8 +129,8 @@ export const publicBlogPosts: PublicBlogPost[] = [
     views: 1280,
     draftContent: null,
     draftSavedAt: null,
-    authorId: "fallback-author-solvo",
-    author: { name: "Solvo Admin", avatar: null },
+    authorId: "fallback-author-aldera",
+    author: { name: "Aldera Admin", avatar: null },
     categoryId: "fallback-category-business",
     category: { name: "Business", slug: "business" },
     createdAt: fallbackDate,
@@ -143,7 +143,7 @@ export function getFallbackCaseStudy(slug: string) {
 }
 
 export function resolveCaseStudyImage(slug: string, image: string | null) {
-  if (image && image !== "/logo.png") return image;
+  if (image && image !== "/logo/logo-transparent.png") return image;
   return getFallbackCaseStudy(slug)?.featuredImage ?? image;
 }
 
@@ -163,7 +163,7 @@ const blogImageBySlug: Record<string, string> = {
 export function resolveBlogPostImage(slug: string, image: string | null) {
   if (
     image &&
-    image !== "/logo.png" &&
+    image !== "/logo/logo-transparent.png" &&
     !image.startsWith("/generated/solvo-tech/portfolio/")
   ) {
     return image;

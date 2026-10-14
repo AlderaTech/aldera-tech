@@ -33,7 +33,7 @@ type InvoiceRow = {
   status: InvoiceStatus;
   total: string;
   dueDate: Date;
-  client: { name: string; company: string | null };
+  client: { name: string };
   project: { title: string } | null;
 };
 
@@ -152,11 +152,6 @@ export function InvoiceTable({ invoices }: { invoices: InvoiceRow[] }) {
                   <TableCell className="font-medium">{inv.number}</TableCell>
                   <TableCell className="hidden md:table-cell">
                     <div className="text-sm">{inv.client.name}</div>
-                    {inv.client.company && (
-                      <div className="text-xs text-muted-foreground">
-                        {inv.client.company}
-                      </div>
-                    )}
                   </TableCell>
                   <TableCell className="hidden max-w-xs truncate text-sm text-muted-foreground xl:table-cell">
                     {inv.project?.title ?? "-"}

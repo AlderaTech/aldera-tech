@@ -203,7 +203,7 @@ export function SignaturePanel({ token, disabled }: Props) {
       <div className="flex flex-wrap justify-end gap-2">
         <ConfirmDialog
           title="Tolak proposal?"
-          description="Proposal akan ditandai sebagai ditolak dan tim Solvo Tech akan melihat status terbaru."
+          description="Proposal akan ditandai sebagai ditolak dan tim Aldera Tech akan melihat status terbaru."
           confirmLabel="Tolak proposal"
           destructive
           pending={pendingAction !== null}

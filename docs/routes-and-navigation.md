@@ -1,6 +1,6 @@
 # Panduan Rute & Navigasi Terpusat (Routes & Navigation Guide)
 
-Dokumen ini menjelaskan arsitektur rute terpusat pada **Solvo Tech**, daftar konstanta rute, serta pedoman implementasi di seluruh lapisan aplikasi (Client Components, Server Components, Server Actions, Route Handlers, dan Utilitas).
+Dokumen ini menjelaskan arsitektur rute terpusat pada **Aldera Tech**, daftar konstanta rute, serta pedoman implementasi di seluruh lapisan aplikasi (Client Components, Server Components, Server Actions, Route Handlers, dan Utilitas).
 
 ---
 

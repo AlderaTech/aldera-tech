@@ -90,11 +90,6 @@ export default async function AdminProposalsPage() {
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
                       <div className="text-sm">{p.clientName}</div>
-                      {p.clientCompany && (
-                        <div className="text-xs text-muted-foreground">
-                          {p.clientCompany}
-                        </div>
-                      )}
                     </TableCell>
                     <TableCell className="font-semibold tabular-nums">
                       {formatCurrency(Number(p.totalAmount))}

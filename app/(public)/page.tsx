@@ -9,7 +9,7 @@ import { OrganizationLd } from "@/components/seo/json-ld";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 
 export const metadata: Metadata = {
-  title: "Solvo Tech: Solusi Digital untuk Bisnis Modern",
+  title: "Aldera Tech: Solusi Digital untuk Bisnis Modern",
   description:
     "Partner teknologi untuk web, aplikasi mobile, dan UI/UX. Kami bangun solusi yang bekerja untuk pertumbuhan bisnis Anda.",
   alternates: { canonical: PUBLIC_ROUTES.home },

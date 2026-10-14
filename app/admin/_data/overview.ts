@@ -150,12 +150,10 @@ async function buildClientRevenueSeries(
   const clientNames = clientIds.length
     ? await prisma.user.findMany({
         where: { id: { in: clientIds } },
-        select: { id: true, name: true, company: true },
+        select: { id: true, name: true },
       })
     : [];
-  const nameById = new Map(
-    clientNames.map((user) => [user.id, user.company || user.name])
-  );
+  const nameById = new Map(clientNames.map((user) => [user.id, user.name]));
 
   return topClients.map((client) => ({
     name: nameById.get(client.clientId) ?? "Tidak tersedia",

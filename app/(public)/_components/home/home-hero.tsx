@@ -29,7 +29,7 @@ export function HomeHero() {
     <section className="relative isolate h-[calc(100dvh-72px)] overflow-hidden bg-[#08090d] text-white">
       <Image
         src="/generated/solvo-tech/hero-blue-editorial-v2.png"
-        alt="Mockup dashboard dan aplikasi digital Solvo Tech"
+        alt="Mockup dashboard dan aplikasi digital Aldera Tech"
         fill
         sizes="100vw"
         className="z-0 object-cover object-center lg:object-right"

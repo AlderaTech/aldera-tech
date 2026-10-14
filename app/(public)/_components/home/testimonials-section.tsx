@@ -11,9 +11,8 @@ const fallback: TestimonialCard[] = [
     id: "fb-1",
     clientName: "Andi Wijaya",
     clientRole: "CEO",
-    company: "TechNova Indonesia",
     content:
-      "Solvo Tech benar-benar mengerti visi kami. Dashboard transparan bikin saya selalu tahu progres tanpa chat berkali-kali.",
+      "Aldera Tech benar-benar mengerti visi kami. Dashboard transparan bikin saya selalu tahu progres tanpa chat berkali-kali.",
     rating: 5,
     avatar: null,
   },
@@ -21,7 +20,6 @@ const fallback: TestimonialCard[] = [
     id: "fb-2",
     clientName: "Linda Kusuma",
     clientRole: "Founder",
-    company: "Kopi Kita",
     content:
       "Tim profesional dan komunikatif. Dari discovery sampai rilis, semuanya tepat waktu dan sesuai anggaran.",
     rating: 5,
@@ -31,7 +29,6 @@ const fallback: TestimonialCard[] = [
     id: "fb-3",
     clientName: "Ridho Pratama",
     clientRole: "Product Manager",
-    company: "FinSmart",
     content:
       "Kualitas kode dan desainnya sangat baik. Investasinya terasa sepadan.",
     rating: 5,
@@ -49,7 +46,6 @@ export async function TestimonialsSection() {
         id: true,
         clientName: true,
         clientRole: true,
-        company: true,
         content: true,
         rating: true,
         avatar: true,
@@ -72,7 +68,7 @@ export async function TestimonialsSection() {
           </div>
           <p className="max-w-2xl text-base leading-relaxed text-white/68 lg:justify-self-end">
             Bisnis-bisnis yang telah mempercayakan transformasi digital mereka
-            ke Solvo Tech.
+            ke Aldera Tech.
           </p>
         </FadeUp>
         <TestimonialsCarousel items={items} />

@@ -35,10 +35,10 @@ export type PublicPricingPlan = {
 };
 
 export const defaultSiteSettings: PublicSiteSettings = {
-  brandName: "Solvo Tech",
+  brandName: "Aldera Tech",
   footerDescription:
     "Partner teknologi untuk bisnis modern. Kami membangun web, aplikasi mobile, dan sistem yang bekerja, transparan dari awal sampai rilis.",
-  email: "hello@solvo.tech",
+  email: "hello@aldera.tech",
   phone: "",
   whatsapp: "",
   address: "Jakarta, Indonesia",
@@ -48,9 +48,9 @@ export const defaultSiteSettings: PublicSiteSettings = {
   githubUrl: "",
   linkedinUrl: "",
   instagramUrl: "",
-  seoTitle: "Solvo Tech: Solusi Digital untuk Bisnis Modern",
+  seoTitle: "Aldera Tech: Solusi Digital untuk Bisnis Modern",
   seoDescription:
-    "Solvo Tech adalah partner teknologi untuk pengembangan web, aplikasi mobile, dan desain UI/UX. Transparan, profesional, dan berorientasi hasil.",
+    "Aldera Tech adalah partner teknologi untuk pengembangan web, aplikasi mobile, dan desain UI/UX. Transparan, profesional, dan berorientasi hasil.",
 };
 
 export const defaultPricingPlans: PublicPricingPlan[] = [

@@ -7,7 +7,7 @@ import { getPortfolioItems } from "./_data/portfolio";
 export const metadata: Metadata = {
   title: "Portfolio",
   description:
-    "Lihat portofolio proyek terbaru Solvo Tech: dari SaaS B2B, e-commerce, hingga aplikasi mobile.",
+    "Lihat portofolio proyek terbaru Aldera Tech: dari SaaS B2B, e-commerce, hingga aplikasi mobile.",
   alternates: { canonical: PUBLIC_ROUTES.portfolio },
 };
 

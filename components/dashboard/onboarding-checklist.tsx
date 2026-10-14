@@ -26,7 +26,7 @@ export async function OnboardingChecklist() {
         await Promise.all([
           prisma.user.findUnique({
             where: { id: userId },
-            select: { avatar: true, company: true, phone: true },
+            select: { avatar: true, phone: true },
           }),
           prisma.project.count({ where: { clientId: userId } }),
           prisma.projectMessage.count({
@@ -41,14 +41,13 @@ export async function OnboardingChecklist() {
     { user: null, projectCount: 0, messageCount: 0, paidInvoiceCount: 0 }
   );
 
-  const profileComplete =
-    !!(data.user?.avatar || data.user?.company) && !!data.user?.phone;
+  const profileComplete = !!data.user?.phone;
 
   const steps: Step[] = [
     {
       id: "profile",
       title: "Lengkapi profil",
-      description: "Tambahkan nomor telepon dan informasi perusahaan.",
+      description: "Tambahkan nomor telepon dan foto profil.",
       done: profileComplete,
       cta: { label: "Lengkapi", href: DASHBOARD_ROUTES.profile },
     },

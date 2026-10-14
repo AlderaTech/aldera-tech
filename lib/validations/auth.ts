@@ -18,7 +18,6 @@ export const registerSchema = z
       .min(8, "Password minimal 8 karakter")
       .max(100, "Password terlalu panjang"),
     confirmPassword: z.string(),
-    company: z.string().trim().max(120).optional(),
     phone: z.string().trim().max(30).optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {

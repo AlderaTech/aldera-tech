@@ -39,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: settings.seoDescription,
     keywords: [
-      "solvo tech",
+      "aldera tech",
       "pengembangan web indonesia",
       "partner teknologi indonesia",
       "jasa pembuatan website",
@@ -57,7 +57,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: settings.seoDescription,
       images: [
         {
-          url: "/logo.png",
+          url: "/logo/logo-transparent.png",
           width: 512,
           height: 512,
           alt: `${settings.brandName} Logo`,
@@ -68,11 +68,11 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: settings.brandName,
       description: settings.seoDescription,
-      images: ["/logo.png"],
+      images: ["/logo/logo-transparent.png"],
     },
     icons: {
-      icon: "/favicon.ico",
-      apple: "/logo.png",
+      icon: "/logo/logo-transparent.png",
+      apple: "/logo/logo-transparent.png",
     },
     robots: {
       index: true,

@@ -1,6 +1,6 @@
-# Solvo Tech: System Roles & Features Specification
+# Aldera Tech: System Roles & Features Specification
 
-Dokumen spesifikasi teknis arsitektur peran (_Role-Based Access Control_), hak akses (_permissions_), rute (_routes_), dan fitur sistem Solvo Tech. Dirancang untuk referensi deterministik bagi agen kecerdasan buatan (AI / LLM).
+Dokumen spesifikasi teknis arsitektur peran (_Role-Based Access Control_), hak akses (_permissions_), rute (_routes_), dan fitur sistem Aldera Tech. Dirancang untuk referensi deterministik bagi agen kecerdasan buatan (AI / LLM).
 
 ---
 

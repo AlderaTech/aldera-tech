@@ -64,8 +64,11 @@ export default async function BlogDetail({ params }: PageProps) {
             : undefined,
           publisher: {
             "@type": "Organization",
-            name: "Solvo Tech",
-            logo: { "@type": "ImageObject", url: `${appUrl}/logo.png` },
+            name: "Aldera Tech",
+            logo: {
+              "@type": "ImageObject",
+              url: `${appUrl}/logo/logo-transparent.png`,
+            },
           },
           mainEntityOfPage: {
             "@type": "WebPage",

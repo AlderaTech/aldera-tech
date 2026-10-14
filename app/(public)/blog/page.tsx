@@ -9,7 +9,7 @@ import { getBlogCategories, getBlogList } from "./_data/blog-list";
 export const metadata: Metadata = {
   title: "Blog",
   description:
-    "Artikel, tutorial, dan wawasan dari tim Solvo Tech seputar teknologi, desain, dan bisnis.",
+    "Artikel, tutorial, dan wawasan dari tim Aldera Tech seputar teknologi, desain, dan bisnis.",
   alternates: { canonical: PUBLIC_ROUTES.blog },
 };
 

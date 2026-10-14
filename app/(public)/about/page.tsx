@@ -10,7 +10,7 @@ import { TechStackSection } from "./_components/tech-stack-section";
 export const metadata: Metadata = {
   title: "Tentang Kami",
   description:
-    "Cerita di balik Solvo Tech: partner teknologi yang membantu bisnis Indonesia membangun produk digital yang bekerja.",
+    "Cerita di balik Aldera Tech: partner teknologi yang membantu bisnis Indonesia membangun produk digital yang bekerja.",
   alternates: { canonical: PUBLIC_ROUTES.about },
 };
 
@@ -22,13 +22,13 @@ export default function AboutPage() {
         data={{
           "@context": "https://schema.org",
           "@type": "AboutPage",
-          name: "Tentang Solvo Tech",
+          name: "Tentang Aldera Tech",
           url: `${appUrl}/about`,
           description: metadata.description,
           isPartOf: {
             "@type": "WebSite",
             url: appUrl,
-            name: "Solvo Tech",
+            name: "Aldera Tech",
           },
         }}
       />

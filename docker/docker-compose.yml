@@ -3,13 +3,13 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    container_name: solvo_tech_app
+    container_name: aldera_tech_app
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-solvo}:${POSTGRES_PASSWORD:-solvosecret}@db:5432/${POSTGRES_DB:-solvo_tech}?schema=public
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-aldera}:${POSTGRES_PASSWORD:-alderasecret}@db:5432/${POSTGRES_DB:-aldera_tech}?schema=public
       - AUTH_SECRET=${AUTH_SECRET}
       - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
@@ -34,21 +34,21 @@ services:
 
   db:
     image: postgres:16-alpine
-    container_name: solvo_tech_db
+    container_name: aldera_tech_db
     restart: unless-stopped
     ports:
       - "127.0.0.1:5432:5432"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-solvo}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-solvosecret}
-      POSTGRES_DB: ${POSTGRES_DB:-solvo_tech}
+      POSTGRES_USER: ${POSTGRES_USER:-aldera}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-alderasecret}
+      POSTGRES_DB: ${POSTGRES_DB:-aldera_tech}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-solvo} -d ${POSTGRES_DB:-solvo_tech}",
+          "pg_isready -U ${POSTGRES_USER:-aldera} -d ${POSTGRES_DB:-aldera_tech}",
         ]
       interval: 10s
       timeout: 5s
@@ -56,6 +56,6 @@ services:
 
 volumes:
   postgres_data:
-    name: solvo_tech_postgres_data
+    name: aldera_tech_postgres_data
   uploads_data:
-    name: solvo_tech_uploads_data
+    name: aldera_tech_uploads_data

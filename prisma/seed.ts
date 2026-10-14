@@ -30,6 +30,27 @@ async function main() {
   // ----------------------------------------------------------------
   // 1. Staff Users (ADMIN & DEVELOPER)
   // ----------------------------------------------------------------
+  const adminEmail = process.env.SEED_ADMIN_EMAIL || "admin@aldera.tech";
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD || "password";
+  const hashedAdminPassword = await bcrypt.hash(adminPassword, 10);
+
+  await prisma.user.upsert({
+    where: { email: adminEmail },
+    update: {
+      name: "Aldera Admin",
+      roles: ["ADMIN"],
+      isActive: true,
+    },
+    create: {
+      email: adminEmail,
+      name: "Aldera Admin",
+      roles: ["ADMIN"],
+      password: hashedAdminPassword,
+      isActive: true,
+      emailVerified: new Date(),
+    },
+  });
+
   const staffGading = await prisma.user.upsert({
     where: { email: "gading@gmail.com" },
     update: {
@@ -43,7 +64,6 @@ async function main() {
       email: "gading@gmail.com",
       name: "Alfian Gading Saputra",
       phone: "0895363116378",
-      company: "Solvo Tech",
       roles: ["ADMIN", "DEVELOPER"],
       password: hashedPassword,
       isActive: true,
@@ -64,7 +84,6 @@ async function main() {
       email: "dery@gmail.com",
       name: "Dery Wahyu Perdana",
       phone: "082377341268",
-      company: "Solvo Tech",
       roles: ["ADMIN", "DEVELOPER"],
       password: hashedPassword,
       isActive: true,
@@ -85,7 +104,6 @@ async function main() {
       email: "rafli@gmail.com",
       name: "Rafli Maulana",
       phone: "085367271303",
-      company: "Solvo Tech",
       roles: ["ADMIN", "DEVELOPER"],
       password: hashedPassword,
       isActive: true,
@@ -109,7 +127,6 @@ async function main() {
       email: "gading-client@gmail.com",
       name: "Gading",
       phone: "0895363116378",
-      company: "Kopi Kenangan Nusantara",
       roles: ["CLIENT"],
       password: hashedPassword,
       isActive: true,
@@ -130,7 +147,6 @@ async function main() {
       email: "dery-client@gmail.com",
       name: "Dery",
       phone: "082377341268",
-      company: "Batik Nusantara Collective",
       roles: ["CLIENT"],
       password: hashedPassword,
       isActive: true,
@@ -151,7 +167,6 @@ async function main() {
       email: "rafli-client@gmail.com",
       name: "Rafli",
       phone: "085367271303",
-      company: "FinSmart Digital",
       roles: ["CLIENT"],
       password: hashedPassword,
       isActive: true,
@@ -170,7 +185,13 @@ async function main() {
   // ----------------------------------------------------------------
   await prisma.siteSetting.upsert({
     where: { id: SITE_SETTING_ID },
-    update: {},
+    update: {
+      brandName: defaultSiteSettings.brandName,
+      footerDescription: defaultSiteSettings.footerDescription,
+      email: defaultSiteSettings.email || null,
+      seoTitle: defaultSiteSettings.seoTitle,
+      seoDescription: defaultSiteSettings.seoDescription,
+    },
     create: {
       id: SITE_SETTING_ID,
       brandName: defaultSiteSettings.brandName,
@@ -400,7 +421,7 @@ async function main() {
       excerpt:
         "Website bukan sekedar etalase digital. Ini adalah mesin pertumbuhan yang bekerja 24/7 untuk bisnis Anda.",
       content:
-        "<h2>Website sebagai Aset Bisnis</h2><p>Di era digital, kehadiran online bukan lagi opsional. Pelanggan mencari informasi, membandingkan harga, dan mengambil keputusan pembelian, semuanya online.</p><p>Website modern bukan sekedar tampil cantik. Ia perlu <strong>cepat</strong>, <strong>mobile-friendly</strong>, dan <strong>SEO-optimized</strong> agar ditemukan oleh audiens yang tepat.</p><h3>Manfaat Konkret</h3><ul><li>Meningkatkan kredibilitas brand.</li><li>Menghasilkan leads otomatis.</li><li>Mengurangi beban customer service.</li></ul><p>Solvo Tech membantu bisnis Indonesia membangun website yang bukan sekedar ada, tapi <em>bekerja</em>.</p>",
+        "<h2>Website sebagai Aset Bisnis</h2><p>Di era digital, kehadiran online bukan lagi opsional. Pelanggan mencari informasi, membandingkan harga, dan mengambil keputusan pembelian, semuanya online.</p><p>Website modern bukan sekedar tampil cantik. Ia perlu <strong>cepat</strong>, <strong>mobile-friendly</strong>, dan <strong>SEO-optimized</strong> agar ditemukan oleh audiens yang tepat.</p><h3>Manfaat Konkret</h3><ul><li>Meningkatkan kredibilitas brand.</li><li>Menghasilkan leads otomatis.</li><li>Mengurangi beban customer service.</li></ul><p>Aldera Tech membantu bisnis Indonesia membangun website yang bukan sekedar ada, tapi <em>bekerja</em>.</p>",
       categoryId: catBiz.id,
       featuredImage: "/generated/solvo-tech/blog/modern-website-strategy.png",
       published: true,
@@ -433,6 +454,9 @@ async function main() {
     await prisma.blogPost.upsert({
       where: { slug: post.slug },
       update: {
+        title: post.title,
+        excerpt: post.excerpt,
+        content: post.content,
         featuredImage: post.featuredImage,
       },
       create: {
@@ -454,16 +478,14 @@ async function main() {
       {
         clientName: "Andi Wijaya",
         clientRole: "CEO",
-        company: "TechNova Indonesia",
         content:
-          "Solvo Tech benar-benar mengerti visi kami. Dashboard yang transparan membuat saya selalu tahu progres proyek tanpa harus chat berkali-kali.",
+          "Aldera Tech benar-benar mengerti visi kami. Dashboard yang transparan membuat saya selalu tahu progres proyek tanpa harus chat berkali-kali.",
         rating: 5,
         order: 1,
       },
       {
         clientName: "Linda Kusuma",
         clientRole: "Founder",
-        company: "Kopi Kita",
         content:
           "Tim yang profesional dan komunikatif. Dari discovery sampai launch, semuanya on time dan on budget.",
         rating: 5,
@@ -472,7 +494,6 @@ async function main() {
       {
         clientName: "Ridho Pratama",
         clientRole: "Product Manager",
-        company: "FinSmart",
         content: "Kualitas kode dan desainnya jempolan. Worth every rupiah.",
         rating: 5,
         order: 3,
@@ -480,7 +501,6 @@ async function main() {
       {
         clientName: "Maya Lestari",
         clientRole: "Marketing Director",
-        company: "Urban Batik",
         content:
           "Mereka bukan sekedar ngoding, mereka jadi partner strategis. Highly recommended!",
         rating: 5,
@@ -669,12 +689,17 @@ async function main() {
   // --- Calculator Config & Data ---
   await prisma.calculatorConfig.upsert({
     where: { id: "calculator" },
-    update: {},
+    update: {
+      featureDisclaimer:
+        'Satu input = satu fitur spesifik.\n✓ Contoh benar: "Login dengan Google"\n✗ Contoh salah: "Sistem login lengkap dengan social media, 2FA, dan forgot password"\n\nJika fitur terlalu besar, tim kami akan memecahnya saat review.',
+      revisionPolicy:
+        "• Bug dari Aldera Tech = revisi gratis tanpa batas\n• Revisi dari Anda = 2x gratis (1 revisi = 1 fitur)\n• Revisi tambahan = Rp 300.000/fitur\n• Contoh: Jika Anda ingin merevisi 3 fitur sekaligus, itu menggunakan 3 jatah revisi.",
+    },
     create: {
       featureDisclaimer:
         'Satu input = satu fitur spesifik.\n✓ Contoh benar: "Login dengan Google"\n✗ Contoh salah: "Sistem login lengkap dengan social media, 2FA, dan forgot password"\n\nJika fitur terlalu besar, tim kami akan memecahnya saat review.',
       revisionPolicy:
-        "• Bug dari Solvo Tech = revisi gratis tanpa batas\n• Revisi dari Anda = 2x gratis (1 revisi = 1 fitur)\n• Revisi tambahan = Rp 300.000/fitur\n• Contoh: Jika Anda ingin merevisi 3 fitur sekaligus, itu menggunakan 3 jatah revisi.",
+        "• Bug dari Aldera Tech = revisi gratis tanpa batas\n• Revisi dari Anda = 2x gratis (1 revisi = 1 fitur)\n• Revisi tambahan = Rp 300.000/fitur\n• Contoh: Jika Anda ingin merevisi 3 fitur sekaligus, itu menggunakan 3 jatah revisi.",
       freeRevisions: 2,
       revisionPricePerItem: 300000,
       urgencyMultiplier: 1.5,
@@ -832,6 +857,7 @@ async function main() {
 
   console.log("\n✅ Seeding complete!");
   console.log("\n--- Akun Staf (ADMIN & DEVELOPER) ---");
+  console.log(`0. Aldera Admin          : ${adminEmail} / ${adminPassword}`);
   console.log(
     "1. Alfian Gading Saputra : gading@gmail.com / password (0895363116378)"
   );

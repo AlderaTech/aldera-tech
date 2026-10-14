@@ -7,7 +7,7 @@ import { ContactSection } from "./_components/contact-section";
 export const metadata: Metadata = {
   title: "Kontak",
   description:
-    "Hubungi Solvo Tech untuk konsultasi gratis tentang proyek digital Anda.",
+    "Hubungi Aldera Tech untuk konsultasi gratis tentang proyek digital Anda.",
   alternates: { canonical: PUBLIC_ROUTES.contact },
 };
 

@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Solvo Tech",
-    short_name: "Solvo",
+    name: "Aldera Tech",
+    short_name: "Aldera Tech",
     description: "Partner teknologi untuk bisnis modern.",
     start_url: "/",
     display: "standalone",
@@ -11,7 +11,7 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#0ea5e9",
     icons: [
       {
-        src: "/logo.png",
+        src: "/logo/logo-transparent.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "any",

@@ -1,5 +1,5 @@
 {
-  "name": "solvo-tech",
+  "name": "aldera-tech",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,7 +15,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset",
     "db:studio": "prisma studio",
-    "docker:build": "docker build -f docker/Dockerfile -t solvo-tech .",
+    "docker:build": "docker build -f docker/Dockerfile -t aldera-tech .",
     "docker:up": "docker compose -f docker/docker-compose.yml up -d",
     "docker:down": "docker compose -f docker/docker-compose.yml down",
     "postinstall": "prisma generate --no-hints || true"

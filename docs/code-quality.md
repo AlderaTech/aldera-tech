@@ -1,6 +1,6 @@
 # Standar Kualitas Kode & Arsitektur Modular (Code Quality Standards)
 
-Dokumen ini merupakan panduan arsitektur dan kualitas kode resmi untuk repositori **Solvo Tech**. Seluruh AI Agent dan pengembang **WAJIB** mematuhi 13 prinsip berikut saat menulis, memodifikasi, atau merefaktor kode.
+Dokumen ini merupakan panduan arsitektur dan kualitas kode resmi untuk repositori **Aldera Tech**. Seluruh AI Agent dan pengembang **WAJIB** mematuhi 13 prinsip berikut saat menulis, memodifikasi, atau merefaktor kode.
 
 ---
 

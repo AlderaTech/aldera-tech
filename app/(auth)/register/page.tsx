@@ -4,7 +4,7 @@ import { RegisterForm } from "./_components/register-form";
 
 export const metadata: Metadata = {
   title: "Daftar",
-  description: "Buat akun Solvo Tech.",
+  description: "Buat akun Aldera Tech.",
 };
 
 export default function RegisterPage() {

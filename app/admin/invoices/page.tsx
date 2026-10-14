@@ -13,7 +13,7 @@ export default async function AdminInvoicesPage() {
       await prisma.invoice.findMany({
         orderBy: { issueDate: "desc" },
         include: {
-          client: { select: { name: true, company: true } },
+          client: { select: { name: true } },
           project: { select: { title: true } },
         },
       }),

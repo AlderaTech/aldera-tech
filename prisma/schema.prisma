@@ -1,4 +1,4 @@
-// Solvo Tech: Prisma schema
+// Aldera Tech: Prisma schema
 // Docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -124,7 +124,6 @@ model User {
   name          String
   roles         Role[]    @default([CLIENT])
   avatar        String?
-  company       String?
   phone         String?
   isActive      Boolean   @default(true)
   emailVerified DateTime?
@@ -370,7 +369,6 @@ model Testimonial {
   id         String   @id @default(cuid())
   clientName String
   clientRole String?
-  company    String?
   content    String   @db.Text
   rating     Int      @default(5)
   avatar     String?
@@ -405,7 +403,7 @@ model CaseStudy {
 
 model SiteSetting {
   id                String   @id @default("site")
-  brandName         String   @default("Solvo Tech")
+  brandName         String   @default("Aldera Tech")
   footerDescription String   @db.Text
   email             String?
   phone             String?
@@ -579,7 +577,6 @@ model Proposal {
   status        ProposalStatus @default(DRAFT)
   clientName    String
   clientEmail   String
-  clientCompany String?
   clientPhone   String?
 
   currency    String  @default("IDR")

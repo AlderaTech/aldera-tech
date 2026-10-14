@@ -12,7 +12,6 @@ export const proposalCreateSchema = z.object({
   content: z.string().min(10, "Konten terlalu pendek"),
   clientName: z.string().trim().min(2).max(100),
   clientEmail: z.string().trim().toLowerCase().email(),
-  clientCompany: z.string().trim().max(120).optional().or(z.literal("")),
   clientPhone: z.string().trim().max(30).optional().or(z.literal("")),
   taxRate: z.coerce.number().min(0).max(100).default(0),
   expiresAt: z.string().optional().or(z.literal("")),

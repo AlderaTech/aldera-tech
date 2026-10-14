@@ -9,7 +9,7 @@ import { incrementBlogViewAction } from "@/lib/actions/blog";
  */
 export function BlogViewIncrementer({ slug }: { slug: string }) {
   useEffect(() => {
-    const key = `solvo:viewed:${slug}`;
+    const key = `aldera:viewed:${slug}`;
     if (typeof window === "undefined") return;
     if (window.sessionStorage.getItem(key)) return;
     window.sessionStorage.setItem(key, "1");

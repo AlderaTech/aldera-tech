@@ -22,7 +22,7 @@ export const authPanelCopy: Record<AuthVariant, AuthPanelCopy> = {
   register: {
     title: "Mulai workspace digital untuk proyek berikutnya.",
     description:
-      "Buat akun agar tim Solvo Tech bisa menyiapkan ruang kerja, scope, dan komunikasi proyek Anda.",
+      "Buat akun agar tim Aldera Tech bisa menyiapkan ruang kerja, scope, dan komunikasi proyek Anda.",
     bullets: [
       "Akses dashboard klien",
       "Brief awal lebih rapi",

@@ -16,7 +16,7 @@ export function AboutHero() {
               digital yang bekerja.
             </h1>
             <p className="max-w-2xl text-lg leading-relaxed text-black/62">
-              Solvo Tech didirikan dari keyakinan sederhana, bahwa bisnis
+              Aldera Tech didirikan dari keyakinan sederhana, bahwa bisnis
               Indonesia layak mendapat produk digital yang sama kualitasnya
               dengan yang dibuat Silicon Valley, tapi tanpa harga yang menyakiti
               dompet.
@@ -26,7 +26,7 @@ export function AboutHero() {
             <div className="relative mx-auto aspect-[4/3] w-full overflow-hidden rounded-xl border border-black/10 bg-background shadow-2xl">
               <Image
                 src="/generated/solvo-tech/about-blue-studio-v2.png"
-                alt="Studio kolaborasi produk digital Solvo Tech"
+                alt="Studio kolaborasi produk digital Aldera Tech"
                 fill
                 sizes="(min-width: 1024px) 520px, 100vw"
                 className="object-cover"

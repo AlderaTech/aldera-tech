@@ -1,4 +1,4 @@
-# Crontab configuration for Solvo Tech Next.js App
+# Crontab configuration for Aldera Tech Next.js App
 # Note: In Alpine BusyBox crond, environment variables are loaded or passed via script wrapper.
 # Times are in UTC.
 #
