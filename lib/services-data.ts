@@ -69,7 +69,7 @@ export const services: Service[] = [
       "Storefront kustom dengan integrasi payment gateway, kurir, dan manajemen inventori. Aset digital milik Anda, bukan sewa.",
     deliverables: [
       "Storefront kustom dan CMS",
-      "Integrasi Midtrans/Xendit/Stripe",
+      "Integrasi Midtrans",
       "Manajemen pesanan dan inventori",
       "Otomasi email marketing",
     ],

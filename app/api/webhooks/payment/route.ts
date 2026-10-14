@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import crypto from "node:crypto";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
 import { sendWhatsApp } from "@/lib/whatsapp";
@@ -8,254 +7,230 @@ import { waTemplates } from "@/lib/whatsapp-templates";
 import { notify } from "@/lib/notifications";
 import { formatCurrency } from "@/lib/utils";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
+import {
+  verifyMidtransSignature,
+  interpretMidtransStatus,
+  getMidtransConfig,
+} from "@/lib/midtrans";
 
-function timingSafeEquals(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  return crypto.timingSafeEqual(
-    Buffer.from(a, "utf-8"),
-    Buffer.from(b, "utf-8")
-  );
-}
-
-function verifyMidtransSignature(params: {
-  orderId: string;
-  statusCode: string;
-  grossAmount: string;
-  signatureKey: string;
-  serverKey: string;
-}): boolean {
-  const payload = `${params.orderId}${params.statusCode}${params.grossAmount}${params.serverKey}`;
-  const computedHash = crypto
-    .createHash("sha512")
-    .update(payload)
-    .digest("hex");
-  return timingSafeEquals(computedHash, params.signatureKey);
-}
-
-function verifyXenditToken(
-  receivedToken: string | null,
-  expectedToken: string
-): boolean {
-  if (!receivedToken || !expectedToken) return false;
-  return timingSafeEquals(receivedToken, expectedToken);
-}
-
+/**
+ * Midtrans Payment Webhook Handler
+ *
+ * Menerima notifikasi HTTP POST resmi dari Midtrans setelah transaksi diproses.
+ * Memvalidasi signature hash SHA-512, memetakan status transaksi, memperbarui
+ * status invoice secara atomik, dan mendistribusikan notifikasi WhatsApp/in-app.
+ */
 export async function POST(request: Request) {
   try {
     const rawBody = await request.text();
     let body: Record<string, unknown> = {};
+
     try {
       body = JSON.parse(rawBody);
     } catch {
       return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const gatewayParam = searchParams.get("gateway");
-    const xenditHeader = request.headers.get("x-callback-token");
+    const orderId = String(body.order_id ?? "");
+    const statusCode = String(body.status_code ?? "");
+    const grossAmount = String(body.gross_amount ?? "");
+    const signatureKey = String(body.signature_key ?? "");
+    const transactionStatus = String(body.transaction_status ?? "");
+    const fraudStatus = body.fraud_status
+      ? String(body.fraud_status)
+      : undefined;
+    const transactionId = String(body.transaction_id ?? orderId);
+    const paymentType = String(body.payment_type ?? "midtrans");
 
-    const isMidtrans =
-      gatewayParam === "midtrans" ||
-      (typeof body.signature_key === "string" &&
-        typeof body.order_id === "string");
-    const isXendit =
-      gatewayParam === "xendit" ||
-      Boolean(xenditHeader) ||
-      (typeof body.external_id === "string" && !isMidtrans);
-
-    if (isMidtrans) {
-      return await handleMidtrans(body);
-    } else if (isXendit) {
-      return await handleXendit(body, xenditHeader);
+    if (!orderId || !transactionStatus) {
+      return NextResponse.json(
+        { error: "Payload webhook Midtrans tidak lengkap" },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(
-      { error: "Unknown payment gateway" },
-      { status: 400 }
+    // Validasi Signature SHA-512 jika Server Key dikonfigurasi
+    const { serverKey } = getMidtransConfig();
+    if (serverKey) {
+      const isValid = verifyMidtransSignature({
+        orderId,
+        statusCode,
+        grossAmount,
+        signatureKey,
+        serverKey,
+      });
+
+      if (!isValid) {
+        return NextResponse.json(
+          { error: "Signature Midtrans tidak valid" },
+          { status: 401 }
+        );
+      }
+    }
+
+    // Cari invoice berdasarkan nomor invoice atau id
+    const invoice = await prisma.invoice.findFirst({
+      where: {
+        OR: [{ id: orderId }, { number: orderId }],
+      },
+      include: { client: true },
+    });
+
+    if (!invoice) {
+      return NextResponse.json(
+        { error: `Invoice dengan identifier '${orderId}' tidak ditemukan.` },
+        { status: 404 }
+      );
+    }
+
+    const paymentState = interpretMidtransStatus(
+      transactionStatus,
+      fraudStatus
     );
-  } catch (error) {
-    console.error("Payment webhook error:", error);
+
+    if (paymentState === "SUCCESS") {
+      await prisma.$transaction(async (tx) => {
+        // Tandai invoice lunas
+        await tx.invoice.update({
+          where: { id: invoice.id },
+          data: {
+            status: "PAID",
+            paidAt: new Date(),
+            paymentMethod: "GATEWAY_MIDTRANS",
+          },
+        });
+
+        // Rekonsiliasi record payment
+        await tx.payment.upsert({
+          where: { transactionId },
+          create: {
+            invoiceId: invoice.id,
+            amount: invoice.total,
+            currency: invoice.currency,
+            status: "SUCCESS",
+            paymentMethod: "GATEWAY_MIDTRANS",
+            gateway: "midtrans",
+            transactionId,
+            paymentType,
+            gatewayResponse: body as unknown as Prisma.InputJsonValue,
+          },
+          update: {
+            status: "SUCCESS",
+            paymentType,
+            gatewayResponse: body as unknown as Prisma.InputJsonValue,
+          },
+        });
+
+        // Catat activity log proyek jika tagihan tertaut pada suatu proyek
+        if (invoice.projectId) {
+          await tx.activityLog.create({
+            data: {
+              projectId: invoice.projectId,
+              userId: invoice.clientId,
+              action: "INVOICE_PAID",
+              description: `Invoice ${invoice.number} senilai ${formatCurrency(
+                Number(invoice.total)
+              )} telah lunas via Midtrans (${paymentType}).`,
+              metadata: {
+                invoiceId: invoice.id,
+                invoiceNumber: invoice.number,
+                gateway: "midtrans",
+                transactionId,
+                paymentType,
+                amount: Number(invoice.total),
+              },
+            },
+          });
+        }
+      });
+
+      // Kirim WhatsApp alert ke nomor WhatsApp klien
+      if (invoice.client.phone) {
+        const tpl = waTemplates.invoicePaid(
+          invoice.number,
+          formatCurrency(Number(invoice.total))
+        );
+        sendWhatsApp({
+          to: invoice.client.phone,
+          message: `*${tpl.title}*\n\n${tpl.message}`,
+        }).catch((err) => {
+          console.error("Gagal mengirim WhatsApp invoice paid:", err);
+        });
+      }
+
+      // Notifikasi in-app
+      await notify({
+        userId: invoice.clientId,
+        type: "INVOICE_SENT",
+        title: "Invoice Lunas",
+        message: `Invoice ${invoice.number} senilai ${formatCurrency(
+          Number(invoice.total)
+        )} telah lunas diverifikasi via Midtrans.`,
+      }).catch(() => {});
+
+      // Revalidasi cache halaman terkait
+      revalidatePath(ADMIN_ROUTES.invoices);
+      revalidatePath(ADMIN_ROUTES.invoiceDetail(invoice.id));
+      revalidatePath(DASHBOARD_ROUTES.invoices);
+    } else if (paymentState === "FAILED") {
+      // Perbarui status pembayaran menjadi GAGAL
+      await prisma.payment.upsert({
+        where: { transactionId },
+        create: {
+          invoiceId: invoice.id,
+          amount: invoice.total,
+          currency: invoice.currency,
+          status: "FAILED",
+          paymentMethod: "GATEWAY_MIDTRANS",
+          gateway: "midtrans",
+          transactionId,
+          paymentType,
+          rejectionReason: `Pembayaran ${transactionStatus} via Midtrans`,
+          gatewayResponse: body as unknown as Prisma.InputJsonValue,
+        },
+        update: {
+          status: "FAILED",
+          rejectionReason: `Pembayaran ${transactionStatus} via Midtrans`,
+          gatewayResponse: body as unknown as Prisma.InputJsonValue,
+        },
+      });
+
+      revalidatePath(ADMIN_ROUTES.invoiceDetail(invoice.id));
+      revalidatePath(DASHBOARD_ROUTES.invoices);
+    } else if (paymentState === "PENDING") {
+      // Rekam pembayaran pending
+      await prisma.payment.upsert({
+        where: { transactionId },
+        create: {
+          invoiceId: invoice.id,
+          amount: invoice.total,
+          currency: invoice.currency,
+          status: "PENDING",
+          paymentMethod: "GATEWAY_MIDTRANS",
+          gateway: "midtrans",
+          transactionId,
+          paymentType,
+          gatewayResponse: body as unknown as Prisma.InputJsonValue,
+        },
+        update: {
+          status: "PENDING",
+          paymentType,
+          gatewayResponse: body as unknown as Prisma.InputJsonValue,
+        },
+      });
+    }
+
+    return NextResponse.json({
+      status: "ok",
+      invoiceId: invoice.id,
+      paymentState,
+      transactionStatus,
+    });
+  } catch (error: unknown) {
+    console.error("Midtrans payment webhook error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
   }
-}
-
-async function handleMidtrans(body: Record<string, unknown>) {
-  const orderId = String(body.order_id ?? "");
-  const statusCode = String(body.status_code ?? "");
-  const grossAmount = String(body.gross_amount ?? "");
-  const signatureKey = String(body.signature_key ?? "");
-  const transactionStatus = String(body.transaction_status ?? "");
-  const fraudStatus = String(body.fraud_status ?? "");
-  const transactionId = String(body.transaction_id ?? orderId);
-  const paymentType = String(body.payment_type ?? "midtrans");
-
-  const serverKey = process.env.MIDTRANS_SERVER_KEY ?? "";
-  if (serverKey) {
-    const isValid = verifyMidtransSignature({
-      orderId,
-      statusCode,
-      grossAmount,
-      signatureKey,
-      serverKey,
-    });
-    if (!isValid) {
-      return NextResponse.json(
-        { error: "Invalid Midtrans signature" },
-        { status: 401 }
-      );
-    }
-  }
-
-  const isSuccess =
-    transactionStatus === "settlement" ||
-    (transactionStatus === "capture" && fraudStatus === "accept");
-
-  return await reconcileInvoicePayment({
-    lookupKey: orderId,
-    gateway: "midtrans",
-    transactionId,
-    paymentType,
-    paymentMethod: "GATEWAY_MIDTRANS",
-    isSuccess,
-    rawPayload: body,
-  });
-}
-
-async function handleXendit(
-  body: Record<string, unknown>,
-  callbackTokenHeader: string | null
-) {
-  const externalId = String(body.external_id ?? "");
-  const status = String(body.status ?? "");
-  const transactionId = String(body.id ?? externalId);
-  const paymentMethodType = String(body.payment_method ?? "xendit");
-
-  const expectedToken = process.env.XENDIT_CALLBACK_TOKEN ?? "";
-  if (expectedToken) {
-    const isValid = verifyXenditToken(callbackTokenHeader, expectedToken);
-    if (!isValid) {
-      return NextResponse.json(
-        { error: "Invalid Xendit callback token" },
-        { status: 401 }
-      );
-    }
-  }
-
-  const isSuccess = ["PAID", "SETTLED", "COMPLETED"].includes(
-    status.toUpperCase()
-  );
-
-  return await reconcileInvoicePayment({
-    lookupKey: externalId,
-    gateway: "xendit",
-    transactionId,
-    paymentType: paymentMethodType,
-    paymentMethod: "GATEWAY_XENDIT",
-    isSuccess,
-    rawPayload: body,
-  });
-}
-
-async function reconcileInvoicePayment(params: {
-  lookupKey: string;
-  gateway: "midtrans" | "xendit";
-  transactionId: string;
-  paymentType: string;
-  paymentMethod: "GATEWAY_MIDTRANS" | "GATEWAY_XENDIT";
-  isSuccess: boolean;
-  rawPayload: Record<string, unknown>;
-}) {
-  const invoice = await prisma.invoice.findFirst({
-    where: {
-      OR: [{ id: params.lookupKey }, { number: params.lookupKey }],
-    },
-    include: { client: true },
-  });
-
-  if (!invoice) {
-    return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
-  }
-
-  if (params.isSuccess) {
-    await prisma.$transaction(async (tx) => {
-      await tx.invoice.update({
-        where: { id: invoice.id },
-        data: {
-          status: "PAID",
-          paidAt: new Date(),
-          paymentMethod: params.paymentMethod,
-        },
-      });
-
-      await tx.payment.upsert({
-        where: { transactionId: params.transactionId },
-        create: {
-          invoiceId: invoice.id,
-          amount: invoice.total,
-          currency: invoice.currency,
-          status: "SUCCESS",
-          paymentMethod: params.paymentMethod,
-          gateway: params.gateway,
-          transactionId: params.transactionId,
-          paymentType: params.paymentType,
-          gatewayResponse:
-            params.rawPayload as unknown as Prisma.InputJsonValue,
-        },
-        update: {
-          status: "SUCCESS",
-          gatewayResponse:
-            params.rawPayload as unknown as Prisma.InputJsonValue,
-        },
-      });
-
-      if (invoice.projectId) {
-        await tx.activityLog.create({
-          data: {
-            projectId: invoice.projectId,
-            userId: invoice.clientId,
-            action: "INVOICE_PAID",
-            description: `Invoice ${invoice.number} senilai ${formatCurrency(Number(invoice.total))} telah lunas via ${params.gateway} (${params.paymentType}).`,
-            metadata: {
-              invoiceId: invoice.id,
-              invoiceNumber: invoice.number,
-              gateway: params.gateway,
-              transactionId: params.transactionId,
-              amount: Number(invoice.total),
-            },
-          },
-        });
-      }
-    });
-
-    if (invoice.client.phone) {
-      const tpl = waTemplates.invoicePaid(
-        invoice.number,
-        formatCurrency(Number(invoice.total))
-      );
-      sendWhatsApp({
-        to: invoice.client.phone,
-        message: `*${tpl.title}*\n\n${tpl.message}`,
-      }).catch(() => {});
-    }
-
-    await notify({
-      userId: invoice.clientId,
-      type: "INVOICE_SENT",
-      title: "Invoice Lunas",
-      message: `Invoice ${invoice.number} senilai ${formatCurrency(Number(invoice.total))} telah lunas via ${params.gateway}.`,
-    }).catch(() => {});
-
-    revalidatePath(ADMIN_ROUTES.invoices);
-    revalidatePath(ADMIN_ROUTES.invoiceDetail(invoice.id));
-    revalidatePath(DASHBOARD_ROUTES.invoices);
-  }
-
-  return NextResponse.json({
-    status: "ok",
-    invoiceId: invoice.id,
-    reconciled: params.isSuccess,
-  });
 }
