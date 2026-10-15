@@ -26,6 +26,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { API_ROUTES } from "@/lib/routes";
 
@@ -144,7 +145,7 @@ export function TipTapEditor({
         const { url } = (await res.json()) as { url: string };
         editor.chain().focus().setImage({ src: url }).run();
       } catch (err) {
-        alert("Gagal mengunggah gambar: " + (err as Error).message);
+        toast.error("Gagal mengunggah gambar: " + (err as Error).message);
       }
     };
     input.click();

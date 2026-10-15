@@ -7,6 +7,7 @@ export type DashboardNavIcon =
   | "activity"
   | "archive"
   | "barChart3"
+  | "bot"
   | "briefcase"
   | "clock"
   | "fileSignature"
@@ -54,8 +55,14 @@ export const clientNavConfig: DashboardNavConfig = {
       items: [
         {
           href: DASHBOARD_ROUTES.home,
-          label: "Overview",
+          label: "Ringkasan",
           icon: "layoutDashboard",
+        },
+        {
+          href: DASHBOARD_ROUTES.aiRelay,
+          label: "AI Relay",
+          icon: "bot",
+          description: "API keys, saldo & playground",
         },
         {
           href: DASHBOARD_ROUTES.orders,
@@ -84,7 +91,7 @@ export const clientNavConfig: DashboardNavConfig = {
 
 const adminNavGroups: DashboardNavGroup[] = [
   {
-    label: "Overview",
+    label: "Ringkasan",
     items: [
       {
         href: ADMIN_ROUTES.home,
@@ -106,7 +113,7 @@ const adminNavGroups: DashboardNavGroup[] = [
       },
       {
         href: ADMIN_ROUTES.orders,
-        label: "Order Requests",
+        label: "Permohonan Pesanan",
         icon: "receipt",
         description: "Estimasi dari kalkulator",
         permission: PERMISSIONS.PROJECT_VIEW_ALL,
@@ -141,10 +148,17 @@ const adminNavGroups: DashboardNavGroup[] = [
       },
       {
         href: ADMIN_ROUTES.files,
-        label: "File Manager",
+        label: "Manajer Berkas",
         icon: "folderClosed",
         description: "Asset dan dokumen",
         permission: PERMISSIONS.FILE_MANAGE,
+      },
+      {
+        href: ADMIN_ROUTES.aiRelay,
+        label: "AI Relay Ops",
+        icon: "bot",
+        description: "Pricing, 9router sync & audit",
+        permission: PERMISSIONS.AI_RELAY_MANAGE,
       },
     ],
   },
@@ -153,7 +167,7 @@ const adminNavGroups: DashboardNavGroup[] = [
     items: [
       {
         href: ADMIN_ROUTES.analytics,
-        label: "Revenue & Profitability",
+        label: "Pendapatan & Profitabilitas",
         icon: "trendingUp",
         description: "Performa bisnis",
         permission: PERMISSIONS.ANALYTICS_VIEW,
@@ -205,7 +219,7 @@ const adminNavGroups: DashboardNavGroup[] = [
       },
       {
         href: ADMIN_ROUTES.settings,
-        label: "Settings Website",
+        label: "Pengaturan Situs",
         icon: "settings",
         description: "Kontak, identitas, sosial",
         permission: PERMISSIONS.SETTINGS_MANAGE,

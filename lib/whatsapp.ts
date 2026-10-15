@@ -1,7 +1,4 @@
-import "server-only";
-
 const API_URL = process.env.WHATSAPP_API_URL || "https://api.fonnte.com/send";
-const API_KEY = process.env.WHATSAPP_API_KEY;
 
 export type SendWhatsAppArgs = {
   to: string;
@@ -16,7 +13,10 @@ export async function sendWhatsApp({ to, message }: SendWhatsAppArgs) {
   const phone = normalizePhone(to);
   if (!phone) return { success: false, error: "Invalid phone number" };
 
-  if (!API_URL || !API_KEY) {
+  const apiKey = process.env.WHATSAPP_API_KEY;
+  const apiUrl = process.env.WHATSAPP_API_URL || API_URL;
+
+  if (!apiUrl || !apiKey) {
     console.log("[WhatsApp] No API configured. Message:", {
       to: phone,
       message,
@@ -25,11 +25,11 @@ export async function sendWhatsApp({ to, message }: SendWhatsAppArgs) {
   }
 
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: API_KEY,
+        Authorization: apiKey,
       },
       body: JSON.stringify({ target: phone, message }),
     });

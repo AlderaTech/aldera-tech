@@ -11,11 +11,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { upsertProjectType, deleteProjectType } from "@/lib/actions/calculator";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import type { AdminProjectType } from "../_types/calculator-admin";
 
 export function ProjectTypesTab({ items }: { items: AdminProjectType[] }) {
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState<AdminProjectType | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<AdminProjectType | null>(null);
 
   function handleSubmit(fd: FormData) {
     const depFields = fd.get("dependentFields") as string;
@@ -35,11 +37,12 @@ export function ProjectTypesTab({ items }: { items: AdminProjectType[] }) {
     });
   }
 
-  function handleDelete(id: string) {
-    if (!confirm("Hapus jenis proyek ini?")) return;
+  function confirmDelete() {
+    if (!deleteTarget) return;
     start(async () => {
-      await deleteProjectType(id);
+      await deleteProjectType(deleteTarget.id);
       toast.success("Dihapus");
+      setDeleteTarget(null);
     });
   }
 
@@ -162,7 +165,8 @@ export function ProjectTypesTab({ items }: { items: AdminProjectType[] }) {
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() => handleDelete(item.id)}
+                onClick={() => setDeleteTarget(item)}
+                className="cursor-pointer text-destructive hover:text-destructive"
               >
                 <Trash2 className="size-4" />
               </Button>
@@ -170,6 +174,17 @@ export function ProjectTypesTab({ items }: { items: AdminProjectType[] }) {
           </Card>
         ))}
       </div>
+      <ConfirmDialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        title="Hapus Jenis Proyek"
+        description={`Apakah Anda yakin ingin menghapus jenis proyek "${deleteTarget?.name}"? Tindakan ini tidak dapat dibatalkan.`}
+        confirmLabel="Hapus"
+        cancelLabel="Batal"
+        destructive
+        pending={pending}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

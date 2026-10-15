@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -14,23 +14,47 @@ import { PasswordInput } from "../../_components/password-input";
 import { usePasswordVisibility } from "../../_hooks/use-password-visibility";
 
 import { registerAction, type ActionState } from "@/lib/actions/auth";
-import { AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
+import { AUTH_ROUTES } from "@/lib/routes";
 
 const initialState: ActionState = { ok: false };
 
 export function RegisterForm() {
   const router = useRouter();
-  const [state] = useActionState(registerAction, initialState);
+  const [formState, setFormState] = useState<ActionState>(initialState);
   const [isPending, startTransition] = useTransition();
   const { showPassword, togglePassword } = usePasswordVisibility();
 
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
-      const result = await registerAction(state, formData);
-      if (result.ok) {
-        toast.success(result.message ?? "Akun dibuat.");
-        router.replace(DASHBOARD_ROUTES.home);
-        router.refresh();
+      const result = await registerAction(formState, formData);
+      setFormState(result);
+      if (result.ok || result.success) {
+        toast.success(
+          result.message ?? "Kode verifikasi telah dikirim via WhatsApp."
+        );
+        const phoneParam =
+          result.phone || (formData.get("phone") as string) || "";
+        const emailParam =
+          result.email || (formData.get("email") as string) || "";
+        const password = (formData.get("password") as string) || "";
+
+        // Temporarily save to sessionStorage for seamless verification auto-login
+        if (typeof window !== "undefined") {
+          try {
+            sessionStorage.setItem(
+              "aldera_otp_flow",
+              JSON.stringify({
+                phone: phoneParam,
+                email: emailParam,
+                password,
+              })
+            );
+          } catch {
+            // Ignore sessionStorage failure in restricted environments
+          }
+        }
+
+        router.push(`/verify-otp?phone=${encodeURIComponent(phoneParam)}`);
       } else if (result.message) {
         toast.error(result.message);
       }
@@ -46,7 +70,7 @@ export function RegisterForm() {
               htmlFor="name"
               className="text-sm font-semibold text-[#0F263A]"
             >
-              Nama lengkap
+              Nama lengkap <span className="text-red-500">*</span>
             </Label>
             <Input
               id="name"
@@ -54,12 +78,12 @@ export function RegisterForm() {
               placeholder="Nama lengkap Anda"
               autoComplete="name"
               required
-              aria-invalid={!!state.errors?.name}
+              aria-invalid={!!formState.errors?.name}
               className="h-11 rounded-xl border-slate-200 bg-white text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
             />
-            {state.errors?.name && (
+            {formState.errors?.name && (
               <p role="alert" className="text-xs font-medium text-destructive">
-                {state.errors.name}
+                {formState.errors.name}
               </p>
             )}
           </div>
@@ -68,7 +92,7 @@ export function RegisterForm() {
               htmlFor="email"
               className="text-sm font-semibold text-[#0F263A]"
             >
-              Email
+              Email <span className="text-red-500">*</span>
             </Label>
             <Input
               id="email"
@@ -77,35 +101,42 @@ export function RegisterForm() {
               placeholder="nama@email.com"
               autoComplete="email"
               required
-              aria-invalid={!!state.errors?.email}
+              aria-invalid={!!formState.errors?.email}
               className="h-11 rounded-xl border-slate-200 bg-white text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
             />
-            {state.errors?.email && (
+            {formState.errors?.email && (
               <p role="alert" className="text-xs font-medium text-destructive">
-                {state.errors.email}
+                {formState.errors.email}
               </p>
             )}
           </div>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label
             htmlFor="phone"
             className="text-sm font-semibold text-[#0F263A]"
           >
-            Telepon
-            <span className="font-normal text-muted-foreground">
-              {" "}
-              (opsional)
-            </span>
+            Nomor WhatsApp Aktif <span className="text-red-500">*</span>
           </Label>
           <Input
             id="phone"
             name="phone"
             type="tel"
-            placeholder="+62 812 3456 7890"
+            placeholder="081234567890"
             autoComplete="tel"
+            required
+            aria-invalid={!!formState.errors?.phone}
             className="h-11 rounded-xl border-slate-200 bg-white text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
           />
+          {formState.errors?.phone ? (
+            <p role="alert" className="text-xs font-medium text-destructive">
+              {formState.errors.phone}
+            </p>
+          ) : (
+            <p className="text-xs text-slate-500">
+              Kode OTP 6-digit akan dikirimkan ke nomor WhatsApp ini untuk verifikasi akun.
+            </p>
+          )}
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
@@ -113,7 +144,7 @@ export function RegisterForm() {
               htmlFor="password"
               className="text-sm font-semibold text-[#0F263A]"
             >
-              Password
+              Password <span className="text-red-500">*</span>
             </Label>
             <PasswordInput
               id="password"
@@ -121,14 +152,14 @@ export function RegisterForm() {
               placeholder="Minimal 8 karakter"
               autoComplete="new-password"
               required
-              aria-invalid={!!state.errors?.password}
+              aria-invalid={!!formState.errors?.password}
               showPassword={showPassword}
               onTogglePassword={togglePassword}
               className="h-11 rounded-xl border-slate-200 bg-white pr-10 text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
             />
-            {state.errors?.password && (
+            {formState.errors?.password && (
               <p role="alert" className="text-xs font-medium text-destructive">
-                {state.errors.password}
+                {formState.errors.password}
               </p>
             )}
           </div>
@@ -137,7 +168,7 @@ export function RegisterForm() {
               htmlFor="confirmPassword"
               className="text-sm font-semibold text-[#0F263A]"
             >
-              Konfirmasi password
+              Konfirmasi password <span className="text-red-500">*</span>
             </Label>
             <Input
               id="confirmPassword"
@@ -146,12 +177,12 @@ export function RegisterForm() {
               placeholder="Ulangi password"
               autoComplete="new-password"
               required
-              aria-invalid={!!state.errors?.confirmPassword}
+              aria-invalid={!!formState.errors?.confirmPassword}
               className="h-11 rounded-xl border-slate-200 bg-white text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
             />
-            {state.errors?.confirmPassword && (
+            {formState.errors?.confirmPassword && (
               <p role="alert" className="text-xs font-medium text-destructive">
-                {state.errors.confirmPassword}
+                {formState.errors.confirmPassword}
               </p>
             )}
           </div>
@@ -162,7 +193,7 @@ export function RegisterForm() {
           type="submit"
           size="xl"
           disabled={isPending}
-          className="w-full rounded-full bg-[#00B1E1] font-bold text-[#0F263A] shadow-md shadow-[#00B1E1]/25 hover:bg-[#0094BD]"
+          className="cursor-pointer w-full rounded-full bg-[#00B1E1] font-bold text-[#0F263A] shadow-md shadow-[#00B1E1]/25 hover:bg-[#0094BD]"
         >
           {isPending ? (
             <>
@@ -171,7 +202,7 @@ export function RegisterForm() {
             </>
           ) : (
             <>
-              <UserPlus className="size-4" /> Daftar
+              <UserPlus className="size-4" /> Daftar & Kirim OTP
             </>
           )}
         </Button>
@@ -179,7 +210,7 @@ export function RegisterForm() {
           Sudah punya akun?{" "}
           <Link
             href={AUTH_ROUTES.login}
-            className="font-bold text-[#00B1E1] transition-colors hover:text-[#0094BD]"
+            className="cursor-pointer font-bold text-[#00B1E1] transition-colors hover:text-[#0094BD]"
           >
             Masuk
           </Link>

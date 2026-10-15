@@ -10,11 +10,13 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { upsertAddOnOption, deleteAddOnOption } from "@/lib/actions/calculator";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import type { AdminAddOn } from "../_types/calculator-admin";
 
 export function AddOnsTab({ items }: { items: AdminAddOn[] }) {
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState<AdminAddOn | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<AdminAddOn | null>(null);
 
   function handleSubmit(fd: FormData) {
     start(async () => {
@@ -32,11 +34,12 @@ export function AddOnsTab({ items }: { items: AdminAddOn[] }) {
     });
   }
 
-  function handleDelete(id: string) {
-    if (!confirm("Hapus add-on ini?")) return;
+  function confirmDelete() {
+    if (!deleteTarget) return;
     start(async () => {
-      await deleteAddOnOption(id);
+      await deleteAddOnOption(deleteTarget.id);
       toast.success("Dihapus");
+      setDeleteTarget(null);
     });
   }
 
@@ -147,7 +150,8 @@ export function AddOnsTab({ items }: { items: AdminAddOn[] }) {
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() => handleDelete(item.id)}
+                onClick={() => setDeleteTarget(item)}
+                className="cursor-pointer text-destructive hover:text-destructive"
               >
                 <Trash2 className="size-4" />
               </Button>
@@ -155,6 +159,17 @@ export function AddOnsTab({ items }: { items: AdminAddOn[] }) {
           </Card>
         ))}
       </div>
+      <ConfirmDialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        title="Hapus Add-on"
+        description={`Apakah Anda yakin ingin menghapus add-on "${deleteTarget?.name}"? Tindakan ini tidak dapat dibatalkan.`}
+        confirmLabel="Hapus"
+        cancelLabel="Batal"
+        destructive
+        pending={pending}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

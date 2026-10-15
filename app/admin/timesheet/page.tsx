@@ -108,7 +108,7 @@ export default async function TimesheetPage({
     }
   );
 
-  const fmtHours = (sec: number) => `${(sec / 3600).toFixed(1)}h`;
+  const fmtHours = (sec: number) => `${(sec / 3600).toFixed(1)} jam`;
 
   return (
     <div className="space-y-6">
@@ -172,7 +172,7 @@ export default async function TimesheetPage({
             <Clock className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{data.totalHours}h</p>
+            <p className="text-2xl font-bold">{data.totalHours} jam</p>
           </CardContent>
         </Card>
         <Card>
@@ -182,7 +182,7 @@ export default async function TimesheetPage({
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {data.billableHours}h{" "}
+              {data.billableHours} jam{" "}
               <span className="text-sm text-muted-foreground">
                 ({data.billableRate}%)
               </span>

@@ -32,6 +32,7 @@ export const PUBLIC_ROUTES = {
     `/contact?service=${encodeURIComponent(slug)}`,
   contactWithPlan: (slug: string) =>
     `/contact?plan=${encodeURIComponent(slug)}`,
+  aiRelay: "/ai-relay",
 } as const;
 
 export const AUTH_ROUTES = {
@@ -54,6 +55,7 @@ export const DASHBOARD_ROUTES = {
   profile: "/dashboard/profile",
   settings: "/dashboard/settings",
   projectDetail: (id: string) => `/dashboard/projects/${id}`,
+  aiRelay: "/dashboard/ai-relay",
 } as const;
 
 export const PROPOSAL_ROUTES = {
@@ -90,6 +92,7 @@ export const ADMIN_ROUTES = {
   invoiceDetail: (id: string) => `/admin/invoices/${id}`,
   projectDetail: (id: string) => `/admin/projects/${id}`,
   proposalDetail: (id: string) => `/admin/proposals/${id}`,
+  aiRelay: "/admin/ai-relay",
 } as const;
 
 export const API_ROUTES = {

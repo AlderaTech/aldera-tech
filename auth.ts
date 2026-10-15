@@ -24,17 +24,15 @@ declare module "next-auth" {
   }
 }
 
+import authConfig from "./auth.config";
+
 const credentialsSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 /* 30 days */ },
-  pages: {
-    signIn: "/login",
-    error: "/login",
-  },
+  ...authConfig,
   providers: [
     Credentials({
       name: "Credentials",

@@ -73,7 +73,7 @@ import { DASHBOARD_ROUTES } from "@/lib/routes";
 
 DASHBOARD_ROUTES.home; // "/dashboard"
 DASHBOARD_ROUTES.projects; // "/dashboard/projects"
-DASHBOARD_ROUTES.calculator; // "/dashboard/calculator" (legacy redirect ke /pricing#calculator)
+DASHBOARD_ROUTES.calculator; // "/dashboard/calculator" (sub-rute kalkulator di portal klien)
 DASHBOARD_ROUTES.orders; // "/dashboard/orders"
 DASHBOARD_ROUTES.invoices; // "/dashboard/invoices"
 DASHBOARD_ROUTES.profile; // "/dashboard/profile"

@@ -1,15 +1,48 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Code2,
+  Smartphone,
+  Cloud,
+  BrainCircuit,
+  Palette,
+  ShieldCheck,
+  Search,
+  ShoppingCart,
+  Layers,
+  type LucideIcon,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { services } from "@/lib/services-data";
 import { PUBLIC_ROUTES } from "@/lib/routes";
+import { prisma } from "@/lib/prisma";
+import { safeDb } from "@/lib/safe-db";
 import {
   FadeUp,
   StaggerContainer,
   StaggerItem,
 } from "@/components/shared/motion";
+
+const iconMap: Record<string, LucideIcon> = {
+  Code2,
+  Smartphone,
+  Cloud,
+  BrainCircuit,
+  Palette,
+  ShieldCheck,
+  Search,
+  ShoppingCart,
+  Layers,
+};
+
+function resolveServiceIcon(icon: string | LucideIcon | undefined): LucideIcon {
+  if (typeof icon === "function") return icon;
+  if (typeof icon === "string" && iconMap[icon]) return iconMap[icon];
+  return Code2;
+}
 
 const deliveryNotes = [
   "Scope Terencana",
@@ -18,8 +51,37 @@ const deliveryNotes = [
   "Handoff Kode Rapi",
 ];
 
-export function ServicesPreview() {
-  const preview = services.slice(0, 6);
+type PreviewItem = {
+  slug: string;
+  title: string;
+  summary: string;
+  icon: LucideIcon;
+};
+
+export async function ServicesPreview() {
+  const fallbackItems: PreviewItem[] = services.slice(0, 6).map((item) => ({
+    slug: item.slug,
+    title: item.title,
+    summary: item.summary,
+    icon: item.icon,
+  }));
+
+  const preview = await safeDb<PreviewItem[]>(async () => {
+    const data = await prisma.service.findMany({
+      where: { active: true },
+      orderBy: { order: "asc" },
+      take: 6,
+    });
+    if (!data || data.length === 0) {
+      return fallbackItems;
+    }
+    return data.map((item) => ({
+      slug: item.slug,
+      title: item.title,
+      summary: item.summary,
+      icon: resolveServiceIcon(item.icon),
+    }));
+  }, fallbackItems);
   return (
     <section className="bg-[#0F263A] py-16 text-white sm:py-24">
       <div className="public-container-px mx-auto grid max-w-screen-xxxl items-center gap-8 lg:grid-cols-[0.85fr_1.15fr] xl:gap-14">
@@ -58,9 +120,9 @@ export function ServicesPreview() {
           <Button
             asChild
             size="xl"
-            className="mt-8 w-fit rounded-full bg-[#00B1E1] px-8 font-bold text-[#0F263A] shadow-lg shadow-[#00B1E1]/20 transition-all hover:bg-[#0094BD]"
+            className="mt-8 w-fit cursor-pointer rounded-full bg-[#00B1E1] px-8 font-bold text-[#0F263A] shadow-lg shadow-[#00B1E1]/20 transition-all hover:bg-[#0094BD]"
           >
-            <Link href={PUBLIC_ROUTES.services}>
+            <Link href={PUBLIC_ROUTES.services} className="cursor-pointer">
               Lihat Semua Layanan
               <ArrowRight className="size-4" />
             </Link>
@@ -72,7 +134,7 @@ export function ServicesPreview() {
             <StaggerItem key={service.slug}>
               <Link
                 href={PUBLIC_ROUTES.contactWithService(service.slug)}
-                className="group block h-full"
+                className="group block h-full cursor-pointer"
               >
                 <Card
                   className={[

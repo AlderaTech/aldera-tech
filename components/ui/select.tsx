@@ -17,7 +17,7 @@ function SelectTrigger({
   return (
     <SelectPrimitive.Trigger
       className={cn(
-        "flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-colors outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50 data-[placeholder]:text-muted-foreground",
+        "flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-colors outline-none cursor-pointer placeholder:text-muted-foreground focus:ring-2 focus:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50 data-[placeholder]:text-muted-foreground",
         className
       )}
       {...props}
@@ -37,7 +37,7 @@ function SelectScrollUpButton({
   return (
     <SelectPrimitive.ScrollUpButton
       className={cn(
-        "flex cursor-default items-center justify-center py-1",
+        "flex cursor-pointer items-center justify-center py-1",
         className
       )}
       {...props}
@@ -54,7 +54,7 @@ function SelectScrollDownButton({
   return (
     <SelectPrimitive.ScrollDownButton
       className={cn(
-        "flex cursor-default items-center justify-center py-1",
+        "flex cursor-pointer items-center justify-center py-1",
         className
       )}
       {...props}
@@ -121,7 +121,7 @@ function SelectItem({
   return (
     <SelectPrimitive.Item
       className={cn(
-        "relative flex w-full cursor-default items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        "relative flex w-full cursor-pointer items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className
       )}
       {...props}
