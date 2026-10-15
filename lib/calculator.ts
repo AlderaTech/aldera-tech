@@ -182,7 +182,7 @@ export function calculateOrderBreakdown(
   let customFeaturesTotal = 0;
   const customItems: CalculationItem[] = [];
   let customCount = 0;
-  let customUnitPrice = Math.max(0, Number(params.customFeaturePrice ?? 500000));
+  const customUnitPrice = Math.max(0, Number(params.customFeaturePrice ?? 500000));
 
   if (params.customFeatures && Array.isArray(params.customFeatures)) {
     customCount = params.customFeatures.length;

@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -121,8 +122,6 @@ function ServiceCard({
   service: GridServiceItem | StaticService;
   featured: boolean;
 }) {
-  const Icon = resolveServiceIcon(service.icon);
-
   return (
     <Card
       className={
@@ -138,7 +137,7 @@ function ServiceCard({
             : "mb-5 flex size-14 items-center justify-center rounded-lg border border-black/10 bg-white/80 text-[#0b6bff] transition-transform group-hover:scale-105"
         }
       >
-        <Icon className="size-7" />
+        {React.createElement(resolveServiceIcon(service.icon), { className: "size-7" })}
       </div>
       <h2 className="mb-2 text-2xl font-black">{service.title}</h2>
       <p
