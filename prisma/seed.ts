@@ -188,7 +188,22 @@ async function main() {
     update: {
       brandName: defaultSiteSettings.brandName,
       footerDescription: defaultSiteSettings.footerDescription,
-      email: defaultSiteSettings.email || null,
+      email: defaultSiteSettings.email || "hello@aldera.tech",
+      phone: "+62 21 5150888",
+      whatsapp: "081288880000",
+      address:
+        "Treasury Tower Lt. 18, District 8 SCBD, Jl. Jend. Sudirman Kav. 52-53, Jakarta Selatan 12190",
+      mapsUrl: "https://maps.google.com/?q=District+8+SCBD+Jakarta",
+      operatingHours: "Senin - Jumat, 09:00 - 18:00 WIB",
+      responseTime: "< 2 jam",
+      githubUrl: "https://github.com/aldera-tech",
+      linkedinUrl: "https://linkedin.com/company/aldera-tech",
+      instagramUrl: "https://instagram.com/aldera.tech",
+      twitterUrl: "https://x.com/alderatech",
+      youtubeUrl: "https://youtube.com/@alderatech",
+      tiktokUrl: "https://tiktok.com/@alderatech",
+      facebookUrl: "https://facebook.com/alderatech",
+      discordUrl: "https://discord.gg/alderatech",
       seoTitle: defaultSiteSettings.seoTitle,
       seoDescription: defaultSiteSettings.seoDescription,
     },
@@ -196,16 +211,22 @@ async function main() {
       id: SITE_SETTING_ID,
       brandName: defaultSiteSettings.brandName,
       footerDescription: defaultSiteSettings.footerDescription,
-      email: defaultSiteSettings.email || null,
-      phone: defaultSiteSettings.phone || null,
-      whatsapp: defaultSiteSettings.whatsapp || null,
-      address: defaultSiteSettings.address || null,
-      mapsUrl: defaultSiteSettings.mapsUrl || null,
-      operatingHours: defaultSiteSettings.operatingHours || null,
-      responseTime: defaultSiteSettings.responseTime,
-      githubUrl: defaultSiteSettings.githubUrl || null,
-      linkedinUrl: defaultSiteSettings.linkedinUrl || null,
-      instagramUrl: defaultSiteSettings.instagramUrl || null,
+      email: defaultSiteSettings.email || "hello@aldera.tech",
+      phone: "+62 21 5150888",
+      whatsapp: "081288880000",
+      address:
+        "Treasury Tower Lt. 18, District 8 SCBD, Jl. Jend. Sudirman Kav. 52-53, Jakarta Selatan 12190",
+      mapsUrl: "https://maps.google.com/?q=District+8+SCBD+Jakarta",
+      operatingHours: "Senin - Jumat, 09:00 - 18:00 WIB",
+      responseTime: "< 2 jam",
+      githubUrl: "https://github.com/aldera-tech",
+      linkedinUrl: "https://linkedin.com/company/aldera-tech",
+      instagramUrl: "https://instagram.com/aldera.tech",
+      twitterUrl: "https://x.com/alderatech",
+      youtubeUrl: "https://youtube.com/@alderatech",
+      tiktokUrl: "https://tiktok.com/@alderatech",
+      facebookUrl: "https://facebook.com/alderatech",
+      discordUrl: "https://discord.gg/alderatech",
       seoTitle: defaultSiteSettings.seoTitle,
       seoDescription: defaultSiteSettings.seoDescription,
     },
@@ -241,6 +262,167 @@ async function main() {
       });
     }
   }
+
+  // ----------------------------------------------------------------
+  // Tech Tools (Categorized by Frontend, Backend, Mobile, Cloud & DevOps, UI/UX, AI/LLM)
+  // ----------------------------------------------------------------
+  await prisma.techTool.deleteMany();
+  await prisma.techTool.createMany({
+    data: [
+      // Frontend
+      { name: "Next.js", category: "Frontend", icon: "Globe", order: 1, active: true },
+      { name: "React", category: "Frontend", icon: "Code2", order: 2, active: true },
+      { name: "TypeScript", category: "Frontend", icon: "FileCode", order: 3, active: true },
+      { name: "Tailwind CSS", category: "Frontend", icon: "Palette", order: 4, active: true },
+      { name: "Vue.js", category: "Frontend", icon: "Layers", order: 5, active: true },
+
+      // Backend
+      { name: "Node.js", category: "Backend", icon: "Server", order: 1, active: true },
+      { name: "Go", category: "Backend", icon: "Cpu", order: 2, active: true },
+      { name: "Python", category: "Backend", icon: "Terminal", order: 3, active: true },
+      { name: "PostgreSQL", category: "Backend", icon: "Database", order: 4, active: true },
+      { name: "Redis", category: "Backend", icon: "Zap", order: 5, active: true },
+      { name: "Prisma", category: "Backend", icon: "Layers", order: 6, active: true },
+
+      // Mobile
+      { name: "React Native", category: "Mobile", icon: "Smartphone", order: 1, active: true },
+      { name: "Flutter", category: "Mobile", icon: "Smartphone", order: 2, active: true },
+      { name: "Swift (iOS)", category: "Mobile", icon: "Smartphone", order: 3, active: true },
+      { name: "Kotlin (Android)", category: "Mobile", icon: "Smartphone", order: 4, active: true },
+
+      // Cloud & DevOps
+      { name: "Docker", category: "Cloud & DevOps", icon: "Box", order: 1, active: true },
+      { name: "Kubernetes", category: "Cloud & DevOps", icon: "Boxes", order: 2, active: true },
+      { name: "AWS", category: "Cloud & DevOps", icon: "Cloud", order: 3, active: true },
+      { name: "Cloudflare", category: "Cloud & DevOps", icon: "Shield", order: 4, active: true },
+      { name: "GitHub Actions", category: "Cloud & DevOps", icon: "GitBranch", order: 5, active: true },
+
+      // UI/UX
+      { name: "Figma", category: "UI/UX", icon: "Palette", order: 1, active: true },
+      { name: "Framer", category: "UI/UX", icon: "Layout", order: 2, active: true },
+      { name: "Storybook", category: "UI/UX", icon: "BookOpen", order: 3, active: true },
+
+      // AI/LLM
+      { name: "OpenAI", category: "AI/LLM", icon: "BrainCircuit", order: 1, active: true },
+      { name: "Anthropic", category: "AI/LLM", icon: "Sparkles", order: 2, active: true },
+      { name: "DeepSeek", category: "AI/LLM", icon: "Zap", order: 3, active: true },
+      { name: "LangChain", category: "AI/LLM", icon: "Layers", order: 4, active: true },
+      { name: "Hugging Face", category: "AI/LLM", icon: "Cpu", order: 5, active: true },
+    ],
+  });
+  console.log("✔ Tech tools seeded");
+
+  // ----------------------------------------------------------------
+  // Engineering Services (6 Core Services)
+  // ----------------------------------------------------------------
+  await prisma.service.deleteMany();
+  await prisma.service.createMany({
+    data: [
+      {
+        slug: "web-application-engineering",
+        title: "Web Application Engineering",
+        icon: "Code2",
+        summary: "Pengembangan web application skala enterprise yang performan, aman, dan siap scale.",
+        description:
+          "Mulai dari SaaS modern, portal korporat, hingga platform interaktif berlatensi rendah. Dibangun dengan Next.js, React, TypeScript, dan arsitektur microservices atau serverless yang scalable.",
+        deliverables: [
+          "Arsitektur frontend performa tinggi (Next.js / TypeScript)",
+          "Core Web Vitals hijau & optimasi SEO teknis mendalam",
+          "REST & GraphQL API terstandarisasi, aman, dan terdokumentasi",
+          "Desain responsif lintas perangkat dan browser modern",
+          "Automated CI/CD pipeline dan containerization Docker",
+        ],
+        order: 1,
+        active: true,
+      },
+      {
+        slug: "mobile-app-development",
+        title: "Mobile App Development",
+        icon: "Smartphone",
+        summary: "Aplikasi mobile iOS & Android berperforma native dengan siklus rilis gesit.",
+        description:
+          "Solusi mobile komprehensif menggunakan React Native dan Flutter. Menghadirkan performa mulus, integrasi hardware (kamera, bluetooth, GPS), serta offline-first synchronization.",
+        deliverables: [
+          "Aplikasi iOS dan Android dari basis kode yang teruji dan efisien",
+          "Offline-first architecture & sinkronisasi data background andal",
+          "Integrasi push notification, payment gateway, & autentikasi biometrik",
+          "Publikasi & kepatuhan rilis App Store dan Google Play Store",
+          "Crash analytics, logging terdistribusi, dan pemantauan performa",
+        ],
+        order: 2,
+        active: true,
+      },
+      {
+        slug: "enterprise-cloud-devops",
+        title: "Enterprise Cloud & DevOps",
+        icon: "Cloud",
+        summary: "Infrastruktur cloud berstandar tinggi, otomatisasi deployment, dan ketahanan sistem 99.9%.",
+        description:
+          "Perancangan arsitektur multi-cloud di AWS, GCP, atau Bare-Metal dengan prinsip Infrastructure as Code (Terraform), Kubernetes cluster orchestration, dan observabilitas menyeluruh.",
+        deliverables: [
+          "Infrastructure as Code menggunakan Terraform & Ansible",
+          "Kubernetes container orchestration & auto-scaling cerdas",
+          "Continuous Integration / Continuous Deployment (CI/CD) pipelines",
+          "Monitoring 24/7, alert tracing, dan automated backup berkala",
+          "Security hardening, audit kepatuhan, dan strategi disaster recovery",
+        ],
+        order: 3,
+        active: true,
+      },
+      {
+        slug: "ai-machine-learning-solutions",
+        title: "AI & Machine Learning Solutions",
+        icon: "BrainCircuit",
+        summary: "Integrasi LLM aggregator, autonomous agents, dan pipeline machine learning terapan.",
+        description:
+          "Mengembangkan kapabilitas AI generatif ke dalam alur kerja bisnis: enterprise RAG (Retrieval-Augmented Generation), fine-tuned domain models, AI API relays berkinerja tinggi, dan bot cerdas multi-channel.",
+        deliverables: [
+          "Integrasi multi-LLM (OpenAI, Anthropic Claude, DeepSeek, Local Models)",
+          "Retrieval-Augmented Generation (RAG) dengan vector database",
+          "High-throughput AI Relay Proxy dengan balance & quota ledger transparan",
+          "Omnichannel conversational bots (Telegram, WhatsApp, Web Playground)",
+          "Evaluasi akurasi prompt, guardrails mitigasi halusinasi, & audit logs",
+        ],
+        order: 4,
+        active: true,
+      },
+      {
+        slug: "ui-ux-product-design",
+        title: "UI/UX & Product Design",
+        icon: "Palette",
+        summary: "Riset pengguna, prototipe interaktif, dan design system yang berorientasi konversi bisnis.",
+        description:
+          "Merancang antarmuka produk digital intuitif yang menyatukan estetika modern dan kemudahan navigasi. Kami membangun design system lengkap di Figma yang siap diterjemahkan ke komponen kode.",
+        deliverables: [
+          "User journey mapping, wireframing, & interactive high-fidelity prototyping",
+          "Comprehensive design system & UI component library terstandar",
+          "Usability testing dan feedback validation dengan calon pengguna nyata",
+          "Spesifikasi design handoff lengkap untuk kemudahan tim engineering",
+          "Audit aksesibilitas (WCAG 2.1) & responsivitas layar menyeluruh",
+        ],
+        order: 5,
+        active: true,
+      },
+      {
+        slug: "maintenance-quality-engineering",
+        title: "Maintenance & Quality Engineering",
+        icon: "ShieldCheck",
+        summary: "Audit kode, pemeliharaan berkelanjutan, pengujian otomatis, dan mitigasi downtime.",
+        description:
+          "Menjaga stabilitas dan keamanan aplikasi produksi dengan uji regresi berkala, automated unit & E2E testing, patching celah keamanan, optimasi query database, dan SLA tanggap cepat.",
+        deliverables: [
+          "Automated test coverage komprehensif (Unit, Integration, dan E2E)",
+          "Audit keamanan berkala & dependency vulnerability patching",
+          "Optimasi performa query database & indexing PostgreSQL mendalam",
+          "Pemeliharaan server berkala dengan jaminan Service Level Agreement (SLA)",
+          "Laporan kesehatan sistem berkala dan rekomendasi roadmap teknologi",
+        ],
+        order: 6,
+        active: true,
+      },
+    ],
+  });
+  console.log("✔ Services seeded");
 
   console.log("✔ Public settings and pricing seeded");
 
@@ -477,34 +659,57 @@ async function main() {
     data: [
       {
         clientName: "Andi Wijaya",
-        clientRole: "CEO",
+        clientRole: "CEO, PT Finansial Nusantara",
         content:
-          "Aldera Tech benar-benar mengerti visi kami. Dashboard yang transparan membuat saya selalu tahu progres proyek tanpa harus chat berkali-kali.",
+          "Aldera Tech benar-benar mengerti visi bisnis kami. Dashboard dan arsitektur AI Relay yang mereka rancang memangkas latensi sistem hingga 40% dan membuat kontrol anggaran API menjadi sangat transparan.",
         rating: 5,
+        published: true,
         order: 1,
       },
       {
         clientName: "Linda Kusuma",
-        clientRole: "Founder",
+        clientRole: "Head of Product, RetailGo",
         content:
-          "Tim yang profesional dan komunikatif. Dari discovery sampai launch, semuanya on time dan on budget.",
+          "Tim yang sangat profesional, responsif, dan terorganisir. Dari fase discovery hingga launching mobile app di App Store & Play Store, semuanya on time dan on budget.",
         rating: 5,
+        published: true,
         order: 2,
       },
       {
         clientName: "Ridho Pratama",
-        clientRole: "Product Manager",
-        content: "Kualitas kode dan desainnya jempolan. Worth every rupiah.",
+        clientRole: "VP of Engineering, Logistics Pro",
+        content:
+          "Kualitas arsitektur cloud dan pipeline CI/CD yang dibangun Aldera Tech sangat solid. Downtime sistem kami terpangkas drastis dan skalabilitas traffic peak season aman terkendali.",
         rating: 5,
+        published: true,
         order: 3,
       },
       {
         clientName: "Maya Lestari",
-        clientRole: "Marketing Director",
+        clientRole: "Marketing Director, Kopi Kita",
         content:
-          "Mereka bukan sekedar ngoding, mereka jadi partner strategis. Highly recommended!",
+          "Mereka bukan sekadar ngoding, melainkan partner strategis. Storefront baru kami meningkatkan conversion rate hingga 2.5x lipat dalam kurun waktu tiga bulan pertama.",
         rating: 5,
+        published: true,
         order: 4,
+      },
+      {
+        clientName: "Bambang Sudiro",
+        clientRole: "CTO, Medika Digital Solusi",
+        content:
+          "Implementasi sistem keamanan data pasien dan audit trail sesuai standar kepatuhan regulasi diselesaikan dengan cermat dan tepat waktu. Kerja sama yang luar biasa.",
+        rating: 5,
+        published: true,
+        order: 5,
+      },
+      {
+        clientName: "Jessica Tan",
+        clientRole: "Founder, EduKits EdTech",
+        content:
+          "Design system di Figma sangat konsisten dan langsung match dengan kode komponen frontend. Sangat mempercepat tim internal kami saat merilis modul pembelajaran baru.",
+        rating: 5,
+        published: true,
+        order: 6,
       },
     ],
   });
@@ -517,66 +722,83 @@ async function main() {
   const caseStudies = [
     {
       slug: "technova-b2b-platform",
-      title: "TechNova: Platform B2B yang Men-Triple Revenue",
-      client: "TechNova Indonesia",
-      industry: "B2B SaaS",
+      title: "TechNova: Platform B2B Enterprise Multi-Tenant & Billing Relay",
+      client: "TechNova Enterprise",
+      industry: "B2B SaaS & Cloud",
       summary:
-        "Membangun platform B2B lengkap yang meningkatkan konversi enterprise lead 3x.",
+        "Membangun platform B2B lengkap dengan AI relay proxy yang menaikkan konversi enterprise lead hingga 300%.",
       challenge:
-        "TechNova mengalami bottleneck pada proses sales enterprise, dari lead ke deal butuh 6+ bulan dengan banyak touchpoint manual.",
+        "TechNova mengalami bottleneck pada proses sales enterprise dan biaya konsumsi LLM yang tidak terkontrol karena model pricing yang kaku.",
       solution:
-        "Kami membangun dashboard B2B dengan self-serve onboarding, usage analytics real-time, dan integrasi billing. Sales team dibebaskan dari tugas administratif.",
+        "Aldera Tech merancang arsitektur web platform terintegrasi dengan AI Relay router, kuota ledger berkecepatan tinggi, serta sistem billing multi-tenant otomatis.",
       result:
-        "Konversi lead ke deal naik 300%. Waktu onboarding turun dari 14 hari ke 2 hari. NPS customer naik dari 32 ke 68.",
+        "Konversi lead ke deal naik 300%. Onboarding turun dari 14 hari menjadi 2 hari. Penghematan biaya operasional AI mencapai 38%.",
       featuredImage: "/images/portfolio/technova-b2b-platform.webp",
-      techStack: ["Next.js", "PostgreSQL", "Stripe", "Tailwind CSS"],
+      techStack: ["Next.js", "TypeScript", "PostgreSQL", "Docker", "Tailwind CSS"],
       published: true,
       order: 1,
     },
     {
       slug: "kopi-kita-ecommerce",
-      title: "Kopi Kita: E-Commerce yang Menggandakan Penjualan Online",
-      client: "Kopi Kita",
-      industry: "F&B E-Commerce",
+      title: "Kopi Kita: E-Commerce Omnichannel dengan Payment Gateway Terpadu",
+      client: "Kopi Kita Group",
+      industry: "F&B Retail & E-Commerce",
       summary:
-        "Storefront modern dengan integrasi payment + delivery yang mulus.",
+        "Storefront modern dengan integrasi pembayaran Midtrans, kalkulator ongkir dinamis, dan sistem loyalty pelanggan.",
       challenge:
-        "Kopi Kita hanya mengandalkan marketplace. Margin tipis dan tidak bisa membangun relationship langsung dengan customer.",
+        "Hanya mengandalkan marketplace pihak ketiga yang memakan margin komisi tinggi dan hilangnya data kepemilikan konsumen langsung.",
       solution:
-        "Storefront custom dengan Midtrans, integrasi kurir, loyalty program, dan newsletter otomatis untuk repeat customer.",
+        "Membangun storefront D2C independen berkecepatan tinggi dengan auto-checkout QRIS, WhatsApp order notification, dan inventory sync.",
       result:
-        "Penjualan online naik 2x dalam 3 bulan. 40% repeat purchase rate. CAC turun 35%.",
+        "Penjualan direct channel melonjak 200% dalam 90 hari, repeat order mencapai 42%, dan margin laba bersih meningkat 22%.",
       featuredImage: "/images/portfolio/kopi-kita-ecommerce.webp",
-      techStack: ["Next.js", "Prisma", "Midtrans", "PostgreSQL"],
+      techStack: ["Next.js", "Prisma", "PostgreSQL", "Midtrans", "Fonnte"],
       published: true,
       order: 2,
     },
     {
       slug: "finsmart-mobile-app",
-      title: "FinSmart: Mobile App yang Meraih 100K Download",
-      client: "FinSmart",
-      industry: "FinTech",
+      title: "FinSmart: Aplikasi Personal Finance & Wealth Tracker 100K+ Pengguna",
+      client: "FinSmart Asia",
+      industry: "FinTech & Wealth Management",
       summary:
-        "Aplikasi finance personal dengan UX yang membuat budgeting jadi mudah.",
+        "Aplikasi mobile iOS & Android dengan visualisasi keuangan interaktif dan keamanan standar perbankan.",
       challenge:
-        "Kompetitor banyak, fitur sudah commodity. FinSmart butuh diferensiasi yang kuat.",
+        "Aplikasi versi sebelumnya lambat, sering crash pada perangkat low-end, dan memiliki tingkat retensi pengguna 30 hari yang rendah.",
       solution:
-        "Fokus pada micro-interactions dan visualisasi data yang delightful. Setiap aksi memberi feedback yang memuaskan.",
+        "Refactoring penuh menggunakan React Native dengan engine Hermes, enkripsi data lokal tingkat lanjut, dan UX micro-interactions intuitif.",
       result:
-        "100K+ download dalam 6 bulan. Rating 4.8 di App Store. Featured di 'Editor's Choice'.",
+        "100.000+ unduhan organik, crash-free session 99.8%, rating 4.8 di App Store & Play Store, dan waktu muat berkurang 65%.",
       featuredImage: "/images/portfolio/finsmart-mobile-app.webp",
-      techStack: ["React Native", "TypeScript", "Firebase", "Framer Motion"],
+      techStack: ["React Native", "TypeScript", "Node.js", "Redis", "Framer Motion"],
       published: true,
       order: 3,
     },
+    {
+      slug: "medikare-cloud-hospital",
+      title: "Medikare: Sistem Informasi Rumah Sakit & Telekonsultasi Terintegrasi",
+      client: "Medikare Hospital Network",
+      industry: "Healthcare & MedTech",
+      summary:
+        "Infrastruktur cloud terdistribusi untuk rekam medis elektronik (RME) dan telekonsultasi dokter berkeamanan tinggi.",
+      challenge:
+        "Sistem legacy sering downtime saat jam sibuk dan belum terhubung ke sistem SatuSehat Kementerian Kesehatan.",
+      solution:
+        "Implementasi arsitektur cloud mikro di AWS, interoperabilitas FHIR / SatuSehat API, serta modul reservasi online berkecepatan tinggi.",
+      result:
+        "Waktu tunggu pasien di klinik berkurang 50%, uptime sistem mencapai 99.98%, dan sertifikasi kepatuhan data kesehatan lulus 100%.",
+      featuredImage: "/images/portfolio/medikare-hospital.webp",
+      techStack: ["Next.js", "Go", "PostgreSQL", "AWS ECS", "Kubernetes"],
+      published: true,
+      order: 4,
+    },
   ];
 
+  await prisma.caseStudy.deleteMany();
   for (const cs of caseStudies) {
     await prisma.caseStudy.upsert({
       where: { slug: cs.slug },
-      update: {
-        featuredImage: cs.featuredImage,
-      },
+      update: cs,
       create: cs,
     });
   }
@@ -713,17 +935,17 @@ async function main() {
 
   await prisma.projectType.create({
     data: {
-      name: "Website",
-      slug: "website",
-      description: "Website company profile, landing page, atau web app",
-      basePrice: 5000000,
+      name: "Web App & SaaS",
+      slug: "web-app",
+      description: "Platform SaaS, web application kustom, dashboard analytics, dan portal korporat interaktif",
+      basePrice: 12000000,
       icon: "code2",
       dependentFields: [
         {
-          label: "Jumlah Halaman",
+          label: "Jumlah Modul / Halaman Utama",
           type: "number",
-          pricePerUnit: 500000,
-          unit: "halaman",
+          pricePerUnit: 750000,
+          unit: "modul",
           min: 1,
           max: 50,
         },
@@ -734,17 +956,17 @@ async function main() {
 
   await prisma.projectType.create({
     data: {
-      name: "Mobile App",
+      name: "Mobile App iOS / Android",
       slug: "mobile-app",
-      description: "Aplikasi Android/iOS dengan React Native",
-      basePrice: 8000000,
+      description: "Aplikasi mobile cross-platform (React Native / Flutter) siap rilis di Play Store & App Store",
+      basePrice: 15000000,
       icon: "smartphone",
       dependentFields: [
         {
-          label: "Jumlah Screen",
+          label: "Jumlah Layar / Screen Utama",
           type: "number",
-          pricePerUnit: 600000,
-          unit: "screen",
+          pricePerUnit: 800000,
+          unit: "layar",
           min: 1,
           max: 40,
         },
@@ -755,17 +977,17 @@ async function main() {
 
   await prisma.projectType.create({
     data: {
-      name: "Tugas Kampus/Sekolah",
-      slug: "tugas-kampus",
-      description: "Tugas pemrograman, skripsi, atau proyek akademik",
-      basePrice: 500000,
-      icon: "fileText",
+      name: "E-Commerce Platform",
+      slug: "ecommerce",
+      description: "Toko online kustom, payment gateway Midtrans, sistem katalog, manajemen inventori, dan logistik kurir",
+      basePrice: 18000000,
+      icon: "shoppingBag",
       dependentFields: [
         {
-          label: "Jumlah Modul/BAB",
+          label: "Jumlah Fitur Transaksi Khusus",
           type: "number",
-          pricePerUnit: 200000,
-          unit: "modul",
+          pricePerUnit: 1000000,
+          unit: "fitur",
           min: 1,
           max: 20,
         },
@@ -776,12 +998,21 @@ async function main() {
 
   await prisma.projectType.create({
     data: {
-      name: "Custom / Lainnya",
-      slug: "custom",
-      description: "Proyek khusus yang tidak masuk kategori di atas",
-      basePrice: 3000000,
-      icon: "settings",
-      dependentFields: [],
+      name: "Custom Enterprise Solution",
+      slug: "custom-enterprise",
+      description: "Sistem arsitektur enterprise kustom, AI integration, otomasi workflow bisnis, dan integrasi API legacy",
+      basePrice: 25000000,
+      icon: "layers",
+      dependentFields: [
+        {
+          label: "Jumlah Integrasi Sub-sistem",
+          type: "number",
+          pricePerUnit: 1500000,
+          unit: "integrasi",
+          min: 1,
+          max: 15,
+        },
+      ],
       order: 3,
     },
   });

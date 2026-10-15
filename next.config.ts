@@ -39,11 +39,6 @@ const nextConfig: NextConfig = {
         destination: "/pricing#calculator",
         permanent: true,
       },
-      {
-        source: "/dashboard/calculator",
-        destination: "/pricing#calculator",
-        permanent: true,
-      },
     ];
   },
 };

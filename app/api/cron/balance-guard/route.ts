@@ -1,0 +1,49 @@
+/**
+ * Low Balance Multi-channel Alert Guard Cron Endpoint (F13).
+ *
+ * Setup on VPS with crontab or automated scheduler:
+ *   (every 30m): 30 * * * *  curl -H "Authorization: Bearer $CRON_SECRET" https://aldera.tech/api/cron/balance-guard
+ *
+ * Behavior:
+ *   - Evaluates active users with balance < Rp 10.000.
+ *   - Enforces a 12-hour cooldown window between alerts for the same user.
+ *   - Automatically resets cooldown when user tops up balance.
+ *   - Dispatches formatted alert with top-up action to Telegram Bot and WhatsApp Fonnte.
+ */
+
+import { NextResponse, type NextRequest } from "next/server";
+import { verifyCronSecret } from "@/lib/cron";
+import { runBalanceGuard } from "@/lib/balance-guard";
+
+export const runtime = "nodejs";
+
+export async function GET(req: NextRequest) {
+  const authResult = verifyCronSecret(req);
+  if (!authResult.authorized) {
+    return NextResponse.json(
+      { error: authResult.error ?? "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
+  try {
+    const summary = await runBalanceGuard();
+    return NextResponse.json({
+      success: true,
+      ...summary,
+    });
+  } catch (error) {
+    console.error("[Cron: balance-guard] Execution failed:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Internal error",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  return GET(req);
+}

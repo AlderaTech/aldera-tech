@@ -19,6 +19,7 @@ export function isStaff(
   if (typeof roleOrRoles === "string") {
     return (STAFF_ROLES as readonly Role[]).includes(roleOrRoles);
   }
+  if (!Array.isArray(roleOrRoles)) return false;
   return roleOrRoles.some((r) => (STAFF_ROLES as readonly Role[]).includes(r));
 }
 
@@ -29,6 +30,7 @@ export function isAdmin(
   if (typeof roleOrRoles === "string") {
     return roleOrRoles === "ADMIN";
   }
+  if (!Array.isArray(roleOrRoles)) return false;
   return roleOrRoles.includes("ADMIN");
 }
 
@@ -39,6 +41,7 @@ export function isDeveloper(
   if (typeof roleOrRoles === "string") {
     return roleOrRoles === "DEVELOPER";
   }
+  if (!Array.isArray(roleOrRoles)) return false;
   return roleOrRoles.includes("DEVELOPER");
 }
 
@@ -49,10 +52,21 @@ export function isClient(
   if (typeof roleOrRoles === "string") {
     return roleOrRoles === "CLIENT";
   }
+  if (!Array.isArray(roleOrRoles)) return false;
   return roleOrRoles.includes("CLIENT");
 }
 
 export const isOwnerOrAdmin = isAdmin;
+
+/**
+ * AI Relay Admin Route Guard: strictly restricted to ADMIN role.
+ * DEVELOPER and CLIENT roles are rejected.
+ */
+export function canAccessAiRelayAdmin(
+  roleOrRoles: Role | readonly Role[] | null | undefined
+): boolean {
+  return isAdmin(roleOrRoles);
+}
 
 /**
  * Resolves the primary role from an array of roles based on hierarchy:
@@ -63,6 +77,7 @@ export function getPrimaryRole(
 ): Role {
   if (!roleOrRoles) return "CLIENT";
   if (typeof roleOrRoles === "string") return roleOrRoles;
+  if (!Array.isArray(roleOrRoles)) return "CLIENT";
   if (roleOrRoles.includes("ADMIN")) return "ADMIN";
   if (roleOrRoles.includes("DEVELOPER")) return "DEVELOPER";
   return roleOrRoles[0] ?? "CLIENT";
@@ -121,6 +136,10 @@ export const PERMISSIONS = {
 
   // Settings
   SETTINGS_MANAGE: "settings.manage",
+
+  // AI Relay Operations (Strictly ADMIN only)
+  AI_RELAY_MANAGE: "aiRelay.manage",
+  AI_RELAY_VIEW: "aiRelay.view",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -158,7 +177,10 @@ export function hasPermission(
   if (typeof roleOrRoles === "string") {
     return ROLE_PERMISSIONS[roleOrRoles]?.includes(permission) ?? false;
   }
-  return roleOrRoles.some((r) => ROLE_PERMISSIONS[r]?.includes(permission));
+  if (!Array.isArray(roleOrRoles)) return false;
+  return roleOrRoles.some(
+    (r) => ROLE_PERMISSIONS[r as Role]?.includes(permission)
+  );
 }
 
 export function hasAnyPermission(
@@ -173,10 +195,14 @@ export function getEffectivePermissions(
 ): readonly Permission[] {
   if (!roleOrRoles) return [];
   const list: readonly Role[] =
-    typeof roleOrRoles === "string" ? [roleOrRoles] : roleOrRoles;
+    typeof roleOrRoles === "string"
+      ? [roleOrRoles]
+      : Array.isArray(roleOrRoles)
+      ? roleOrRoles
+      : [];
   const set = new Set<Permission>();
   for (const r of list) {
-    for (const p of ROLE_PERMISSIONS[r] ?? []) {
+    for (const p of ROLE_PERMISSIONS[r as Role] ?? []) {
       set.add(p);
     }
   }

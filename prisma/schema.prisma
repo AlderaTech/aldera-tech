@@ -488,10 +488,44 @@ model SiteSetting {
   githubUrl         String?
   linkedinUrl       String?
   instagramUrl      String?
+  twitterUrl        String?
+  youtubeUrl        String?
+  tiktokUrl         String?
+  facebookUrl       String?
+  discordUrl        String?
   seoTitle          String
   seoDescription    String   @db.Text
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+}
+
+model TechTool {
+  id        String   @id @default(cuid())
+  name      String
+  category  String
+  icon      String
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category, order])
+}
+
+model Service {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  icon         String
+  summary      String
+  description  String   @db.Text
+  deliverables String[]
+  order        Int      @default(0)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([order])
 }
 
 model PricingPlan {
