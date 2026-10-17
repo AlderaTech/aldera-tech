@@ -85,7 +85,8 @@ export function TestimonialManagement({
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Testimoni Klien</h1>
           <p className="text-sm text-muted-foreground">
-            Kelola ulasan, testimoni proyek, dan rating kepuasan klien Aldera Tech.
+            Kelola ulasan, testimoni proyek, dan rating kepuasan klien Aldera
+            Tech.
           </p>
         </div>
         <Button onClick={handleCreate} className="cursor-pointer gap-2">

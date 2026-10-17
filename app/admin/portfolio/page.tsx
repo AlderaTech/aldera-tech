@@ -31,7 +31,7 @@ export default async function AdminPortfolioPage() {
         </div>
         <Button
           asChild
-          className="bg-brand-primary hover:bg-brand-primary-hover gap-1.5 text-white"
+          className="gap-1.5 bg-brand-primary text-white hover:bg-brand-primary-hover"
         >
           <Link href={ADMIN_ROUTES.portfolioNew}>
             <Plus className="size-4" /> Tambah Studi Kasus

@@ -216,7 +216,8 @@ export async function POST(req: NextRequest) {
         userId: notifyUserId,
         type: "FILE_UPLOADED",
         title: "Berkas Baru Diunggah",
-        message: `Berkas ${file.name} telah diunggah pada proyek ${project?.title ?? ""}.`.trim(),
+        message:
+          `Berkas ${file.name} telah diunggah pada proyek ${project?.title ?? ""}.`.trim(),
         metadata: {
           projectId: targetProjectId,
           fileId: fileRecord?.id,

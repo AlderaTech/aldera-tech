@@ -99,7 +99,9 @@ export default async function PublicProposalPage({ params }: PageProps) {
           <Card className="p-6">
             <div
               className="prose max-w-none prose-neutral"
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(proposal.content) }}
+              dangerouslySetInnerHTML={{
+                __html: sanitizeHtml(proposal.content),
+              }}
             />
           </Card>
 

@@ -224,9 +224,9 @@ export function UploadProofDialog({
 
           {/* TAB 1: MIDTRANS SNAP ONLINE PAYMENT */}
           <TabsContent value="midtrans" className="space-y-4 pt-3">
-            <div className="from-brand-primary/5 rounded-xl border bg-gradient-to-br via-background to-muted/40 p-4">
+            <div className="rounded-xl border bg-gradient-to-br from-brand-primary/5 via-background to-muted/40 p-4">
               <div className="mb-3 flex items-center gap-2">
-                <span className="bg-brand-primary/10 text-brand-primary inline-flex size-8 items-center justify-center rounded-lg">
+                <span className="inline-flex size-8 items-center justify-center rounded-lg bg-brand-primary/10 text-brand-primary">
                   <ShieldCheck className="size-5" />
                 </span>
                 <div>
@@ -241,17 +241,17 @@ export function UploadProofDialog({
 
               <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground sm:grid-cols-3">
                 <div className="flex items-center gap-1.5 rounded-md border bg-background/80 p-2">
-                  <QrCode className="text-brand-primary size-3.5 shrink-0" />
+                  <QrCode className="size-3.5 shrink-0 text-brand-primary" />
                   <span className="font-medium text-foreground">QRIS</span>
                 </div>
                 <div className="flex items-center gap-1.5 rounded-md border bg-background/80 p-2">
-                  <CreditCard className="text-brand-primary size-3.5 shrink-0" />
+                  <CreditCard className="size-3.5 shrink-0 text-brand-primary" />
                   <span className="font-medium text-foreground">
                     Kartu Kredit
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 rounded-md border bg-background/80 p-2">
-                  <Wallet className="text-brand-primary size-3.5 shrink-0" />
+                  <Wallet className="size-3.5 shrink-0 text-brand-primary" />
                   <span className="font-medium text-foreground">E-Wallet</span>
                 </div>
               </div>
@@ -266,7 +266,7 @@ export function UploadProofDialog({
               type="button"
               disabled={isStartingMidtrans}
               onClick={handleMidtransPayment}
-              className="bg-brand-primary hover:bg-brand-primary-hover h-11 w-full gap-2 text-sm font-semibold text-white shadow-sm"
+              className="h-11 w-full gap-2 bg-brand-primary text-sm font-semibold text-white shadow-sm hover:bg-brand-primary-hover"
             >
               {isStartingMidtrans ? (
                 <>
@@ -412,7 +412,7 @@ export function UploadProofDialog({
                 <Button
                   type="submit"
                   disabled={isUploading || isPending}
-                  className="bg-brand-primary hover:bg-brand-primary-hover gap-2 text-white"
+                  className="gap-2 bg-brand-primary text-white hover:bg-brand-primary-hover"
                 >
                   {isUploading || isPending ? (
                     <>

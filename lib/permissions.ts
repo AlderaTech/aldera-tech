@@ -178,8 +178,8 @@ export function hasPermission(
     return ROLE_PERMISSIONS[roleOrRoles]?.includes(permission) ?? false;
   }
   if (!Array.isArray(roleOrRoles)) return false;
-  return roleOrRoles.some(
-    (r) => ROLE_PERMISSIONS[r as Role]?.includes(permission)
+  return roleOrRoles.some((r) =>
+    ROLE_PERMISSIONS[r as Role]?.includes(permission)
   );
 }
 
@@ -198,8 +198,8 @@ export function getEffectivePermissions(
     typeof roleOrRoles === "string"
       ? [roleOrRoles]
       : Array.isArray(roleOrRoles)
-      ? roleOrRoles
-      : [];
+        ? roleOrRoles
+        : [];
   const set = new Set<Permission>();
   for (const r of list) {
     for (const p of ROLE_PERMISSIONS[r as Role] ?? []) {

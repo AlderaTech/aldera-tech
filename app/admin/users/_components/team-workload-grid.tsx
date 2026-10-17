@@ -22,7 +22,8 @@ export function TeamWorkloadGrid({ staff }: { staff: StaffWorkloadItem[] }) {
     <div className="space-y-4">
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
-          Pemantauan kapasitas mingguan staf (target {WEEKLY_CAPACITY_HOURS} jam/minggu)
+          Pemantauan kapasitas mingguan staf (target {WEEKLY_CAPACITY_HOURS}{" "}
+          jam/minggu)
         </span>
         <span>{staff.length} Staf Terdata</span>
       </div>

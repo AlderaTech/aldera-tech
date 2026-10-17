@@ -152,7 +152,9 @@ export interface LedgerInvariantResult {
  * Executes the database diagnostic function `verify_ledger_invariants()`,
  * returning verification status for all 5 financial invariants.
  */
-export async function verifyLedgerInvariants(): Promise<LedgerInvariantResult[]> {
+export async function verifyLedgerInvariants(): Promise<
+  LedgerInvariantResult[]
+> {
   const res = await queryRouter<{
     check_name: string;
     status: "PASS" | "FAIL";

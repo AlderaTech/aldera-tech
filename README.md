@@ -157,7 +157,7 @@ crontab -e
 
 ## Deployment
 
-Panduan deployment produksi lengkap, arsitektur container, dan konfigurasi Nginx/Caddy tersedia di [**`docs/deployment.md`**](docs/deployment.md).
+Panduan deployment produksi lengkap, arsitektur container, dan konfigurasi Nginx/Caddy tersedia di [**`ai-agent-docs/deployment.md`**](ai-agent-docs/deployment.md).
 
 ### Menjalankan dengan Docker Compose (Direkomendasikan)
 

@@ -58,7 +58,8 @@ describe("AI Relay Cryptographic Auth Utilities", () => {
 
   describe("Validation Functions", () => {
     it("validates correct raw key format", () => {
-      const validKey = "sk-toko-1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKL";
+      const validKey =
+        "sk-toko-1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKL";
       expect(validKey.length).toBe(56);
       expect(validateKeyFormat(validKey)).toBe(true);
     });
@@ -166,7 +167,11 @@ describe("AI Relay Cryptographic Auth Utilities", () => {
 
     it("throws when extracting prefix from malformed key", () => {
       expect(() => extractKeyPrefix("sk-toko-short")).toThrow();
-      expect(() => extractKeyPrefix("sk-wrong-123456789012345678901234567890123456789012345678")).toThrow();
+      expect(() =>
+        extractKeyPrefix(
+          "sk-wrong-123456789012345678901234567890123456789012345678"
+        )
+      ).toThrow();
     });
   });
 

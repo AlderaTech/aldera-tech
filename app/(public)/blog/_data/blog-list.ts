@@ -38,50 +38,56 @@ export async function getBlogList(params: {
   category?: string;
   q?: string;
 }) {
-  return safeDb<BlogListItem[]>(async () => {
-    const data = await prisma.blogPost.findMany({
-      where: {
-        published: true,
-        ...(params.category ? { category: { slug: params.category } } : {}),
-        ...(params.q
-          ? {
-              OR: [
-                { title: { contains: params.q, mode: "insensitive" } },
-                { excerpt: { contains: params.q, mode: "insensitive" } },
-              ],
-            }
-          : {}),
-      },
-      orderBy: { publishedAt: "desc" },
-      skip: (params.page - 1) * BLOG_PAGE_SIZE,
-      take: BLOG_PAGE_SIZE,
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        excerpt: true,
-        content: true,
-        featuredImage: true,
-        publishedAt: true,
-        author: { select: { name: true } },
-        category: { select: { name: true, slug: true } },
-      },
-    });
-    if (params.q || params.category) {
+  return safeDb<BlogListItem[]>(
+    async () => {
+      const data = await prisma.blogPost.findMany({
+        where: {
+          published: true,
+          ...(params.category ? { category: { slug: params.category } } : {}),
+          ...(params.q
+            ? {
+                OR: [
+                  { title: { contains: params.q, mode: "insensitive" } },
+                  { excerpt: { contains: params.q, mode: "insensitive" } },
+                ],
+              }
+            : {}),
+        },
+        orderBy: { publishedAt: "desc" },
+        skip: (params.page - 1) * BLOG_PAGE_SIZE,
+        take: BLOG_PAGE_SIZE,
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          excerpt: true,
+          content: true,
+          featuredImage: true,
+          publishedAt: true,
+          author: { select: { name: true } },
+          category: { select: { name: true, slug: true } },
+        },
+      });
+      if (params.q || params.category) {
+        return data.length
+          ? data.map((post) => ({
+              ...post,
+              featuredImage: resolveBlogPostImage(
+                post.slug,
+                post.featuredImage
+              ),
+            }))
+          : [];
+      }
       return data.length
         ? data.map((post) => ({
             ...post,
             featuredImage: resolveBlogPostImage(post.slug, post.featuredImage),
           }))
-        : [];
-    }
-    return data.length
-      ? data.map((post) => ({
-          ...post,
-          featuredImage: resolveBlogPostImage(post.slug, post.featuredImage),
-        }))
-      : fallback;
-  }, params.q || params.category ? [] : fallback);
+        : fallback;
+    },
+    params.q || params.category ? [] : fallback
+  );
 }
 
 export async function getBlogCategories() {

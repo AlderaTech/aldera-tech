@@ -232,7 +232,10 @@ export async function submitPaymentProofAction(input: {
   }
 
   if (invoice.status === "DRAFT") {
-    return { ok: false, message: "Invoice berstatus draf tidak dapat dibayar." };
+    return {
+      ok: false,
+      message: "Invoice berstatus draf tidak dapat dibayar.",
+    };
   }
 
   if (invoice.status === "PAID") {

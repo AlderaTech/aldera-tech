@@ -44,7 +44,11 @@ import {
   getModelHealthMetrics,
   executePlaygroundChat,
 } from "./ai-relay";
-import { queryRouter, closeRouterPool, verifyLedgerInvariants } from "@/lib/router-db";
+import {
+  queryRouter,
+  closeRouterPool,
+  verifyLedgerInvariants,
+} from "@/lib/router-db";
 
 describe("AI Relay Action Utilities & Calculations (F4 - F10)", () => {
   afterAll(async () => {
@@ -102,8 +106,12 @@ describe("AI Relay Action Utilities & Calculations (F4 - F10)", () => {
     });
 
     it("throws error when tokens are negative", () => {
-      expect(() => calculateTokenCost(-10, 100, 2000, 4000)).toThrow(/negative/);
-      expect(() => calculateTokenCost(10, -100, 2000, 4000)).toThrow(/negative/);
+      expect(() => calculateTokenCost(-10, 100, 2000, 4000)).toThrow(
+        /negative/
+      );
+      expect(() => calculateTokenCost(10, -100, 2000, 4000)).toThrow(
+        /negative/
+      );
     });
   });
 
@@ -175,12 +183,12 @@ describe("AI Relay Action Utilities & Calculations (F4 - F10)", () => {
       expect(summary.modelBreakdown["gpt-4o"].tokens).toBe(4500);
       expect(summary.modelBreakdown["gpt-4o"].costIdr).toBe(360);
       expect(summary.modelBreakdown["gpt-4o"].requestCount).toBe(2);
-      expect(
-        summary.modelBreakdown["claude-3-5-sonnet-20241022"].tokens
-      ).toBe(4000);
-      expect(
-        summary.modelBreakdown["claude-3-5-sonnet-20241022"].costIdr
-      ).toBe(384);
+      expect(summary.modelBreakdown["claude-3-5-sonnet-20241022"].tokens).toBe(
+        4000
+      );
+      expect(summary.modelBreakdown["claude-3-5-sonnet-20241022"].costIdr).toBe(
+        384
+      );
       expect(
         summary.modelBreakdown["claude-3-5-sonnet-20241022"].requestCount
       ).toBe(1);

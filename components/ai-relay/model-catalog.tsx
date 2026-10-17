@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Check,
-  Code2,
-  Copy,
-  Layers,
-  Play,
-  Search,
-} from "lucide-react";
+import { Check, Code2, Copy, Layers, Play, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,7 +42,8 @@ export function ModelCatalog({
   apiKeys,
   onSelectPlaygroundModel,
 }: ModelCatalogProps) {
-  const [selectedCategory, setSelectedCategory] = useState<ModelCategory>("All");
+  const [selectedCategory, setSelectedCategory] =
+    useState<ModelCategory>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -106,10 +100,10 @@ export function ModelCatalog({
                 variant={isSelected ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedCategory(cat)}
-                className={`text-xs h-8 px-3 rounded-full ${
+                className={`h-8 rounded-full px-3 text-xs ${
                   isSelected
-                    ? "bg-indigo-600 hover:bg-indigo-700 text-white font-semibold"
-                    : "hover:bg-slate-100 text-slate-700"
+                    ? "bg-indigo-600 font-semibold text-white hover:bg-indigo-700"
+                    : "text-slate-700 hover:bg-slate-100"
                 }`}
               >
                 {cat}
@@ -119,43 +113,43 @@ export function ModelCatalog({
         </div>
 
         <div className="relative w-full sm:w-72">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
+          <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-slate-400" />
           <Input
             placeholder="Cari model, ID, atau kegunaan..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8 text-xs h-9 bg-white"
+            className="h-9 bg-white pl-8 text-xs"
           />
         </div>
       </div>
 
       {/* Grid of Model Cards */}
       {filteredModels.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-14 px-4 text-center">
-          <Layers className="h-8 w-8 text-slate-300 mb-2" />
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed px-4 py-14 text-center">
+          <Layers className="mb-2 h-8 w-8 text-slate-300" />
           <h3 className="text-sm font-semibold text-slate-800">
             Tidak ada model yang cocok
           </h3>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="mt-1 text-xs text-muted-foreground">
             Coba ubah kata kunci pencarian atau pilih kategori lain.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {filteredModels.map((model) => (
             <Card
               key={model.id}
-              className="border shadow-xs hover:border-indigo-300 transition-colors flex flex-col justify-between"
+              className="flex flex-col justify-between border shadow-xs transition-colors hover:border-indigo-300"
             >
               <div>
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-base font-bold text-slate-900 leading-snug">
+                    <CardTitle className="text-base leading-snug font-bold text-slate-900">
                       {model.displayName}
                     </CardTitle>
                     <Badge
                       variant="secondary"
-                      className={`text-[10px] font-semibold shrink-0 ${getCategoryBadgeClass(
+                      className={`shrink-0 text-[10px] font-semibold ${getCategoryBadgeClass(
                         model.category
                       )}`}
                     >
@@ -164,7 +158,7 @@ export function ModelCatalog({
                   </div>
 
                   <div className="flex items-center gap-1.5 pt-1">
-                    <code className="text-xs font-mono font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200/80 truncate max-w-[200px]">
+                    <code className="max-w-[200px] truncate rounded border border-slate-200/80 bg-slate-100 px-2 py-0.5 font-mono text-xs font-medium text-slate-600">
                       {model.id}
                     </code>
                     <Button
@@ -183,21 +177,21 @@ export function ModelCatalog({
                   </div>
                 </CardHeader>
 
-                <CardContent className="space-y-3 text-xs pt-0">
-                  <div className="rounded-lg bg-slate-50 p-2.5 space-y-1.5 border border-slate-100">
-                    <div className="flex justify-between items-center">
+                <CardContent className="space-y-3 pt-0 text-xs">
+                  <div className="space-y-1.5 rounded-lg border border-slate-100 bg-slate-50 p-2.5">
+                    <div className="flex items-center justify-between">
                       <span className="text-slate-500">Harga Input:</span>
                       <span className="font-mono font-semibold text-slate-900">
                         {formatCurrency(model.inputPricePerM)} / 1M token
                       </span>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center justify-between">
                       <span className="text-slate-500">Harga Output:</span>
                       <span className="font-mono font-semibold text-slate-900">
                         {formatCurrency(model.outputPricePerM)} / 1M token
                       </span>
                     </div>
-                    <div className="flex justify-between items-center pt-1 border-t border-slate-200/60">
+                    <div className="flex items-center justify-between border-t border-slate-200/60 pt-1">
                       <span className="text-slate-500">Batas Konteks:</span>
                       <span className="font-mono font-medium text-slate-700">
                         {model.contextWindow.toLocaleString("id-ID")} token
@@ -206,22 +200,22 @@ export function ModelCatalog({
                   </div>
 
                   <div>
-                    <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                    <span className="mb-1 block text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
                       Rekomendasi Kegunaan:
                     </span>
-                    <p className="text-xs text-slate-600 leading-relaxed italic">
+                    <p className="text-xs leading-relaxed text-slate-600 italic">
                       &ldquo;{model.bestFor}&rdquo;
                     </p>
                   </div>
                 </CardContent>
               </div>
 
-              <CardFooter className="pt-3 border-t bg-slate-50/50 flex items-center justify-between gap-2">
+              <CardFooter className="flex items-center justify-between gap-2 border-t bg-slate-50/50 pt-3">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setPresetModalModelId(model.id)}
-                  className="text-xs h-8 gap-1.5 border-indigo-200 text-indigo-700 hover:bg-indigo-50 flex-1"
+                  className="h-8 flex-1 gap-1.5 border-indigo-200 text-xs text-indigo-700 hover:bg-indigo-50"
                 >
                   <Code2 className="h-3.5 w-3.5" />
                   Gunakan di IDE
@@ -232,7 +226,7 @@ export function ModelCatalog({
                     variant="ghost"
                     size="sm"
                     onClick={() => onSelectPlaygroundModel(model.id)}
-                    className="text-xs h-8 gap-1 text-slate-600 hover:text-slate-900"
+                    className="h-8 gap-1 text-xs text-slate-600 hover:text-slate-900"
                   >
                     <Play className="h-3.5 w-3.5" />
                     Playground

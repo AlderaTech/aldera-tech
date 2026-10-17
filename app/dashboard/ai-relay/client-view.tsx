@@ -96,7 +96,7 @@ function AiRelayClientViewInner({
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-5">
+      <div className="flex flex-col gap-4 border-b pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2.5">
             <div className="rounded-xl bg-indigo-600 p-2 text-white shadow-xs">
@@ -106,7 +106,7 @@ function AiRelayClientViewInner({
               <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                 Aldera AI API Relay
               </h1>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="mt-0.5 text-xs text-muted-foreground">
                 Akses model LLM global (Claude 3.5, GPT-4o, DeepSeek V3/R1)
                 dengan pembayaran Rupiah dan integrasi IDE instan.
               </p>
@@ -116,78 +116,82 @@ function AiRelayClientViewInner({
 
         <div className="flex items-center gap-3 self-start sm:self-auto">
           <div className="rounded-xl border bg-white px-3.5 py-1.5 shadow-2xs">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">
+            <span className="block text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
               Saldo Aktif
             </span>
-            <span className="text-base font-extrabold text-slate-900 font-mono">
+            <span className="font-mono text-base font-extrabold text-slate-900">
               {formatCurrency(currentBalance)}
             </span>
           </div>
           <Button
             onClick={() => setActiveTab("billing")}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-9 shadow-xs"
+            className="h-9 bg-emerald-600 text-xs text-white shadow-xs hover:bg-emerald-700"
           >
-            <Wallet className="h-3.5 w-3.5 mr-1.5" />
+            <Wallet className="mr-1.5 h-3.5 w-3.5" />
             Top-up Saldo
           </Button>
         </div>
       </div>
 
       {/* Main Tabs Navigation */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="bg-slate-100 p-1 h-10 w-full sm:w-auto flex flex-wrap">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
+        <TabsList className="flex h-10 w-full flex-wrap bg-slate-100 p-1 sm:w-auto">
           <TabsTrigger
             value="catalog"
-            className="text-xs font-semibold gap-1.5 px-3.5 data-[state=active]:bg-white data-[state=active]:shadow-2xs"
+            className="gap-1.5 px-3.5 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:shadow-2xs"
           >
             <Layers className="h-3.5 w-3.5" />
             Katalog Model
           </TabsTrigger>
           <TabsTrigger
             value="playground"
-            className="text-xs font-semibold gap-1.5 px-3.5 data-[state=active]:bg-white data-[state=active]:shadow-2xs"
+            className="gap-1.5 px-3.5 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:shadow-2xs"
           >
             <Terminal className="h-3.5 w-3.5" />
             Playground Chat
           </TabsTrigger>
           <TabsTrigger
             value="keys"
-            className="text-xs font-semibold gap-1.5 px-3.5 data-[state=active]:bg-white data-[state=active]:shadow-2xs"
+            className="gap-1.5 px-3.5 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:shadow-2xs"
           >
             <Key className="h-3.5 w-3.5" />
             API Keys
           </TabsTrigger>
           <TabsTrigger
             value="billing"
-            className="text-xs font-semibold gap-1.5 px-3.5 data-[state=active]:bg-white data-[state=active]:shadow-2xs"
+            className="gap-1.5 px-3.5 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:shadow-2xs"
           >
             <CreditCard className="h-3.5 w-3.5" />
             Saldo & Ledger
           </TabsTrigger>
           <TabsTrigger
             value="telegram"
-            className="text-xs font-semibold gap-1.5 px-3.5 data-[state=active]:bg-white data-[state=active]:shadow-2xs"
+            className="gap-1.5 px-3.5 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:shadow-2xs"
           >
             <Send className="h-3.5 w-3.5" />
             Telegram Bot
           </TabsTrigger>
           <TabsTrigger
             value="analytics"
-            className="text-xs font-semibold gap-1.5 px-3.5 data-[state=active]:bg-white data-[state=active]:shadow-2xs"
+            className="gap-1.5 px-3.5 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:shadow-2xs"
           >
             <Activity className="h-3.5 w-3.5" />
             Analitik & Log
           </TabsTrigger>
           <TabsTrigger
             value="simulator"
-            className="text-xs font-semibold gap-1.5 px-3.5 data-[state=active]:bg-white data-[state=active]:shadow-2xs"
+            className="gap-1.5 px-3.5 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:shadow-2xs"
           >
             <Calculator className="h-3.5 w-3.5" />
             Komparasi & Simulasi
           </TabsTrigger>
           <TabsTrigger
             value="health"
-            className="text-xs font-semibold gap-1.5 px-3.5 data-[state=active]:bg-white data-[state=active]:shadow-2xs"
+            className="gap-1.5 px-3.5 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:shadow-2xs"
           >
             <Cpu className="h-3.5 w-3.5" />
             Status & Latensi

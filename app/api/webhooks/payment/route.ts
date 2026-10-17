@@ -228,10 +228,7 @@ export async function POST(request: Request) {
       // Perbarui status pembayaran menjadi GAGAL
       const existingPayment = await prisma.payment.findFirst({
         where: {
-          OR: [
-            { transactionId },
-            { invoiceId: invoice.id, status: "PENDING" },
-          ],
+          OR: [{ transactionId }, { invoiceId: invoice.id, status: "PENDING" }],
         },
         orderBy: { createdAt: "desc" },
       });
@@ -336,10 +333,7 @@ export async function POST(request: Request) {
       // Rekam pembayaran pending
       const existingPayment = await prisma.payment.findFirst({
         where: {
-          OR: [
-            { transactionId },
-            { invoiceId: invoice.id, status: "PENDING" },
-          ],
+          OR: [{ transactionId }, { invoiceId: invoice.id, status: "PENDING" }],
         },
         orderBy: { createdAt: "desc" },
       });

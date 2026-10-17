@@ -1,6 +1,6 @@
 # Standar Kualitas Kode & Arsitektur Modular (Code Quality Standards)
 
-Dokumen ini merupakan panduan arsitektur dan kualitas kode resmi untuk repositori **Aldera Tech**. Seluruh AI Agent dan pengembang **WAJIB** mematuhi 13 prinsip berikut saat menulis, memodifikasi, atau merefaktor kode.
+Dokumen ini merupakan panduan arsitektur dan kualitas kode resmi untuk repositori **Aldera Tech**. Seluruh AI Agent dan pengembang **WAJIB** mematuhi 18 prinsip berikut saat menulis, memodifikasi, atau merefaktor kode.
 
 ---
 
@@ -19,6 +19,11 @@ Dokumen ini merupakan panduan arsitektur dan kualitas kode resmi untuk repositor
 11. [Efisiensi State & Eliminasi Redundant useEffect](#11-efisiensi-state--eliminasi-redundant-useeffect)
 12. [Konvensi Penamaan Terstandarisasi (Naming Conventions)](#12-konvensi-penamaan-terstandarisasi-naming-conventions)
 13. [Sentralisasi Rute & Anti-Hardcoded Navigation (Zero Hardcoded Routes)](#13-sentralisasi-rute--anti-hardcoded-navigation-zero-hardcoded-routes)
+14. [Sinkronisasi State ke URL Parameters (Shareable Deep-Linking)](#14-sinkronisasi-state-ke-url-parameters-shareable-deep-linking)
+15. [Standar Penanganan 4 UI States & Input Form Hygiene](#15-standar-penanganan-4-ui-states--input-form-hygiene)
+16. [Integritas Pengetesan & Sinkronisasi Test Suite (Test Mapping & Maintenance)](#16-integritas-pengetesan--sinkronisasi-test-suite-test-mapping--maintenance)
+17. [Disiplin Git Branching & Squash Merge (No Direct Commit to Main)](#17-disiplin-git-branching--squash-merge-no-direct-commit-to-main)
+18. [Kewajiban Pengujian UI untuk Setiap Komponen & Halaman (Mandatory UI Testing)](#18-kewajiban-pengujian-ui-untuk-setiap-komponen--halaman-mandatory-ui-testing)
 
 ---
 
@@ -296,7 +301,7 @@ Konsistensi penamaan mempermudah navigasi, pembacaan kode, dan pemahaman tim ser
 
 ### Prinsip
 
-Dilarang keras menulis path URL / rute secara manual (_hardcoded string literal_) pada tautan (`<Link href="...">`), tombol navigasi, pemanggilan API (`fetch`), pengalihan halaman (`redirect`), dan invalidasi cache (`revalidatePath`). Seluruh rute wajib diimpor dari [`lib/routes.ts`](../lib/routes.ts). Panduan lengkap tersedia di [`docs/routes-and-navigation.md`](routes-and-navigation.md).
+Dilarang keras menulis path URL / rute secara manual (_hardcoded string literal_) pada tautan (`<Link href="...">`), tombol navigasi, pemanggilan API (`fetch`), pengalihan halaman (`redirect`), dan invalidasi cache (`revalidatePath`). Seluruh rute wajib diimpor dari [`lib/routes.ts`](../lib/routes.ts). Panduan lengkap tersedia di [`ai-agent-docs/routes-and-navigation.md`](routes-and-navigation.md).
 
 ### Aturan
 
@@ -324,10 +329,112 @@ revalidatePath(ADMIN_ROUTES.users);
 
 ---
 
+## 14. Sinkronisasi State ke URL Parameters (Shareable Deep-Linking)
+
+### Prinsip
+
+Seluruh state interaktif yang mengubah filter, kata kunci pencarian, urutan data, halaman paginasi, dan navigasi tab wajib direfleksikan ke dalam URL query parameters (`searchParams`).
+
+### Aturan
+
+- **Shareable State**: URL yang disalin dan dibagikan harus menampilkan kondisi antarmuka yang persis sama kepada penerima link.
+- **Konvensi Parameter**:
+  - Pencarian: `?q=` atau `?search=` (dengan debounce 300–400ms).
+  - Filter: `?category=`, `?status=`, `?role=`.
+  - Paging: `?page=`, `?limit=`. Setiap filter/search berubah, reset `page=1`.
+  - Tab Aktif: `?tab=billing`, `?tab=overview`.
+- Di Client Component, sinkronkan via `useSearchParams()` dan `router.replace(url, { scroll: false })`.
+- Di Server Component (`page.tsx`), baca data langsung dari prop `searchParams`.
+
+---
+
+## 15. Standar Penanganan 4 UI States & Input Form Hygiene
+
+### 1. Penanganan 4 Kondisi Antarmuka (4 UI States)
+
+Setiap komponen penyaji data (tabel/grid/kartu) wajib menangani 4 kondisi:
+
+1. **Loading State**: Wajib menggunakan `Skeleton` (`@/components/ui/skeleton`) yang meniru tata letak asli komponen (dilarang spinner polos atau layar putih kosong).
+2. **Empty State**: Ketika data berjumlah 0 (`data.length === 0`), tampilkan ikon visual, pesan ramah informatif, dan tombol Call-to-Action (CTA) seperti "Reset Filter" atau "Tambah Data Baru".
+3. **Error State**: Tampilkan kartu pesan error dengan tombol "Coba Lagi" (_Retry_) dan notifikasi toast `sonner`.
+4. **Large Dataset State**: Wajib menerapkan paginasi atau virtualized scrolling jika data berjumlah ratusan/ribuan baris; sertakan info ringkasan jumlah data.
+
+### 2. Standarisasi Input Form
+
+- **Placeholder Wajib**: Setiap input teks, textarea, dan select trigger wajib memiliki placeholder kontekstual yang memberikan contoh nilai nyata (misal: `placeholder="Contoh: PT Teknologi Maju Indonesia"`).
+- **Indikator Wajib (_Required_)**: Label field wajib menyertakan tanda bintang merah (`<span className="text-red-500">*</span>`).
+- **Indikator Opsional (_Optional_)**: Label field opsional wajib secara eksplisit mencantumkan keterangan `(Opsional)` (`<span className="text-xs font-normal text-slate-500">(Opsional)</span>`).
+
+---
+
+## 16. Integritas Pengetesan & Sinkronisasi Test Suite (Test Mapping & Maintenance)
+
+### Prinsip
+
+Setiap modifikasi kode (fitur baru, perbaikan bug, atau refactoring) wajib diverifikasi dan dipayungi oleh unit test yang relevan. Dilarang mengubah kode tanpa memverifikasi test terkait.
+
+### Aturan Operasional
+
+1. **Pencarian Test Terkait (_Test Mapping_)**: Sebelum atau sesaat setelah mengedit berkas kode, cari file test yang menguji fungsi/modul tersebut menggunakan `find . -name "*.test.*"` atau `grep -rn "namaFungsi" lib/ tests/ app/`.
+2. **Pembaruan Skenario Test**:
+   - Jika kontrak fungsi atau logika bisnis dimodifikasi, **wajib memperbarui nilai ekspektasi test** agar sinkron.
+   - Jika memperbaiki bug, **wajib menambahkan kasus uji regresi (_regression test_)** untuk menjamin bug tidak akan muncul kembali di masa depan.
+   - Jika membuat modul/Server Action baru, **wajib menambahkan berkas test baru** (`*.test.ts`) dengan cakupan _happy path_ dan _edge cases_.
+3. **Verifikasi Mandiri 100% PASS**: Jalankan `bun test <file.test.ts>` dan pastikan seluruh test suite `bun test` berstatus 0 fail sebelum menyatakan tugas selesai.
+
+---
+
+## 17. Disiplin Git Branching & Squash Merge (No Direct Commit to Main)
+
+### Prinsip
+
+Branch `main` adalah representasi cabang produksi yang stabil dan suci. Dilarang keras melakukan commit langsung ke branch `main`.
+
+### Aturan Operasional
+
+1. **Wajib Buat Branch Baru**: Setiap penanganan issue/task harus dimulai dengan membuat branch baru dari `main` terkini:
+   - `feat/<fitur-singkat>` untuk fitur baru
+   - `fix/<deskripsi-bug>` untuk perbaikan bug
+   - `refactor/<komponen>` untuk refactoring kode
+   - `docs/<topik>` untuk dokumentasi
+   - `chore/<tugas>` untuk dependensi dan konfigurasi
+2. **Commit Terstruktur pada Branch**: Lakukan commit pada branch kerja menggunakan format Conventional Commits (`feat: ...`, `fix: ...`).
+3. **Pull Request & Squash and Merge**:
+   - Ajukan Pull Request (PR) dari branch kerja menuju `main`.
+   - Penggabungan ke branch `main` **WAJIB menggunakan strategi Squash and Merge** untuk memadatkan riwayat pengerjaan menjadi satu commit bersih dan informatif di `main`.
+
+---
+
+## 18. Kewajiban Pengujian UI untuk Setiap Komponen & Halaman (Mandatory UI Testing)
+
+### Prinsip
+
+Seluruh komponen visual, formulir interaktif, dialog modal, dan halaman rute Next.js (`page.tsx`) **WAJIB** memiliki file pengujian UI (`*.test.tsx` atau `*.test.ts`) pendamping. Dilarang merilis atau memodifikasi antarmuka pengguna tanpa pengujian otomatis yang memverifikasi perilakunya.
+
+### Aturan Operasional
+
+1. **Pola Co-location Wajib**: File pengujian UI wajib diletakkan tepat di direktori yang sama dengan komponen/halaman yang diuji (contoh: `app/(public)/ai-relay/page.test.tsx` di samping `page.tsx`, `components/dashboard/sidebar.test.ts` di samping `sidebar.tsx`).
+2. **Cakupan Pengujian Wajib**:
+   - **Rendering & Prop Initialization**: Memastikan fungsi komponen (RSC maupun RCC) menghasilkan elemen JSX yang valid dan tidak mengalami null-pointer crash.
+   - **SEO Metadata Verification**: Pada halaman publik (`page.tsx`), verifikasi ekspor objek `metadata` (judul, deskripsi berbahasa Indonesia, dan canonical URL).
+   - **Zero Hardcoded Routes**: Verifikasi bahwa seluruh tombol, link, dan pengalihan rute mengimpor konstanta resmi dari `lib/routes.ts`.
+   - **Penanganan 4 UI States**: Uji kondisi Loading (Skeleton), Empty State (ikon + CTA), Error State (kartu error + retry), dan Large Dataset (paginasi URL).
+   - **Standarisasi Input Form**: Verifikasi kehadiran placeholder kontekstual di setiap input, tanda bintang merah (`*`) untuk field required, dan label `(Opsional)` untuk field optional.
+   - **Sinkronisasi URL Param State**: Uji integrasi state tab aktif (`?tab=`), filter/pencarian (`?q=`), dan paginasi (`?page=`).
+   - **Modal Dialog & Interaktivitas**: Verifikasi pelarangan `window.confirm()` dan pastikan menggunakan `<ConfirmDialog>` serta notifikasi toast `sonner`.
+3. **Eksekusi Test Runner**: Seluruh UI test dijalankan menggunakan `bun test` dan wajib lulus 100% tanpa error sebelum kode digabung. Panduan lengkap tersedia di [`ai-agent-docs/ui-testing.md`](ui-testing.md).
+
+---
+
 ## Checklist Audit Mandiri (Self-Audit Checklist)
 
 Sebelum menyelesaikan task pembuatan/modifikasi fitur, pastikan:
 
+- [ ] Bekerja pada branch kerja terpisah (`feat/...`, `fix/...`), BUKAN langsung di branch `main`.
+- [ ] Telah mencari file test terkait (`find . -name "*.test.*"` atau grep).
+- [ ] Memperbarui skenario test yang ada atau menambahkan test baru untuk setiap perubahan logika/bugfix.
+- [ ] Setiap komponen UI, form, modal, atau halaman rute memiliki file pengujian UI (`*.test.tsx` / `*.test.ts`) yang lolos 100% (`bun test`).
+- [ ] Seluruh unit test & UI test lulus 100% tanpa kegagalan (`bun test`).
 - [ ] Tidak ada file komponen yang membengkak melebihi batas wajar (~200–250 baris).
 - [ ] Logika state/form kompleks telah dipisahkan ke dalam custom hook.
 - [ ] Tidak ada penggunaan tipe `any`.
@@ -337,5 +444,9 @@ Sebelum menyelesaikan task pembuatan/modifikasi fitur, pastikan:
 - [ ] Styling menggunakan kelas Tailwind semantic dan fungsi `cn()`.
 - [ ] Penamaan file, folder, dan simbol mengikuti standar konvensi.
 - [ ] Seluruh tautan, navigasi, redirect, dan API call menggunakan konstanta terpusat dari `lib/routes.ts` (Zero Hardcoded Routes).
+- [ ] Searching, filtering, sorting, pagination, dan navigasi tab tersinkronisasi ke URL search parameters (Deep-linking & Shareable State).
+- [ ] Menangani 4 kondisi antarmuka: Loading Skeleton, Empty State informatif + CTA, Error State + Retry, dan Large Dataset pagination.
+- [ ] Seluruh field input memiliki placeholder kontekstual, label field required bertanda bintang merah (`*`), dan field optional bertuliskan `(Opsional)`.
 - [ ] Kode telah diformat menggunakan Prettier (`bun run format`) dan urutan utility class Tailwind tertata otomatis.
 - [ ] Tidak ada URI/path absolut mesin (`file:///...`, `/home/...`) yang tersimpan di dalam berkas repositori (Portability Check).
+- [ ] Siap diajukan Pull Request (PR) ke `main` dengan strategi Squash and Merge.

@@ -5,10 +5,7 @@ import bcrypt from "bcryptjs";
 import type { Role } from "@prisma/client";
 import { signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import {
-  loginSchema,
-  registerSchema,
-} from "@/lib/validations/auth";
+import { loginSchema, registerSchema } from "@/lib/validations/auth";
 import { getPrimaryRole } from "@/lib/permissions";
 import { sendWhatsApp } from "@/lib/whatsapp";
 import { waTemplates } from "@/lib/whatsapp-templates";
@@ -59,7 +56,12 @@ export async function loginAction(
     for (const issue of parsed.error.issues) {
       if (issue.path[0]) errors[issue.path[0] as string] = issue.message;
     }
-    return { ok: false, success: false, message: "Periksa kembali input Anda.", errors };
+    return {
+      ok: false,
+      success: false,
+      message: "Periksa kembali input Anda.",
+      errors,
+    };
   }
 
   try {
@@ -84,9 +86,17 @@ export async function loginAction(
   } catch (error) {
     if (error instanceof AuthError) {
       if (error.type === "CredentialsSignin") {
-        return { ok: false, success: false, message: "Email atau password salah." };
+        return {
+          ok: false,
+          success: false,
+          message: "Email atau password salah.",
+        };
       }
-      return { ok: false, success: false, message: "Terjadi kesalahan saat masuk." };
+      return {
+        ok: false,
+        success: false,
+        message: "Terjadi kesalahan saat masuk.",
+      };
     }
     // Re-throw non-auth errors (e.g. Next.js redirects)
     throw error;
@@ -105,7 +115,8 @@ export async function registerAction(
       name: payload.get("name"),
       email: payload.get("email"),
       password: payload.get("password"),
-      confirmPassword: payload.get("confirmPassword") ?? payload.get("password"),
+      confirmPassword:
+        payload.get("confirmPassword") ?? payload.get("password"),
       phone: payload.get("phone"),
     };
   } else if (payload && typeof payload === "object") {
@@ -211,7 +222,8 @@ export async function registerAction(
     requiresVerification: true,
     phone: normalizedPhone,
     email,
-    message: "Registrasi berhasil. Kode OTP verifikasi telah dikirim via WhatsApp.",
+    message:
+      "Registrasi berhasil. Kode OTP verifikasi telah dikirim via WhatsApp.",
   };
 }
 
@@ -245,9 +257,7 @@ export async function verifyOtpAction(
     if (typeof p === "string" && p) password = p;
   } else if (payload && typeof payload === "object") {
     const obj = payload as Record<string, unknown>;
-    identifier = String(
-      obj.identifier || obj.phone || obj.email || ""
-    ).trim();
+    identifier = String(obj.identifier || obj.phone || obj.email || "").trim();
     token = String(obj.token || obj.otp || "").trim();
     if (typeof obj.password === "string" && obj.password) {
       password = obj.password;
@@ -288,7 +298,8 @@ export async function verifyOtpAction(
     return {
       ok: false,
       success: false,
-      message: "Kode OTP tidak valid atau belum diminta. Silakan minta kode baru.",
+      message:
+        "Kode OTP tidak valid atau belum diminta. Silakan minta kode baru.",
     };
   }
 
@@ -300,7 +311,8 @@ export async function verifyOtpAction(
       attempts: tokenRecord.attempts,
       remainingAttempts: 0,
       isLocked: true,
-      message: "Batas percobaan verifikasi telah habis (maksimal 5 kali). Silakan minta kode OTP baru.",
+      message:
+        "Batas percobaan verifikasi telah habis (maksimal 5 kali). Silakan minta kode OTP baru.",
     };
   }
 
@@ -343,11 +355,7 @@ export async function verifyOtpAction(
 
   const user = await prisma.user.findFirst({
     where: {
-      OR: [
-        { phone: identifier },
-        { phone: normalized },
-        { email: identifier },
-      ],
+      OR: [{ phone: identifier }, { phone: normalized }, { email: identifier }],
     },
   });
 
@@ -395,7 +403,9 @@ export async function resendOtpAction(
   let phone = "";
 
   if (payload instanceof FormData) {
-    phone = String(payload.get("phone") || payload.get("identifier") || "").trim();
+    phone = String(
+      payload.get("phone") || payload.get("identifier") || ""
+    ).trim();
   } else if (typeof payload === "string") {
     phone = payload.trim();
   } else if (payload && typeof payload === "object") {

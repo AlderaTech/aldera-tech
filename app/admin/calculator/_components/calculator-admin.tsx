@@ -1,6 +1,14 @@
 "use client";
 
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import {
+  FolderKanban,
+  Sparkles,
+  PackagePlus,
+  SlidersHorizontal,
+} from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { ProjectTypesTab } from "./project-types-tab";
 import { FeaturesTab } from "./features-tab";
 import { AddOnsTab } from "./add-ons-tab";
@@ -21,28 +29,71 @@ type Props = {
     addOns: AdminAddOn[];
     config: AdminConfig;
   };
+  initialTab?: string;
 };
 
-export function CalculatorAdmin({ data }: Props) {
+export function CalculatorAdmin({ data, initialTab = "types" }: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const currentTab = searchParams.get("tab") || initialTab;
+
+  function handleTabChange(value: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", value);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }
+
   return (
-    <Tabs defaultValue="types">
-      <TabsList>
-        <TabsTrigger value="types">Jenis Proyek</TabsTrigger>
-        <TabsTrigger value="features">Fitur</TabsTrigger>
-        <TabsTrigger value="addons">Add-On</TabsTrigger>
-        <TabsTrigger value="config">Pengaturan</TabsTrigger>
+    <Tabs value={currentTab} onValueChange={handleTabChange}>
+      <TabsList className="grid h-11 w-full grid-cols-2 p-1 sm:inline-flex sm:w-auto sm:grid-cols-4">
+        <TabsTrigger value="types" className="flex items-center gap-2">
+          <FolderKanban className="size-4" />
+          <span>Jenis Proyek</span>
+          <Badge
+            variant="secondary"
+            className="ml-1 px-1.5 py-0 text-[11px] font-medium"
+          >
+            {data.projectTypes.length}
+          </Badge>
+        </TabsTrigger>
+        <TabsTrigger value="features" className="flex items-center gap-2">
+          <Sparkles className="size-4" />
+          <span>Fitur</span>
+          <Badge
+            variant="secondary"
+            className="ml-1 px-1.5 py-0 text-[11px] font-medium"
+          >
+            {data.features.length}
+          </Badge>
+        </TabsTrigger>
+        <TabsTrigger value="addons" className="flex items-center gap-2">
+          <PackagePlus className="size-4" />
+          <span>Add-On</span>
+          <Badge
+            variant="secondary"
+            className="ml-1 px-1.5 py-0 text-[11px] font-medium"
+          >
+            {data.addOns.length}
+          </Badge>
+        </TabsTrigger>
+        <TabsTrigger value="config" className="flex items-center gap-2">
+          <SlidersHorizontal className="size-4" />
+          <span>Pengaturan</span>
+        </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="types" className="mt-4">
+      <TabsContent value="types" className="mt-5 space-y-4">
         <ProjectTypesTab items={data.projectTypes} />
       </TabsContent>
-      <TabsContent value="features" className="mt-4">
+      <TabsContent value="features" className="mt-5 space-y-4">
         <FeaturesTab items={data.features} projectTypes={data.projectTypes} />
       </TabsContent>
-      <TabsContent value="addons" className="mt-4">
+      <TabsContent value="addons" className="mt-5 space-y-4">
         <AddOnsTab items={data.addOns} />
       </TabsContent>
-      <TabsContent value="config" className="mt-4">
+      <TabsContent value="config" className="mt-5 space-y-4">
         <ConfigTab config={data.config} />
       </TabsContent>
     </Tabs>

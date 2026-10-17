@@ -1,12 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Check,
-  Code2,
-  Copy,
-  FileCode,
-} from "lucide-react";
+import { Check, Code2, Copy, FileCode } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -98,7 +93,9 @@ export function PresetConfigModal({
   );
   const effectiveKey =
     customKey ||
-    (activeKeyObj ? `${activeKeyObj.key_prefix}••••••••••••••••••••••••••••••••••••••••` : "sk-toko-YOUR_API_KEY_HERE");
+    (activeKeyObj
+      ? `${activeKeyObj.key_prefix}••••••••••••••••••••••••••••••••••••••••`
+      : "sk-toko-YOUR_API_KEY_HERE");
 
   const configJson = generateIdePresetConfig(selectedTarget, {
     apiKey: effectiveKey,
@@ -172,7 +169,7 @@ export function PresetConfigModal({
                 placeholder="Masukkan API Key Anda (sk-toko-...)"
                 value={customKey}
                 onChange={(e) => setCustomKey(e.target.value)}
-                className="text-xs font-mono"
+                className="font-mono text-xs"
               />
             )}
           </div>
@@ -183,12 +180,12 @@ export function PresetConfigModal({
             onValueChange={(v) => setSelectedTarget(v as IdeTarget)}
             className="w-full"
           >
-            <TabsList className="grid grid-cols-5 bg-slate-100 p-1 h-9">
+            <TabsList className="grid h-9 grid-cols-5 bg-slate-100 p-1">
               {IDE_TARGETS.map((ide) => (
                 <TabsTrigger
                   key={ide.id}
                   value={ide.id}
-                  className="text-xs font-medium h-7"
+                  className="h-7 text-xs font-medium"
                 >
                   {ide.name.split(" ")[0]}
                 </TabsTrigger>
@@ -207,7 +204,7 @@ export function PresetConfigModal({
                 variant="outline"
                 size="sm"
                 onClick={handleCopy}
-                className="h-7 gap-1 text-xs px-2.5 border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+                className="h-7 gap-1 border-indigo-200 px-2.5 text-xs text-indigo-700 hover:bg-indigo-50"
               >
                 {copied ? (
                   <>
@@ -223,18 +220,18 @@ export function PresetConfigModal({
               </Button>
             </div>
 
-            <div className="relative rounded-lg bg-slate-950 p-3.5 font-mono text-xs text-slate-100 overflow-x-auto shadow-inner">
-              <pre className="select-all leading-relaxed whitespace-pre">
+            <div className="relative overflow-x-auto rounded-lg bg-slate-950 p-3.5 font-mono text-xs text-slate-100 shadow-inner">
+              <pre className="leading-relaxed whitespace-pre select-all">
                 {configJson}
               </pre>
             </div>
           </div>
 
           {/* Notice info */}
-          <div className="rounded-lg bg-slate-50 p-3 text-[11px] text-slate-600 border space-y-1">
+          <div className="space-y-1 rounded-lg border bg-slate-50 p-3 text-[11px] text-slate-600">
             <p>
               💡 <strong>Catatan:</strong> Jika Anda menyalin kunci bertanda{" "}
-              <code className="text-slate-800 font-mono">••••</code>, ganti
+              <code className="font-mono text-slate-800">••••</code>, ganti
               dengan API Key lengkap 56-karakter yang Anda simpan saat pembuatan
               kunci.
             </p>

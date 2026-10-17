@@ -14,7 +14,8 @@ export default async function AdminLayout({
   const session = await auth();
   if (!session?.user)
     redirect(AUTH_ROUTES.loginWithCallback(ADMIN_ROUTES.home));
-  if (!isStaff(session.user.roles ?? session.user.role)) redirect(DASHBOARD_ROUTES.home);
+  if (!isStaff(session.user.roles ?? session.user.role))
+    redirect(DASHBOARD_ROUTES.home);
 
   const navConfig = getAdminNavConfig(session.user.roles ?? session.user.role);
 

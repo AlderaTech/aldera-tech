@@ -40,6 +40,7 @@ async function main() {
       name: "Aldera Admin",
       roles: ["ADMIN"],
       isActive: true,
+      phoneVerified: new Date(),
     },
     create: {
       email: adminEmail,
@@ -48,6 +49,7 @@ async function main() {
       password: hashedAdminPassword,
       isActive: true,
       emailVerified: new Date(),
+      phoneVerified: new Date(),
     },
   });
 
@@ -59,6 +61,7 @@ async function main() {
       roles: ["ADMIN", "DEVELOPER"],
       password: hashedPassword,
       isActive: true,
+      phoneVerified: new Date(),
     },
     create: {
       email: "gading@gmail.com",
@@ -68,6 +71,7 @@ async function main() {
       password: hashedPassword,
       isActive: true,
       emailVerified: new Date(),
+      phoneVerified: new Date(),
     },
   });
 
@@ -79,6 +83,7 @@ async function main() {
       roles: ["ADMIN", "DEVELOPER"],
       password: hashedPassword,
       isActive: true,
+      phoneVerified: new Date(),
     },
     create: {
       email: "dery@gmail.com",
@@ -88,6 +93,7 @@ async function main() {
       password: hashedPassword,
       isActive: true,
       emailVerified: new Date(),
+      phoneVerified: new Date(),
     },
   });
 
@@ -99,6 +105,7 @@ async function main() {
       roles: ["ADMIN", "DEVELOPER"],
       password: hashedPassword,
       isActive: true,
+      phoneVerified: new Date(),
     },
     create: {
       email: "rafli@gmail.com",
@@ -108,6 +115,7 @@ async function main() {
       password: hashedPassword,
       isActive: true,
       emailVerified: new Date(),
+      phoneVerified: new Date(),
     },
   });
 
@@ -122,6 +130,7 @@ async function main() {
       roles: ["CLIENT"],
       password: hashedPassword,
       isActive: true,
+      phoneVerified: new Date(),
     },
     create: {
       email: "gading-client@gmail.com",
@@ -131,6 +140,7 @@ async function main() {
       password: hashedPassword,
       isActive: true,
       emailVerified: new Date(),
+      phoneVerified: new Date(),
     },
   });
 
@@ -142,6 +152,7 @@ async function main() {
       roles: ["CLIENT"],
       password: hashedPassword,
       isActive: true,
+      phoneVerified: new Date(),
     },
     create: {
       email: "dery-client@gmail.com",
@@ -151,6 +162,7 @@ async function main() {
       password: hashedPassword,
       isActive: true,
       emailVerified: new Date(),
+      phoneVerified: new Date(),
     },
   });
 
@@ -162,6 +174,7 @@ async function main() {
       roles: ["CLIENT"],
       password: hashedPassword,
       isActive: true,
+      phoneVerified: new Date(),
     },
     create: {
       email: "rafli-client@gmail.com",
@@ -171,6 +184,7 @@ async function main() {
       password: hashedPassword,
       isActive: true,
       emailVerified: new Date(),
+      phoneVerified: new Date(),
     },
   });
 
@@ -270,44 +284,206 @@ async function main() {
   await prisma.techTool.createMany({
     data: [
       // Frontend
-      { name: "Next.js", category: "Frontend", icon: "Globe", order: 1, active: true },
-      { name: "React", category: "Frontend", icon: "Code2", order: 2, active: true },
-      { name: "TypeScript", category: "Frontend", icon: "FileCode", order: 3, active: true },
-      { name: "Tailwind CSS", category: "Frontend", icon: "Palette", order: 4, active: true },
-      { name: "Vue.js", category: "Frontend", icon: "Layers", order: 5, active: true },
+      {
+        name: "Next.js",
+        category: "Frontend",
+        icon: "Globe",
+        order: 1,
+        active: true,
+      },
+      {
+        name: "React",
+        category: "Frontend",
+        icon: "Code2",
+        order: 2,
+        active: true,
+      },
+      {
+        name: "TypeScript",
+        category: "Frontend",
+        icon: "FileCode",
+        order: 3,
+        active: true,
+      },
+      {
+        name: "Tailwind CSS",
+        category: "Frontend",
+        icon: "Palette",
+        order: 4,
+        active: true,
+      },
+      {
+        name: "Vue.js",
+        category: "Frontend",
+        icon: "Layers",
+        order: 5,
+        active: true,
+      },
 
       // Backend
-      { name: "Node.js", category: "Backend", icon: "Server", order: 1, active: true },
+      {
+        name: "Node.js",
+        category: "Backend",
+        icon: "Server",
+        order: 1,
+        active: true,
+      },
       { name: "Go", category: "Backend", icon: "Cpu", order: 2, active: true },
-      { name: "Python", category: "Backend", icon: "Terminal", order: 3, active: true },
-      { name: "PostgreSQL", category: "Backend", icon: "Database", order: 4, active: true },
-      { name: "Redis", category: "Backend", icon: "Zap", order: 5, active: true },
-      { name: "Prisma", category: "Backend", icon: "Layers", order: 6, active: true },
+      {
+        name: "Python",
+        category: "Backend",
+        icon: "Terminal",
+        order: 3,
+        active: true,
+      },
+      {
+        name: "PostgreSQL",
+        category: "Backend",
+        icon: "Database",
+        order: 4,
+        active: true,
+      },
+      {
+        name: "Redis",
+        category: "Backend",
+        icon: "Zap",
+        order: 5,
+        active: true,
+      },
+      {
+        name: "Prisma",
+        category: "Backend",
+        icon: "Layers",
+        order: 6,
+        active: true,
+      },
 
       // Mobile
-      { name: "React Native", category: "Mobile", icon: "Smartphone", order: 1, active: true },
-      { name: "Flutter", category: "Mobile", icon: "Smartphone", order: 2, active: true },
-      { name: "Swift (iOS)", category: "Mobile", icon: "Smartphone", order: 3, active: true },
-      { name: "Kotlin (Android)", category: "Mobile", icon: "Smartphone", order: 4, active: true },
+      {
+        name: "React Native",
+        category: "Mobile",
+        icon: "Smartphone",
+        order: 1,
+        active: true,
+      },
+      {
+        name: "Flutter",
+        category: "Mobile",
+        icon: "Smartphone",
+        order: 2,
+        active: true,
+      },
+      {
+        name: "Swift (iOS)",
+        category: "Mobile",
+        icon: "Smartphone",
+        order: 3,
+        active: true,
+      },
+      {
+        name: "Kotlin (Android)",
+        category: "Mobile",
+        icon: "Smartphone",
+        order: 4,
+        active: true,
+      },
 
       // Cloud & DevOps
-      { name: "Docker", category: "Cloud & DevOps", icon: "Box", order: 1, active: true },
-      { name: "Kubernetes", category: "Cloud & DevOps", icon: "Boxes", order: 2, active: true },
-      { name: "AWS", category: "Cloud & DevOps", icon: "Cloud", order: 3, active: true },
-      { name: "Cloudflare", category: "Cloud & DevOps", icon: "Shield", order: 4, active: true },
-      { name: "GitHub Actions", category: "Cloud & DevOps", icon: "GitBranch", order: 5, active: true },
+      {
+        name: "Docker",
+        category: "Cloud & DevOps",
+        icon: "Box",
+        order: 1,
+        active: true,
+      },
+      {
+        name: "Kubernetes",
+        category: "Cloud & DevOps",
+        icon: "Boxes",
+        order: 2,
+        active: true,
+      },
+      {
+        name: "AWS",
+        category: "Cloud & DevOps",
+        icon: "Cloud",
+        order: 3,
+        active: true,
+      },
+      {
+        name: "Cloudflare",
+        category: "Cloud & DevOps",
+        icon: "Shield",
+        order: 4,
+        active: true,
+      },
+      {
+        name: "GitHub Actions",
+        category: "Cloud & DevOps",
+        icon: "GitBranch",
+        order: 5,
+        active: true,
+      },
 
       // UI/UX
-      { name: "Figma", category: "UI/UX", icon: "Palette", order: 1, active: true },
-      { name: "Framer", category: "UI/UX", icon: "Layout", order: 2, active: true },
-      { name: "Storybook", category: "UI/UX", icon: "BookOpen", order: 3, active: true },
+      {
+        name: "Figma",
+        category: "UI/UX",
+        icon: "Palette",
+        order: 1,
+        active: true,
+      },
+      {
+        name: "Framer",
+        category: "UI/UX",
+        icon: "Layout",
+        order: 2,
+        active: true,
+      },
+      {
+        name: "Storybook",
+        category: "UI/UX",
+        icon: "BookOpen",
+        order: 3,
+        active: true,
+      },
 
       // AI/LLM
-      { name: "OpenAI", category: "AI/LLM", icon: "BrainCircuit", order: 1, active: true },
-      { name: "Anthropic", category: "AI/LLM", icon: "Sparkles", order: 2, active: true },
-      { name: "DeepSeek", category: "AI/LLM", icon: "Zap", order: 3, active: true },
-      { name: "LangChain", category: "AI/LLM", icon: "Layers", order: 4, active: true },
-      { name: "Hugging Face", category: "AI/LLM", icon: "Cpu", order: 5, active: true },
+      {
+        name: "OpenAI",
+        category: "AI/LLM",
+        icon: "BrainCircuit",
+        order: 1,
+        active: true,
+      },
+      {
+        name: "Anthropic",
+        category: "AI/LLM",
+        icon: "Sparkles",
+        order: 2,
+        active: true,
+      },
+      {
+        name: "DeepSeek",
+        category: "AI/LLM",
+        icon: "Zap",
+        order: 3,
+        active: true,
+      },
+      {
+        name: "LangChain",
+        category: "AI/LLM",
+        icon: "Layers",
+        order: 4,
+        active: true,
+      },
+      {
+        name: "Hugging Face",
+        category: "AI/LLM",
+        icon: "Cpu",
+        order: 5,
+        active: true,
+      },
     ],
   });
   console.log("✔ Tech tools seeded");
@@ -322,7 +498,8 @@ async function main() {
         slug: "web-application-engineering",
         title: "Web Application Engineering",
         icon: "Code2",
-        summary: "Pengembangan web application skala enterprise yang performan, aman, dan siap scale.",
+        summary:
+          "Pengembangan web application skala enterprise yang performan, aman, dan siap scale.",
         description:
           "Mulai dari SaaS modern, portal korporat, hingga platform interaktif berlatensi rendah. Dibangun dengan Next.js, React, TypeScript, dan arsitektur microservices atau serverless yang scalable.",
         deliverables: [
@@ -339,7 +516,8 @@ async function main() {
         slug: "mobile-app-development",
         title: "Mobile App Development",
         icon: "Smartphone",
-        summary: "Aplikasi mobile iOS & Android berperforma native dengan siklus rilis gesit.",
+        summary:
+          "Aplikasi mobile iOS & Android berperforma native dengan siklus rilis gesit.",
         description:
           "Solusi mobile komprehensif menggunakan React Native dan Flutter. Menghadirkan performa mulus, integrasi hardware (kamera, bluetooth, GPS), serta offline-first synchronization.",
         deliverables: [
@@ -356,7 +534,8 @@ async function main() {
         slug: "enterprise-cloud-devops",
         title: "Enterprise Cloud & DevOps",
         icon: "Cloud",
-        summary: "Infrastruktur cloud berstandar tinggi, otomatisasi deployment, dan ketahanan sistem 99.9%.",
+        summary:
+          "Infrastruktur cloud berstandar tinggi, otomatisasi deployment, dan ketahanan sistem 99.9%.",
         description:
           "Perancangan arsitektur multi-cloud di AWS, GCP, atau Bare-Metal dengan prinsip Infrastructure as Code (Terraform), Kubernetes cluster orchestration, dan observabilitas menyeluruh.",
         deliverables: [
@@ -373,7 +552,8 @@ async function main() {
         slug: "ai-machine-learning-solutions",
         title: "AI & Machine Learning Solutions",
         icon: "BrainCircuit",
-        summary: "Integrasi LLM aggregator, autonomous agents, dan pipeline machine learning terapan.",
+        summary:
+          "Integrasi LLM aggregator, autonomous agents, dan pipeline machine learning terapan.",
         description:
           "Mengembangkan kapabilitas AI generatif ke dalam alur kerja bisnis: enterprise RAG (Retrieval-Augmented Generation), fine-tuned domain models, AI API relays berkinerja tinggi, dan bot cerdas multi-channel.",
         deliverables: [
@@ -390,7 +570,8 @@ async function main() {
         slug: "ui-ux-product-design",
         title: "UI/UX & Product Design",
         icon: "Palette",
-        summary: "Riset pengguna, prototipe interaktif, dan design system yang berorientasi konversi bisnis.",
+        summary:
+          "Riset pengguna, prototipe interaktif, dan design system yang berorientasi konversi bisnis.",
         description:
           "Merancang antarmuka produk digital intuitif yang menyatukan estetika modern dan kemudahan navigasi. Kami membangun design system lengkap di Figma yang siap diterjemahkan ke komponen kode.",
         deliverables: [
@@ -407,7 +588,8 @@ async function main() {
         slug: "maintenance-quality-engineering",
         title: "Maintenance & Quality Engineering",
         icon: "ShieldCheck",
-        summary: "Audit kode, pemeliharaan berkelanjutan, pengujian otomatis, dan mitigasi downtime.",
+        summary:
+          "Audit kode, pemeliharaan berkelanjutan, pengujian otomatis, dan mitigasi downtime.",
         description:
           "Menjaga stabilitas dan keamanan aplikasi produksi dengan uji regresi berkala, automated unit & E2E testing, patching celah keamanan, optimasi query database, dan SLA tanggap cepat.",
         deliverables: [
@@ -734,7 +916,13 @@ async function main() {
       result:
         "Konversi lead ke deal naik 300%. Onboarding turun dari 14 hari menjadi 2 hari. Penghematan biaya operasional AI mencapai 38%.",
       featuredImage: "/images/portfolio/technova-b2b-platform.webp",
-      techStack: ["Next.js", "TypeScript", "PostgreSQL", "Docker", "Tailwind CSS"],
+      techStack: [
+        "Next.js",
+        "TypeScript",
+        "PostgreSQL",
+        "Docker",
+        "Tailwind CSS",
+      ],
       published: true,
       order: 1,
     },
@@ -758,7 +946,8 @@ async function main() {
     },
     {
       slug: "finsmart-mobile-app",
-      title: "FinSmart: Aplikasi Personal Finance & Wealth Tracker 100K+ Pengguna",
+      title:
+        "FinSmart: Aplikasi Personal Finance & Wealth Tracker 100K+ Pengguna",
       client: "FinSmart Asia",
       industry: "FinTech & Wealth Management",
       summary:
@@ -770,13 +959,20 @@ async function main() {
       result:
         "100.000+ unduhan organik, crash-free session 99.8%, rating 4.8 di App Store & Play Store, dan waktu muat berkurang 65%.",
       featuredImage: "/images/portfolio/finsmart-mobile-app.webp",
-      techStack: ["React Native", "TypeScript", "Node.js", "Redis", "Framer Motion"],
+      techStack: [
+        "React Native",
+        "TypeScript",
+        "Node.js",
+        "Redis",
+        "Framer Motion",
+      ],
       published: true,
       order: 3,
     },
     {
       slug: "medikare-cloud-hospital",
-      title: "Medikare: Sistem Informasi Rumah Sakit & Telekonsultasi Terintegrasi",
+      title:
+        "Medikare: Sistem Informasi Rumah Sakit & Telekonsultasi Terintegrasi",
       client: "Medikare Hospital Network",
       industry: "Healthcare & MedTech",
       summary:
@@ -937,7 +1133,8 @@ async function main() {
     data: {
       name: "Web App & SaaS",
       slug: "web-app",
-      description: "Platform SaaS, web application kustom, dashboard analytics, dan portal korporat interaktif",
+      description:
+        "Platform SaaS, web application kustom, dashboard analytics, dan portal korporat interaktif",
       basePrice: 12000000,
       icon: "code2",
       dependentFields: [
@@ -958,7 +1155,8 @@ async function main() {
     data: {
       name: "Mobile App iOS / Android",
       slug: "mobile-app",
-      description: "Aplikasi mobile cross-platform (React Native / Flutter) siap rilis di Play Store & App Store",
+      description:
+        "Aplikasi mobile cross-platform (React Native / Flutter) siap rilis di Play Store & App Store",
       basePrice: 15000000,
       icon: "smartphone",
       dependentFields: [
@@ -979,7 +1177,8 @@ async function main() {
     data: {
       name: "E-Commerce Platform",
       slug: "ecommerce",
-      description: "Toko online kustom, payment gateway Midtrans, sistem katalog, manajemen inventori, dan logistik kurir",
+      description:
+        "Toko online kustom, payment gateway Midtrans, sistem katalog, manajemen inventori, dan logistik kurir",
       basePrice: 18000000,
       icon: "shoppingBag",
       dependentFields: [
@@ -1000,7 +1199,8 @@ async function main() {
     data: {
       name: "Custom Enterprise Solution",
       slug: "custom-enterprise",
-      description: "Sistem arsitektur enterprise kustom, AI integration, otomasi workflow bisnis, dan integrasi API legacy",
+      description:
+        "Sistem arsitektur enterprise kustom, AI integration, otomasi workflow bisnis, dan integrasi API legacy",
       basePrice: 25000000,
       icon: "layers",
       dependentFields: [

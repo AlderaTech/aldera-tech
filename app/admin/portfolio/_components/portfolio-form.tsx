@@ -27,7 +27,7 @@ export function PortfolioForm({ initial }: { initial?: PortfolioFormInitial }) {
           <Button
             type="submit"
             disabled={form.isPending}
-            className="bg-brand-primary hover:bg-brand-primary-hover gap-1.5 text-white"
+            className="gap-1.5 bg-brand-primary text-white hover:bg-brand-primary-hover"
           >
             {form.isPending ? (
               <Loader2 className="size-4 animate-spin" />

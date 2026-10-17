@@ -156,4 +156,3 @@ export const waTemplates = {
     };
   },
 } as const;
-

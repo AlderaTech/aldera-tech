@@ -5,7 +5,8 @@ import { ADMIN_ROUTES, AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 
 export const metadata = {
   title: "AI Relay Operations — Admin Portal Aldera Tech",
-  description: "Manajemen katalog model, pricing dinamis, sinkronisasi 9router, approval top-up, dan audit ledger.",
+  description:
+    "Manajemen katalog model, pricing dinamis, sinkronisasi 9router, approval top-up, dan audit ledger.",
 };
 
 export default async function AdminAiRelayLayout({

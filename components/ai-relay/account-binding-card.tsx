@@ -84,7 +84,9 @@ export function AccountBindingCard() {
           token: res.token,
           code: res.code,
           deepLink: res.deepLink,
-          expiresAt: res.expiresAt ?? new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+          expiresAt:
+            res.expiresAt ??
+            new Date(Date.now() + 15 * 60 * 1000).toISOString(),
         },
       });
       toast.success("Kode binding baru berhasil digenerate!");
@@ -133,7 +135,7 @@ export function AccountBindingCard() {
     return (
       <Card className="border-slate-200 shadow-xs">
         <CardHeader className="pb-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <Skeleton className="size-10 rounded-xl" />
               <div className="space-y-1.5">
@@ -141,7 +143,7 @@ export function AccountBindingCard() {
                 <Skeleton className="h-3.5 w-72" />
               </div>
             </div>
-            <Skeleton className="h-8 w-20 self-start sm:self-auto rounded-md" />
+            <Skeleton className="h-8 w-20 self-start rounded-md sm:self-auto" />
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -158,27 +160,31 @@ export function AccountBindingCard() {
   return (
     <Card className="border-slate-200 shadow-xs">
       <CardHeader className="pb-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-blue-50 p-2.5 text-blue-600 border border-blue-100">
+            <div className="rounded-xl border border-blue-100 bg-blue-50 p-2.5 text-blue-600">
               <Send className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg font-bold text-slate-900">
                 Integrasi Telegram Bot
                 {status.isBound ? (
-                  <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 hover:bg-emerald-100 font-semibold text-xs">
-                    <ShieldCheck className="h-3 w-3 mr-1" />
+                  <Badge className="border-emerald-200 bg-emerald-100 text-xs font-semibold text-emerald-800 hover:bg-emerald-100">
+                    <ShieldCheck className="mr-1 h-3 w-3" />
                     Terhubung
                   </Badge>
                 ) : (
-                  <Badge variant="outline" className="text-amber-800 bg-amber-50 border-amber-200 font-semibold text-xs">
+                  <Badge
+                    variant="outline"
+                    className="border-amber-200 bg-amber-50 text-xs font-semibold text-amber-800"
+                  >
                     Belum Terhubung
                   </Badge>
                 )}
               </CardTitle>
-              <CardDescription className="text-xs text-muted-foreground mt-0.5">
-                Sinkronisasikan saldo Rupiah, top-up, dan API Key antara dashboard web dan bot Telegram.
+              <CardDescription className="mt-0.5 text-xs text-muted-foreground">
+                Sinkronisasikan saldo Rupiah, top-up, dan API Key antara
+                dashboard web dan bot Telegram.
               </CardDescription>
             </div>
           </div>
@@ -188,9 +194,9 @@ export function AccountBindingCard() {
             size="sm"
             onClick={fetchStatus}
             disabled={submitting}
-            className="text-xs h-8 text-slate-600 hover:text-slate-900 self-start sm:self-auto"
+            className="h-8 self-start text-xs text-slate-600 hover:text-slate-900 sm:self-auto"
           >
-            <RefreshCw className="h-3.5 w-3.5 mr-1" />
+            <RefreshCw className="mr-1 h-3.5 w-3.5" />
             Refresh
           </Button>
         </div>
@@ -199,19 +205,19 @@ export function AccountBindingCard() {
       <CardContent className="space-y-6 pt-0">
         {status.isBound ? (
           // ================= BOUND STATE =================
-          <div className="rounded-xl border border-emerald-200/80 bg-emerald-50/40 p-4 sm:p-5 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-4 rounded-xl border border-emerald-200/80 bg-emerald-50/40 p-4 sm:p-5">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div className="space-y-1">
-                <span className="text-xs font-semibold text-emerald-900 uppercase tracking-wider block">
+                <span className="block text-xs font-semibold tracking-wider text-emerald-900 uppercase">
                   Detail Akun Telegram Terhubung
                 </span>
                 <div className="flex items-center gap-2 font-mono text-sm text-slate-800">
                   <span className="font-bold">Telegram ID:</span>
-                  <code className="bg-white px-2 py-0.5 rounded border border-emerald-200 font-semibold text-emerald-900">
+                  <code className="rounded border border-emerald-200 bg-white px-2 py-0.5 font-semibold text-emerald-900">
                     {String(status.telegramId)}
                   </code>
                   {status.telegramUsername && (
-                    <span className="text-slate-500 font-sans text-xs">
+                    <span className="font-sans text-xs text-slate-500">
                       (@{status.telegramUsername})
                     </span>
                   )}
@@ -233,12 +239,12 @@ export function AccountBindingCard() {
                     variant="destructive"
                     size="sm"
                     disabled={submitting}
-                    className="text-xs h-8 bg-rose-600 hover:bg-rose-700 self-start sm:self-auto cursor-pointer"
+                    className="h-8 cursor-pointer self-start bg-rose-600 text-xs hover:bg-rose-700 sm:self-auto"
                   >
                     {submitting ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                      <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                     ) : (
-                      <Unlink className="h-3.5 w-3.5 mr-1.5" />
+                      <Unlink className="mr-1.5 h-3.5 w-3.5" />
                     )}
                     Putuskan Tautan
                   </Button>
@@ -246,66 +252,76 @@ export function AccountBindingCard() {
               />
             </div>
 
-            <p className="text-xs text-slate-600 leading-relaxed border-t border-emerald-200/60 pt-3">
-              ✅ Akun Telegram Anda aktif tersinkronisasi. Anda dapat menggunakan perintah{" "}
-              <code className="text-emerald-800 font-semibold">/saldo</code>,{" "}
-              <code className="text-emerald-800 font-semibold">/apikey</code>, dan{" "}
-              <code className="text-emerald-800 font-semibold">/models</code> di bot Telegram dengan saldo
-              yang sama dengan akun web ini.
+            <p className="border-t border-emerald-200/60 pt-3 text-xs leading-relaxed text-slate-600">
+              ✅ Akun Telegram Anda aktif tersinkronisasi. Anda dapat
+              menggunakan perintah{" "}
+              <code className="font-semibold text-emerald-800">/saldo</code>,{" "}
+              <code className="font-semibold text-emerald-800">/apikey</code>,
+              dan{" "}
+              <code className="font-semibold text-emerald-800">/models</code> di
+              bot Telegram dengan saldo yang sama dengan akun web ini.
             </p>
           </div>
         ) : (
           // ================= UNBOUND STATE =================
           <div className="space-y-5">
             {status.activeToken ? (
-              <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-5 space-y-5">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-blue-200/60 pb-3">
+              <div className="space-y-5 rounded-xl border border-blue-200 bg-blue-50/50 p-5">
+                <div className="flex flex-col justify-between gap-2 border-b border-blue-200/60 pb-3 sm:flex-row sm:items-center">
                   <div>
-                    <span className="text-xs font-bold text-blue-900 uppercase tracking-wider">
+                    <span className="text-xs font-bold tracking-wider text-blue-900 uppercase">
                       Kode Verifikasi Penautan Akun
                     </span>
-                    <p className="text-xs text-blue-700 mt-0.5">
-                      Berlaku hingga 15 menit ke depan. Pilih salah satu cara berikut untuk menghubungkan:
+                    <p className="mt-0.5 text-xs text-blue-700">
+                      Berlaku hingga 15 menit ke depan. Pilih salah satu cara
+                      berikut untuk menghubungkan:
                     </p>
                   </div>
-                  <Badge variant="outline" className="bg-white border-blue-300 text-blue-700 text-[11px] self-start sm:self-auto">
+                  <Badge
+                    variant="outline"
+                    className="self-start border-blue-300 bg-white text-[11px] text-blue-700 sm:self-auto"
+                  >
                     Berlaku 15 Menit
                   </Badge>
                 </div>
 
                 {/* Option 1: One-click Telegram Deep-link */}
-                <div className="space-y-2 bg-white rounded-lg p-4 border border-blue-100 shadow-2xs">
+                <div className="space-y-2 rounded-lg border border-blue-100 bg-white p-4 shadow-2xs">
                   <div className="flex items-center justify-between gap-2">
                     <div>
-                      <span className="text-xs font-bold text-slate-900 block">
+                      <span className="block text-xs font-bold text-slate-900">
                         Metode 1: Buka Tautan Otomatis (Direkomendasikan)
                       </span>
-                      <p className="text-xs text-slate-500 mt-0.5">
-                        Klik tombol untuk langsung membuka Telegram dan bot akan otomatis menautkan akun Anda.
+                      <p className="mt-0.5 text-xs text-slate-500">
+                        Klik tombol untuk langsung membuka Telegram dan bot akan
+                        otomatis menautkan akun Anda.
                       </p>
                     </div>
                   </div>
 
-                  <div className="pt-2 flex flex-wrap gap-2.5">
+                  <div className="flex flex-wrap gap-2.5 pt-2">
                     <Button
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-xs h-9 shadow-xs"
-                      onClick={() => window.open(status.activeToken?.deepLink, "_blank")}
+                      className="h-9 bg-blue-600 text-xs text-white shadow-xs hover:bg-blue-700"
+                      onClick={() =>
+                        window.open(status.activeToken?.deepLink, "_blank")
+                      }
                     >
-                      <Send className="h-3.5 w-3.5 mr-1.5" />
+                      <Send className="mr-1.5 h-3.5 w-3.5" />
                       Buka di Telegram Bot
-                      <ExternalLink className="h-3 w-3 ml-1.5 opacity-80" />
+                      <ExternalLink className="ml-1.5 h-3 w-3 opacity-80" />
                     </Button>
                     <Button
                       variant="outline"
-                      className="text-xs h-9 text-slate-700"
+                      className="h-9 text-xs text-slate-700"
                       onClick={() =>
-                        status.activeToken && copyToClipboard(status.activeToken.deepLink, "link")
+                        status.activeToken &&
+                        copyToClipboard(status.activeToken.deepLink, "link")
                       }
                     >
                       {copiedLink ? (
-                        <Check className="h-3.5 w-3.5 text-emerald-600 mr-1.5" />
+                        <Check className="mr-1.5 h-3.5 w-3.5 text-emerald-600" />
                       ) : (
-                        <Copy className="h-3.5 w-3.5 text-slate-500 mr-1.5" />
+                        <Copy className="mr-1.5 h-3.5 w-3.5 text-slate-500" />
                       )}
                       Salin Link Tautan
                     </Button>
@@ -313,21 +329,21 @@ export function AccountBindingCard() {
                 </div>
 
                 {/* Option 2: 6-digit Code */}
-                <div className="space-y-2 bg-white rounded-lg p-4 border border-blue-100 shadow-2xs">
+                <div className="space-y-2 rounded-lg border border-blue-100 bg-white p-4 shadow-2xs">
                   <div>
-                    <span className="text-xs font-bold text-slate-900 block">
+                    <span className="block text-xs font-bold text-slate-900">
                       Metode 2: Masukkan Kode 6-Digit di Bot
                     </span>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <p className="mt-0.5 text-xs text-slate-500">
                       Buka bot di Telegram, lalu kirim perintah manual:{" "}
-                      <code className="text-slate-800 bg-slate-100 px-1 py-0.5 rounded font-mono text-[11px]">
+                      <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px] text-slate-800">
                         /bind {status.activeToken.code}
                       </code>
                     </p>
                   </div>
 
-                  <div className="pt-3 flex flex-col sm:flex-row sm:items-center gap-3">
-                    <div className="inline-flex items-center gap-2 font-mono text-2xl font-extrabold tracking-widest text-blue-900 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
+                  <div className="flex flex-col gap-3 pt-3 sm:flex-row sm:items-center">
+                    <div className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 font-mono text-2xl font-extrabold tracking-widest text-blue-900">
                       <span>{status.activeToken.code.slice(0, 3)}</span>
                       <span>{status.activeToken.code.slice(3)}</span>
                     </div>
@@ -335,15 +351,16 @@ export function AccountBindingCard() {
                     <Button
                       variant="secondary"
                       size="sm"
-                      className="h-10 text-xs font-semibold px-4"
+                      className="h-10 px-4 text-xs font-semibold"
                       onClick={() =>
-                        status.activeToken && copyToClipboard(status.activeToken.code, "code")
+                        status.activeToken &&
+                        copyToClipboard(status.activeToken.code, "code")
                       }
                     >
                       {copiedCode ? (
-                        <Check className="h-4 w-4 text-emerald-600 mr-1.5" />
+                        <Check className="mr-1.5 h-4 w-4 text-emerald-600" />
                       ) : (
-                        <Copy className="h-4 w-4 text-slate-600 mr-1.5" />
+                        <Copy className="mr-1.5 h-4 w-4 text-slate-600" />
                       )}
                       {copiedCode ? "Tersalin!" : "Salin Kode"}
                     </Button>
@@ -356,41 +373,42 @@ export function AccountBindingCard() {
                     size="sm"
                     onClick={handleGenerate}
                     disabled={submitting}
-                    className="text-xs text-blue-700 hover:text-blue-900 hover:bg-blue-100/50"
+                    className="text-xs text-blue-700 hover:bg-blue-100/50 hover:text-blue-900"
                   >
                     {submitting ? (
-                      <Loader2 className="h-3 w-3 animate-spin mr-1.5" />
+                      <Loader2 className="mr-1.5 h-3 w-3 animate-spin" />
                     ) : (
-                      <RefreshCw className="h-3 w-3 mr-1.5" />
+                      <RefreshCw className="mr-1.5 h-3 w-3" />
                     )}
                     Buat Kode Baru
                   </Button>
                 </div>
               </div>
             ) : (
-              <div className="rounded-xl border border-dashed border-slate-300 p-6 text-center space-y-4 bg-slate-50/50">
-                <div className="mx-auto rounded-full bg-blue-100 p-3 text-blue-600 w-fit">
+              <div className="space-y-4 rounded-xl border border-dashed border-slate-300 bg-slate-50/50 p-6 text-center">
+                <div className="mx-auto w-fit rounded-full bg-blue-100 p-3 text-blue-600">
                   <Link2 className="h-6 w-6" />
                 </div>
-                <div className="max-w-md mx-auto space-y-1">
+                <div className="mx-auto max-w-md space-y-1">
                   <h4 className="text-sm font-semibold text-slate-900">
                     Tautkan Akun Telegram Anda
                   </h4>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    Hubungkan akun web Anda dengan bot Telegram untuk melihat saldo, menerima notifikasi
-                    low-balance otomatis, dan mengelola API Key langsung dari aplikasi Telegram.
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    Hubungkan akun web Anda dengan bot Telegram untuk melihat
+                    saldo, menerima notifikasi low-balance otomatis, dan
+                    mengelola API Key langsung dari aplikasi Telegram.
                   </p>
                 </div>
                 <div>
                   <Button
                     onClick={handleGenerate}
                     disabled={submitting}
-                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs h-9 shadow-xs px-5"
+                    className="h-9 bg-blue-600 px-5 text-xs text-white shadow-xs hover:bg-blue-700"
                   >
                     {submitting ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                      <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                     ) : (
-                      <Send className="h-3.5 w-3.5 mr-1.5" />
+                      <Send className="mr-1.5 h-3.5 w-3.5" />
                     )}
                     Generate Tautan & Kode Binding
                   </Button>

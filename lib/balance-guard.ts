@@ -139,7 +139,10 @@ export async function runBalanceGuard(
           if (webUser.phone) phone = webUser.phone;
         }
       } catch (err) {
-        console.warn(`[BalanceGuard] Failed to fetch web user ${row.web_user_id}:`, err);
+        console.warn(
+          `[BalanceGuard] Failed to fetch web user ${row.web_user_id}:`,
+          err
+        );
       }
     }
 

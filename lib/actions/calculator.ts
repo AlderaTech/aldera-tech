@@ -174,7 +174,9 @@ export async function submitOrderRequest(data: {
 
   const parsed = submitOrderRequestSchema.safeParse(data);
   if (!parsed.success) {
-    throw new Error(parsed.error.issues[0]?.message ?? "Data order tidak valid");
+    throw new Error(
+      parsed.error.issues[0]?.message ?? "Data order tidak valid"
+    );
   }
   const validData = parsed.data;
 
@@ -194,7 +196,10 @@ export async function submitOrderRequest(data: {
 
   // 2. Dependent fields
   const depFields = Array.isArray(projectType.dependentFields)
-    ? (projectType.dependentFields as Array<{ label?: string; pricePerUnit?: number }>)
+    ? (projectType.dependentFields as Array<{
+        label?: string;
+        pricePerUnit?: number;
+      }>)
     : [];
   const dependentFieldItems = depFields.map((field) => ({
     value: (field.label && validData.dependentValues[field.label]) || 0,
