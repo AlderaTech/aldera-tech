@@ -205,7 +205,7 @@ export async function uploadTopupProof(
     approved_at: Date | null;
   }>(
     `UPDATE topup_requests
-     SET proof_file_id = $1, updated_at = NOW()
+     SET proof_file_id = $1
      WHERE id = $2 AND user_id = $3 AND status = 'pending'
      RETURNING id, user_id, amount, unique_code, total_transfer, proof_file_id, status, admin_id, created_at, approved_at;`,
     [proofFileId.trim(), topupId, user.id]
