@@ -4,6 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import {
   Archive,
+  Bot,
   FolderKanban,
   FileText,
   Users,
@@ -14,6 +15,7 @@ import {
   Plus,
   FileSignature,
   FolderClosed,
+  Receipt,
   Repeat,
   Settings,
   ShieldCheck,
@@ -148,6 +150,12 @@ const adminQuickNav: QuickNavItem[] = [
     permission: PERMISSIONS.SETTINGS_MANAGE,
   },
   {
+    label: "AI Gateway / Relay Ops",
+    href: ADMIN_ROUTES.aiRelay,
+    icon: Bot,
+    permission: PERMISSIONS.AI_RELAY_MANAGE,
+  },
+  {
     label: "Audit Log",
     href: ADMIN_ROUTES.audit,
     icon: ShieldCheck,
@@ -162,7 +170,17 @@ const clientQuickNav: QuickNavItem[] = [
     href: DASHBOARD_ROUTES.projects,
     icon: FolderKanban,
   },
+  {
+    label: "Pesanan & Estimasi",
+    href: DASHBOARD_ROUTES.orders,
+    icon: Receipt,
+  },
   { label: "Invoice", href: DASHBOARD_ROUTES.invoices, icon: FileText },
+  {
+    label: "AI Gateway / Relay",
+    href: DASHBOARD_ROUTES.aiRelay,
+    icon: Bot,
+  },
 ];
 
 export function CommandPalette({ role }: { role?: Role | null }) {

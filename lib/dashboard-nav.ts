@@ -51,33 +51,53 @@ export const clientNavConfig: DashboardNavConfig = {
   variant: "client",
   groups: [
     {
-      label: "Client Area",
+      label: "Ringkasan",
       items: [
         {
           href: DASHBOARD_ROUTES.home,
           label: "Ringkasan",
           icon: "layoutDashboard",
+          description: "Ikhtisar akun & aktivitas",
         },
-        {
-          href: DASHBOARD_ROUTES.aiRelay,
-          label: "AI Relay",
-          icon: "bot",
-          description: "API keys, saldo & playground",
-        },
-        {
-          href: DASHBOARD_ROUTES.orders,
-          label: "Riwayat Estimasi",
-          icon: "receipt",
-        },
+      ],
+    },
+    {
+      label: "Project Conventional",
+      items: [
         {
           href: DASHBOARD_ROUTES.projects,
           label: "Proyek Saya",
           icon: "folderKanban",
+          description: "Pemesanan web, mobile & delivery",
+        },
+        {
+          href: DASHBOARD_ROUTES.orders,
+          label: "Pesanan & Estimasi",
+          icon: "receipt",
+          description: "Riwayat pesanan kalkulator",
+        },
+        {
+          href: DASHBOARD_ROUTES.calculator,
+          label: "Kalkulator Proyek",
+          icon: "barChart3",
+          description: "Hitung estimasi proyek baru",
         },
         {
           href: DASHBOARD_ROUTES.invoices,
-          label: "Invoice",
-          icon: "receipt",
+          label: "Invoice & Pembayaran",
+          icon: "fileText",
+          description: "Tagihan termin dan pembayaran",
+        },
+      ],
+    },
+    {
+      label: "Router (AI Gateway)",
+      items: [
+        {
+          href: DASHBOARD_ROUTES.aiRelay,
+          label: "AI Gateway / Relay",
+          icon: "bot",
+          description: "API Keys, saldo top-up & playground",
         },
       ],
     },
@@ -102,13 +122,13 @@ const adminNavGroups: DashboardNavGroup[] = [
     ],
   },
   {
-    label: "Operasional",
+    label: "Project Conventional",
     items: [
       {
         href: ADMIN_ROUTES.projects,
         label: "Proyek",
         icon: "folderKanban",
-        description: "Pipeline dan delivery",
+        description: "Pipeline dan delivery web & mobile",
         permission: PERMISSIONS.PROJECT_VIEW_ALL,
       },
       {
@@ -129,35 +149,40 @@ const adminNavGroups: DashboardNavGroup[] = [
         href: ADMIN_ROUTES.proposals,
         label: "Proposal",
         icon: "fileSignature",
-        description: "Penawaran dan scope",
+        description: "Penawaran dan scope kerja",
         permission: PERMISSIONS.PROPOSAL_MANAGE,
       },
       {
         href: ADMIN_ROUTES.invoices,
         label: "Invoice",
         icon: "fileText",
-        description: "Tagihan dan pembayaran",
+        description: "Tagihan dan pembayaran termin",
         permission: PERMISSIONS.INVOICE_VIEW,
       },
       {
         href: ADMIN_ROUTES.timesheet,
         label: "Timesheet",
         icon: "clock",
-        description: "Laporan jam kerja",
+        description: "Laporan jam kerja developer",
         permission: PERMISSIONS.TIMESHEET_VIEW,
       },
       {
         href: ADMIN_ROUTES.files,
         label: "Manajer Berkas",
         icon: "folderClosed",
-        description: "Asset dan dokumen",
+        description: "Asset dan dokumen proyek",
         permission: PERMISSIONS.FILE_MANAGE,
       },
+    ],
+  },
+  {
+    label: "Router (AI Gateway)",
+    items: [
       {
         href: ADMIN_ROUTES.aiRelay,
-        label: "AI Relay Ops",
+        label: "AI Gateway / Relay Ops",
         icon: "bot",
-        description: "Pricing, 9router sync & audit",
+        description: "Pricing model, router sync & audit",
         permission: PERMISSIONS.AI_RELAY_MANAGE,
       },
     ],
@@ -242,7 +267,7 @@ const adminNavGroups: DashboardNavGroup[] = [
 
 function filterItemByRole(
   item: DashboardNavItem,
-  role: Role | null | undefined
+  role: Role | Role[] | null | undefined
 ): DashboardNavItem | null {
   if (item.permission && !hasPermission(role, item.permission)) {
     return null;
@@ -259,7 +284,7 @@ function filterItemByRole(
 }
 
 export function getAdminNavConfig(
-  role: Role | null | undefined
+  role: Role | Role[] | null | undefined
 ): DashboardNavConfig {
   const groups = adminNavGroups
     .map((group) => ({
