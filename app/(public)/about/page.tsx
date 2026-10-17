@@ -5,6 +5,7 @@ import { AboutCta } from "./_components/about-cta";
 import { AboutHero } from "./_components/about-hero";
 import { AboutStory } from "./_components/about-story";
 import { AboutValues } from "./_components/about-values";
+import { AboutPurpose } from "./_components/about-purpose";
 import { TechStackSection } from "./_components/tech-stack-section";
 
 export const metadata: Metadata = {
@@ -23,7 +24,7 @@ export default function AboutPage() {
           "@context": "https://schema.org",
           "@type": "AboutPage",
           name: "Tentang Aldera Tech",
-          url: `${appUrl}/about`,
+          url: `${appUrl}${PUBLIC_ROUTES.about}`,
           description: metadata.description,
           isPartOf: {
             "@type": "WebSite",
@@ -34,6 +35,7 @@ export default function AboutPage() {
       />
       <AboutHero />
       <AboutStory />
+      <AboutPurpose />
       <AboutValues />
       <TechStackSection />
       <AboutCta />

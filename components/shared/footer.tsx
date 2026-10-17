@@ -6,6 +6,8 @@ import {
   Instagram,
   Youtube,
   Facebook,
+  ArrowUpRight,
+  CodeXml,
 } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
 import { footerSections } from "@/lib/nav-config";
@@ -13,6 +15,8 @@ import { defaultSiteSettings, SITE_SETTING_ID } from "@/lib/public-settings";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
+import { cn } from "@/lib/utils";
+import styles from "./studio-footer.module.css";
 
 function DiscordIcon({ className }: { className?: string }) {
   return (
@@ -108,44 +112,66 @@ export async function Footer() {
   );
 
   return (
-    <footer className="editorial-ink">
-      <div className="public-container-px mx-auto w-full max-w-screen-xxxl py-6">
-        <div className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.04]">
-          <div className="grid gap-10 p-6 sm:p-8 md:grid-cols-2 lg:grid-cols-[1.55fr_repeat(3,1fr)] lg:p-10">
-            <div className="space-y-5">
-              <Logo size="md" variant="dark" />
+    <footer className={cn("editorial-ink", styles.footer)}>
+      <div
+        className={cn(
+          "public-container-px mx-auto w-full max-w-screen-xxxl py-6",
+          styles.container
+        )}
+      >
+        <div
+          className={cn(
+            "overflow-hidden rounded-xl border border-white/10 bg-white/[0.04]",
+            styles.panel
+          )}
+        >
+          <div className={styles.intro}>
+            <p>
+              <CodeXml className="size-4" aria-hidden="true" /> Software
+              Engineering & Digital Studio
+            </p>
+            <span>Mari bangun langkah berikutnya.</span>
+          </div>
+          <div
+            className={cn(
+              "grid gap-10 p-6 sm:p-8 md:grid-cols-2 lg:grid-cols-[1.55fr_repeat(3,1fr)] lg:p-10",
+              styles.grid
+            )}
+          >
+            <div className={cn("space-y-5", styles.brand)}>
+              <Logo size="md" variant="dark" className={styles.brandLogo} />
               <p className="max-w-md text-sm leading-relaxed text-white/68">
                 {footerDescription}
               </p>
               <Link
                 href={PUBLIC_ROUTES.contact}
-                className="inline-flex cursor-pointer rounded-lg bg-[#0b6bff] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#075bd8]"
+                className={cn(
+                  "inline-flex cursor-pointer rounded-lg bg-brand-cyan px-4 py-2 text-sm font-bold text-brand-navy transition-colors hover:bg-brand-cyan-hover",
+                  styles.consultation
+                )}
               >
                 Konsultasi Gratis
+                <span className={styles.ctaIcon} aria-hidden="true">
+                  <ArrowUpRight className="size-4" />
+                </span>
               </Link>
-              {socialLinks.length > 0 && (
-                <div className="flex flex-wrap gap-3 pt-2">
-                  {socialLinks.map((link) => {
-                    const Icon = link.icon;
-                    return (
-                      <a
-                        key={link.label}
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={link.label}
-                        className="inline-flex size-9 cursor-pointer items-center justify-center rounded-md border border-white/10 bg-white/5 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
-                      >
-                        <Icon className="size-4" />
-                      </a>
-                    );
-                  })}
-                </div>
-              )}
             </div>
-            {sections.map((section) => (
-              <div key={section.title}>
-                <h3 className="mb-3 text-sm font-semibold">{section.title}</h3>
+            {sections.map((section, index) => (
+              <div
+                key={section.title}
+                className={cn(
+                  styles.linkGroup,
+                  section.title === "Kontak" && styles.contactGroup
+                )}
+              >
+                <div className={styles.groupHeading}>
+                  <span className={styles.sectionIndex} aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="mb-3 text-sm font-semibold">
+                    {section.title}
+                  </h3>
+                </div>
                 <ul className="space-y-2">
                   {section.links.map((link) => (
                     <li key={link.href}>
@@ -161,7 +187,34 @@ export async function Footer() {
               </div>
             ))}
           </div>
-          <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 px-6 py-5 sm:flex-row sm:px-8 lg:px-10">
+          {socialLinks.length > 0 && (
+            <div className={styles.socials}>
+              {socialLinks.map((link) => {
+                const Icon = link.icon;
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={link.label}
+                    className="inline-flex size-9 cursor-pointer items-center justify-center rounded-md border border-white/10 bg-white/5 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    <Icon className="size-4" />
+                  </a>
+                );
+              })}
+            </div>
+          )}
+          <div className={styles.wordmark} aria-hidden="true">
+            {brandName}
+          </div>
+          <div
+            className={cn(
+              "flex flex-col items-center justify-between gap-4 border-t border-white/10 px-6 py-5 sm:flex-row sm:px-8 lg:px-10",
+              styles.bottom
+            )}
+          >
             <p className="text-xs text-white/64">
               © {year} {brandName}. All rights reserved.
             </p>

@@ -6,8 +6,9 @@ export function BlogArticleBody({ html }: BlogArticleBodyProps) {
   return (
     <div
       id="blog-content"
-      className="prose max-w-none prose-neutral prose-headings:scroll-mt-24"
+      className={styles.body}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
 }
+import styles from "./blog-detail.module.css";

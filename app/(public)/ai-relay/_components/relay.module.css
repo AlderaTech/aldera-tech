@@ -1,0 +1,338 @@
+.page {
+  --relay-divider: color-mix(in srgb, var(--home-ink) 16%, var(--home-paper));
+  color: var(--home-ink);
+  overflow: clip;
+}
+.page :is(button, a, input, pre):focus-visible {
+  outline: 2px solid var(--home-blue);
+  outline-offset: 4px;
+}
+.section {
+  position: relative;
+  padding-block: clamp(3.5rem, 6vw, 5.5rem);
+  scroll-margin-top: 7rem;
+  background: var(--home-paper);
+}
+.section + .section::before,
+.ctaSection::before {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(calc(100% - 2.5rem), 76rem);
+  height: 1px;
+  translate: -50% 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--relay-divider) 20%,
+    var(--relay-divider) 80%,
+    transparent
+  );
+  pointer-events: none;
+  content: "";
+}
+.softSection {
+  background: linear-gradient(
+    180deg,
+    var(--home-paper),
+    var(--home-soft) 40%,
+    var(--home-paper)
+  );
+}
+.sectionHeading {
+  display: grid;
+  grid-template-areas: "eyebrow" "title" "description";
+  margin-bottom: 2.25rem;
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
+  color: var(--home-blue);
+  font-size: 0.65rem;
+  font-weight: 750;
+  line-height: 1.6;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.eyebrow > span {
+  display: grid;
+  min-width: 1.65rem;
+  height: 1.65rem;
+  place-items: center;
+  border: 1px solid var(--home-line);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--home-paper) 60%, transparent);
+  font-size: 0.6rem;
+  letter-spacing: 0;
+}
+.sectionHeading > .eyebrow {
+  grid-area: eyebrow;
+  margin-bottom: 1rem;
+}
+.sectionHeading h2 {
+  grid-area: title;
+  max-width: 22ch;
+  font-size: clamp(1.9rem, 3.4vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.sectionDescription {
+  grid-area: description;
+  max-width: 36rem;
+  margin-top: 1rem;
+  color: var(--home-muted);
+  font-size: clamp(0.875rem, 1.2vw, 0.975rem);
+  line-height: 1.75;
+}
+.sectionHeadingCenter {
+  justify-items: center;
+  text-align: center;
+}
+.sectionHeadingCenter > .eyebrow {
+  justify-content: center;
+}
+.sectionHeadingCenter h2 {
+  max-width: 26ch;
+}
+.sectionHeadingCenter .sectionDescription {
+  max-width: 36rem;
+  margin-inline: auto;
+}
+.divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--relay-divider) 20%,
+    var(--relay-divider) 80%,
+    transparent
+  );
+}
+.miniMascot {
+  display: block;
+  width: 104px;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(
+    0 6px 8px color-mix(in srgb, var(--home-ink) 12%, transparent)
+  );
+  animation: mascotSway 7s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+.miniMascot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.ctaSection {
+  position: relative;
+  padding-block: clamp(2.5rem, 5vw, 4rem) clamp(3.5rem, 6vw, 5.5rem);
+  background: linear-gradient(
+    180deg,
+    var(--home-paper),
+    var(--home-soft) 45%,
+    var(--home-paper)
+  );
+}
+.cta {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.75rem, 3vw, 2.5rem);
+  min-height: 25rem;
+  padding: clamp(2.25rem, 5vw, 4.5rem) clamp(1.5rem, 5vw, 4.5rem);
+  overflow: hidden;
+  border: 1px solid
+    color-mix(in srgb, var(--home-slate-deep) 85%, var(--home-paper));
+  border-radius: clamp(1.5rem, 3vw, 2.25rem);
+  background:
+    radial-gradient(
+      ellipse 55% 75% at 50% -15%,
+      color-mix(in srgb, var(--home-blue) 21%, transparent),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      color-mix(in srgb, var(--home-blue) 10%, transparent),
+      transparent 48%
+    ),
+    linear-gradient(
+      135deg,
+      var(--home-sky),
+      var(--home-ice) 54%,
+      var(--home-slate-deep)
+    );
+  box-shadow: 0 18px 55px color-mix(in srgb, var(--home-ink) 7%, transparent);
+  text-align: center;
+}
+.cta::before {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--home-blue) 9%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      color-mix(in srgb, var(--home-blue) 9%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 3rem 3rem;
+  mask-image: radial-gradient(
+    ellipse 75% 90% at 50% 20%,
+    var(--home-ink),
+    transparent
+  );
+  pointer-events: none;
+  content: "";
+}
+.ctaCopy,
+.ctaActions {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+.ctaCopy .eyebrow {
+  width: fit-content;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  padding: 0.6rem 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--home-paper) 82%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--home-paper) 70%, transparent);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--home-ink) 5%, transparent);
+}
+.ctaCopy h2 {
+  max-width: 23ch;
+  margin-inline: auto;
+  font-size: clamp(2rem, 4.25vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+.ctaCopy h2 span {
+  color: var(--home-blue);
+}
+.ctaCopy > p:last-child {
+  max-width: 36rem;
+  margin: 1.35rem auto 0;
+  color: var(--home-muted);
+  font-size: clamp(0.875rem, 1.25vw, 1rem);
+  line-height: 1.75;
+}
+.ctaActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+}
+.ctaActions a {
+  min-height: 3.25rem;
+  text-align: center;
+}
+.ctaActions a:first-child {
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--home-blue) 19%, transparent);
+}
+.ctaActions a:last-child {
+  border-color: color-mix(in srgb, var(--home-ink) 16%, transparent);
+  background: color-mix(in srgb, var(--home-paper) 70%, transparent);
+}
+.ctaActions a:last-child:hover {
+  background: var(--home-paper);
+}
+@keyframes mascotSway {
+  0%,
+  100% {
+    rotate: -1deg;
+  }
+  50% {
+    rotate: 1deg;
+  }
+}
+@media (min-width: 900px) {
+  .sectionHeading {
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    grid-template-areas: "eyebrow description" "title description";
+    align-items: end;
+    column-gap: clamp(3rem, 5vw, 5rem);
+    margin-bottom: 2.5rem;
+  }
+  .sectionHeading > .eyebrow {
+    align-self: start;
+  }
+  .sectionDescription {
+    align-self: end;
+    margin: 0 0 0.2rem;
+    padding-left: 1.25rem;
+    border-left: 2px solid
+      color-mix(in srgb, var(--home-blue) 26%, var(--home-line));
+  }
+  .sectionHeadingCenter {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "eyebrow" "title" "description";
+  }
+  .sectionHeadingCenter .sectionDescription {
+    margin: 1.15rem auto 0;
+    padding: 0;
+    border: 0;
+  }
+  .sectionHeadingIndexed {
+    grid-template-columns: clamp(10.5rem, 18vw, 13rem) minmax(0, 1fr);
+    grid-template-areas: "eyebrow title" ". description";
+    align-items: start;
+    column-gap: clamp(1.5rem, 3vw, 3rem);
+  }
+  .sectionHeadingIndexed > .eyebrow {
+    margin: 0;
+    padding-top: 0.35rem;
+  }
+  .sectionHeadingIndexed h2 {
+    max-width: 25ch;
+  }
+  .sectionHeadingIndexed .sectionDescription {
+    margin: 1rem 0 0;
+    padding: 0;
+    border: 0;
+  }
+}
+@media (max-width: 639px) {
+  .cta {
+    min-height: 0;
+  }
+  .ctaCopy h2 {
+    font-size: clamp(1.5rem, 7.5vw, 2.5rem);
+  }
+  .ctaActions {
+    width: 100%;
+    flex-direction: column;
+  }
+  .ctaActions a {
+    width: 100%;
+  }
+}
+@media (max-width: 359px) {
+  .ctaActions a {
+    gap: 0.4rem;
+    padding-inline: 0.85rem;
+    font-size: 0.75rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .miniMascot {
+    animation: none;
+  }
+  .page *,
+  .page *::before,
+  .page *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

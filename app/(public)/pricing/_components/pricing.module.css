@@ -1,0 +1,425 @@
+.hero {
+  padding-block: clamp(2.5rem, 5vw, 4.25rem) 2.75rem;
+  color: var(--home-ink);
+}
+.heroGrid {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+}
+.heroCopy {
+  min-width: 0;
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
+  color: var(--home-blue);
+  font-size: 0.625rem;
+  font-weight: 750;
+  line-height: 1.6;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.eyebrow > span {
+  display: grid;
+  min-width: 1.65rem;
+  height: 1.65rem;
+  place-items: center;
+  border: 1px solid var(--home-line);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--home-paper) 60%, transparent);
+  font-size: 0.6rem;
+  letter-spacing: 0;
+}
+.hero .eyebrow > span {
+  min-width: 0.45rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--home-blue);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--home-blue) 8%, transparent);
+}
+.hero h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.055em;
+}
+.hero h1 span,
+.sectionHeading h2 span,
+.faqIntro h2 span {
+  color: var(--home-blue);
+}
+.heroDescription {
+  max-width: 32rem;
+  margin-top: 1.5rem;
+  color: var(--home-muted);
+  font-size: 0.9375rem;
+  line-height: 1.85;
+}
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+.heroGuide {
+  position: relative;
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  min-width: 0;
+  padding: 1.75rem;
+  border: 1px solid color-mix(in srgb, var(--home-paper) 85%, transparent);
+  border-radius: 1.5rem;
+  background: color-mix(in srgb, var(--home-paper) 46%, transparent);
+  box-shadow: inset 0 1px 0 var(--home-paper);
+  isolation: isolate;
+}
+.guideGlow {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--home-blue) 10%, transparent),
+    transparent 65%
+  );
+  pointer-events: none;
+}
+.miniMascot {
+  display: block;
+  width: 92px;
+  flex-shrink: 0;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(
+    0 7px 6px color-mix(in srgb, var(--home-ink) 10%, transparent)
+  );
+  animation: mascotFloat 7s ease-in-out infinite;
+}
+.miniMascot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.guideCopy {
+  min-width: 0;
+}
+.guideLabel {
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--home-ink);
+  font-size: 1.25rem;
+  font-weight: 750;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+.guideCopy ol {
+  display: grid;
+  gap: 0.625rem;
+  list-style: none;
+}
+.guideCopy li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.5rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.guideCopy li > span {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--home-line);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--home-paper) 65%, transparent);
+  color: var(--home-blue);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+.guideCopy > p {
+  display: flex;
+  align-items: start;
+  gap: 0.5rem;
+  margin-top: 1.125rem;
+  color: var(--home-muted);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+}
+.guideCopy > p svg {
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+  color: var(--home-blue);
+}
+.sectionHeading {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+.sectionHeading h2,
+.faqIntro h2 {
+  color: var(--home-ink);
+  font-size: clamp(1.9rem, 3.4vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.sectionDescription {
+  max-width: 38rem;
+  color: var(--home-muted);
+  font-size: 0.875rem;
+  line-height: 1.85;
+}
+.calculatorSection,
+.faqSection {
+  position: relative;
+  padding-block: clamp(3.5rem, 6vw, 5.5rem);
+  color: var(--home-ink);
+}
+.calculatorSection::before,
+.faqSection::before {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(calc(100% - 2.5rem), 76rem);
+  height: 1px;
+  translate: -50% 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--home-line) 15%,
+    var(--home-line) 85%,
+    transparent
+  );
+  content: "";
+}
+.calculatorSection {
+  scroll-margin-top: 6.5rem;
+  background: linear-gradient(
+    180deg,
+    var(--home-paper),
+    var(--home-soft) 60%,
+    var(--home-paper)
+  );
+}
+.calculatorPanel {
+  overflow: clip;
+  border: 1px solid var(--home-line);
+  border-radius: 1.5rem;
+  background: var(--home-paper);
+  box-shadow: 0 16px 48px color-mix(in srgb, var(--home-ink) 4%, transparent);
+}
+.calculatorBar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--home-line);
+  background: var(--home-soft);
+  color: var(--home-muted);
+  font-size: 0.6rem;
+}
+.calculatorBar > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--home-blue);
+  font-size: 0.675rem;
+  font-weight: 650;
+}
+.calculatorBody {
+  padding: clamp(1rem, 2.5vw, 2rem);
+}
+.faqSection {
+  background: var(--home-paper);
+}
+.faqGrid {
+  display: grid;
+  align-items: start;
+  gap: 2rem;
+}
+.faqIntro > p:not(.eyebrow) {
+  max-width: 27rem;
+  margin-top: 1.25rem;
+  color: var(--home-muted);
+  font-size: 0.875rem;
+  line-height: 1.85;
+}
+.contactLink {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 1.25rem;
+  color: var(--home-blue);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+.contactLink:hover {
+  color: var(--home-blue-hover);
+}
+.faqList {
+  display: grid;
+  gap: 0.75rem;
+}
+.faqItem {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--home-line);
+  border-radius: 1rem;
+  background: var(--home-soft);
+}
+.faqItem:last-child {
+  border-bottom: 1px solid var(--home-line);
+}
+.faqQuestion {
+  min-height: 4.25rem;
+  gap: 0.75rem;
+  padding: 1.125rem 1.25rem;
+  color: var(--home-ink);
+  font-size: 0.8125rem;
+  font-weight: 650;
+  line-height: 1.6;
+  text-align: left;
+  text-decoration: none;
+}
+.faqQuestion:hover {
+  background: var(--home-sky);
+  text-decoration: none;
+}
+.questionIndex {
+  display: grid;
+  width: 1.625rem;
+  height: 1.625rem;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--home-line);
+  border-radius: 0.5rem;
+  color: var(--home-blue);
+  font-size: 0.55rem;
+}
+.faqQuestion > span:nth-child(2) {
+  flex: 1;
+}
+.faqQuestion > svg {
+  color: var(--home-blue);
+}
+.faqAnswer {
+  padding: 0 1.25rem 1.25rem;
+  color: var(--home-muted);
+  font-size: 0.8125rem;
+  line-height: 1.85;
+}
+.faqSection :is(a, button):focus-visible,
+.hero a:focus-visible {
+  outline: 2px solid var(--home-blue);
+  outline-offset: 4px;
+}
+@keyframes mascotFloat {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -4px;
+  }
+}
+@media (min-width: 900px) {
+  .heroGrid {
+    grid-template-columns: 1.2fr 1fr;
+    gap: 2.25rem;
+  }
+  .sectionHeading {
+    grid-template-columns: 1.15fr 1fr;
+    gap: 4rem;
+    align-items: end;
+    margin-bottom: 2.5rem;
+  }
+  .sectionDescription {
+    padding-bottom: 0.2rem;
+  }
+  .faqGrid {
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 4rem;
+  }
+  .faqAnswer {
+    padding-left: 3.625rem;
+  }
+}
+@media (min-width: 1024px) {
+  .heroGuide {
+    grid-template-columns: 128px minmax(0, 1fr);
+  }
+  .miniMascot {
+    width: 128px;
+  }
+}
+@media (max-width: 639px) {
+  .hero {
+    padding-bottom: 2rem;
+  }
+  .heroGrid {
+    gap: 1rem;
+  }
+  .heroActions {
+    gap: 0.625rem;
+  }
+  .heroActions a {
+    padding-inline: 1rem;
+    font-size: 0.7rem;
+  }
+  .heroGuide {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 0.875rem;
+    padding: 1.25rem;
+  }
+  .miniMascot {
+    width: 72px;
+  }
+  .guideCopy ol {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .guideCopy li {
+    min-height: 2.25rem;
+    gap: 0.625rem;
+    font-size: 0.9375rem;
+  }
+  .guideCopy li > span {
+    width: 1.875rem;
+    height: 1.875rem;
+    font-size: 0.6875rem;
+  }
+  .guideLabel {
+    margin-bottom: 0.75rem;
+    font-size: 1.125rem;
+  }
+  .calculatorBar {
+    padding-inline: 1.125rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .miniMascot {
+    animation: none;
+  }
+  .faqQuestion {
+    transition: none;
+  }
+  .faqList * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

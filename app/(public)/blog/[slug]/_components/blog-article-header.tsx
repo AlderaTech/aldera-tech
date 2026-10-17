@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { ArrowLeft, Calendar, Clock, Eye } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 import { formatDate, getInitials } from "@/lib/utils";
 import type { BlogDetailPost } from "../_data/blog-detail";
+import styles from "./blog-detail.module.css";
 
 type BlogArticleHeaderProps = {
   post: BlogDetailPost;
@@ -15,50 +14,45 @@ type BlogArticleHeaderProps = {
 export function BlogArticleHeader({ post, minutes }: BlogArticleHeaderProps) {
   return (
     <>
-      <Button asChild variant="ghost" size="sm" className="mb-6">
-        <Link href={PUBLIC_ROUTES.blog}>
-          <ArrowLeft className="size-4" /> Kembali ke Blog
-        </Link>
-      </Button>
+      <Link href={PUBLIC_ROUTES.blog} className={styles.backLink}>
+        <ArrowLeft className="size-4" aria-hidden="true" /> Kembali ke Blog
+      </Link>
 
-      <header className="mb-8 space-y-5">
+      <header className={styles.header}>
         {post.category && (
-          <Link href={PUBLIC_ROUTES.blogCategory(post.category.slug)}>
-            <Badge className="bg-[#0b6bff] text-white transition hover:bg-[#0b6bff]">
-              {post.category.name}
-            </Badge>
+          <Link
+            href={PUBLIC_ROUTES.blogCategory(post.category.slug)}
+            className={styles.category}
+          >
+            {post.category.name}
           </Link>
         )}
-        <h1 className="editorial-display text-4xl leading-tight text-balance sm:text-5xl lg:text-6xl">
-          {post.title}
-        </h1>
-        {post.excerpt && (
-          <p className="text-lg text-black/60">{post.excerpt}</p>
-        )}
-        <div className="flex flex-wrap items-center gap-4 border-t border-black/10 pt-4">
+        <h1>{post.title}</h1>
+        {post.excerpt && <p className={styles.excerpt}>{post.excerpt}</p>}
+        <div className={styles.meta}>
           {post.author && (
-            <div className="flex items-center gap-2">
-              <Avatar className="size-8">
-                <AvatarFallback className="bg-[#0b6bff] text-xs text-white">
+            <div className={styles.author}>
+              <Avatar className="size-9">
+                <AvatarFallback className={styles.avatarFallback}>
                   {getInitials(post.author.name)}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium">{post.author.name}</span>
+              <span>{post.author.name}</span>
             </div>
           )}
           {post.publishedAt && (
-            <span className="inline-flex items-center gap-1 text-sm text-black/62">
-              <Calendar className="size-3.5" />
+            <span>
+              <Calendar className="size-3.5" aria-hidden="true" />
               {formatDate(post.publishedAt)}
             </span>
           )}
-          <span className="inline-flex items-center gap-1 text-sm text-black/62">
-            <Clock className="size-3.5" />
+          <span>
+            <Clock className="size-3.5" aria-hidden="true" />
             {minutes} menit baca
           </span>
           {post.views > 0 && (
-            <span className="inline-flex items-center gap-1 text-sm text-black/62">
-              <Eye className="size-3.5" />
+            <span>
+              <Eye className="size-3.5" aria-hidden="true" />
               {post.views.toLocaleString("id-ID")} tampilan
             </span>
           )}

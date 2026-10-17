@@ -1,7 +1,8 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
+import styles from "./pricing-calculator.module.css";
 import type {
   ProjectType,
   Feature,
@@ -22,6 +23,7 @@ type Props = {
   urgency: "normal" | "urgent";
   config: Config;
   total: number;
+  studio?: boolean;
 };
 
 export function CalculatorSummarySidebar({
@@ -36,13 +38,21 @@ export function CalculatorSummarySidebar({
   urgency,
   config,
   total,
+  studio = false,
 }: Props) {
   return (
-    <div className="h-fit lg:sticky lg:top-24">
-      <Card className="space-y-3 border-border bg-card p-5 shadow-sm">
+    <div className={cn("h-fit lg:sticky lg:top-24", studio && styles.summary)}>
+      <Card
+        className={cn(
+          "space-y-3 border-border bg-card p-5 shadow-sm",
+          studio && styles.summaryCard
+        )}
+      >
         <h3 className="font-semibold text-foreground">Estimasi Biaya</h3>
         {pt ? (
-          <div className="space-y-2 text-sm">
+          <div
+            className={cn("space-y-2 text-sm", studio && styles.summaryDetails)}
+          >
             <div className="flex justify-between">
               <span className="text-muted-foreground">Base ({pt.name})</span>
               <span className="font-medium tabular-nums">
@@ -125,7 +135,12 @@ export function CalculatorSummarySidebar({
           </p>
         )}
         <div className="border-t border-border pt-3">
-          <div className="flex justify-between text-lg font-bold text-foreground">
+          <div
+            className={cn(
+              "flex justify-between text-lg font-bold text-foreground",
+              studio && styles.summaryTotal
+            )}
+          >
             <span>Total Estimasi</span>
             <span className="text-primary tabular-nums">
               {formatCurrency(total)}

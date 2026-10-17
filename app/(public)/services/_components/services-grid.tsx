@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -27,8 +28,6 @@ import {
   Sparkles,
   type LucideIcon,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { StaggerContainer, StaggerItem } from "@/components/shared/motion";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 import { prisma } from "@/lib/prisma";
@@ -37,6 +36,10 @@ import {
   services as fallbackServices,
   type Service as StaticService,
 } from "@/lib/services-data";
+import { cn } from "@/lib/utils";
+import { getServiceArtwork } from "@/lib/service-artwork";
+import shared from "../../_components/studio.module.css";
+import styles from "./services.module.css";
 
 const iconMap: Record<string, LucideIcon> = {
   Code2,
@@ -98,14 +101,32 @@ export async function ServicesGrid({ services }: ServicesGridProps = {}) {
   }
 
   return (
-    <section className="editorial-surface">
-      <div className="public-container-px mx-auto max-w-screen-xxxl py-14 sm:py-20">
-        <StaggerContainer className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <section
+      className={styles.servicesSection}
+      id="pilihan-layanan"
+      aria-labelledby="service-options-heading"
+    >
+      <div className={shared.container}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <p className={styles.sectionEyebrow}>Pilihan Layanan</p>
+            <h2 id="service-options-heading">
+              Solusi untuk setiap tahap <span>digital.</span>
+            </h2>
+          </div>
+          <p className={styles.sectionIntro}>
+            Pilih layanan yang paling sesuai. Setiap kartu merangkum ruang
+            lingkup pekerjaan dan jalur untuk meminta penawaran.
+          </p>
+        </div>
+
+        <StaggerContainer className={styles.serviceGrid}>
           {items.map((service, index) => (
-            <StaggerItem key={service.slug}>
+            <StaggerItem key={service.slug} className="h-full min-w-0">
               <ServiceCard
                 service={service}
-                featured={index === 1 || index === 4}
+                index={index}
+                featured={index === 0}
               />
             </StaggerItem>
           ))}
@@ -117,69 +138,73 @@ export async function ServicesGrid({ services }: ServicesGridProps = {}) {
 
 function ServiceCard({
   service,
+  index,
   featured,
 }: {
   service: GridServiceItem | StaticService;
+  index: number;
   featured: boolean;
 }) {
+  const artwork = getServiceArtwork(service.slug);
+
   return (
-    <Card
-      className={
-        featured
-          ? "group h-full gap-0 rounded-xl border-[#0b6bff]/40 bg-[#0b6bff] p-6 text-white transition-all hover:-translate-y-1 hover:shadow-xl lg:p-8"
-          : "editorial-card group h-full gap-0 rounded-xl p-6 transition-all hover:-translate-y-1 hover:shadow-xl lg:p-8"
-      }
+    <article
+      className={cn(styles.serviceCard, featured && styles.serviceCardFeatured)}
     >
-      <div
-        className={
-          featured
-            ? "mb-5 flex size-14 items-center justify-center rounded-lg border border-white/20 bg-white text-[#0b6bff] transition-transform group-hover:scale-105"
-            : "mb-5 flex size-14 items-center justify-center rounded-lg border border-black/10 bg-white/80 text-[#0b6bff] transition-transform group-hover:scale-105"
-        }
-      >
-        {React.createElement(resolveServiceIcon(service.icon), { className: "size-7" })}
-      </div>
-      <h2 className="mb-2 text-2xl font-black">{service.title}</h2>
-      <p
-        className={
-          featured
-            ? "mb-5 text-sm leading-relaxed text-white/72"
-            : "mb-5 text-sm leading-relaxed text-black/62"
-        }
-      >
-        {service.description}
-      </p>
-      <ul className="mb-6 space-y-2">
-        {service.deliverables.map((deliverable) => (
-          <li key={deliverable} className="flex items-start gap-2 text-sm">
-            <Check
-              className={
-                featured
-                  ? "mt-0.5 size-4 shrink-0 text-white"
-                  : "mt-0.5 size-4 shrink-0 text-[#0b6bff]"
-              }
+      <div className={styles.cardVisual} aria-hidden="true">
+        <span className={styles.cardIndex}>
+          {String(index + 1).padStart(2, "0")}
+        </span>
+        {artwork ? (
+          <div className={styles.cardArtwork}>
+            <Image
+              src={artwork}
+              alt=""
+              fill
+              sizes="(min-width: 1280px) 360px, (min-width: 640px) 45vw, 90vw"
+              quality={90}
             />
-            <span>{deliverable}</span>
-          </li>
-        ))}
-      </ul>
-      <Button
-        asChild
-        variant={featured ? "default" : "outline"}
-        className={
-          featured
-            ? "group/btn w-full cursor-pointer bg-black text-white hover:bg-black/90"
-            : "group/btn w-full cursor-pointer border-black/15 bg-white/70"
-        }
-      >
+          </div>
+        ) : (
+          <span className={styles.artFallback}>
+            {React.createElement(resolveServiceIcon(service.icon), {
+              strokeWidth: 1.5,
+            })}
+          </span>
+        )}
+      </div>
+
+      <div className={styles.cardBody}>
+        <div className={styles.cardHeading}>
+          <span className={styles.cardIcon} aria-hidden="true">
+            {React.createElement(resolveServiceIcon(service.icon), {
+              strokeWidth: 1.7,
+            })}
+          </span>
+          <h3>{service.title}</h3>
+        </div>
+        <p className={styles.cardDescription}>{service.description}</p>
+
+        <div className={styles.deliverables}>
+          <h4>Ruang lingkup</h4>
+          <ul>
+            {service.deliverables.map((deliverable) => (
+              <li key={deliverable}>
+                <Check aria-hidden="true" />
+                <span>{deliverable}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         <Link
           href={PUBLIC_ROUTES.contactWithService(service.slug)}
-          className="cursor-pointer"
+          className={styles.cardLink}
         >
           Minta Penawaran
-          <ArrowRight className="size-4 transition-transform group-hover/btn:translate-x-1" />
+          <ArrowRight aria-hidden="true" />
         </Link>
-      </Button>
-    </Card>
+      </div>
+    </article>
   );
 }

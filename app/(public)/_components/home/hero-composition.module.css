@@ -1,0 +1,398 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  padding-top: 0.75rem;
+  padding-bottom: 5rem;
+  overflow: hidden;
+  text-align: center;
+}
+
+.backdrop {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 1rem;
+  background: linear-gradient(var(--home-sky), var(--home-soft));
+  border-radius: 0 0 50% 50% / 0 0 9% 9%;
+}
+
+.backdrop::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse at 50% 32%,
+    var(--home-paper),
+    transparent 58%
+  );
+  mask-image: linear-gradient(transparent, black 130px);
+  content: "";
+}
+
+.kicker {
+  margin-block: 1.25rem 0;
+  color: var(--home-muted);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.scene {
+  position: relative;
+  height: 36rem;
+  margin-top: 2rem;
+  isolation: isolate;
+}
+
+.wordmark {
+  position: absolute;
+  inset: 1rem -0.5rem auto;
+  color: var(--home-blue);
+  font-size: clamp(4rem, 13.7vw, 11.5rem);
+  line-height: 0.9;
+  font-weight: 800;
+  letter-spacing: -0.075em;
+  white-space: nowrap;
+}
+
+.mascot {
+  position: absolute;
+  z-index: 3;
+  top: 1.25rem;
+  left: 50%;
+  width: 25rem;
+  height: 35.5rem;
+  margin-left: -12.5rem;
+  filter: drop-shadow(
+    0 18px 18px color-mix(in srgb, var(--home-ink) 11%, transparent)
+  );
+  mask-image: linear-gradient(black 89%, transparent);
+  animation: float 8s ease-in-out infinite;
+}
+
+.connections {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.connections path {
+  stroke: var(--home-blue);
+  stroke-opacity: 0.2;
+  stroke-width: 1;
+}
+
+.connections circle {
+  fill: var(--home-blue);
+  filter: drop-shadow(0 0 5px var(--home-blue));
+}
+
+.insight {
+  position: absolute;
+  top: 15.5rem;
+  left: 2%;
+  width: 14.5rem;
+  padding: 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--home-paper) 45%, transparent);
+  border-radius: 1.25rem;
+  background: color-mix(in srgb, var(--home-paper) 28%, transparent);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--home-blue) 3%, transparent);
+  text-align: left;
+  backdrop-filter: blur(8px);
+}
+
+.insightIcon {
+  position: relative;
+  isolation: isolate;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 1rem;
+}
+
+.insightIcon img {
+  filter: drop-shadow(
+      0 6px 6px color-mix(in srgb, var(--home-ink) 25%, transparent)
+    )
+    drop-shadow(0 2px 3px color-mix(in srgb, var(--home-blue) 16%, transparent));
+}
+
+.insightIcon::after {
+  position: absolute;
+  z-index: -1;
+  inset: auto 15% -0.25rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--home-ink) 22%, transparent),
+    transparent 72%
+  );
+  filter: blur(2px);
+  content: "";
+}
+
+.insight p {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.insight > span {
+  display: block;
+  margin-top: 0.75rem;
+  color: var(--home-muted);
+  font-size: 0.6875rem;
+  line-height: 1.7;
+}
+
+.mockupStack {
+  position: absolute;
+  top: 15rem;
+  right: 0;
+  width: 16.5rem;
+  rotate: 7deg;
+  animation: float 9s ease-in-out -3s infinite;
+}
+
+.mockupBack {
+  position: absolute;
+  z-index: -1;
+  inset: -1rem 1rem 2rem -1rem;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 20%, transparent);
+  border-radius: 0.875rem;
+  background: var(--home-paper);
+  rotate: -12deg;
+}
+
+.mockupWindow {
+  overflow: hidden;
+  border: 4px solid var(--home-paper);
+  border-radius: 0.875rem;
+  background: var(--home-paper);
+  box-shadow: 0 20px 40px color-mix(in srgb, var(--home-ink) 12%, transparent);
+}
+
+.windowBar {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.5rem 0.375rem;
+}
+
+.windowBar i {
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 50%;
+  background: var(--home-line);
+}
+
+.windowBar span {
+  margin-left: 0.5rem;
+  color: var(--home-muted);
+  font-family: monospace;
+  font-size: 0.5rem;
+}
+
+.mockupImage {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.previewCaption {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.875rem;
+  color: var(--home-muted);
+  font-size: 0.5625rem;
+  font-weight: 500;
+}
+
+.serviceBadge {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--home-paper) 90%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--home-paper) 90%, transparent);
+  color: var(--home-ink);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--home-blue) 5%, transparent);
+}
+
+.serviceBadge svg {
+  color: var(--home-blue);
+}
+.webBadge {
+  top: 11rem;
+  left: 14%;
+}
+.mobileBadge {
+  bottom: 3.75rem;
+  left: 23%;
+}
+.designBadge {
+  top: 12.25rem;
+  right: 10%;
+}
+.badgeDot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: var(--home-blue);
+}
+
+.heroCopy {
+  position: relative;
+  z-index: 5;
+  max-width: 60rem;
+  margin: -0.25rem auto 0;
+}
+
+.startButton {
+  min-height: 2.5rem !important;
+  padding: 0.625rem 1rem !important;
+  font-size: 0.6875rem !important;
+}
+
+.heroCopy h1 {
+  margin-top: 1.5rem;
+  color: var(--home-ink);
+  font-size: clamp(2rem, 4.4vw, 3.75rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.05em;
+}
+
+.heroCopy > p {
+  margin-top: 1.25rem;
+  color: var(--home-muted);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@media (max-width: 1023px) {
+  .scene {
+    height: 32rem;
+  }
+  .mascot {
+    width: 22rem;
+    height: 32rem;
+    margin-left: -11rem;
+  }
+  .insight {
+    left: 0;
+    top: 13rem;
+    width: 11rem;
+    padding: 1rem;
+  }
+  .mockupStack {
+    top: 15rem;
+    width: 12rem;
+  }
+  .webBadge {
+    left: 3%;
+    top: 10rem;
+  }
+  .designBadge {
+    right: 1%;
+    top: 11rem;
+  }
+  .mobileBadge {
+    left: 4%;
+    bottom: 1rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .hero {
+    padding-bottom: 3.5rem;
+  }
+  .backdrop {
+    border-radius: 0 0 50% 50% / 0 0 5% 5%;
+  }
+  .kicker {
+    margin-top: 0.5rem;
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+  }
+  .scene {
+    height: 26rem;
+    margin-top: 1.75rem;
+  }
+  .wordmark {
+    inset: 0 -0.5rem auto;
+    font-size: 13.4vw;
+  }
+  .mascot {
+    top: 1rem;
+    width: 78vw;
+    max-width: 20rem;
+    height: 26rem;
+    margin-left: 0;
+    translate: -50% 0;
+  }
+  .connections {
+    opacity: 0.5;
+  }
+  .insight,
+  .mockupStack {
+    display: none;
+  }
+  .serviceBadge {
+    gap: 0.375rem;
+    padding: 0.5rem 0.625rem;
+    font-size: 0.5625rem;
+  }
+  .serviceBadge svg {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+  .webBadge {
+    top: 9rem;
+    left: 0;
+  }
+  .designBadge {
+    top: 15.5rem;
+    right: 0;
+  }
+  .mobileBadge {
+    bottom: 1.5rem;
+    left: 0;
+  }
+  .heroCopy {
+    margin-top: 0.5rem;
+  }
+  .heroCopy h1 {
+    font-size: clamp(1.75rem, 7.1vw, 2.75rem);
+  }
+  .heroCopy > p {
+    max-width: 18rem;
+    margin-inline: auto;
+    font-size: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot,
+  .mockupStack {
+    animation: none;
+  }
+}

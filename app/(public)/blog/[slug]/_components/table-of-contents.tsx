@@ -3,6 +3,7 @@
 import * as React from "react";
 import { ListTree } from "lucide-react";
 import { cn } from "@/lib/utils";
+import styles from "./blog-detail.module.css";
 
 type Heading = { id: string; text: string; level: number };
 
@@ -69,10 +70,7 @@ export function TableOfContents({ containerId }: { containerId: string }) {
   if (headings.length < 2) return null;
 
   return (
-    <nav
-      aria-label="Daftar isi"
-      className="sticky top-20 hidden w-60 shrink-0 xl:block"
-    >
+    <nav aria-label="Daftar isi" className={styles.toc}>
       <div className="mb-3 inline-flex items-center gap-1.5 text-xs font-medium tracking-wider text-muted-foreground uppercase">
         <ListTree className="size-3.5" />
         Daftar Isi

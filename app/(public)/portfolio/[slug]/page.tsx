@@ -5,8 +5,8 @@ import { PUBLIC_ROUTES } from "@/lib/routes";
 import { getPortfolioItem, getPortfolioStaticParams } from "../_data/portfolio";
 import { PortfolioDetailContent } from "./_components/portfolio-detail-content";
 import { PortfolioCta } from "./_components/portfolio-cta";
-import { PortfolioFeaturedImage } from "./_components/portfolio-featured-image";
 import { PortfolioDetailHero } from "./_components/portfolio-detail-hero";
+import styles from "./_components/portfolio-detail.module.css";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -45,11 +45,10 @@ export default async function PortfolioDetail({ params }: PageProps) {
   const featuredImage = resolveCaseStudyImage(item.slug, item.featuredImage);
 
   return (
-    <>
-      <PortfolioDetailHero item={item} />
-      <PortfolioFeaturedImage src={featuredImage} alt={item.title} />
+    <div className={styles.page}>
+      <PortfolioDetailHero item={item} featuredImage={featuredImage} />
       <PortfolioDetailContent item={item} />
       <PortfolioCta />
-    </>
+    </div>
   );
 }

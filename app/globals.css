@@ -28,6 +28,7 @@
   --brand-navy-light: #1a3b54;
   --brand-cyan: #00b1e1;
   --brand-cyan-hover: #0094bd;
+  --brand-orange: #f47a38;
   --brand-canvas: #f8fafc;
   --brand-surface: #ffffff;
   --brand-divider: #e2e8f0;
@@ -129,10 +130,14 @@
   --color-brand-navy-light: var(--brand-navy-light);
   --color-brand-cyan: var(--brand-cyan);
   --color-brand-cyan-hover: var(--brand-cyan-hover);
+  --color-brand-orange: var(--brand-orange);
   --color-brand-canvas: var(--brand-canvas);
   --color-brand-surface: var(--brand-surface);
   --color-brand-divider: var(--brand-divider);
   --color-primary-hover: var(--primary-hover);
+  --color-brand-cyan-ink: var(--brand-cyan-ink);
+  --color-hero-blue: var(--hero-blue);
+  --color-hero-red: var(--hero-red);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -140,6 +145,7 @@
   --radius-xl: calc(var(--radius) + 4px);
 
   --font-sans: var(--font-geist-sans);
+  --font-jakarta: var(--font-jakarta-sans);
   --font-mono: var(--font-geist-mono);
   --font-serif: Georgia, Cambria, "Times New Roman", Times, serif;
 
@@ -334,6 +340,23 @@
 }
 
 @layer components {
+  /* Scoped marketing palette; other application surfaces keep their tokens. */
+  .tech-playful {
+    --brand-navy: #0f172a;
+    --brand-navy-light: #1e293b;
+    --brand-cyan: #06b6d4;
+    --brand-cyan-hover: #22d3ee;
+    --brand-cyan-ink: #0e7490;
+    --brand-canvas: #f8fafc;
+    --brand-surface: #ffffff;
+    --brand-divider: #e2e8f0;
+    --hero-blue: #2563eb;
+    --hero-red: #dc2626;
+    --primary: var(--brand-cyan);
+    --primary-foreground: var(--brand-navy);
+    --ring: var(--brand-cyan-ink);
+  }
+
   /* Brand visual components */
   .brand-card {
     border: 1px solid var(--border);

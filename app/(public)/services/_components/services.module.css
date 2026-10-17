@@ -1,0 +1,1039 @@
+.servicesPage {
+  --home-ink: #102651;
+  --home-blue: #245fe5;
+  --home-blue-hover: #174dc7;
+  --home-sky: #e6f0fc;
+  --home-ice: #e7ecf3;
+  --home-slate: #dce4ed;
+  --home-slate-deep: #cfd9e6;
+  --home-paper: #ffffff;
+  --home-soft: #f5f8fd;
+  --home-muted: #5c6d86;
+  --home-line: #dce5f2;
+  width: 100%;
+  background: transparent;
+  color: var(--home-ink);
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: 3.5rem 4.25rem;
+  background: transparent;
+  border-radius: 0 0 3rem 3rem;
+}
+
+.heroBackdrop {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 24% 48%,
+      color-mix(in srgb, var(--home-blue) 10%, transparent),
+      transparent 34%
+    ),
+    radial-gradient(
+      ellipse at 3% 5%,
+      color-mix(in srgb, white 88%, transparent),
+      transparent 48%
+    ),
+    linear-gradient(180deg, var(--home-paper) 0%, #f8fafd 58%, #e9eff7 100%);
+  pointer-events: none;
+}
+
+.heroBackdrop::after {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--home-ink) 3%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--home-ink) 3%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 56px 56px;
+  mask-image: linear-gradient(270deg, transparent 35%, black 100%);
+  content: "";
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+.heroCopy {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: 39rem;
+  padding-block: 0.75rem;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 14%, var(--home-line));
+  border-radius: 999px;
+  background: color-mix(in srgb, white 68%, transparent);
+  color: var(--home-blue-hover);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.eyebrow > span {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--home-blue);
+  box-shadow: 0 0 0 0.25rem
+    color-mix(in srgb, var(--home-blue) 12%, transparent);
+}
+
+.heroCopy h1 {
+  max-width: min(100%, 14ch);
+  margin-top: 1.25rem;
+  color: var(--home-ink);
+  font-size: clamp(2.75rem, 5.1vw, 4.5rem);
+  font-weight: 780;
+  line-height: 1.04;
+  letter-spacing: -0.06em;
+  text-wrap: balance;
+}
+
+.heroCopy h1 > span {
+  color: var(--home-blue);
+}
+
+.heroDescription {
+  max-width: min(43ch, 100%);
+  margin-top: 1.25rem;
+  color: var(--home-muted);
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  text-wrap: pretty;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.heroActions a {
+  min-height: 3.125rem;
+}
+
+.heroActions a:focus-visible,
+.cardLink:focus-visible {
+  outline: 2px solid var(--home-blue);
+  outline-offset: 4px;
+}
+
+.heroNote {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 32rem;
+  margin-top: 1.5rem;
+  color: var(--home-muted);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.heroNoteRule {
+  width: 2rem;
+  height: 1px;
+  flex: 0 0 auto;
+  background: color-mix(in srgb, var(--home-blue) 55%, transparent);
+}
+
+.visualColumn {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.mascotStage {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 36rem;
+  height: 34rem;
+  margin-inline: auto;
+}
+
+.backdropWord {
+  position: absolute;
+  z-index: -2;
+  top: 7%;
+  right: 0;
+  color: color-mix(in srgb, var(--home-blue) 8%, transparent);
+  font-size: clamp(4.75rem, 8vw, 7rem);
+  font-weight: 800;
+  letter-spacing: -0.085em;
+  line-height: 0.9;
+}
+
+.orbit {
+  position: absolute;
+  z-index: -1;
+  inset: 8% 9% 7%;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 12%, transparent);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 50% 53%,
+    color-mix(in srgb, white 84%, transparent),
+    transparent 66%
+  );
+  box-shadow:
+    0 0 0 1.25rem color-mix(in srgb, var(--home-blue) 2.5%, transparent),
+    inset 0 0 3rem color-mix(in srgb, white 70%, transparent);
+}
+
+.connection {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.connection path {
+  stroke: var(--home-blue);
+  stroke-opacity: 0.2;
+  stroke-width: 1;
+}
+
+.connection circle {
+  fill: var(--home-blue);
+  filter: drop-shadow(0 0 4px var(--home-blue));
+}
+
+.mascotShadow {
+  position: absolute;
+  z-index: -1;
+  right: 19%;
+  bottom: 1rem;
+  left: 19%;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--home-ink) 16%, transparent),
+    transparent 72%
+  );
+  filter: blur(8px);
+}
+
+.mascot {
+  position: absolute;
+  z-index: 1;
+  inset: 0 8% 0.5rem;
+  filter: drop-shadow(
+    0 18px 20px color-mix(in srgb, var(--home-ink) 13%, transparent)
+  );
+  animation: services-float 8s ease-in-out infinite;
+  mask-image: linear-gradient(black 91%, transparent);
+}
+
+.mascotImage {
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.floatBadge {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  min-width: 10rem;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid color-mix(in srgb, white 82%, var(--home-line));
+  border-radius: 1rem;
+  background: color-mix(in srgb, white 82%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 94%, transparent),
+    0 12px 28px color-mix(in srgb, var(--home-ink) 8%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+.floatBadge > span {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 12%, white);
+  border-radius: 0.75rem;
+  background: linear-gradient(145deg, white, var(--home-sky));
+  color: var(--home-blue);
+}
+
+.floatBadge svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.floatBadge div {
+  display: grid;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.floatBadge strong {
+  color: var(--home-ink);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.floatBadge small {
+  color: var(--home-muted);
+  font-size: 0.5625rem;
+  line-height: 1.4;
+}
+
+.badgeEngineering {
+  top: 8%;
+  left: 0;
+  animation: services-float 7s ease-in-out -1s infinite;
+}
+
+.badgeDesign {
+  top: 57%;
+  left: 0;
+  animation: services-float 8s ease-in-out -3s infinite;
+}
+
+.badgeMobile {
+  right: 0;
+  bottom: 13%;
+  animation: services-float 7.5s ease-in-out -4.5s infinite;
+}
+
+.servicesSection {
+  position: relative;
+  padding-block: 5rem;
+  background: var(--home-paper);
+}
+
+.servicesSection::before {
+  position: absolute;
+  top: 0;
+  right: max(1.25rem, calc((100vw - 80rem) / 2));
+  left: max(1.25rem, calc((100vw - 80rem) / 2));
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--home-line) 12%,
+    var(--home-line) 88%,
+    transparent
+  );
+  content: "";
+}
+
+.sectionHeader {
+  display: grid;
+  justify-items: center;
+  gap: 0;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.sectionEyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--home-blue);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.sectionEyebrow::before {
+  width: 0.375rem;
+  height: 0.375rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--home-blue);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--home-blue) 12%, transparent);
+  content: "";
+}
+
+.sectionHeader h2 {
+  max-width: 20ch;
+  margin-top: 0.875rem;
+  color: var(--home-ink);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 760;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.sectionHeader h2 span {
+  color: var(--home-blue);
+}
+
+.sectionIntro {
+  max-width: 58ch;
+  justify-self: center;
+  margin-top: 1.125rem;
+  color: var(--home-muted);
+  font-size: 0.875rem;
+  line-height: 1.85;
+  text-wrap: pretty;
+}
+
+.sectionIntro::before {
+  display: block;
+  width: 2rem;
+  height: 2px;
+  margin: 0 auto 0.875rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--home-blue) 58%, white);
+  content: "";
+}
+
+.serviceGrid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.serviceCard {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--home-line);
+  border-radius: 1.5rem;
+  background: white;
+  box-shadow: 0 8px 26px color-mix(in srgb, var(--home-ink) 4%, transparent);
+  transition:
+    border-color 220ms,
+    box-shadow 220ms,
+    transform 220ms;
+}
+
+.serviceCardFeatured {
+  border-color: color-mix(in srgb, var(--home-blue) 26%, var(--home-line));
+  background: linear-gradient(
+    155deg,
+    white,
+    color-mix(in srgb, var(--home-sky) 74%, white)
+  );
+}
+
+.serviceCard:focus-within {
+  outline: 2px solid var(--home-blue);
+  outline-offset: 4px;
+}
+
+.cardVisual {
+  position: relative;
+  display: grid;
+  height: 13.75rem;
+  flex: 0 0 auto;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 50% 63%,
+      color-mix(in srgb, var(--home-blue) 10%, transparent),
+      transparent 58%
+    ),
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, white 72%, var(--home-sky)),
+      white
+    );
+}
+
+.cardVisual::after {
+  position: absolute;
+  inset: auto 12% 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--home-blue) 20%, transparent),
+    transparent
+  );
+  content: "";
+}
+
+.cardIndex {
+  position: absolute;
+  z-index: 1;
+  top: 1rem;
+  left: 1.25rem;
+  color: var(--home-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+}
+
+.cardArtwork {
+  position: absolute;
+  inset: 0.5rem 1rem 0;
+}
+
+.cardArtwork img {
+  object-fit: contain;
+  filter: drop-shadow(
+    0 12px 14px color-mix(in srgb, var(--home-ink) 8%, transparent)
+  );
+  transition: transform 260ms ease;
+}
+
+.artFallback {
+  display: grid;
+  width: 6rem;
+  height: 6rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 14%, white);
+  border-radius: 1.75rem;
+  background: linear-gradient(145deg, white, var(--home-sky));
+  box-shadow: 0 16px 30px color-mix(in srgb, var(--home-blue) 10%, transparent);
+  color: var(--home-blue);
+}
+
+.artFallback svg {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.cardBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 1.25rem;
+}
+
+.cardHeading {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.cardIcon {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 14%, white);
+  border-radius: 0.875rem;
+  background: color-mix(in srgb, var(--home-sky) 82%, white);
+  color: var(--home-blue);
+}
+
+.cardIcon svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.cardHeading h3 {
+  max-width: 20ch;
+  padding-top: 0.2rem;
+  color: var(--home-ink);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+  text-wrap: pretty;
+}
+
+.cardDescription {
+  min-height: 5.25rem;
+  max-width: 48ch;
+  margin-top: 0.625rem;
+  color: var(--home-muted);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.deliverables {
+  margin-top: 0.875rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--home-line);
+}
+
+.deliverables h4 {
+  margin-bottom: 0.5rem;
+  color: var(--home-ink);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.deliverables ul {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.deliverables li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  color: var(--home-muted);
+  font-size: 0.6875rem;
+  line-height: 1.55;
+}
+
+.deliverables li svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex: 0 0 auto;
+  margin-top: 0.0625rem;
+  color: var(--home-blue);
+}
+
+.cardLink {
+  display: flex;
+  min-height: 2.875rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 16%, var(--home-line));
+  border-radius: 0.875rem;
+  background: color-mix(in srgb, white 76%, var(--home-sky));
+  color: var(--home-ink);
+  font-size: 0.75rem;
+  font-weight: 650;
+  transition:
+    border-color 200ms,
+    background-color 200ms,
+    color 200ms;
+}
+
+.cardLink svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--home-blue);
+  transition: transform 200ms;
+}
+
+.ctaSection {
+  padding-block: 0 5.5rem;
+  background: var(--home-paper);
+}
+
+.ctaPanel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+  border: 1px solid color-mix(in srgb, var(--home-blue) 18%, var(--home-line));
+  border-radius: 2rem;
+  background:
+    radial-gradient(
+      ellipse at 88% 18%,
+      color-mix(in srgb, white 82%, transparent),
+      transparent 37%
+    ),
+    radial-gradient(
+      ellipse at 8% 100%,
+      color-mix(in srgb, var(--home-blue) 15%, transparent),
+      transparent 44%
+    ),
+    linear-gradient(
+      125deg,
+      var(--home-sky),
+      var(--home-ice) 58%,
+      var(--home-slate)
+    );
+  box-shadow: 0 20px 56px color-mix(in srgb, var(--home-ink) 8%, transparent);
+}
+
+.ctaPanel::before {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: 7%;
+  width: min(23rem, 38%);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 15%, transparent);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1rem color-mix(in srgb, var(--home-blue) 3%, transparent),
+    0 0 0 2rem color-mix(in srgb, var(--home-blue) 2%, transparent);
+  transform: translateY(-50%);
+  content: "";
+}
+
+.ctaContent {
+  position: relative;
+  z-index: 1;
+  max-width: 42rem;
+}
+
+.ctaEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--home-blue-hover);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.ctaEyebrow svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.ctaPanel h2 {
+  max-width: 16ch;
+  margin-top: 1.125rem;
+  color: var(--home-ink);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 760;
+  line-height: 1.06;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.ctaPanel > .ctaContent > p {
+  max-width: 46ch;
+  margin-top: 1rem;
+  color: var(--home-muted);
+  font-size: 0.875rem;
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+
+.ctaLink {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--home-blue);
+  border-radius: 999px;
+  background: var(--home-blue);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 650;
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--home-blue) 20%, transparent);
+  transition:
+    border-color 180ms,
+    background-color 180ms,
+    box-shadow 180ms,
+    transform 180ms;
+}
+
+.ctaLink svg {
+  width: 1rem;
+  height: 1rem;
+  transition: transform 180ms;
+}
+
+.ctaLink:hover {
+  border-color: var(--home-blue-hover);
+  background: var(--home-blue-hover);
+  box-shadow: 0 13px 26px color-mix(in srgb, var(--home-blue) 24%, transparent);
+}
+
+.ctaLink:focus-visible {
+  outline: 2px solid var(--home-blue);
+  outline-offset: 4px;
+}
+
+@keyframes services-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (min-width: 640px) {
+  .hero {
+    padding-block: 4rem 5rem;
+  }
+  .sectionHeader {
+    gap: 0;
+  }
+  .serviceGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+  .cardBody {
+    padding: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    padding-block: 3.5rem 4rem;
+  }
+  .heroGrid {
+    grid-template-columns: minmax(0, 1fr) minmax(28rem, 0.92fr);
+    gap: clamp(2rem, 4vw, 4rem);
+  }
+  .visualColumn {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .heroCopy {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+  .sectionHeader {
+    gap: 0;
+  }
+  .mascotStage {
+    height: 37rem;
+  }
+  .servicesSection {
+    padding-block: 6rem;
+  }
+  .serviceGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.375rem;
+    margin-top: 3rem;
+  }
+  .cardVisual {
+    height: 14rem;
+  }
+  .ctaSection {
+    padding-bottom: 6rem;
+  }
+  .ctaPanel {
+    padding: 3.5rem;
+  }
+  .ctaContent {
+    display: grid;
+    max-width: none;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    column-gap: clamp(1.25rem, 3vw, 2.5rem);
+    align-items: center;
+  }
+  .ctaEyebrow {
+    grid-column: 1 / -1;
+    margin-bottom: 0.5rem;
+  }
+  .ctaPanel h2 {
+    grid-column: 1;
+    max-width: 15ch;
+    margin-top: 0;
+  }
+  .ctaPanel > .ctaContent > p {
+    grid-column: 2;
+    align-self: center;
+    max-width: 42ch;
+    margin-top: 0;
+  }
+  .ctaLink {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 1rem;
+  }
+  .ctaLink:hover svg,
+  .cardLink:hover svg {
+    transform: translateX(3px);
+  }
+}
+
+@media (max-width: 639px) {
+  .servicesPage {
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  .hero {
+    padding-block: 2.25rem 3rem;
+    border-radius: 0 0 2rem 2rem;
+  }
+  .heroCopy h1 {
+    width: 100%;
+    max-width: 100%;
+    font-size: clamp(2.125rem, 8vw, 2.75rem);
+    line-height: 1.06;
+  }
+  .eyebrow {
+    font-size: 0.5625rem;
+  }
+  .heroCopy {
+    width: min(100%, calc(100vw - 4rem));
+    max-width: calc(100vw - 4rem);
+  }
+  .heroDescription {
+    width: 100%;
+    max-width: 100%;
+    font-size: 0.8125rem;
+    line-height: 1.75;
+  }
+  .heroActions {
+    gap: 0.625rem;
+  }
+  .heroActions a {
+    min-height: 2.875rem;
+    padding-inline: 1rem;
+    font-size: 0.75rem;
+  }
+  .heroNote {
+    margin-top: 1.5rem;
+  }
+  .mascotStage {
+    width: min(calc(100vw - 4rem), 22rem);
+    max-width: calc(100vw - 4rem);
+    height: min(30rem, 116vw);
+    min-height: 21rem;
+    margin-top: 0.25rem;
+  }
+  .backdropWord {
+    top: 13%;
+    right: 2%;
+    font-size: clamp(4rem, 18vw, 6rem);
+  }
+  .mascot {
+    inset-inline: 9%;
+  }
+  .floatBadge {
+    min-width: 8.5rem;
+    gap: 0.5rem;
+    padding: 0.5rem 0.625rem;
+    border-radius: 0.875rem;
+  }
+  .floatBadge > span {
+    width: 1.875rem;
+    height: 1.875rem;
+    border-radius: 0.625rem;
+  }
+  .floatBadge strong {
+    font-size: 0.625rem;
+  }
+  .floatBadge small {
+    font-size: 0.5rem;
+  }
+  .badgeEngineering {
+    top: auto;
+    bottom: 20%;
+    left: 0;
+  }
+  .badgeDesign {
+    top: 55%;
+    left: -0.25rem;
+  }
+  .badgeMobile {
+    right: 0;
+    bottom: 10%;
+  }
+  .servicesSection {
+    padding-block: 4rem;
+  }
+  .sectionHeader h2 {
+    font-size: clamp(1.875rem, 9vw, 2.5rem);
+  }
+  .sectionIntro {
+    max-width: 48ch;
+    justify-self: center;
+    margin-top: 1rem;
+    font-size: 0.8125rem;
+  }
+  .serviceGrid {
+    gap: 1rem;
+    margin-top: 1.75rem;
+  }
+  .cardVisual {
+    height: auto;
+    aspect-ratio: 1.55;
+  }
+  .cardBody {
+    padding: 1rem;
+  }
+  .cardDescription {
+    min-height: 0;
+  }
+  .cardHeading {
+    min-height: 0;
+  }
+  .ctaSection {
+    padding-bottom: 4rem;
+  }
+  .ctaPanel {
+    border-radius: 1.5rem;
+  }
+  .ctaPanel::before {
+    top: 3%;
+    right: -19%;
+    width: 14rem;
+    transform: none;
+  }
+  .ctaPanel h2 {
+    font-size: clamp(2rem, 9vw, 2.75rem);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .serviceCard:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--home-blue) 38%, var(--home-line));
+    box-shadow: 0 18px 38px color-mix(in srgb, var(--home-blue) 9%, transparent);
+  }
+  .serviceCard:hover .cardArtwork img {
+    transform: translateY(-3px) scale(1.035);
+  }
+  .cardLink:hover {
+    border-color: var(--home-blue);
+    background: var(--home-blue);
+    color: white;
+  }
+  .cardLink:hover svg {
+    color: white;
+  }
+  .ctaLink:hover {
+    transform: translateY(-1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot,
+  .floatBadge {
+    animation: none;
+  }
+  .serviceCard,
+  .cardArtwork img,
+  .cardLink,
+  .cardLink svg,
+  .ctaLink,
+  .ctaLink svg {
+    transition: none;
+  }
+}

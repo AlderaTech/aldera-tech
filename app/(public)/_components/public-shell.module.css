@@ -1,0 +1,70 @@
+.studioTheme {
+  --home-ink: #102651;
+  --home-blue: #245fe5;
+  --home-blue-hover: #174dc7;
+  --home-sky: #e6f0fc;
+  --home-ice: #e7ecf3;
+  --home-slate: #dce4ed;
+  --home-slate-deep: #cfd9e6;
+  --home-paper: #ffffff;
+  --home-soft: #f5f8fd;
+  --home-muted: #5c6d86;
+  --home-line: #dce5f2;
+  --brand-navy: var(--home-ink);
+  --brand-navy-light: #1b396c;
+  --brand-cyan: var(--home-blue);
+  --brand-cyan-hover: var(--home-blue-hover);
+  --brand-cyan-ink: var(--home-blue);
+  --brand-canvas: var(--home-soft);
+  --brand-surface: var(--home-paper);
+  --brand-divider: var(--home-line);
+  --primary: var(--home-blue);
+  --ring: var(--home-blue);
+  background: var(--home-paper);
+  color: var(--home-ink);
+}
+
+.portfolioTheme {
+  background: linear-gradient(
+    180deg,
+    var(--home-sky) 0,
+    color-mix(in srgb, var(--home-sky) 48%, var(--home-paper)) 27rem,
+    var(--home-paper) 63rem
+  );
+}
+
+.aiRelayTheme {
+  background: linear-gradient(
+    180deg,
+    var(--home-sky) 0,
+    color-mix(in srgb, var(--home-sky) 45%, var(--home-paper)) 30rem,
+    var(--home-paper) 58rem
+  );
+}
+
+.pricingTheme {
+  background: linear-gradient(
+    180deg,
+    var(--home-sky) 0,
+    color-mix(in srgb, var(--home-sky) 45%, var(--home-paper)) 24rem,
+    var(--home-paper) 52rem
+  );
+}
+
+.blogTheme {
+  background: linear-gradient(
+    180deg,
+    var(--home-sky) 0,
+    color-mix(in srgb, var(--home-sky) 45%, var(--home-paper)) 24rem,
+    var(--home-paper) 47rem
+  );
+}
+
+.contactTheme {
+  background: linear-gradient(
+    180deg,
+    var(--home-sky) 0,
+    color-mix(in srgb, var(--home-sky) 45%, var(--home-paper)) 26rem,
+    var(--home-paper) 54rem
+  );
+}
