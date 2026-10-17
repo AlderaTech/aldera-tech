@@ -24,6 +24,15 @@ export function useCalculatorWizard(data: CalculatorData) {
   const [submitted, setSubmitted] = useState(false);
   const [pending, startTransition] = useTransition();
 
+  function handleSelectType(typeId: string) {
+    if (typeId !== selectedType) {
+      setSelectedType(typeId);
+      setDepValues({});
+      setSelectedFeatures([]);
+      setSelectedAddOns({});
+    }
+  }
+
   const pt = projectTypes.find((t) => t.id === selectedType);
   const depFields: DependentField[] = useMemo(
     () =>
@@ -42,6 +51,9 @@ export function useCalculatorWizard(data: CalculatorData) {
   const total = useMemo(() => {
     if (!pt) return 0;
     const stdPrice = features.find((f) => !f.isMajor)?.price;
+    const validCustomFeatures = customFeatures.filter(
+      (f) => f.name && f.name.trim().length > 0
+    );
     return calculateOrderTotal({
       basePrice: Number(pt.basePrice),
       dependentFields: depFields.map((field) => ({
@@ -52,7 +64,7 @@ export function useCalculatorWizard(data: CalculatorData) {
         .map((fId) => features.find((x) => x.id === fId)?.price)
         .filter((p): p is number => p !== undefined)
         .map(Number),
-      customFeatureCount: customFeatures.length,
+      customFeatureCount: validCustomFeatures.length,
       customFeaturePrice: stdPrice ? Number(stdPrice) : 500000,
       addOns: Object.entries(selectedAddOns).map(([addOnId, months]) => {
         const ao = addOns.find((a) => a.id === addOnId);
@@ -92,10 +104,13 @@ export function useCalculatorWizard(data: CalculatorData) {
   function handleSubmit() {
     startTransition(async () => {
       try {
+        const validCustomFeatures = customFeatures.filter(
+          (f) => f.name && f.name.trim().length > 0
+        );
         await submitOrderRequest({
           projectTypeId: selectedType,
           features: selectedFeatures,
-          customFeatures,
+          customFeatures: validCustomFeatures,
           addOns: Object.entries(selectedAddOns)
             .filter(([, m]) => m > 0)
             .map(([addOnId, months]) => ({ addOnId, months })),
@@ -121,7 +136,7 @@ export function useCalculatorWizard(data: CalculatorData) {
     step,
     setStep,
     selectedType,
-    setSelectedType,
+    setSelectedType: handleSelectType,
     depValues,
     setDepValues,
     selectedFeatures,

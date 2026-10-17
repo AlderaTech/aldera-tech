@@ -214,3 +214,63 @@ export const ROLE_LABELS: Record<Role, string> = {
   DEVELOPER: "Developer",
   CLIENT: "Client",
 };
+
+export type SessionUser = {
+  id: string;
+  role: Role;
+  roles: Role[];
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+};
+
+export type ExplicitSession = {
+  user?: {
+    id?: string;
+    role?: Role;
+    roles?: Role[];
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  } | null;
+} | null;
+
+type AuthFunction = () => Promise<ExplicitSession>;
+let authHandler: AuthFunction | null = null;
+
+export function setAuthHandler(fn: AuthFunction): void {
+  authHandler = fn;
+}
+
+/**
+ * Evaluates session user's roles against ROLE_PERMISSIONS for a required permission.
+ * Throws "Unauthorized" if no session user, or "Forbidden" if missing permission.
+ */
+export async function requirePermission(
+  permission: Permission,
+  explicitSession?: ExplicitSession
+): Promise<SessionUser> {
+  let session = explicitSession;
+  if (session === undefined) {
+    if (authHandler) {
+      session = await authHandler();
+    } else {
+      try {
+        const dynamicImport = new Function("m", "return import(m)");
+        const mod = await dynamicImport("@/auth");
+        session = await mod.auth();
+      } catch {
+        session = null;
+      }
+    }
+  }
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+  const roles =
+    session.user.roles ?? (session.user.role ? [session.user.role] : []);
+  if (!hasPermission(roles, permission)) {
+    throw new Error("Forbidden");
+  }
+  return session.user as SessionUser;
+}

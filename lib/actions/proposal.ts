@@ -16,6 +16,7 @@ import { waTemplates } from "@/lib/whatsapp-templates";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { logAudit } from "@/lib/actions/team";
 import { ADMIN_ROUTES, PROPOSAL_ROUTES } from "@/lib/routes";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 
 export type ProposalActionState = {
   ok: boolean;
@@ -89,7 +90,7 @@ export async function createProposalAction(
       token,
       title: data.title,
       summary: data.summary || null,
-      content: data.content,
+      content: sanitizeHtml(data.content),
       clientName: data.clientName,
       clientEmail: data.clientEmail,
       clientPhone: data.clientPhone || null,

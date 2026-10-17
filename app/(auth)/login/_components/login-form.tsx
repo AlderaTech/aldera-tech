@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useTransition } from "react";
+import { useActionState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -19,33 +19,49 @@ import { ADMIN_ROUTES, AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 
 const initialState: ActionState = { ok: false };
 
+function getSafeRedirectUrl(
+  url: string | null | undefined,
+  defaultPath: string
+): string {
+  if (!url || typeof url !== "string") {
+    return defaultPath;
+  }
+  const trimmed = url.trim();
+  if (
+    !trimmed.startsWith("/") ||
+    trimmed.startsWith("//") ||
+    trimmed.startsWith("/\\") ||
+    trimmed.includes("://")
+  ) {
+    return defaultPath;
+  }
+  return trimmed;
+}
+
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? undefined;
 
-  const [state] = useActionState(loginAction, initialState);
-  const [isPending, startTransition] = useTransition();
+  const [state, formAction, isPending] = useActionState(loginAction, initialState);
   const { showPassword, togglePassword } = usePasswordVisibility();
 
-  function handleSubmit(formData: FormData) {
-    startTransition(async () => {
-      const result = await loginAction(state, formData);
-      if (result.ok) {
-        toast.success("Berhasil masuk!");
-        const target =
-          callbackUrl ??
-          (isStaff(result.role) ? ADMIN_ROUTES.home : DASHBOARD_ROUTES.home);
-        router.replace(target);
-        router.refresh();
-      } else if (result.message) {
-        toast.error(result.message);
-      }
-    });
-  }
+  useEffect(() => {
+    if (state.ok) {
+      toast.success("Berhasil masuk!");
+      const defaultTarget = isStaff(state.role)
+        ? ADMIN_ROUTES.home
+        : DASHBOARD_ROUTES.home;
+      const target = getSafeRedirectUrl(callbackUrl, defaultTarget);
+      router.replace(target);
+      router.refresh();
+    } else if (state.message) {
+      toast.error(state.message);
+    }
+  }, [state, callbackUrl, router]);
 
   return (
-    <form action={handleSubmit}>
+    <form action={formAction}>
       <CardContent className="space-y-5 px-6 pb-2 sm:px-8">
         <div className="space-y-2">
           <Label

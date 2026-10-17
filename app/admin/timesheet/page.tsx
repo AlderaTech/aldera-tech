@@ -26,6 +26,9 @@ export default async function TimesheetPage({
     ? new Date(sp.from)
     : new Date(now.getFullYear(), now.getMonth(), 1);
   const to = sp.to ? new Date(sp.to) : now;
+  if (sp.to) {
+    to.setHours(23, 59, 59, 999);
+  }
 
   const data = await safeDb(
     async () => {

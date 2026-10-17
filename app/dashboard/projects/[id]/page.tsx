@@ -45,7 +45,10 @@ export default async function UserProjectDetail({ params }: PageProps) {
           },
           testimonial: true,
           files: { orderBy: { createdAt: "desc" } },
-          invoices: { orderBy: { issueDate: "desc" } },
+          invoices: {
+            where: { status: { not: "DRAFT" } },
+            orderBy: { issueDate: "desc" },
+          },
           messages: {
             orderBy: { createdAt: "asc" },
             include: {

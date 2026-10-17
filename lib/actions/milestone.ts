@@ -62,6 +62,9 @@ export async function updateMilestoneStatusAction(
     data: {
       status,
       completedAt: status === "COMPLETED" ? new Date() : null,
+      ...(status === "COMPLETED"
+        ? { clientRejectedAt: null, clientFeedback: null }
+        : {}),
     },
     select: { projectId: true, title: true, requiresClientApproval: true },
   });
@@ -171,8 +174,15 @@ export async function rejectMilestoneAction(
 
   await prisma.milestone.update({
     where: { id: milestoneId },
-    data: { clientRejectedAt: new Date(), clientFeedback: feedback || null },
+    data: {
+      status: "IN_PROGRESS",
+      completedAt: null,
+      clientRejectedAt: new Date(),
+      clientFeedback: feedback || null,
+    },
   });
+
+  await recomputeProgressIfAuto(milestone.project.id);
 
   await prisma.activityLog.create({
     data: {

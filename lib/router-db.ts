@@ -19,6 +19,8 @@ const FORBIDDEN_AUDIT_PATTERNS = [
   /\bUPDATE\s+(ONLY\s+)?("?public\s*"?\s*\.)?\s*"?balance_transactions"?\b/i,
   /\bDELETE\s+FROM\s+(ONLY\s+)?("?public\s*"?\s*\.)?\s*"?balance_transactions"?\b/i,
   /\bTRUNCATE(\s+TABLE)?(\s+ONLY)?\s+("?public\s*"?\s*\.)?\s*"?balance_transactions"?\b/i,
+  /\bUPDATE\s+(ONLY\s+)?("?public\s*"?\s*\.)?\s*"?usage_logs"?\b/i,
+  /\bUPDATE\s+usage_logs\b/i,
   /\bDELETE\s+FROM\s+(ONLY\s+)?("?public\s*"?\s*\.)?\s*"?usage_logs"?\b/i,
   /\bTRUNCATE(\s+TABLE)?(\s+ONLY)?\s+("?public\s*"?\s*\.)?\s*"?usage_logs"?\b/i,
 ];
@@ -50,10 +52,17 @@ export function assertQuerySafety(sql: string): void {
   for (const pattern of FORBIDDEN_AUDIT_PATTERNS) {
     if (pattern.test(normalized)) {
       throw new Error(
-        "Audit immutability violation: Modification (UPDATE/DELETE/TRUNCATE) on balance_transactions or deletion on usage_logs is strictly forbidden."
+        "Audit immutability violation: Modification (UPDATE/DELETE/TRUNCATE) on balance_transactions or usage_logs is strictly forbidden."
       );
     }
   }
+}
+
+/**
+ * Authoritative alias for assertQuerySafety enforcing immutable audit tables.
+ */
+export function assertAuditTableImmutability(sql: string): void {
+  assertQuerySafety(sql);
 }
 
 /**

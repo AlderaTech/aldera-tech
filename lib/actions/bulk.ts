@@ -1,23 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { isStaff } from "@/lib/permissions";
+import { requirePermission, PERMISSIONS } from "@/lib/permissions";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 import type { InvoiceStatus } from "@prisma/client";
 
-async function requireAdmin() {
-  const session = await auth();
-  if (!session?.user || !isStaff(session.user.role)) {
-    throw new Error("Forbidden");
-  }
-  return session.user;
-}
-
 // ---- Blog bulk actions ----
 export async function bulkBlogPublishAction(ids: string[], publish: boolean) {
-  await requireAdmin();
+  await requirePermission(PERMISSIONS.BLOG_PUBLISH);
   if (ids.length === 0) return { ok: true, count: 0 };
   const now = new Date();
   const result = await prisma.blogPost.updateMany({
@@ -33,7 +24,7 @@ export async function bulkBlogPublishAction(ids: string[], publish: boolean) {
 }
 
 export async function bulkBlogDeleteAction(ids: string[]) {
-  await requireAdmin();
+  await requirePermission(PERMISSIONS.BLOG_DELETE);
   if (ids.length === 0) return { ok: true, count: 0 };
   const result = await prisma.blogPost.deleteMany({
     where: { id: { in: ids } },
@@ -48,7 +39,7 @@ export async function bulkInvoiceStatusAction(
   ids: string[],
   status: InvoiceStatus
 ) {
-  await requireAdmin();
+  await requirePermission(PERMISSIONS.INVOICE_EDIT);
   if (ids.length === 0) return { ok: true, count: 0 };
   const result = await prisma.invoice.updateMany({
     where: { id: { in: ids } },
@@ -63,7 +54,7 @@ export async function bulkInvoiceStatusAction(
 }
 
 export async function bulkInvoiceDeleteAction(ids: string[]) {
-  await requireAdmin();
+  await requirePermission(PERMISSIONS.INVOICE_DELETE);
   if (ids.length === 0) return { ok: true, count: 0 };
   const result = await prisma.invoice.deleteMany({
     where: { id: { in: ids } },

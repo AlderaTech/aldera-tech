@@ -19,6 +19,7 @@ import { safeDb } from "@/lib/safe-db";
 import { proposalStatusMeta } from "@/lib/status-meta";
 import { ADMIN_ROUTES } from "@/lib/routes";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 import { ProposalActions } from "../_components/proposal-actions";
 
 type PageProps = {
@@ -152,7 +153,7 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
         </div>
         <div
           className="prose max-w-none prose-neutral"
-          dangerouslySetInnerHTML={{ __html: proposal.content }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(proposal.content) }}
         />
       </Card>
 

@@ -39,7 +39,13 @@ export function StepReview({
   onBack,
   onSubmit,
 }: StepReviewProps) {
-  const waDigits = (whatsappNumber || "6281234567890").replace(/\D/g, "");
+  const rawDigits = (whatsappNumber || "6281234567890").replace(/\D/g, "");
+  let waDigits = rawDigits;
+  if (rawDigits.startsWith("0")) {
+    waDigits = "62" + rawDigits.slice(1);
+  } else if (!rawDigits.startsWith("62")) {
+    waDigits = "62" + rawDigits;
+  }
   const waText = `Halo Aldera Tech, saya telah membuat estimasi di website untuk proyek *${ptName || "Kustom"}* dengan estimasi biaya *${formatCurrency(total)}*. Saya ingin berkonsultasi lebih lanjut.`;
   const whatsappHref = `https://wa.me/${waDigits || "6281234567890"}?text=${encodeURIComponent(waText)}`;
 

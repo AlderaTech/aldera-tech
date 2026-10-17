@@ -44,6 +44,8 @@ EOF
 1 17 * * * /app/run-cron.sh issue-recurring
 # Publish Scheduled Blog Posts (Every 15 minutes)
 */15 * * * * /app/run-cron.sh publish-scheduled
+# AI Relay Low Balance Guard (Every 30 minutes)
+*/30 * * * * /app/run-cron.sh balance-guard
 EOF
   chmod 0600 /etc/crontabs/nextjs
 

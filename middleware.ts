@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import authConfig from "@/auth.config";
 import { NextResponse } from "next/server";
-import { isStaff, isAdmin } from "@/lib/permissions";
+import { isStaff, isAdmin, hasPermission, PERMISSIONS } from "@/lib/permissions";
 import { AUTH_ROUTES, DASHBOARD_ROUTES, ADMIN_ROUTES } from "@/lib/routes";
 
 const { auth } = NextAuth(authConfig);
@@ -28,6 +28,27 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
+  // 1b. Guard Admin Export API routes by granular permissions
+  if (pathname.startsWith("/api/admin/export/analytics")) {
+    if (!isLoggedIn) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!hasPermission(roles, PERMISSIONS.ANALYTICS_VIEW)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    return NextResponse.next();
+  }
+
+  if (pathname.startsWith("/api/admin/export/invoices")) {
+    if (!isLoggedIn) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!hasPermission(roles, PERMISSIONS.INVOICE_VIEW)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    return NextResponse.next();
+  }
+
   // 1. Guard API Admin routes: return JSON 401 / 403
   if (pathname.startsWith("/api/admin")) {
     if (!isLoggedIn) {
@@ -39,14 +60,37 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // 2a. Guard AI Relay Admin dashboard pages: strictly ADMIN only (reject DEVELOPER and CLIENT)
-  if (pathname.startsWith("/admin/ai-relay")) {
+  // 2a. Guard Admin restricted pages (ai-relay, invoices, proposals, analytics, settings)
+  const isAiRelayAdminPage = pathname.startsWith("/admin/ai-relay");
+  const isInvoiceAdminPage = pathname.startsWith("/admin/invoices");
+  const isProposalAdminPage = pathname.startsWith("/admin/proposals");
+  const isAnalyticsAdminPage = pathname.startsWith("/admin/analytics");
+  const isSettingsAdminPage = pathname.startsWith("/admin/settings");
+
+  if (
+    isAiRelayAdminPage ||
+    isInvoiceAdminPage ||
+    isProposalAdminPage ||
+    isAnalyticsAdminPage ||
+    isSettingsAdminPage
+  ) {
     if (!isLoggedIn) {
       const loginUrl = new URL(AUTH_ROUTES.login, req.nextUrl);
       loginUrl.searchParams.set("callbackUrl", `${pathname}${search}`);
       return NextResponse.redirect(loginUrl);
     }
-    if (!userIsAdmin) {
+
+    const hasRequiredPermission =
+      (isAiRelayAdminPage && userIsAdmin) ||
+      (isInvoiceAdminPage && hasPermission(roles, PERMISSIONS.INVOICE_VIEW)) ||
+      (isProposalAdminPage &&
+        hasPermission(roles, PERMISSIONS.PROPOSAL_MANAGE)) ||
+      (isAnalyticsAdminPage &&
+        hasPermission(roles, PERMISSIONS.ANALYTICS_VIEW)) ||
+      (isSettingsAdminPage &&
+        hasPermission(roles, PERMISSIONS.SETTINGS_MANAGE));
+
+    if (!hasRequiredPermission) {
       const fallbackTarget = userIsStaff
         ? ADMIN_ROUTES.home
         : DASHBOARD_ROUTES.home;

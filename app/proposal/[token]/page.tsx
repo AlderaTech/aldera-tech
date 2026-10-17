@@ -17,6 +17,7 @@ import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { proposalStatusMeta } from "@/lib/status-meta";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 import { SignaturePanel } from "./signature-panel";
 
 type PageProps = {
@@ -98,7 +99,7 @@ export default async function PublicProposalPage({ params }: PageProps) {
           <Card className="p-6">
             <div
               className="prose max-w-none prose-neutral"
-              dangerouslySetInnerHTML={{ __html: proposal.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(proposal.content) }}
             />
           </Card>
 

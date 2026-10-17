@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import type { AdminAddOn } from "../_types/calculator-admin";
 
 export function AddOnsTab({ items }: { items: AdminAddOn[] }) {
+  const router = useRouter();
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState<AdminAddOn | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminAddOn | null>(null);
@@ -31,6 +33,7 @@ export function AddOnsTab({ items }: { items: AdminAddOn[] }) {
       });
       toast.success(editing ? "Diperbarui" : "Ditambahkan");
       setEditing(null);
+      router.refresh();
     });
   }
 
@@ -40,6 +43,7 @@ export function AddOnsTab({ items }: { items: AdminAddOn[] }) {
       await deleteAddOnOption(deleteTarget.id);
       toast.success("Dihapus");
       setDeleteTarget(null);
+      router.refresh();
     });
   }
 

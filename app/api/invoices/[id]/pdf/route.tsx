@@ -30,6 +30,11 @@ export async function GET(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  // Clients cannot download DRAFT invoices
+  if (session.user.role !== "ADMIN" && invoice.status === "DRAFT") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const data: InvoicePdfData = {
     number: invoice.number,
     issueDate: formatDate(invoice.issueDate),

@@ -17,6 +17,9 @@ export async function GET(req: NextRequest) {
     ? new Date(sp.get("from")!)
     : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   const to = sp.get("to") ? new Date(sp.get("to")!) : new Date();
+  if (sp.get("to")) {
+    to.setHours(23, 59, 59, 999);
+  }
 
   const entries = await prisma.timeEntry.findMany({
     where: { startedAt: { gte: from, lte: to } },

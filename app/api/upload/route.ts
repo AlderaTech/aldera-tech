@@ -5,6 +5,8 @@ import { randomUUID } from "node:crypto";
 import sharp from "sharp";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { isStaff } from "@/lib/permissions";
+import { notify } from "@/lib/notifications";
 
 export const runtime = "nodejs";
 
@@ -14,7 +16,6 @@ const ALLOWED_MIME = new Set([
   "image/jpeg",
   "image/webp",
   "image/gif",
-  "image/svg+xml",
   "application/pdf",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -89,14 +90,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No file provided" }, { status: 400 });
   }
 
-  // Validate client can only upload to their own project
-  if (
-    typeof projectId === "string" &&
-    projectId &&
-    session.user.role === "CLIENT"
-  ) {
+  // Non-staff users must provide a valid projectId that they own
+  const userIsStaff = isStaff(session.user.roles ?? session.user.role);
+  if (!userIsStaff) {
+    if (typeof projectId !== "string" || !projectId.trim()) {
+      return NextResponse.json(
+        { error: "ProjectId wajib disertakan untuk pengguna non-staff" },
+        { status: 400 }
+      );
+    }
+
     const project = await prisma.project.findUnique({
-      where: { id: projectId },
+      where: { id: projectId.trim() },
       select: { clientId: true },
     });
     if (!project || project.clientId !== session.user.id) {
@@ -155,6 +160,9 @@ export async function POST(req: NextRequest) {
 
   const url = `/uploads/${relativePath}`;
 
+  const targetProjectId =
+    typeof projectId === "string" && projectId.trim() ? projectId.trim() : null;
+
   let fileRecord: { id: string } | null = null;
   try {
     fileRecord = await prisma.file.create({
@@ -166,13 +174,69 @@ export async function POST(req: NextRequest) {
         path: relativePath,
         url,
         uploaderId: session.user.id,
-        projectId:
-          typeof projectId === "string" && projectId ? projectId : null,
+        projectId: targetProjectId,
       },
       select: { id: true },
     });
   } catch (err) {
     console.error("Upload DB error:", err);
+  }
+
+  // Log ActivityAction.FILE_UPLOADED and call notify() on upload
+  try {
+    if (targetProjectId) {
+      const project = await prisma.project.findUnique({
+        where: { id: targetProjectId },
+        select: { id: true, title: true, clientId: true },
+      });
+
+      await prisma.activityLog.create({
+        data: {
+          projectId: targetProjectId,
+          userId: session.user.id,
+          action: "FILE_UPLOADED",
+          description: `Berkas ${file.name} telah diunggah.`,
+          metadata: {
+            fileId: fileRecord?.id,
+            filename,
+            originalName: file.name,
+            mimeType: savedMimeType,
+            size: buffer.byteLength,
+            url,
+          },
+        },
+      });
+
+      const notifyUserId =
+        project?.clientId && project.clientId !== session.user.id
+          ? project.clientId
+          : session.user.id;
+
+      await notify({
+        userId: notifyUserId,
+        type: "FILE_UPLOADED",
+        title: "Berkas Baru Diunggah",
+        message: `Berkas ${file.name} telah diunggah pada proyek ${project?.title ?? ""}.`.trim(),
+        metadata: {
+          projectId: targetProjectId,
+          fileId: fileRecord?.id,
+          url,
+        },
+      });
+    } else {
+      await notify({
+        userId: session.user.id,
+        type: "FILE_UPLOADED",
+        title: "Berkas Baru Diunggah",
+        message: `Berkas ${file.name} telah berhasil diunggah.`,
+        metadata: {
+          fileId: fileRecord?.id,
+          url,
+        },
+      });
+    }
+  } catch (err) {
+    console.error("Upload activity/notification error:", err);
   }
 
   return NextResponse.json({

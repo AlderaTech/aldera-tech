@@ -2,18 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import type { RecurringFrequency } from "@prisma/client";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { requirePermission, PERMISSIONS } from "@/lib/permissions";
 import { ADMIN_ROUTES } from "@/lib/routes";
 import { recurringInvoiceSchema } from "@/lib/validations/recurring-invoice";
-
-async function requireAdmin() {
-  const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN") {
-    throw new Error("Forbidden");
-  }
-  return session.user;
-}
 
 function advanceDate(from: Date, frequency: RecurringFrequency): Date {
   const d = new Date(from);
@@ -46,7 +38,7 @@ async function generateInvoiceNumber() {
 }
 
 export async function createRecurringTemplateAction(formData: FormData) {
-  await requireAdmin();
+  await requirePermission(PERMISSIONS.INVOICE_CREATE);
   const itemsRaw = formData.get("items");
   let itemsParsed: unknown;
   try {
@@ -95,7 +87,7 @@ export async function createRecurringTemplateAction(formData: FormData) {
 }
 
 export async function toggleRecurringActiveAction(id: string) {
-  await requireAdmin();
+  await requirePermission(PERMISSIONS.INVOICE_EDIT);
   const t = await prisma.recurringInvoiceTemplate.findUnique({
     where: { id },
     select: { active: true },
@@ -109,7 +101,7 @@ export async function toggleRecurringActiveAction(id: string) {
 }
 
 export async function deleteRecurringAction(id: string) {
-  await requireAdmin();
+  await requirePermission(PERMISSIONS.INVOICE_DELETE);
   await prisma.recurringInvoiceTemplate.delete({ where: { id } });
   revalidatePath(ADMIN_ROUTES.invoicesRecurring);
 }

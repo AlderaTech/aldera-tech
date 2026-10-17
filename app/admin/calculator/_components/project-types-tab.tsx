@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,15 +13,26 @@ import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { upsertProjectType, deleteProjectType } from "@/lib/actions/calculator";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import type { Prisma } from "@prisma/client";
 import type { AdminProjectType } from "../_types/calculator-admin";
 
 export function ProjectTypesTab({ items }: { items: AdminProjectType[] }) {
+  const router = useRouter();
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState<AdminProjectType | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminProjectType | null>(null);
 
   function handleSubmit(fd: FormData) {
     const depFields = fd.get("dependentFields") as string;
+    let parsedDepFields: unknown[] = [];
+    if (depFields && depFields.trim()) {
+      try {
+        parsedDepFields = JSON.parse(depFields);
+      } catch {
+        toast.error("Format JSON tidak valid");
+        return;
+      }
+    }
     start(async () => {
       await upsertProjectType(editing?.id ?? null, {
         name: fd.get("name") as string,
@@ -28,12 +40,13 @@ export function ProjectTypesTab({ items }: { items: AdminProjectType[] }) {
         description: fd.get("description") as string,
         basePrice: Number(fd.get("basePrice")),
         icon: (fd.get("icon") as string) || "code2",
-        dependentFields: depFields ? JSON.parse(depFields) : [],
+        dependentFields: parsedDepFields as unknown as Prisma.InputJsonValue,
         order: Number(fd.get("order") || 0),
         active: true,
       });
       toast.success(editing ? "Diperbarui" : "Ditambahkan");
       setEditing(null);
+      router.refresh();
     });
   }
 
@@ -43,6 +56,7 @@ export function ProjectTypesTab({ items }: { items: AdminProjectType[] }) {
       await deleteProjectType(deleteTarget.id);
       toast.success("Dihapus");
       setDeleteTarget(null);
+      router.refresh();
     });
   }
 

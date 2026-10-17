@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import type { Role } from "@prisma/client";
-import { getPrimaryRole, isStaff } from "@/lib/permissions";
+import { getPrimaryRole, isStaff, setAuthHandler, type ExplicitSession } from "@/lib/permissions";
 
 /**
  * Extend the session type with our custom fields (roles, role, id).
@@ -55,10 +55,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             roles: true,
             avatar: true,
             isActive: true,
+            phoneVerified: true,
           },
         });
 
         if (!user || !user.isActive) return null;
+
+        // Reject credentials login if phone is unverified (unless seeded staff)
+        const isSeededStaff =
+          isStaff(user.roles) &&
+          (user.email.endsWith("@aldera.tech") ||
+            user.email === "gading@gmail.com" ||
+            user.email === "dery@gmail.com" ||
+            user.email === "rafli@gmail.com");
+
+        if (!user.phoneVerified && !isSeededStaff) {
+          return null;
+        }
 
         const ok = await bcrypt.compare(password, user.password);
         if (!ok) return null;
@@ -130,3 +143,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   trustHost: true,
 });
+
+setAuthHandler(auth as unknown as () => Promise<ExplicitSession>);

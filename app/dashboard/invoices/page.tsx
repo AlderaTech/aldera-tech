@@ -10,7 +10,7 @@ export default async function UserInvoicesPage() {
   const rawInvoices = await safeDb(
     async () =>
       await prisma.invoice.findMany({
-        where: { clientId: userId },
+        where: { clientId: userId, status: { not: "DRAFT" } },
         orderBy: { issueDate: "desc" },
         include: { project: { select: { title: true } } },
       }),

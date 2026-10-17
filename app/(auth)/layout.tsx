@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { isStaff } from "@/lib/permissions";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 
 export default async function AuthLayout({
@@ -9,8 +10,10 @@ export default async function AuthLayout({
 }) {
   const session = await auth();
   if (session?.user) {
+    const roles =
+      session.user.roles ?? (session.user.role ? [session.user.role] : []);
     redirect(
-      session.user.role === "ADMIN" ? ADMIN_ROUTES.home : DASHBOARD_ROUTES.home
+      isStaff(roles) ? ADMIN_ROUTES.home : DASHBOARD_ROUTES.home
     );
   }
 

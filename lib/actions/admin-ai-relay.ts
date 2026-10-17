@@ -135,6 +135,7 @@ export async function createModelPricing(
     input_price_per_m: number;
     output_price_per_m: number;
     is_active?: boolean;
+    upstream_input_cost_per_m?: number;
   }
 ): Promise<{ success: boolean; id: number }> {
   await resolveAdminSession();
@@ -162,6 +163,24 @@ export async function createModelPricing(
     ]
   );
 
+  const modelId = Number(res.rows[0].id);
+
+  if (data.upstream_input_cost_per_m !== undefined) {
+    const inputCost = Number(data.upstream_input_cost_per_m);
+    UPSTREAM_BASELINE_COSTS[data.model_name.trim()] = {
+      inputCostPerM: inputCost,
+      outputCostPerM: inputCost * 2,
+    };
+    try {
+      await queryRouter(
+        "UPDATE model_pricing SET upstream_input_cost_per_m = $1 WHERE id = $2;",
+        [inputCost, modelId]
+      );
+    } catch {
+      // column may not exist, in-memory baseline updated
+    }
+  }
+
   try {
     revalidatePath("/admin/ai-relay");
     revalidatePath("/dashboard/ai-relay");
@@ -169,7 +188,7 @@ export async function createModelPricing(
     // ignore revalidatePath when called in tests
   }
 
-  return { success: true, id: Number(res.rows[0].id) };
+  return { success: true, id: modelId };
 }
 
 /**
@@ -182,6 +201,7 @@ export async function updateModelPricing(
     input_price_per_m?: number;
     output_price_per_m?: number;
     is_active?: boolean;
+    upstream_input_cost_per_m?: number;
   }
 ): Promise<{ success: boolean }> {
   await resolveAdminSession();
@@ -217,6 +237,34 @@ export async function updateModelPricing(
   if (data.is_active !== undefined) {
     updates.push(`is_active = $${paramIdx++}`);
     params.push(data.is_active);
+  }
+
+  if (data.upstream_input_cost_per_m !== undefined) {
+    const inputCost = Number(data.upstream_input_cost_per_m);
+    try {
+      const existing = await queryRouter<{ model_name: string }>(
+        "SELECT model_name FROM model_pricing WHERE id = $1 LIMIT 1;",
+        [id]
+      );
+      if (existing.rows.length > 0) {
+        const mName = existing.rows[0].model_name;
+        const prev = UPSTREAM_BASELINE_COSTS[mName];
+        UPSTREAM_BASELINE_COSTS[mName] = {
+          inputCostPerM: inputCost,
+          outputCostPerM: prev?.outputCostPerM ?? inputCost * 2,
+        };
+      }
+    } catch {
+      // ignore
+    }
+    try {
+      await queryRouter(
+        "UPDATE model_pricing SET upstream_input_cost_per_m = $1 WHERE id = $2;",
+        [inputCost, id]
+      );
+    } catch {
+      // column may not exist
+    }
   }
 
   const sql = `UPDATE model_pricing SET ${updates.join(", ")} WHERE id = $1;`;

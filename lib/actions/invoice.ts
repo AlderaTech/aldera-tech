@@ -146,15 +146,6 @@ export async function sendInvoiceWhatsAppAction(invoiceId: string) {
     formatDate(invoice.dueDate)
   );
 
-  const res = await sendWhatsApp({
-    to: invoice.client.phone,
-    message: `*${tpl.title}*\n\n${tpl.message}`,
-  });
-  if (!res.success) {
-    console.error("Send invoice WhatsApp error:", res.error);
-    throw new Error(`Gagal mengirim WhatsApp: ${res.error ?? "Unknown error"}`);
-  }
-
   await prisma.invoice.update({
     where: { id: invoiceId },
     data: {
@@ -162,12 +153,12 @@ export async function sendInvoiceWhatsAppAction(invoiceId: string) {
     },
   });
 
-  // Also log notification record
+  // Exactly one WhatsApp notification via notify()
   await notify({
     userId: invoice.clientId,
     type: "INVOICE_SENT",
     ...tpl,
-  }).catch(() => {});
+  });
 
   revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
   revalidatePath(ADMIN_ROUTES.invoices);
@@ -195,27 +186,17 @@ export async function sendReminderAction(invoiceId: string) {
     formatDate(invoice.dueDate)
   );
 
-  const res = await sendWhatsApp({
-    to: invoice.client.phone,
-    message: `*${tpl.title}*\n\n${tpl.message}`,
-  });
-  if (!res.success) {
-    console.error("Send reminder WhatsApp error:", res.error);
-    throw new Error(
-      `Gagal mengirim reminder WhatsApp: ${res.error ?? "Unknown error"}`
-    );
-  }
-
   await prisma.invoice.update({
     where: { id: invoiceId },
     data: { lastReminderSentAt: new Date() },
   });
 
+  // Exactly one WhatsApp notification via notify()
   await notify({
     userId: invoice.clientId,
     type: "INVOICE_SENT",
     ...tpl,
-  }).catch(() => {});
+  });
 
   revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
 }
@@ -248,6 +229,10 @@ export async function submitPaymentProofAction(input: {
 
   if (invoice.clientId !== session.user.id && session.user.role !== "ADMIN") {
     return { ok: false, message: "Anda tidak memiliki akses ke invoice ini." };
+  }
+
+  if (invoice.status === "DRAFT") {
+    return { ok: false, message: "Invoice berstatus draf tidak dapat dibayar." };
   }
 
   if (invoice.status === "PAID") {
@@ -386,22 +371,17 @@ export async function verifyPaymentProofAction(
     }
   });
 
-  if (invoice.client.phone) {
-    const tpl = waTemplates.invoicePaid(
-      invoice.number,
-      formatCurrency(Number(invoice.total))
-    );
-    sendWhatsApp({
-      to: invoice.client.phone,
-      message: `*${tpl.title}*\n\n${tpl.message}`,
-    }).catch(() => {});
-  }
+  const tpl = waTemplates.invoicePaid(
+    invoice.number,
+    formatCurrency(Number(invoice.total))
+  );
 
+  // Exactly one WhatsApp notification via notify()
   await notify({
     userId: invoice.clientId,
     type: "INVOICE_SENT",
-    title: "Pembayaran Lunas",
-    message: `Invoice ${invoice.number} telah diverifikasi dan lunas.`,
+    title: tpl.title,
+    message: tpl.message,
   }).catch(() => {});
 
   revalidatePath(ADMIN_ROUTES.invoices);
@@ -456,19 +436,14 @@ export async function rejectPaymentProofAction(
     }
   });
 
-  if (invoice.client.phone) {
-    const tpl = waTemplates.paymentProofRejected(invoice.number, reason);
-    sendWhatsApp({
-      to: invoice.client.phone,
-      message: `*${tpl.title}*\n\n${tpl.message}`,
-    }).catch(() => {});
-  }
+  const tpl = waTemplates.paymentProofRejected(invoice.number, reason);
 
+  // Exactly one WhatsApp notification via notify()
   await notify({
     userId: invoice.clientId,
     type: "INVOICE_SENT",
-    title: "Bukti Pembayaran Ditolak",
-    message: `Bukti pembayaran invoice ${invoice.number} ditolak: ${reason}`,
+    title: tpl.title,
+    message: tpl.message,
   }).catch(() => {});
 
   revalidatePath(ADMIN_ROUTES.invoices);

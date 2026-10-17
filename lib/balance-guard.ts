@@ -10,6 +10,14 @@ import {
 
 export const BALANCE_GUARD_THRESHOLD = 10000; // Rp 10.000
 
+export function escapeTelegramHtml(text: string): string {
+  if (!text || typeof text !== "string") return "";
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 export interface BalanceGuardUserRecord {
   id: number;
   telegram_id: string | number | null;
@@ -161,9 +169,10 @@ export async function runBalanceGuard(
     // 1. Telegram Dispatch
     if (telegramId) {
       const formattedBalance = `Rp ${balance.toLocaleString("id-ID")}`;
+      const safeClientName = escapeTelegramHtml(clientName);
       const tgText =
         `⚠️ <b>Peringatan Saldo Rendah Aldera AI Relay</b>\n\n` +
-        `Halo <b>${clientName}</b>,\n` +
+        `Halo <b>${safeClientName}</b>,\n` +
         `Sisa saldo AI Relay Anda saat ini adalah <b>${formattedBalance}</b> (di bawah batas minimum Rp ${threshold.toLocaleString("id-ID")}).\n\n` +
         `Panggilan API akan ditolak jika saldo habis. Segera lakukan pengisian saldo agar integrasi IDE (Cursor, Cline) tetap lancar.`;
 

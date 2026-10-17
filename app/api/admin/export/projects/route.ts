@@ -8,7 +8,10 @@ export const runtime = "nodejs";
 
 export async function GET() {
   const session = await auth();
-  if (!session?.user || !isStaff(session.user.role)) {
+  const roles =
+    session?.user?.roles ??
+    (session?.user?.role ? [session.user.role] : []);
+  if (!session?.user || !isStaff(roles)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

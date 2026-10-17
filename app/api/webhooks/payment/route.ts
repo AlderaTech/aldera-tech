@@ -42,7 +42,13 @@ export async function POST(request: Request) {
     const transactionId = String(body.transaction_id ?? orderId);
     const paymentType = String(body.payment_type ?? "midtrans");
 
-    if (!orderId || !transactionStatus) {
+    if (
+      !orderId ||
+      !transactionStatus ||
+      !signatureKey ||
+      !statusCode ||
+      !grossAmount
+    ) {
       return NextResponse.json(
         { error: "Payload webhook Midtrans tidak lengkap" },
         { status: 400 }
@@ -51,6 +57,13 @@ export async function POST(request: Request) {
 
     // Validasi Signature SHA-512 jika Server Key dikonfigurasi
     const { serverKey } = getMidtransConfig();
+    if (!serverKey && process.env.NODE_ENV !== "test") {
+      return NextResponse.json(
+        { error: "MIDTRANS_SERVER_KEY tidak dikonfigurasi" },
+        { status: 500 }
+      );
+    }
+
     if (serverKey) {
       const isValid = verifyMidtransSignature({
         orderId,
@@ -68,10 +81,25 @@ export async function POST(request: Request) {
       }
     }
 
+    // Parse nomor invoice asli jika orderId memiliki timestamp suffix: `${invoice.number}-${Date.now()}`
+    let invoiceLookupTarget = orderId;
+    const lastHyphenIdx = orderId.lastIndexOf("-");
+    if (lastHyphenIdx > 0) {
+      const suffix = orderId.slice(lastHyphenIdx + 1);
+      if (/^\d{10,}$/.test(suffix)) {
+        invoiceLookupTarget = orderId.slice(0, lastHyphenIdx);
+      }
+    }
+
     // Cari invoice berdasarkan nomor invoice atau id
     const invoice = await prisma.invoice.findFirst({
       where: {
-        OR: [{ id: orderId }, { number: orderId }],
+        OR: [
+          { id: orderId },
+          { number: orderId },
+          { id: invoiceLookupTarget },
+          { number: invoiceLookupTarget },
+        ],
       },
       include: { client: true },
     });
@@ -80,6 +108,14 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: `Invoice dengan identifier '${orderId}' tidak ditemukan.` },
         { status: 404 }
+      );
+    }
+
+    // Validasi nominal pembayaran terhadap total invoice
+    if (Math.round(Number(grossAmount)) !== Math.round(Number(invoice.total))) {
+      return NextResponse.json(
+        { error: "Nominal pembayaran tidak sesuai dengan total tagihan" },
+        { status: 400 }
       );
     }
 
@@ -100,26 +136,42 @@ export async function POST(request: Request) {
           },
         });
 
-        // Rekonsiliasi record payment
-        await tx.payment.upsert({
-          where: { transactionId },
-          create: {
-            invoiceId: invoice.id,
-            amount: invoice.total,
-            currency: invoice.currency,
-            status: "SUCCESS",
-            paymentMethod: "GATEWAY_MIDTRANS",
-            gateway: "midtrans",
-            transactionId,
-            paymentType,
-            gatewayResponse: body as unknown as Prisma.InputJsonValue,
+        // Rekonsiliasi record payment (update existing PENDING jika ada)
+        const existingPayment = await tx.payment.findFirst({
+          where: {
+            OR: [
+              { transactionId },
+              { invoiceId: invoice.id, status: "PENDING" },
+            ],
           },
-          update: {
-            status: "SUCCESS",
-            paymentType,
-            gatewayResponse: body as unknown as Prisma.InputJsonValue,
-          },
+          orderBy: { createdAt: "desc" },
         });
+
+        if (existingPayment) {
+          await tx.payment.update({
+            where: { id: existingPayment.id },
+            data: {
+              transactionId,
+              status: "SUCCESS",
+              paymentType,
+              gatewayResponse: body as unknown as Prisma.InputJsonValue,
+            },
+          });
+        } else {
+          await tx.payment.create({
+            data: {
+              invoiceId: invoice.id,
+              amount: invoice.total,
+              currency: invoice.currency,
+              status: "SUCCESS",
+              paymentMethod: "GATEWAY_MIDTRANS",
+              gateway: "midtrans",
+              transactionId,
+              paymentType,
+              gatewayResponse: body as unknown as Prisma.InputJsonValue,
+            },
+          });
+        }
 
         // Catat activity log proyek jika tagihan tertaut pada suatu proyek
         if (invoice.projectId) {
@@ -174,50 +226,149 @@ export async function POST(request: Request) {
       revalidatePath(DASHBOARD_ROUTES.invoices);
     } else if (paymentState === "FAILED") {
       // Perbarui status pembayaran menjadi GAGAL
-      await prisma.payment.upsert({
-        where: { transactionId },
-        create: {
-          invoiceId: invoice.id,
-          amount: invoice.total,
-          currency: invoice.currency,
-          status: "FAILED",
-          paymentMethod: "GATEWAY_MIDTRANS",
-          gateway: "midtrans",
-          transactionId,
-          paymentType,
-          rejectionReason: `Pembayaran ${transactionStatus} via Midtrans`,
-          gatewayResponse: body as unknown as Prisma.InputJsonValue,
+      const existingPayment = await prisma.payment.findFirst({
+        where: {
+          OR: [
+            { transactionId },
+            { invoiceId: invoice.id, status: "PENDING" },
+          ],
         },
-        update: {
-          status: "FAILED",
-          rejectionReason: `Pembayaran ${transactionStatus} via Midtrans`,
-          gatewayResponse: body as unknown as Prisma.InputJsonValue,
-        },
+        orderBy: { createdAt: "desc" },
       });
 
+      if (existingPayment) {
+        await prisma.payment.update({
+          where: { id: existingPayment.id },
+          data: {
+            transactionId,
+            status: "FAILED",
+            paymentType,
+            rejectionReason: `Pembayaran ${transactionStatus} via Midtrans`,
+            gatewayResponse: body as unknown as Prisma.InputJsonValue,
+          },
+        });
+      } else {
+        await prisma.payment.create({
+          data: {
+            invoiceId: invoice.id,
+            amount: invoice.total,
+            currency: invoice.currency,
+            status: "FAILED",
+            paymentMethod: "GATEWAY_MIDTRANS",
+            gateway: "midtrans",
+            transactionId,
+            paymentType,
+            rejectionReason: `Pembayaran ${transactionStatus} via Midtrans`,
+            gatewayResponse: body as unknown as Prisma.InputJsonValue,
+          },
+        });
+      }
+
+      revalidatePath(ADMIN_ROUTES.invoiceDetail(invoice.id));
+      revalidatePath(DASHBOARD_ROUTES.invoices);
+    } else if (paymentState === "REFUNDED") {
+      // Perbarui status pembayaran menjadi REFUNDED
+      await prisma.$transaction(async (tx) => {
+        const existingPayment = await tx.payment.findFirst({
+          where: {
+            OR: [
+              { transactionId },
+              { invoiceId: invoice.id, status: "PENDING" },
+              { invoiceId: invoice.id, status: "SUCCESS" },
+            ],
+          },
+          orderBy: { createdAt: "desc" },
+        });
+
+        if (existingPayment) {
+          await tx.payment.update({
+            where: { id: existingPayment.id },
+            data: {
+              transactionId,
+              status: "REFUNDED",
+              paymentType,
+              gatewayResponse: body as unknown as Prisma.InputJsonValue,
+            },
+          });
+        } else {
+          await tx.payment.create({
+            data: {
+              invoiceId: invoice.id,
+              amount: invoice.total,
+              currency: invoice.currency,
+              status: "REFUNDED",
+              paymentMethod: "GATEWAY_MIDTRANS",
+              gateway: "midtrans",
+              transactionId,
+              paymentType,
+              gatewayResponse: body as unknown as Prisma.InputJsonValue,
+            },
+          });
+        }
+
+        if (invoice.projectId) {
+          await tx.activityLog.create({
+            data: {
+              projectId: invoice.projectId,
+              userId: invoice.clientId,
+              action: "PROJECT_UPDATED",
+              description: `Pembayaran invoice ${invoice.number} senilai ${formatCurrency(
+                Number(invoice.total)
+              )} telah di-refund via Midtrans (${paymentType}).`,
+              metadata: {
+                invoiceId: invoice.id,
+                invoiceNumber: invoice.number,
+                gateway: "midtrans",
+                transactionId,
+                paymentType,
+                amount: Number(invoice.total),
+                status: "REFUNDED",
+              },
+            },
+          });
+        }
+      });
+
+      revalidatePath(ADMIN_ROUTES.invoices);
       revalidatePath(ADMIN_ROUTES.invoiceDetail(invoice.id));
       revalidatePath(DASHBOARD_ROUTES.invoices);
     } else if (paymentState === "PENDING") {
       // Rekam pembayaran pending
-      await prisma.payment.upsert({
-        where: { transactionId },
-        create: {
-          invoiceId: invoice.id,
-          amount: invoice.total,
-          currency: invoice.currency,
-          status: "PENDING",
-          paymentMethod: "GATEWAY_MIDTRANS",
-          gateway: "midtrans",
-          transactionId,
-          paymentType,
-          gatewayResponse: body as unknown as Prisma.InputJsonValue,
+      const existingPayment = await prisma.payment.findFirst({
+        where: {
+          OR: [
+            { transactionId },
+            { invoiceId: invoice.id, status: "PENDING" },
+          ],
         },
-        update: {
-          status: "PENDING",
-          paymentType,
-          gatewayResponse: body as unknown as Prisma.InputJsonValue,
-        },
+        orderBy: { createdAt: "desc" },
       });
+
+      if (existingPayment) {
+        await prisma.payment.update({
+          where: { id: existingPayment.id },
+          data: {
+            transactionId,
+            status: "PENDING",
+            paymentType,
+            gatewayResponse: body as unknown as Prisma.InputJsonValue,
+          },
+        });
+      } else {
+        await prisma.payment.create({
+          data: {
+            invoiceId: invoice.id,
+            amount: invoice.total,
+            currency: invoice.currency,
+            status: "PENDING",
+            paymentMethod: "GATEWAY_MIDTRANS",
+            gateway: "midtrans",
+            transactionId,
+            paymentType,
+            gatewayResponse: body as unknown as Prisma.InputJsonValue,
+          },
+        });
+      }
     }
 
     return NextResponse.json({

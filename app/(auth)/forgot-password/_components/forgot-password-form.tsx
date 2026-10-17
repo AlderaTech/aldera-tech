@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useTransition } from "react";
+import { useActionState, useEffect } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Loader2, MessageSquare } from "lucide-react";
@@ -18,19 +18,38 @@ import { AUTH_ROUTES } from "@/lib/routes";
 const initialState: ResetActionState = { ok: false };
 
 export function ForgotPasswordForm() {
-  const [state] = useActionState(requestPasswordResetAction, initialState);
-  const [isPending, startTransition] = useTransition();
+  const [state, formAction, isPending] = useActionState(
+    async (prevState: ResetActionState, formData: FormData) => {
+      const email = String(formData.get("email") ?? "").trim();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return {
+          ok: false,
+          message: "Email tidak valid.",
+          errors: { email: "Format email tidak valid" },
+        };
+      }
+      const res = await requestPasswordResetAction(prevState, formData);
+      if (!res.ok && res.message?.toLowerCase().includes("email")) {
+        return {
+          ...res,
+          errors: { email: res.message },
+        };
+      }
+      return res;
+    },
+    initialState
+  );
 
-  function handleSubmit(formData: FormData) {
-    startTransition(async () => {
-      const result = await requestPasswordResetAction(state, formData);
-      if (result.ok) toast.success(result.message ?? "Cek WhatsApp Anda.");
-      else toast.error(result.message ?? "Gagal mengirim link reset.");
-    });
-  }
+  useEffect(() => {
+    if (state.ok) {
+      toast.success(state.message ?? "Cek WhatsApp Anda.");
+    } else if (state.message) {
+      toast.error(state.message);
+    }
+  }, [state]);
 
   return (
-    <form action={handleSubmit}>
+    <form action={formAction}>
       <CardContent className="space-y-5 px-6 pb-2 sm:px-8">
         <div className="space-y-2">
           <Label
