@@ -86,6 +86,7 @@ export async function createBlogPostAction(
 
   revalidatePath(PUBLIC_ROUTES.blog);
   revalidatePath(PUBLIC_ROUTES.blogDetail(post.slug));
+  revalidatePath(PUBLIC_ROUTES.home);
   revalidatePath(ADMIN_ROUTES.blog);
 
   return { ok: true, postId: post.id, message: "Post berhasil dibuat." };
@@ -151,6 +152,7 @@ export async function updateBlogPostAction(
     revalidatePath(PUBLIC_ROUTES.blogDetail(current.slug));
   }
   revalidatePath(PUBLIC_ROUTES.blogDetail(post.slug));
+  revalidatePath(PUBLIC_ROUTES.home);
   revalidatePath(ADMIN_ROUTES.blog);
 
   return { ok: true, postId: post.id, message: "Post berhasil diperbarui." };
@@ -176,6 +178,7 @@ export async function togglePublishBlogPostAction(id: string) {
   });
   revalidatePath(PUBLIC_ROUTES.blog);
   revalidatePath(PUBLIC_ROUTES.blogDetail(updated.slug));
+  revalidatePath(PUBLIC_ROUTES.home);
   revalidatePath(ADMIN_ROUTES.blog);
 }
 
@@ -188,6 +191,7 @@ export async function deleteBlogPostAction(id: string) {
   await prisma.blogPost.delete({ where: { id } });
   revalidatePath(PUBLIC_ROUTES.blog);
   if (post?.slug) revalidatePath(PUBLIC_ROUTES.blogDetail(post.slug));
+  revalidatePath(PUBLIC_ROUTES.home);
   revalidatePath(ADMIN_ROUTES.blog);
 }
 
