@@ -15,6 +15,8 @@ import { StepDetails } from "./calculator-steps/step-details";
 import { StepFeatures } from "./calculator-steps/step-features";
 import { StepAddOns } from "./calculator-steps/step-addons";
 import { StepReview } from "./calculator-steps/step-review";
+import { cn } from "@/lib/utils";
+import styles from "./pricing-calculator.module.css";
 
 export type { ProjectType, Feature, AddOn, Config };
 
@@ -22,13 +24,16 @@ type CalculatorWizardProps = {
   data: CalculatorData;
   isAuthenticated?: boolean;
   whatsappNumber?: string;
+  appearance?: "default" | "studio";
 };
 
 export function CalculatorWizard({
   data,
   isAuthenticated = false,
   whatsappNumber,
+  appearance = "default",
 }: CalculatorWizardProps) {
+  const studio = appearance === "studio";
   const { projectTypes, features, config } = data;
   const {
     step,
@@ -61,23 +66,42 @@ export function CalculatorWizard({
   } = useCalculatorWizard(data);
 
   if (submitted) {
-    return <CalculatorSuccessScreen total={total} onReset={resetCalculator} />;
+    const success = (
+      <CalculatorSuccessScreen total={total} onReset={resetCalculator} />
+    );
+    return studio ? <div className={styles.studio}>{success}</div> : success;
   }
 
   const stepLabels = ["Jenis", "Skala", "Fitur", "Add-On", "Review"];
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
-      <div className="space-y-6">
+    <div
+      className={cn(
+        "grid gap-8 lg:grid-cols-[1fr_320px]",
+        studio && styles.studio,
+        studio && styles.wizard
+      )}
+    >
+      <div className={cn("space-y-6", studio && styles.stepContent)}>
         {/* Step indicators */}
-        <div className="space-y-2">
-          <div className="flex gap-1.5">
+        <div className={cn("space-y-2", studio && styles.progress)}>
+          {studio && (
+            <div className={styles.progressMeta}>
+              <span>
+                Langkah {step + 1} dari {stepLabels.length}
+              </span>
+              <strong>{stepLabels[step]}</strong>
+            </div>
+          )}
+          <div className={cn("flex gap-1.5", studio && styles.progressTrack)}>
             {stepLabels.map((_, i) => (
               <div
                 key={i}
-                className={`h-1.5 flex-1 rounded-full transition-colors ${
+                data-complete={studio ? i <= step : undefined}
+                className={cn(
+                  "h-1.5 flex-1 rounded-full transition-colors",
                   i <= step ? "bg-primary" : "bg-muted"
-                }`}
+                )}
               />
             ))}
           </div>
@@ -86,6 +110,7 @@ export function CalculatorWizard({
               <span
                 key={label}
                 className={i === step ? "font-bold text-primary" : undefined}
+                aria-current={i === step ? "step" : undefined}
               >
                 {label}
               </span>
@@ -100,6 +125,7 @@ export function CalculatorWizard({
             selectedType={selectedType}
             onSelectType={(id) => setSelectedType(id)}
             onNext={() => setStep(1)}
+            studio={studio}
           />
         )}
 
@@ -147,6 +173,7 @@ export function CalculatorWizard({
             config={config}
             onBack={() => setStep(2)}
             onNext={() => setStep(4)}
+            studio={studio}
           />
         )}
 
@@ -181,6 +208,7 @@ export function CalculatorWizard({
         urgency={urgency}
         config={config}
         total={total}
+        studio={studio}
       />
     </div>
   );

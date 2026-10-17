@@ -2,15 +2,16 @@
 
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import type { ProjectType } from "../../_types/calculator";
+import { CalculatorChoice } from "../calculator-choice";
 
 type StepProjectTypeProps = {
   projectTypes: ProjectType[];
   selectedType: string;
   onSelectType: (id: string) => void;
   onNext: () => void;
+  studio?: boolean;
 };
 
 export function StepProjectType({
@@ -18,6 +19,7 @@ export function StepProjectType({
   selectedType,
   onSelectType,
   onNext,
+  studio = false,
 }: StepProjectTypeProps) {
   return (
     <div className="space-y-4">
@@ -35,14 +37,16 @@ export function StepProjectType({
         {projectTypes.map((t) => {
           const isSelected = selectedType === t.id;
           return (
-            <Card
+            <CalculatorChoice
               key={t.id}
               className={`cursor-pointer p-5 transition-all hover:border-primary/50 ${
                 isSelected
                   ? "border-primary bg-primary/5 ring-2 ring-primary/20"
                   : "hover:bg-muted/30"
               }`}
-              onClick={() => onSelectType(t.id)}
+              onSelect={() => onSelectType(t.id)}
+              studio={studio}
+              selected={isSelected}
             >
               <h4 className="font-semibold text-foreground">{t.name}</h4>
               <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
@@ -52,10 +56,17 @@ export function StepProjectType({
               <p className="mt-3 text-sm font-bold text-primary tabular-nums">
                 Mulai dari {formatCurrency(Number(t.basePrice))}
               </p>
-            </Card>
+            </CalculatorChoice>
           );
         })}
       </div>
+
+      {studio && projectTypes.length === 0 && (
+        <p className="rounded-2xl border border-border bg-muted/30 p-5 text-sm text-muted-foreground">
+          Pilihan jenis proyek belum tersedia. Silakan hubungi tim melalui
+          tautan konsultasi untuk mendiskusikan kebutuhan Anda.
+        </p>
+      )}
 
       <div className="pt-2">
         <Button onClick={onNext} disabled={!selectedType} className="gap-2">

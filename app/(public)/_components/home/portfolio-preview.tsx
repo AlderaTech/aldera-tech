@@ -1,21 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, PanelsTopLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import {
   FadeUp,
   StaggerContainer,
   StaggerItem,
 } from "@/components/shared/motion";
 import { prisma } from "@/lib/prisma";
+import { cn } from "@/lib/utils";
 import {
   publicCaseStudies,
   resolveCaseStudyImage,
 } from "@/lib/public-fallbacks";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
+import styles from "../studio.module.css";
+import portfolioStyles from "./portfolio-preview.module.css";
 
 type HomeCaseStudy = {
   slug: string;
@@ -56,89 +58,107 @@ export async function PortfolioPreview() {
   }, fallback);
 
   return (
-    <section className="bg-[#F8FAFC] py-16 sm:py-24">
-      <div className="public-container-px mx-auto max-w-screen-xxxl">
-        <FadeUp className="mb-12 grid gap-6 lg:grid-cols-[0.8fr_1fr] lg:items-end">
-          <div>
-            <div className="mb-4 h-1.5 w-12 rounded-full bg-[#00B1E1]" />
-            <h2 className="font-serif text-3xl font-extrabold tracking-tight text-[#0F263A] sm:text-4xl lg:text-5xl">
-              Studi Kasus & Produk Terpilih
+    <section className={portfolioStyles.section}>
+      <div className={styles.container}>
+        <FadeUp className={portfolioStyles.header}>
+          <div className={portfolioStyles.headingBlock}>
+            <p className={portfolioStyles.eyebrow}>
+              <span aria-hidden="true">02</span>
+              Portfolio / Pilihan Karya
+            </p>
+            <h2 className={portfolioStyles.heading}>
+              Studi Kasus & <span>Produk Terpilih</span>
             </h2>
           </div>
-          <p className="max-w-2xl text-base leading-relaxed text-slate-600 lg:justify-self-end">
+          <p className={portfolioStyles.description}>
             Preview platform digital yang telah kami bangun dan rilis bersama
             mitra bisnis. Layar, arsitektur, dan konteks dampak terlihat sejak
             kartu pertama.
           </p>
         </FadeUp>
 
-        <StaggerContainer className="grid gap-6 md:grid-cols-3">
-          {items.map((item) => (
-            <StaggerItem key={item.slug}>
+        <StaggerContainer className={portfolioStyles.caseGrid}>
+          {items.map((item, index) => (
+            <StaggerItem
+              key={item.slug}
+              className={cn(
+                portfolioStyles.caseItem,
+                index === 0 && portfolioStyles.featuredItem
+              )}
+            >
               <Link
                 href={PUBLIC_ROUTES.portfolioDetail(item.slug)}
-                className="group block h-full"
+                className={portfolioStyles.caseLink}
+                aria-label={`Lihat studi kasus ${item.title}`}
               >
-                <Card className="h-full overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-0 shadow-md transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl">
-                  <div className="relative aspect-[16/10] overflow-hidden bg-slate-100 xl:aspect-[16/11]">
+                <article
+                  className={cn(
+                    portfolioStyles.caseCard,
+                    index === 0 && portfolioStyles.featuredCard
+                  )}
+                >
+                  <div className={portfolioStyles.media}>
                     {item.featuredImage ? (
                       <Image
                         src={item.featuredImage}
                         alt={item.title}
                         fill
-                        sizes="(min-width: 1024px) 31vw, (min-width: 768px) 33vw, 100vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        sizes={
+                          index === 0
+                            ? "(min-width: 1280px) 700px, (min-width: 768px) 54vw, 90vw"
+                            : "(min-width: 1280px) 620px, (min-width: 768px) 46vw, 90vw"
+                        }
+                        quality={90}
+                        className={portfolioStyles.image}
                       />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-sm text-slate-400">
-                        No image
+                      <div className={portfolioStyles.imageFallback}>
+                        <PanelsTopLeft aria-hidden="true" />
+                        <span>Gambar proyek belum tersedia</span>
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0F263A]/90 via-[#0F263A]/25 to-transparent" />
-                    <div className="absolute top-4 left-4">
-                      <Badge className="rounded-full bg-[#00B1E1] px-3 py-1 font-bold text-[#0F263A] shadow-sm hover:bg-[#0094BD]">
+                    <div className={portfolioStyles.industryBadge}>
+                      <Badge className="rounded-full border border-white/70 bg-white/90 px-3 py-1 font-semibold text-brand-navy shadow-sm backdrop-blur-md hover:bg-white">
                         {item.industry}
                       </Badge>
                     </div>
-                    <div className="absolute top-4 right-4 flex size-9 translate-y-1 items-center justify-center rounded-full border border-white/20 bg-[#0F263A]/80 text-[#00B1E1] opacity-0 backdrop-blur transition-all group-hover:translate-y-0 group-hover:opacity-100">
+                    <div
+                      className={portfolioStyles.openButton}
+                      aria-hidden="true"
+                    >
                       <ArrowUpRight className="size-4" />
                     </div>
-                    <div className="absolute inset-x-0 bottom-0 p-6 text-white">
-                      <div className="mb-1 text-xs font-semibold tracking-wider text-slate-300 uppercase">
-                        {item.client}
-                      </div>
-                      <h3 className="font-serif text-xl leading-tight font-bold text-white sm:text-2xl">
-                        {item.title}
-                      </h3>
-                      <div className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-[#00B1E1]">
-                        Buka detail studi kasus
-                        <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                      </div>
+                  </div>
+                  <div className={portfolioStyles.caseCopy}>
+                    <div className={portfolioStyles.client}>{item.client}</div>
+                    <h3 className={portfolioStyles.caseTitle}>{item.title}</h3>
+                    <div className={portfolioStyles.detailLink}>
+                      Buka detail studi kasus
+                      <ArrowUpRight aria-hidden="true" />
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 border-t border-slate-100 bg-white text-xs text-slate-600">
+                  <div className={portfolioStyles.metaGrid}>
                     {["Cakupan", "Proses", "Rilis"].map((label) => (
-                      <div
-                        key={label}
-                        className="border-r border-slate-100 px-4 py-3 last:border-r-0"
-                      >
-                        <div className="font-bold text-[#0F263A]">{label}</div>
-                        <div className="mt-0.5 text-slate-500">Alur sprint</div>
+                      <div key={label} className={portfolioStyles.metaCell}>
+                        <div className={portfolioStyles.metaLabel}>{label}</div>
+                        <div className={portfolioStyles.metaCaption}>
+                          Alur sprint
+                        </div>
                       </div>
                     ))}
                   </div>
-                </Card>
+                </article>
               </Link>
             </StaggerItem>
           ))}
         </StaggerContainer>
 
-        <FadeUp className="mt-10 flex justify-center">
+        <FadeUp className={portfolioStyles.allProjectsWrap}>
           <Button
             asChild
             size="lg"
             variant="outline"
-            className="rounded-full border-2 border-[#0F263A] bg-transparent px-8 font-bold text-[#0F263A] transition-all hover:bg-[#0F263A] hover:text-white"
+            className="rounded-full border-brand-navy/25 bg-white/85 px-8 font-semibold text-brand-navy shadow-sm backdrop-blur transition-[background,color,border,transform] hover:-translate-y-0.5 hover:border-brand-navy hover:bg-brand-navy hover:text-white motion-reduce:transition-none"
           >
             <Link href={PUBLIC_ROUTES.portfolio}>
               Lihat Semua Portfolio

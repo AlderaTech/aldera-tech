@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
+import { PublicShell } from "./_components/public-shell";
 
 export default async function PublicLayout({
   children,
@@ -9,10 +10,8 @@ export default async function PublicLayout({
 }) {
   const session = await auth();
   return (
-    <>
-      <Navbar session={session} />
-      <main className="flex-1">{children}</main>
-      <Footer />
-    </>
+    <PublicShell navbar={<Navbar session={session} />} footer={<Footer />}>
+      {children}
+    </PublicShell>
   );
 }

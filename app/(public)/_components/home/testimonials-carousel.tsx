@@ -1,12 +1,11 @@
 "use client";
 
 import * as React from "react";
-import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
+import { Pause, Play, Quote, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
+import styles from "./testimonials.module.css";
 
 export type TestimonialCard = {
   id: string;
@@ -17,114 +16,148 @@ export type TestimonialCard = {
   avatar: string | null;
 };
 
+function TestimonialSlide({
+  testimonial,
+  index,
+  total,
+}: {
+  testimonial: TestimonialCard;
+  index: number;
+  total: number;
+}) {
+  return (
+    <div
+      className={styles.slide}
+      role="group"
+      aria-roledescription="slide"
+      aria-label={`${index + 1} dari ${total}`}
+    >
+      <article className={styles.quoteCard}>
+        <div className={styles.cardHeading}>
+          <div
+            className={styles.rating}
+            role="img"
+            aria-label={`${testimonial.rating} dari 5 bintang`}
+          >
+            {Array.from({ length: 5 }).map((_, starIndex) => (
+              <Star
+                key={starIndex}
+                className={
+                  starIndex < testimonial.rating
+                    ? styles.starActive
+                    : styles.starInactive
+                }
+                aria-hidden="true"
+              />
+            ))}
+          </div>
+          <span className={styles.cardIndex} aria-hidden="true">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+        </div>
+        <Quote className={styles.quoteMark} aria-hidden="true" />
+        <blockquote className={styles.quoteText}>
+          &ldquo;{testimonial.content}&rdquo;
+        </blockquote>
+        <footer className={styles.author}>
+          <Avatar className={styles.avatar}>
+            {testimonial.avatar ? (
+              <AvatarImage
+                src={testimonial.avatar}
+                alt={testimonial.clientName}
+              />
+            ) : null}
+            <AvatarFallback className={styles.avatarFallback}>
+              {getInitials(testimonial.clientName)}
+            </AvatarFallback>
+          </Avatar>
+          <div className={styles.authorCopy}>
+            <div className={styles.authorName}>{testimonial.clientName}</div>
+            {testimonial.clientRole && (
+              <div className={styles.authorRole}>{testimonial.clientRole}</div>
+            )}
+          </div>
+          <span className={styles.authorAccent} aria-hidden="true" />
+        </footer>
+      </article>
+    </div>
+  );
+}
+
 export function TestimonialsCarousel({ items }: { items: TestimonialCard[] }) {
-  const [emblaRef, embla] = useEmblaCarousel({
-    loop: true,
-    align: "start",
-    slidesToScroll: 1,
-  });
-  const [canPrev, setCanPrev] = React.useState(false);
-  const [canNext, setCanNext] = React.useState(true);
-
-  const onSelect = React.useCallback(() => {
-    if (!embla) return;
-    setCanPrev(embla.canScrollPrev());
-    setCanNext(embla.canScrollNext());
-  }, [embla]);
-
-  React.useEffect(() => {
-    if (!embla) return;
-    embla.on("select", onSelect);
-    embla.on("reInit", onSelect);
-    const timer = setTimeout(onSelect, 0);
-    return () => {
-      clearTimeout(timer);
-      embla.off("select", onSelect);
-      embla.off("reInit", onSelect);
-    };
-  }, [embla, onSelect]);
+  const [isPlaying, setIsPlaying] = React.useState(true);
 
   if (!items.length) return null;
 
+  const hasMultipleItems = items.length > 1;
+  const trackClassName = [
+    styles.track,
+    !isPlaying || !hasMultipleItems ? styles.isPaused : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div className="relative">
-      <div ref={emblaRef} className="overflow-hidden">
-        <div className="-ml-5 flex">
-          {items.map((t) => (
-            <div key={t.id} className="w-full shrink-0 pl-5 sm:w-1/2 lg:w-1/3">
-              <Card className="relative flex h-full flex-col justify-between rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#00B1E1]/40 hover:shadow-xl sm:p-7">
-                <Quote
-                  className="absolute top-6 right-6 size-7 text-[#00B1E1]/20"
-                  aria-hidden
+    <div
+      className={styles.carousel}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Testimoni klien Aldera Tech"
+    >
+      <div className={styles.viewport}>
+        <div
+          className={trackClassName}
+          style={{ animationDuration: `${Math.max(24, items.length * 8)}s` }}
+          aria-live="off"
+        >
+          <div className={styles.group}>
+            {items.map((testimonial, index) => (
+              <TestimonialSlide
+                key={testimonial.id}
+                testimonial={testimonial}
+                index={index}
+                total={items.length}
+              />
+            ))}
+          </div>
+          {hasMultipleItems && (
+            <div className={styles.group} aria-hidden="true">
+              {items.map((testimonial, index) => (
+                <TestimonialSlide
+                  key={`${testimonial.id}-duplicate`}
+                  testimonial={testimonial}
+                  index={index}
+                  total={items.length}
                 />
-                <div>
-                  <div
-                    className="mb-4 flex items-center gap-1"
-                    aria-label={`${t.rating} dari 5 bintang`}
-                  >
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={
-                          i < t.rating
-                            ? "size-4 fill-[#00B1E1] text-[#00B1E1]"
-                            : "size-4 text-slate-200"
-                        }
-                      />
-                    ))}
-                  </div>
-                  <p className="mb-6 text-sm leading-relaxed text-slate-700">
-                    &ldquo;{t.content}&rdquo;
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 border-t border-slate-100 pt-4">
-                  <Avatar className="size-11 border border-slate-200">
-                    {t.avatar ? (
-                      <AvatarImage src={t.avatar} alt={t.clientName} />
-                    ) : null}
-                    <AvatarFallback className="bg-[#0F263A] text-xs font-bold text-white">
-                      {getInitials(t.clientName)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-bold text-[#0F263A]">
-                      {t.clientName}
-                    </div>
-                    {t.clientRole && (
-                      <div className="truncate text-xs font-medium text-slate-500">
-                        {t.clientRole}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Card>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       </div>
 
-      <div className="mt-8 flex items-center justify-end gap-3">
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full border-slate-200 bg-white text-[#0F263A] shadow-sm hover:border-[#00B1E1] hover:text-[#00B1E1]"
-          onClick={() => embla?.scrollPrev()}
-          disabled={!canPrev}
-          aria-label="Testimoni sebelumnya"
-        >
-          <ChevronLeft className="size-4" />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full border-slate-200 bg-white text-[#0F263A] shadow-sm hover:border-[#00B1E1] hover:text-[#00B1E1]"
-          onClick={() => embla?.scrollNext()}
-          disabled={!canNext}
-          aria-label="Testimoni berikutnya"
-        >
-          <ChevronRight className="size-4" />
-        </Button>
-      </div>
+      {hasMultipleItems && (
+        <div className={styles.controls}>
+          <span className={styles.motionNote}>Cerita mitra Aldera Tech</span>
+          <Button
+            variant="outline"
+            size="icon"
+            className={styles.controlButton}
+            onClick={() => setIsPlaying((playing) => !playing)}
+            aria-label={
+              isPlaying
+                ? "Jeda guliran testimoni"
+                : "Lanjutkan guliran testimoni"
+            }
+            aria-pressed={isPlaying}
+          >
+            {isPlaying ? (
+              <Pause className="size-4" aria-hidden="true" />
+            ) : (
+              <Play className="size-4" aria-hidden="true" />
+            )}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,0 +1,356 @@
+.section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: clamp(4rem, 6vw, 5.5rem);
+  background: linear-gradient(
+    180deg,
+    var(--home-paper),
+    color-mix(in srgb, var(--home-sky) 38%, var(--home-paper))
+  );
+}
+
+.section::before,
+.section::after {
+  position: absolute;
+  z-index: -1;
+  content: "";
+  pointer-events: none;
+}
+
+.section::before {
+  inset: 0;
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--home-blue) 4%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--home-blue) 4%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse at 50% 48%, black, transparent 78%);
+}
+
+.section::after {
+  top: 8%;
+  right: -11rem;
+  width: 34rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--home-blue) 9%, transparent),
+    transparent 70%
+  );
+  filter: blur(10px);
+}
+
+.intro {
+  display: grid;
+  align-items: end;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.introCopy {
+  min-width: 0;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 1.125rem;
+  color: var(--home-blue);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.eyebrow > span {
+  display: inline-grid;
+  width: 1.75rem;
+  height: 1.75rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 20%, var(--home-line));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--home-paper) 72%, transparent);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.5625rem;
+  letter-spacing: 0;
+}
+
+.heading {
+  max-width: 15ch;
+  color: var(--home-ink);
+  font-size: clamp(2rem, 4.2vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.055em;
+  text-transform: none;
+}
+
+.heading > span {
+  display: block;
+  color: var(--home-blue);
+}
+
+.introDescription {
+  max-width: 31rem;
+  margin: 0 0 0.25rem;
+  padding-left: 1.25rem;
+  border-left: 1px solid
+    color-mix(in srgb, var(--home-blue) 24%, var(--home-line));
+  color: var(--home-muted);
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  text-wrap: pretty;
+}
+
+.challengeCard {
+  position: relative;
+  isolation: isolate;
+  min-height: 16rem;
+  overflow: hidden;
+  border-color: var(--home-line);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--home-ink) 5%, transparent);
+  transition:
+    transform 250ms,
+    border-color 250ms,
+    box-shadow 250ms;
+}
+
+.challengeCard::before,
+.challengeCard::after {
+  position: absolute;
+  z-index: -1;
+  content: "";
+  pointer-events: none;
+}
+
+.challengeCard::before {
+  top: 0;
+  right: 1.5rem;
+  left: 1.5rem;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--home-blue) 40%, transparent),
+    transparent
+  );
+}
+
+.challengeCard::after {
+  right: -3.25rem;
+  bottom: -4.75rem;
+  width: 10rem;
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 13%, transparent);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1.5rem color-mix(in srgb, var(--home-blue) 3%, transparent),
+    0 0 0 3rem color-mix(in srgb, var(--home-blue) 2%, transparent);
+  transition: transform 300ms;
+}
+
+.cardRelease {
+  border-color: color-mix(in srgb, var(--home-blue) 20%, var(--home-line));
+  background:
+    radial-gradient(
+      ellipse at 100% 0,
+      color-mix(in srgb, var(--home-blue) 11%, transparent),
+      transparent 78%
+    ),
+    linear-gradient(
+      125deg,
+      var(--home-sky),
+      var(--home-ice) 55%,
+      var(--home-slate-deep)
+    );
+}
+
+.cardNeutral {
+  background:
+    radial-gradient(
+      ellipse at 100% 0,
+      color-mix(in srgb, var(--home-blue) 6%, transparent),
+      transparent 72%
+    ),
+    linear-gradient(145deg, var(--home-paper), var(--home-soft));
+}
+
+.cardScope {
+  background:
+    radial-gradient(
+      ellipse at 100% 100%,
+      color-mix(in srgb, var(--home-blue) 9%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(135deg, var(--home-paper), var(--home-sky));
+}
+
+.challengeIcon {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 18%, var(--home-line));
+  border-radius: 0.875rem;
+  background: color-mix(in srgb, var(--home-paper) 76%, transparent);
+  color: var(--home-blue);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--home-paper) 92%, transparent),
+    0 6px 16px color-mix(in srgb, var(--home-ink) 5%, transparent);
+}
+
+.challengeIndex {
+  padding: 0.4rem 0.625rem;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 12%, var(--home-line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--home-paper) 56%, transparent);
+  color: color-mix(in srgb, var(--home-ink) 62%, var(--home-blue));
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+}
+
+.challengeBadge {
+  color: var(--home-blue);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.challengeTitle {
+  margin-top: 0.5rem;
+  color: var(--home-ink);
+  font-size: clamp(1.125rem, 1.55vw, 1.35rem);
+  font-weight: 750;
+  line-height: 1.3;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.challengeItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  color: var(--home-muted);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.challengeCheck {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+  color: var(--home-blue);
+}
+
+.deliverablesWrap {
+  margin-top: 1.25rem;
+}
+
+.deliverablesGrid {
+  display: grid;
+  gap: 0.625rem;
+  padding: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 10%, var(--home-line));
+  border-radius: 1.5rem;
+  background: color-mix(in srgb, var(--home-paper) 76%, transparent);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--home-ink) 4%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.deliverable {
+  display: flex;
+  min-height: 3.25rem;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 8%, var(--home-line));
+  border-radius: 0.875rem;
+  background: color-mix(in srgb, var(--home-paper) 82%, transparent);
+  color: var(--home-ink);
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.5;
+  transition:
+    border-color 200ms,
+    background-color 200ms,
+    transform 200ms;
+}
+
+.deliverableIcon {
+  display: grid;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 12%, var(--home-line));
+  border-radius: 50%;
+  background: var(--home-sky);
+  color: var(--home-blue);
+}
+
+@media (min-width: 640px) {
+  .deliverablesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .intro {
+    grid-template-columns: minmax(0, 1.1fr) minmax(17rem, 0.75fr);
+    gap: 2.5rem;
+    margin-bottom: 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .deliverablesGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.875rem;
+    padding: 1.125rem;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .challengeCard:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--home-blue) 32%, var(--home-line));
+    box-shadow: 0 22px 48px
+      color-mix(in srgb, var(--home-blue) 10%, transparent);
+  }
+
+  .challengeCard:hover::after {
+    transform: translate(-0.75rem, -0.5rem) scale(1.05);
+  }
+
+  .deliverable:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--home-blue) 24%, var(--home-line));
+    background-color: var(--home-paper);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .challengeCard,
+  .challengeCard::after,
+  .deliverable {
+    transition: none;
+  }
+}

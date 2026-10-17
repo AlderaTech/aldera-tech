@@ -1,0 +1,15 @@
+# Maskot Visi Aldera Tech
+
+- Aset: [aldera-cat-vision.webp](../public/images/about/aldera-cat-vision.webp).
+- Referensi identitas: [maskot hero Tentang](../public/images/about/aldera-cat-about.webp).
+- Penempatan: panel visi pada halaman Tentang, melalui `app/(public)/about/_components/purpose-mascot.tsx` dan stylesheet lokal `purpose-mascot.module.css`.
+- Pose: berdiri dengan langkah percaya diri, satu tangan di pinggang, dan satu tangan menunjuk ke arah depan/atas. Tidak membawa laptop. Pakaian, warna, bulu, headphone, serta kacamata mengikuti aset referensi.
+- Format: WebP transparan, 1024×1536, 215.638 byte, kualitas 90 dan alpha kualitas 100. Sumber generasi disimpan oleh tool; aplikasi memakai salinan aset portabel di dalam proyek.
+- Pembuatan: mode edit pada tool bawaan `imagegen`, memakai aset asli sebagai referensi. Konversi ke WebP menggunakan Sharp; aset referensi tidak ditimpa.
+- Rendering: `next/image`, static import, lazy loading, kualitas 90, `sizes` responsif, serta alt text yang menjelaskan pose. Shadow dan orbit dibuat dengan CSS; animasi float menghormati `prefers-reduced-motion`.
+
+## Prompt final
+
+```text
+Use case: precise-object-edit. Asset type: transparent premium 3D brand mascot for the vision and mission section of Aldera Tech software house and digital studio. Input image is the exact character identity reference. Preserve this same recognizable original white fluffy cat: head and facial proportions, pink nose, friendly small smile, glossy black sunglasses, large black over-ear headphones with restrained electric-blue trim, premium white hoodie with thin red and electric-blue stripes along the sleeves, white knee-length sporty shorts with matching details, white sneakers with navy/red/blue accents, and fluffy white tail. Change the pose substantially: confident visionary team leader taking one small natural step forward, torso turned slightly toward the viewer, one arm extending outward diagonally toward the upper-right at shoulder height in a clear presenting/pointing gesture toward a future goal, the other paw resting naturally on its hip. The extended paw must remain a soft rounded feline paw with simple believable anatomy, not a human hand with long fingers. No laptop, tablet, flag or handheld prop. Keep the face oriented toward the viewer and both sunglasses lenses visible. Relaxed and welcoming professional confidence, not a running action pose. Full body centered in a portrait 2:3 composition, complete ears, headphones, extended paw, tail and both shoes fully inside the frame with comfortable clear margins. Premium polished 3D illustration, finely groomed clean white fur, realistic soft cotton fabric, controlled reflections, soft neutral studio key lighting and cool blue edge light, consistent with the reference. Genuinely transparent alpha background. No environment, no floor plane, no baked background, no opaque glow, no extra objects, no typography, no logo or watermark. Exactly one cat. Crisp highly detailed production-quality render for placement on a deep navy and electric-blue website panel.
+```

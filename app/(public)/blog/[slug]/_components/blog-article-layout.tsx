@@ -4,6 +4,9 @@ import { BlogArticleHeader } from "./blog-article-header";
 import { BlogCtaBanner } from "./blog-cta-banner";
 import { BlogFeaturedImage } from "./blog-featured-image";
 import type { BlogDetailPost } from "../_data/blog-detail";
+import { cn } from "@/lib/utils";
+import shared from "../../../_components/studio.module.css";
+import styles from "./blog-detail.module.css";
 
 type BlogArticleLayoutProps = {
   post: BlogDetailPost;
@@ -17,9 +20,9 @@ export function BlogArticleLayout({
   featuredImage,
 }: BlogArticleLayoutProps) {
   return (
-    <div className="editorial-surface">
-      <div className="public-container-px mx-auto flex max-w-screen-xxxl gap-12 py-12">
-        <article className="mx-auto max-w-3xl min-w-0 flex-1">
+    <div className={styles.page}>
+      <div className={cn(shared.container, styles.layout)}>
+        <article className={styles.article}>
           <BlogArticleHeader post={post} minutes={minutes} />
           <BlogFeaturedImage src={featuredImage} alt={post.title} />
           <BlogArticleBody html={post.content} />

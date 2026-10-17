@@ -1,28 +1,46 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { ArrowUpRight, MessagesSquare } from "lucide-react";
 import { FadeUp } from "@/components/shared/motion";
 import { PUBLIC_ROUTES } from "@/lib/routes";
+import shared from "../../_components/studio.module.css";
+import styles from "./about.module.css";
 
 export function AboutCta() {
   return (
-    <section className="editorial-surface">
-      <div className="public-container-px mx-auto max-w-screen-xxxl pb-14 sm:pb-20">
-        <FadeUp>
-          <div className="rounded-xl bg-[#08090d] p-8 text-center text-white sm:p-12">
-            <h2 className="editorial-display mb-4 text-4xl sm:text-5xl">
-              Mari berkenalan
+    <section className={styles.ctaSection} aria-labelledby="about-cta-heading">
+      <div className={shared.container}>
+        <FadeUp className={styles.ctaPanel}>
+          <div className={styles.ctaHeading}>
+            <span className={styles.ctaEyebrow}>
+              <span aria-hidden="true" />
+              Langkah berikutnya
+            </span>
+            <h2 id="about-cta-heading">
+              <span className={styles.ctaTitleLead}>Mari</span>{" "}
+              <span className={styles.ctaTitleFocus}>berkenalan</span>
             </h2>
-            <p className="mx-auto mb-6 max-w-xl opacity-90">
-              Kami senang mendengar ide Anda. Konsultasi 30 menit gratis tanpa
-              komitmen.
-            </p>
-            <Button
-              asChild
-              size="xl"
-              className="bg-[#0b6bff] text-white hover:bg-[#075bd8]"
-            >
-              <Link href={PUBLIC_ROUTES.contact}>Konsultasi Gratis</Link>
-            </Button>
+            <span className={styles.ctaSignature} aria-hidden="true">
+              Aldera Tech <span /> Digital Studio
+            </span>
+          </div>
+          <div className={styles.ctaDetails}>
+            <p>Kami senang mendengar ide Anda.</p>
+            <div className={styles.ctaOffer}>
+              <span className={styles.ctaOfferIcon} aria-hidden="true">
+                <MessagesSquare className="size-5" strokeWidth={1.6} />
+              </span>
+              <span className={styles.ctaOfferCopy}>
+                <strong>30 menit</strong>
+                <span>Konsultasi gratis tanpa komitmen</span>
+              </span>
+              <span className={styles.ctaOfferIndex} aria-hidden="true">
+                01
+              </span>
+            </div>
+            <Link href={PUBLIC_ROUTES.contact} className={shared.outlineLink}>
+              Konsultasi Gratis{" "}
+              <ArrowUpRight className="size-4" aria-hidden="true" />
+            </Link>
           </div>
         </FadeUp>
       </div>

@@ -11,6 +11,7 @@ Tabel berikut menentukan perintah apa saja yang boleh dijalankan otomatis oleh A
 | Kategori Perintah      | Contoh Perintah                          | Boleh Dijalankan Otomatis? | Keterangan & Aturan                                                                                   |
 | :--------------------- | :--------------------------------------- | :------------------------: | :---------------------------------------------------------------------------------------------------- |
 | **Typecheck**          | `bunx tsc --noEmit`                      |         ✅ **YA**          | Wajib dijalankan untuk memastikan tidak ada error kompilasi/tipe.                                     |
+| **Next.js Typegen**    | `bunx next typegen`                      |         ✅ **YA**          | Jalankan sebelum typecheck pada Next.js 16 untuk menghasilkan deklarasi gambar dan tipe rute.         |
 | **Linter**             | `bun run lint`, `eslint .`               |         ✅ **YA**          | Diizinkan untuk memastikan kepatuhan standar kode.                                                    |
 | **Formatter**          | `bun run format`, `prettier --write ...` |         ✅ **YA**          | **Wajib dijalankan** setelah selesai mengedit kode untuk merapikan kode & mengurutkan class Tailwind. |
 | **Pemeriksaan Status** | `git status`, `git diff`                 |         ✅ **YA**          | Wajib dijalankan sebelum menyelesaikan turn/task.                                                     |
@@ -62,6 +63,7 @@ Setiap AI Agent wajib memeriksa seluruh checklist berikut sebelum menyatakan bah
 
 [ ] 7. Verifikasi Non-Build / Non-Test (Wajib)
     - Jalankan `bun run format` untuk merapikan kode & mengurutkan kelas Tailwind.
+    - Jalankan `bunx next typegen` untuk menghasilkan deklarasi tipe Next.js sebelum typecheck.
     - Jalankan `bunx tsc --noEmit` untuk memastikan 0 error tipe TypeScript.
     - Jalankan `bun run lint` jika relevan untuk membersihkan warning/error.
 

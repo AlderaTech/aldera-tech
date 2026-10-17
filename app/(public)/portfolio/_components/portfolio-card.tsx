@@ -1,10 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 import type { PortfolioItem } from "../_data/portfolio";
+import { PortfolioImage } from "./portfolio-image";
+import styles from "./portfolio-grid.module.css";
 
 type PortfolioCardProps = {
   item: PortfolioItem;
@@ -14,47 +13,32 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
   return (
     <Link
       href={PUBLIC_ROUTES.portfolioDetail(item.slug)}
-      className="group block h-full"
+      className={styles.card}
     >
-      <Card className="h-full overflow-hidden rounded-xl p-0 transition-all hover:-translate-y-1 hover:shadow-2xl">
-        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-          {item.featuredImage ? (
-            <Image
-              src={item.featuredImage}
-              alt={item.title}
-              fill
-              sizes="(min-width: 1280px) 400px, (min-width: 768px) 50vw, 100vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          ) : null}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-transparent to-transparent opacity-80 transition-opacity group-hover:opacity-100" />
-          <div className="absolute top-3 left-3 flex gap-2">
-            <Badge className="bg-[#0b6bff] text-white hover:bg-[#0b6bff]">
-              {item.industry}
-            </Badge>
-          </div>
-          <div className="absolute right-3 bottom-3 flex size-9 translate-y-2 items-center justify-center rounded-full bg-white text-black opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100">
-            <ArrowUpRight className="size-4" />
-          </div>
+      <div className={styles.media}>
+        <PortfolioImage
+          src={item.featuredImage}
+          alt={`Pratinjau proyek ${item.title}`}
+          sizes="(min-width: 1280px) 400px, (min-width: 768px) 48vw, 95vw"
+          imageClassName={styles.image}
+          fallbackClassName={styles.imageFallback}
+        />
+        <span className={styles.industry}>{item.industry}</span>
+        <span className={styles.openIcon} aria-hidden="true">
+          <ArrowUpRight className="size-4" />
+        </span>
+      </div>
+
+      <div className={styles.cardBody}>
+        <p className={styles.client}>{item.client}</p>
+        <h3>{item.title}</h3>
+        <p className={styles.summary}>{item.summary}</p>
+        <div className={styles.techStack} aria-label="Teknologi yang digunakan">
+          {item.techStack.slice(0, 3).map((tech) => (
+            <span key={tech}>{tech}</span>
+          ))}
         </div>
-        <div className="space-y-3 bg-white/80 p-5">
-          <div className="text-xs text-black/62 uppercase">{item.client}</div>
-          <h2 className="text-xl leading-snug font-black transition-colors group-hover:text-[#0b6bff]">
-            {item.title}
-          </h2>
-          <p className="line-clamp-2 text-sm text-black/60">{item.summary}</p>
-          <div className="flex flex-wrap gap-1 pt-2">
-            {item.techStack.slice(0, 3).map((tech) => (
-              <span
-                key={tech}
-                className="rounded-md bg-black/5 px-2 py-0.5 text-xs text-black/58"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
-        </div>
-      </Card>
+      </div>
     </Link>
   );
 }

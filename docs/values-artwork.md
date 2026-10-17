@@ -1,0 +1,15 @@
+# Ilustrasi Nilai Aldera Tech
+
+- Aset: [aldera-values-foundation.webp](../public/images/about/aldera-values-foundation.webp).
+- Penempatan: bagian Nilai yang kami pegang pada halaman Tentang, melalui `app/(public)/about/_components/about-values-visual.tsx` dan stylesheet lokal `about-values.module.css`.
+- Konsep: empat modul berbentuk L saling terhubung di sekitar inti biru, sebagai metafora untuk hasil, craft, transparansi, dan kemitraan. Material putih, navy, kaca biru muda, serta biru elektrik mengikuti identitas visual halaman. Aset merupakan ilustrasi pendukung, bukan pengganti logo.
+- Format: WebP transparan 768×768, 72.634 byte, kualitas 90 dan alpha kualitas 100. Gambar sumber disimpan oleh tool; aplikasi memakai salinan aset portabel di dalam proyek.
+- Pembuatan: tool bawaan `imagegen`, dengan satu prompt generasi baru. Konversi dan kompresi menggunakan Sharp.
+- Rendering: `next/image`, static import, lazy loading, kualitas 90, `sizes` responsif, dan `alt=""` karena ilustrasi dekoratif. Gambar tidak berisi teks atau angka; empat nilai asli dirender sebagai elemen HTML. Jumlah nilai dekoratif diambil dari data yang ditampilkan.
+- Animasi: float ringan pada ilustrasi hanya aktif ketika reduced motion tidak diaktifkan; ring dan bayangan menggunakan CSS.
+
+## Prompt final
+
+```text
+Use case: stylized-concept. Asset type: transparent premium 3D editorial illustration for the core values section of Aldera Tech, a professional software house and digital studio. Subject: a beautifully engineered architectural sculpture of exactly four substantial interlocking rounded L-shaped modules forming a stable open cube around a small electric-blue spherical core. Each of the four modules uses a different restrained material: polished white ceramic, matte deep midnight navy aluminum, translucent frosted pale-blue glass, and refined electric-blue coated metal. Their precise fitted joins and cohesive structure communicate craftsmanship, transparency, purposeful results and long-term partnership. This is a sophisticated sculptural object, not a logo or an app icon. Composition: one cohesive isolated object centered on a square canvas, elevated three-quarter isometric view, occupies about 76 percent of the canvas with clear generous margin on all sides. Clean balanced silhouette, some visible negative space through the structure, realistic material thickness and rounded edges. Lighting: refined soft studio key from upper left, gentle cool fill, realistic reflections and ambient occlusion, restrained blue internal glow on the core only, crisp high-quality product-render details. Color palette strictly white, deep navy, electric blue and soft ice blue. Genuinely transparent alpha background, no room, no floor plane, no pedestal, no opaque halo, no rectangular background. Avoid scattered fragments, extra objects, people, mascots, letters, numerals, readable text, branding, watermark, charts or business metrics. Professional, calm, precise and enterprise quality.
+```

@@ -1,5 +1,6 @@
-import Image from "next/image";
-import { FadeUp } from "@/components/shared/motion";
+import { PanelsTopLeft } from "lucide-react";
+import { PortfolioImage } from "../../_components/portfolio-image";
+import styles from "./portfolio-detail.module.css";
 
 type PortfolioFeaturedImageProps = {
   src: string | null;
@@ -13,21 +14,24 @@ export function PortfolioFeaturedImage({
   if (!src) return null;
 
   return (
-    <section className="editorial-surface">
-      <div className="public-container-px mx-auto max-w-screen-xxxl py-10">
-        <FadeUp>
-          <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-black/10 shadow-2xl">
-            <Image
-              src={src}
-              alt={alt}
-              fill
-              sizes="(min-width: 1280px) 1200px, 100vw"
-              className="object-cover"
-              preload
-            />
-          </div>
-        </FadeUp>
+    <figure className={styles.featured}>
+      <figcaption className={styles.imageToolbar}>
+        <span className={styles.windowDots} aria-hidden="true">
+          <i /> <i /> <i />
+        </span>
+        <span>Pratinjau proyek</span>
+        <PanelsTopLeft className="size-3.5" aria-hidden="true" />
+      </figcaption>
+      <div className={styles.imageCanvas}>
+        <PortfolioImage
+          src={src}
+          alt={alt}
+          sizes="(min-width: 1280px) 520px, (min-width: 1024px) 45vw, (min-width: 640px) 560px, 90vw"
+          imageClassName={styles.featuredImage}
+          fallbackClassName={styles.imageFallback}
+          preload
+        />
       </div>
-    </section>
+    </figure>
   );
 }
