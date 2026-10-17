@@ -227,7 +227,17 @@ export async function Footer() {
 }
 
 function toWhatsappHref(value: string) {
+  if (!value) return "";
   if (value.startsWith("http")) return value;
   const digits = value.replace(/\D/g, "");
-  return digits ? `https://wa.me/${digits}` : value;
+  if (!digits) return value;
+
+  let normalized = digits;
+  if (digits.startsWith("0")) {
+    normalized = "62" + digits.slice(1);
+  } else if (!digits.startsWith("62")) {
+    normalized = "62" + digits;
+  }
+
+  return `https://wa.me/${normalized}`;
 }

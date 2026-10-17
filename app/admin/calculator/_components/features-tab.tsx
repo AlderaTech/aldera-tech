@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, Trash2, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ export function FeaturesTab({
   items: AdminFeature[];
   projectTypes: AdminProjectType[];
 }) {
+  const router = useRouter();
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState<AdminFeature | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminFeature | null>(null);
@@ -45,6 +47,7 @@ export function FeaturesTab({
       });
       toast.success(editing ? "Diperbarui" : "Ditambahkan");
       setEditing(null);
+      router.refresh();
     });
   }
 
@@ -54,6 +57,7 @@ export function FeaturesTab({
       await deleteFeatureOption(deleteTarget.id);
       toast.success("Dihapus");
       setDeleteTarget(null);
+      router.refresh();
     });
   }
 

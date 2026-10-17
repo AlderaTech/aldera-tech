@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useTransition } from "react";
+import { useActionState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -25,21 +25,20 @@ export function ResetFormContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
 
-  const [state] = useActionState(resetPasswordAction, initialState);
-  const [isPending, startTransition] = useTransition();
+  const [state, formAction, isPending] = useActionState(
+    resetPasswordAction,
+    initialState
+  );
   const { showPassword, togglePassword } = usePasswordVisibility();
 
-  function handleSubmit(formData: FormData) {
-    startTransition(async () => {
-      const result = await resetPasswordAction(state, formData);
-      if (result.ok) {
-        toast.success(result.message ?? "Password diperbarui.");
-        router.replace(AUTH_ROUTES.login);
-      } else {
-        toast.error(result.message ?? "Gagal memperbarui password.");
-      }
-    });
-  }
+  useEffect(() => {
+    if (state.ok) {
+      toast.success(state.message ?? "Password diperbarui.");
+      router.replace(AUTH_ROUTES.login);
+    } else if (state.message) {
+      toast.error(state.message);
+    }
+  }, [state, router]);
 
   if (!token) {
     return (
@@ -75,7 +74,7 @@ export function ResetFormContent() {
       description="Pilih password baru yang kuat agar akses dashboard proyek tetap aman."
       variant="reset"
     >
-      <form action={handleSubmit}>
+      <form action={formAction}>
         <input type="hidden" name="token" value={token} />
         <CardContent className="space-y-5 px-6 pb-2 sm:px-8">
           <div className="space-y-2">

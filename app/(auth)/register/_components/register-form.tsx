@@ -36,9 +36,7 @@ export function RegisterForm() {
           result.phone || (formData.get("phone") as string) || "";
         const emailParam =
           result.email || (formData.get("email") as string) || "";
-        const password = (formData.get("password") as string) || "";
-
-        // Temporarily save to sessionStorage for seamless verification auto-login
+        // Save contact info to sessionStorage for verification flow
         if (typeof window !== "undefined") {
           try {
             sessionStorage.setItem(
@@ -46,7 +44,6 @@ export function RegisterForm() {
               JSON.stringify({
                 phone: phoneParam,
                 email: emailParam,
-                password,
               })
             );
           } catch {

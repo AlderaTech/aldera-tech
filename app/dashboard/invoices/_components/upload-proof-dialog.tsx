@@ -266,7 +266,7 @@ export function UploadProofDialog({
               type="button"
               disabled={isStartingMidtrans}
               onClick={handleMidtransPayment}
-              className="bg-brand-primary hover:bg-brand-primary/90 h-11 w-full gap-2 text-sm font-semibold text-white shadow-sm"
+              className="bg-brand-primary hover:bg-brand-primary-hover h-11 w-full gap-2 text-sm font-semibold text-white shadow-sm"
             >
               {isStartingMidtrans ? (
                 <>
@@ -412,7 +412,7 @@ export function UploadProofDialog({
                 <Button
                   type="submit"
                   disabled={isUploading || isPending}
-                  className="bg-brand-primary hover:bg-brand-primary/90 gap-2 text-white"
+                  className="bg-brand-primary hover:bg-brand-primary-hover gap-2 text-white"
                 >
                   {isUploading || isPending ? (
                     <>

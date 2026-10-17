@@ -11,7 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     PUBLIC_ROUTES.services,
     PUBLIC_ROUTES.portfolio,
     PUBLIC_ROUTES.pricing,
-    PUBLIC_ROUTES.calculator,
+    PUBLIC_ROUTES.aiRelay,
     PUBLIC_ROUTES.testimonials,
     PUBLIC_ROUTES.faq,
     PUBLIC_ROUTES.blog,

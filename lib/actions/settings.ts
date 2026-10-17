@@ -1,8 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { requirePermission, PERMISSIONS } from "@/lib/permissions";
 import { defaultSiteSettings, SITE_SETTING_ID } from "@/lib/public-settings";
 import { siteSettingsSchema } from "@/lib/validations/settings";
 import { ADMIN_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
@@ -12,14 +12,6 @@ export type SettingsActionState = {
   message?: string;
   errors?: Record<string, string>;
 };
-
-async function requireSettingsAdmin() {
-  const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN") {
-    throw new Error("Forbidden");
-  }
-  return session.user;
-}
 
 function clean(value: unknown) {
   const text = String(value ?? "").trim();
@@ -41,7 +33,7 @@ export async function updateSiteSettingsAction(
   _: SettingsActionState,
   formData: FormData
 ): Promise<SettingsActionState> {
-  await requireSettingsAdmin();
+  await requirePermission(PERMISSIONS.SETTINGS_MANAGE);
   const parsed = siteSettingsSchema.safeParse({
     brandName: formData.get("brandName"),
     footerDescription: formData.get("footerDescription"),

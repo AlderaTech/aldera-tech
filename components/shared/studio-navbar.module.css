@@ -70,8 +70,9 @@ header.navbar > div {
   justify-content: center;
   padding: 0.625rem 0.75rem;
   border-radius: 999px;
-  color: var(--home-muted);
+  color: #334155;
   font-size: 0.75rem;
+  font-weight: 500;
   line-height: 1.5;
 }
 .navbar .desktopNav a[aria-current] {
@@ -124,9 +125,11 @@ header.navbar > div {
 .navbar .login {
   min-height: 2.75rem;
   border: 1px solid var(--home-line);
-  background: color-mix(in srgb, var(--home-paper) 60%, transparent);
+  background: var(--home-paper);
   color: var(--home-ink);
   font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--home-ink) 8%, transparent);
 }
 .navbar .login:hover {
   border-color: color-mix(in srgb, var(--home-blue) 30%, var(--home-line));

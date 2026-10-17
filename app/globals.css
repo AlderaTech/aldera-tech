@@ -24,6 +24,8 @@
   --primary-hover: #0094bd;
 
   /* Brand Dark: Deep Navy (#0F263A) */
+  --brand-primary: #2563eb;
+  --brand-primary-hover: #1d4ed8;
   --brand-navy: #0f263a;
   --brand-navy-light: #1a3b54;
   --brand-cyan: #00b1e1;
@@ -128,6 +130,8 @@
 
   --color-brand-navy: var(--brand-navy);
   --color-brand-navy-light: var(--brand-navy-light);
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-hover: var(--brand-primary-hover);
   --color-brand-cyan: var(--brand-cyan);
   --color-brand-cyan-hover: var(--brand-cyan-hover);
   --color-brand-orange: var(--brand-orange);

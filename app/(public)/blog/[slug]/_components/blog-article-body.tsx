@@ -1,3 +1,6 @@
+import styles from "./blog-detail.module.css";
+import { sanitizeHtml } from "@/lib/sanitize-html";
+
 type BlogArticleBodyProps = {
   html: string;
 };
@@ -7,8 +10,7 @@ export function BlogArticleBody({ html }: BlogArticleBodyProps) {
     <div
       id="blog-content"
       className={styles.body}
-      dangerouslySetInnerHTML={{ __html: html }}
+      dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }}
     />
   );
 }
-import styles from "./blog-detail.module.css";

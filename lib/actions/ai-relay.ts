@@ -164,6 +164,64 @@ export async function createTopupRequest(
   return { success: true, topup };
 }
 
+export async function uploadTopupProof(
+  topupId: number,
+  proofFileId: string
+): Promise<{
+  success: boolean;
+  topup: TopupRequestRecord;
+}> {
+  if (!topupId || isNaN(topupId)) {
+    throw new Error("ID tiket top-up tidak valid.");
+  }
+  if (!proofFileId || !proofFileId.trim()) {
+    throw new Error("Berkas bukti transfer wajib disertakan.");
+  }
+
+  const user = await resolveCurrentUser();
+
+  const res = await queryRouter<{
+    id: string | number;
+    user_id: string | number;
+    amount: string | number;
+    unique_code: number;
+    total_transfer: string | number;
+    proof_file_id: string | null;
+    status: "pending" | "approved" | "rejected";
+    admin_id: string | number | null;
+    created_at: Date;
+    approved_at: Date | null;
+  }>(
+    `UPDATE topup_requests
+     SET proof_file_id = $1, updated_at = NOW()
+     WHERE id = $2 AND user_id = $3 AND status = 'pending'
+     RETURNING id, user_id, amount, unique_code, total_transfer, proof_file_id, status, admin_id, created_at, approved_at;`,
+    [proofFileId.trim(), topupId, user.id]
+  );
+
+  if (res.rows.length === 0) {
+    throw new Error(
+      "Tiket top-up tidak ditemukan atau sudah tidak berstatus pending."
+    );
+  }
+
+  const row = res.rows[0];
+  const topup: TopupRequestRecord = {
+    id: Number(row.id),
+    user_id: Number(row.user_id),
+    amount: Number(row.amount),
+    unique_code: Number(row.unique_code),
+    total_transfer: Number(row.total_transfer),
+    proof_file_id: row.proof_file_id,
+    status: row.status,
+    admin_id: row.admin_id ? Number(row.admin_id) : null,
+    created_at: new Date(row.created_at),
+    approved_at: row.approved_at ? new Date(row.approved_at) : null,
+  };
+
+  return { success: true, topup };
+}
+
 export async function getBalanceTransactions(
   limit = 50
 ): Promise<BalanceTransactionRecord[]> {

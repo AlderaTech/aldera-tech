@@ -47,6 +47,7 @@ import {
   createTopupRequest,
   getBalanceTransactions,
   getUserBalance,
+  uploadTopupProof,
   type BalanceTransactionRecord,
   type TopupRequestRecord,
 } from "@/lib/actions/ai-relay";
@@ -77,6 +78,9 @@ export function BalanceTopupCard({
     null
   );
   const [copiedAmount, setCopiedAmount] = useState(false);
+  const [proofFile, setProofFile] = useState<File | null>(null);
+  const [isUploadingProof, setIsUploadingProof] = useState(false);
+  const [uploadedProofId, setUploadedProofId] = useState<string | null>(null);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -131,12 +135,49 @@ export function BalanceTopupCard({
     }
   };
 
+  const handleUploadProof = async () => {
+    if (!createdTopup) return;
+    if (!proofFile) {
+      toast.error("Pilih file bukti transfer terlebih dahulu.");
+      return;
+    }
+    setIsUploadingProof(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", proofFile);
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Gagal mengunggah file bukti transfer.");
+      }
+      const uploadData = await res.json();
+      const fileId = uploadData.url || uploadData.id || uploadData.path;
+      const proofRes = await uploadTopupProof(createdTopup.id, fileId);
+      if (proofRes.success) {
+        setUploadedProofId(fileId);
+        setCreatedTopup(proofRes.topup);
+        toast.success("Bukti transfer berhasil diunggah!");
+      }
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Gagal mengunggah bukti transfer."
+      );
+    } finally {
+      setIsUploadingProof(false);
+    }
+  };
+
   const handleCloseTopup = () => {
     setIsTopupOpen(false);
     setCreatedTopup(null);
     setCustomAmount("");
     setSelectedPreset(100000);
     setCopiedAmount(false);
+    setProofFile(null);
+    setUploadedProofId(null);
   };
 
   const isLowBalance = balance < 5000;
@@ -479,11 +520,11 @@ export function BalanceTopupCard({
                   <p>
                     • No. Rekening:{" "}
                     <code className="font-mono font-bold text-slate-900 bg-white px-1.5 py-0.5 rounded border">
-                      8420-192-881
+                      8012-3456-7890
                     </code>
                   </p>
                   <p>
-                    • Atas Nama: <strong>PT Aldera Solusindo Digital</strong>
+                    • Atas Nama: <strong>PT Aldera Solusindo Mandiri</strong>
                   </p>
                 </div>
                 <div className="mt-2 pt-2 border-t text-[11px] text-amber-800 bg-amber-50/70 p-2 rounded">
@@ -494,6 +535,66 @@ export function BalanceTopupCard({
                   </strong>
                   ) agar saldo otomatis masuk ke akun Anda.
                 </div>
+              </div>
+
+              {/* Form Upload Bukti Transfer */}
+              <div className="rounded-lg border p-3.5 space-y-3 bg-white">
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold text-slate-800 text-xs">
+                    Upload Bukti Transfer:
+                  </p>
+                  {(createdTopup.proof_file_id || uploadedProofId) && (
+                    <Badge
+                      variant="outline"
+                      className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] gap-1"
+                    >
+                      <Check className="size-3" /> Bukti Terunggah
+                    </Badge>
+                  )}
+                </div>
+                {createdTopup.proof_file_id || uploadedProofId ? (
+                  <div className="text-xs text-muted-foreground bg-slate-50 p-2.5 rounded border flex items-center justify-between">
+                    <span className="font-mono truncate max-w-[200px]">
+                      {createdTopup.proof_file_id || uploadedProofId}
+                    </span>
+                    <span className="text-emerald-600 font-medium text-[11px]">
+                      Menunggu verifikasi admin
+                    </span>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onChange={(e) =>
+                          setProofFile(e.target.files?.[0] || null)
+                        }
+                        disabled={isUploadingProof}
+                        className="text-xs file:text-xs file:font-medium h-9"
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        disabled={!proofFile || isUploadingProof}
+                        onClick={handleUploadProof}
+                        className="h-9 px-3 bg-brand-primary hover:bg-brand-primary-hover text-white text-xs shrink-0"
+                      >
+                        {isUploadingProof ? (
+                          <>
+                            <Loader2 className="size-3.5 animate-spin mr-1" />
+                            Mengunggah...
+                          </>
+                        ) : (
+                          "Kirim Bukti"
+                        )}
+                      </Button>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      Format: PNG, JPG, JPEG, WEBP, atau PDF (maks. 5MB)
+                    </p>
+                  </div>
+                )}
               </div>
 
               <DialogFooter className="pt-2">

@@ -101,6 +101,7 @@ export function AiRelayAdminClientView({
   const [editDisplayName, setEditDisplayName] = useState("");
   const [editInputPrice, setEditInputPrice] = useState(0);
   const [editOutputPrice, setEditOutputPrice] = useState(0);
+  const [editUpstreamCost, setEditUpstreamCost] = useState(0);
 
   // 9router Sync State (F15)
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
@@ -178,6 +179,7 @@ export function AiRelayAdminClientView({
     setEditDisplayName(item.display_name);
     setEditInputPrice(item.input_price_per_m);
     setEditOutputPrice(item.output_price_per_m);
+    setEditUpstreamCost(item.upstream_input_cost_per_m ?? 0);
   };
 
   const handleSaveEdit = async () => {
@@ -188,6 +190,7 @@ export function AiRelayAdminClientView({
           display_name: editDisplayName,
           input_price_per_m: Number(editInputPrice),
           output_price_per_m: Number(editOutputPrice),
+          upstream_input_cost_per_m: Number(editUpstreamCost),
         });
         await refreshPricing();
         setEditingModel(null);
@@ -216,6 +219,7 @@ export function AiRelayAdminClientView({
           display_name: newDisplayName.trim(),
           input_price_per_m: Number(newInputPrice),
           output_price_per_m: Number(newOutputPrice),
+          upstream_input_cost_per_m: Number(newUpstreamCost),
           is_active: true,
         });
         await refreshPricing();
@@ -1378,34 +1382,44 @@ export function AiRelayAdminClientView({
               </div>
             </div>
 
-            {editingModel?.upstream_input_cost_per_m && (
-              <div className="rounded-lg bg-slate-50 border p-3 flex items-center justify-between">
-                <div>
-                  <span className="text-[11px] font-semibold text-slate-700 block">
-                    Gross Margin Input Baru:
-                  </span>
-                  <span className="text-[10px] text-muted-foreground font-mono">
-                    Modal upstream: {formatCurrency(editingModel.upstream_input_cost_per_m)}
-                  </span>
-                </div>
-                <Badge
-                  className={`font-mono text-xs ${
-                    calculateGrossMarginPercentage(
-                      editInputPrice,
-                      editingModel.upstream_input_cost_per_m
-                    ) >= 30
-                      ? "bg-emerald-600 text-white"
-                      : "bg-amber-600 text-white"
-                  }`}
-                >
-                  {calculateGrossMarginPercentage(
-                    editInputPrice,
-                    editingModel.upstream_input_cost_per_m
-                  )}
-                  %
-                </Badge>
+            <div className="space-y-1">
+              <Label className="text-xs font-semibold">
+                Estimasi Modal Upstream / 1M
+              </Label>
+              <Input
+                type="number"
+                value={editUpstreamCost}
+                onChange={(e) => setEditUpstreamCost(Number(e.target.value))}
+                className="font-mono text-xs"
+              />
+            </div>
+
+            <div className="rounded-lg bg-slate-50 border p-3 flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-semibold text-slate-700 block">
+                  Gross Margin Input Baru:
+                </span>
+                <span className="text-[10px] text-muted-foreground font-mono">
+                  Modal upstream: {formatCurrency(editUpstreamCost)}
+                </span>
               </div>
-            )}
+              <Badge
+                className={`font-mono text-xs ${
+                  calculateGrossMarginPercentage(
+                    editInputPrice,
+                    editUpstreamCost
+                  ) >= 30
+                    ? "bg-emerald-600 text-white"
+                    : "bg-amber-600 text-white"
+                }`}
+              >
+                {calculateGrossMarginPercentage(
+                  editInputPrice,
+                  editUpstreamCost
+                )}
+                %
+              </Badge>
+            </div>
           </div>
 
           <DialogFooter>
@@ -1565,13 +1579,38 @@ export function AiRelayAdminClientView({
 
           <div className="py-2 text-center">
             {viewProofTicket?.proof_file_id ? (
-              <div className="rounded-lg border p-4 bg-slate-50 flex flex-col items-center gap-2">
-                <span className="font-mono text-xs text-slate-700">
-                  {viewProofTicket.proof_file_id}
-                </span>
-                <p className="text-xs text-muted-foreground">
-                  Berkas bukti transfer tercatat pada sistem penyimpanan.
-                </p>
+              <div className="rounded-lg border p-4 bg-slate-50 flex flex-col items-center gap-3">
+                <div className="relative max-h-72 w-full overflow-hidden rounded-md border bg-white flex items-center justify-center p-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={
+                      viewProofTicket.proof_file_id.startsWith("/") ||
+                      viewProofTicket.proof_file_id.startsWith("http")
+                        ? viewProofTicket.proof_file_id
+                        : `/api/upload/${viewProofTicket.proof_file_id}`
+                    }
+                    alt="Bukti Transfer"
+                    className="max-h-64 object-contain rounded"
+                  />
+                </div>
+                <div className="flex flex-col items-center gap-1.5">
+                  <span className="font-mono text-xs text-slate-700">
+                    {viewProofTicket.proof_file_id}
+                  </span>
+                  <a
+                    href={
+                      viewProofTicket.proof_file_id.startsWith("/") ||
+                      viewProofTicket.proof_file_id.startsWith("http")
+                        ? viewProofTicket.proof_file_id
+                        : `/api/upload/${viewProofTicket.proof_file_id}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-brand-primary hover:underline font-medium inline-flex items-center gap-1"
+                  >
+                    Buka Berkas Penuh &rarr;
+                  </a>
+                </div>
               </div>
             ) : null}
           </div>

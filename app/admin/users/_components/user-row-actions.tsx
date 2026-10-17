@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Check, MoreHorizontal, Power, Shield } from "lucide-react";
 import { toast } from "sonner";
 import type { Role } from "@prisma/client";
@@ -35,6 +36,7 @@ export function UserRowActions({
   roles: Role[];
   isActive: boolean;
 }) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [roleTarget, setRoleTarget] = useState<Role | null>(null);
   const [activeOpen, setActiveOpen] = useState(false);
@@ -50,6 +52,7 @@ export function UserRowActions({
             : `Role ${ROLE_LABELS[role]} dihapus.`
         );
         setRoleTarget(null);
+        router.refresh();
       } catch (err) {
         toast.error((err as Error).message);
       }
@@ -62,6 +65,7 @@ export function UserRowActions({
         await toggleUserActiveAction(userId);
         toast.success(isActive ? "Dinonaktifkan" : "Diaktifkan");
         setActiveOpen(false);
+        router.refresh();
       } catch (err) {
         toast.error((err as Error).message);
       }

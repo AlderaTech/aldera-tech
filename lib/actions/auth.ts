@@ -150,6 +150,21 @@ export async function registerAction(
     };
   }
 
+  const existingPhone = await prisma.user.findFirst({
+    where: {
+      OR: [{ phone }, { phone: normalizedPhone }],
+    },
+    select: { id: true },
+  });
+  if (existingPhone) {
+    return {
+      ok: false,
+      success: false,
+      message: "Nomor WhatsApp sudah terdaftar.",
+      errors: { phone: "Nomor WhatsApp sudah terdaftar" },
+    };
+  }
+
   const hashed = await bcrypt.hash(password, 10);
   await prisma.user.create({
     data: {

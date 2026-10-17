@@ -80,11 +80,22 @@ export function StepAddOns({
                   max={ao.maxMonths}
                   className="h-8 w-20 text-center"
                   value={selectedAddOns[ao.id] || ""}
-                  onChange={(e) => onAddOnChange(ao.id, Number(e.target.value))}
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    if (raw === "" || Number(raw) === 0) {
+                      onAddOnChange(ao.id, 0);
+                      return;
+                    }
+                    const num = Number(raw);
+                    const min = ao.minMonths || 1;
+                    const max = ao.maxMonths;
+                    const clamped = Math.min(Math.max(num, min), max);
+                    onAddOnChange(ao.id, clamped);
+                  }}
                   placeholder="0"
                 />
                 <span className="text-xs text-muted-foreground">
-                  bulan (maks {ao.maxMonths} bulan)
+                  bulan ({ao.minMonths ? `min ${ao.minMonths}, ` : ""}maks {ao.maxMonths} bulan)
                 </span>
               </div>
             </div>

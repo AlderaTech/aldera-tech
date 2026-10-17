@@ -153,7 +153,11 @@ export function VerifyOtpForm() {
         }
 
         setTimeout(() => {
-          router.replace(DASHBOARD_ROUTES.home);
+          if (activePassword) {
+            router.replace(DASHBOARD_ROUTES.home);
+          } else {
+            router.replace(AUTH_ROUTES.login);
+          }
           router.refresh();
         }, 1000);
       } else {

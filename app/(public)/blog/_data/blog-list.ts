@@ -67,13 +67,21 @@ export async function getBlogList(params: {
         category: { select: { name: true, slug: true } },
       },
     });
+    if (params.q || params.category) {
+      return data.length
+        ? data.map((post) => ({
+            ...post,
+            featuredImage: resolveBlogPostImage(post.slug, post.featuredImage),
+          }))
+        : [];
+    }
     return data.length
       ? data.map((post) => ({
           ...post,
           featuredImage: resolveBlogPostImage(post.slug, post.featuredImage),
         }))
       : fallback;
-  }, fallback);
+  }, params.q || params.category ? [] : fallback);
 }
 
 export async function getBlogCategories() {

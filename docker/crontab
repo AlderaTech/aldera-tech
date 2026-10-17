@@ -10,3 +10,7 @@
 #
 # 3. Publish Scheduled Blog Posts (Every 15 minutes)
 */15 * * * * curl -s -f -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/publish-scheduled > /dev/null 2>&1
+#
+# 4. AI Relay Low Balance Guard (Every 30 minutes)
+*/30 * * * * curl -s -f -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/balance-guard > /dev/null 2>&1
+

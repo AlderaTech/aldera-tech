@@ -8,6 +8,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { blogPostSchema } from "@/lib/validations/blog";
 import { isStaff } from "@/lib/permissions";
 import { ADMIN_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 
 export type BlogActionState = {
   ok: boolean;
@@ -71,7 +72,7 @@ export async function createBlogPostAction(
       title: data.title,
       slug: data.slug,
       excerpt: data.excerpt || null,
-      content: data.content,
+      content: sanitizeHtml(data.content),
       featuredImage: data.featuredImage || null,
       categoryId: data.categoryId || null,
       published: Boolean(data.published),
@@ -129,7 +130,7 @@ export async function updateBlogPostAction(
       title: data.title,
       slug: data.slug,
       excerpt: data.excerpt || null,
-      content: data.content,
+      content: sanitizeHtml(data.content),
       featuredImage: data.featuredImage || null,
       categoryId: data.categoryId || null,
       published: Boolean(data.published),

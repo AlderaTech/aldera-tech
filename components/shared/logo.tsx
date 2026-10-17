@@ -44,12 +44,14 @@ export function Logo({
           className={cn(
             "font-bold tracking-tight",
             s.text,
-            variant === "dark" ? "text-white" : undefined
+            variant === "dark" ? "text-white" : "text-brand-navy"
           )}
         >
           Aldera{" "}
           <span
-            className={variant === "dark" ? "text-[#61a3ff]" : "text-primary"}
+            className={
+              variant === "dark" ? "text-[#61a3ff]" : "text-hero-blue"
+            }
           >
             Tech
           </span>

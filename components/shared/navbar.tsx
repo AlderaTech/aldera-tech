@@ -119,7 +119,7 @@ export function Navbar({ session }: { session: Session | null }) {
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    "h-10 rounded-full bg-brand-canvas px-4 font-semibold text-slate-600 hover:bg-brand-divider/60 hover:text-brand-navy motion-reduce:active:scale-100",
+                    "h-10 rounded-full border border-brand-divider/80 bg-white px-4 font-semibold text-brand-navy shadow-xs hover:bg-slate-50 hover:text-brand-navy-light motion-reduce:active:scale-100",
                     usesStudioChrome && studioStyles.login
                   )}
                 >

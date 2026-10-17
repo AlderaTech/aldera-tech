@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Activity,
   Bot,
@@ -43,7 +44,7 @@ interface ClientViewProps {
   healthMetrics: ModelHealthStatus[];
 }
 
-export function AiRelayClientView({
+function AiRelayClientViewInner({
   initialBalance,
   initialTransactions,
   initialKeys,
@@ -52,12 +53,45 @@ export function AiRelayClientView({
   catalog,
   healthMetrics,
 }: ClientViewProps) {
-  const [activeTab, setActiveTab] = useState<string>("catalog");
-  const [currentBalance, setCurrentBalance] = useState<number>(initialBalance);
+  const searchParams = useSearchParams();
+  const tabFromQuery = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState<string>(tabFromQuery || "catalog");
+  const [prevTabQuery, setPrevTabQuery] = useState(tabFromQuery);
 
-  const handleSelectPlaygroundModel = () => {
+  if (tabFromQuery !== prevTabQuery) {
+    setPrevTabQuery(tabFromQuery);
+    if (tabFromQuery) {
+      setActiveTab(tabFromQuery);
+    }
+  }
+
+  const [currentBalance, setCurrentBalance] = useState<number>(initialBalance);
+  const [selectedPlaygroundModel, setSelectedPlaygroundModel] = useState<
+    string | null
+  >(null);
+
+  const handleSelectPlaygroundModel = (modelId?: string) => {
+    if (modelId) {
+      setSelectedPlaygroundModel(modelId);
+    }
     setActiveTab("playground");
   };
+
+  const playgroundModels = useMemo(() => {
+    if (!selectedPlaygroundModel) return catalog;
+    const target = catalog.find((m) => m.id === selectedPlaygroundModel);
+    if (!target) return catalog;
+    return [
+      target,
+      ...catalog
+        .filter((m) => m.id !== selectedPlaygroundModel)
+        .map((m) =>
+          m.id === "gpt-4o-mini" && selectedPlaygroundModel !== "gpt-4o-mini"
+            ? { ...m, isActive: false }
+            : m
+        ),
+    ];
+  }, [catalog, selectedPlaygroundModel]);
 
   return (
     <div className="space-y-6">
@@ -172,7 +206,8 @@ export function AiRelayClientView({
         {/* Tab 2: Playground */}
         <TabsContent value="playground" className="space-y-6 outline-hidden">
           <AiPlayground
-            models={catalog}
+            key={selectedPlaygroundModel || "default"}
+            models={playgroundModels}
             userBalance={currentBalance}
             onBalanceChange={setCurrentBalance}
           />
@@ -189,7 +224,6 @@ export function AiRelayClientView({
             initialBalance={currentBalance}
             initialTransactions={initialTransactions}
           />
-          <AccountBindingCard />
         </TabsContent>
 
         {/* Tab: Telegram Bot Integration */}
@@ -213,5 +247,19 @@ export function AiRelayClientView({
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+export function AiRelayClientView(props: ClientViewProps) {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-xs text-muted-foreground">
+          Memuat AI Relay...
+        </div>
+      }
+    >
+      <AiRelayClientViewInner {...props} />
+    </Suspense>
   );
 }
