@@ -78,4 +78,4 @@ Pemeriksaan UI tidak mengirim permintaan inferensi AI, membuat akun, melakukan t
 - State dan konten: `app/(public)/ai-relay/_hooks/use-relay-showcase.ts` dan `app/(public)/ai-relay/_data/relay-content.ts`.
 - Aktivasi chrome khusus rute: `app/(public)/_components/public-shell.tsx`, `public-shell.module.css`, `components/shared/navbar.tsx`, dan `studio-navbar.module.css`.
 - Aset: dua WebP di `public/images/ai-relay/` yang dirinci di atas.
-- Dokumentasi: panduan ini serta `docs/brand-context.md`.
+- Dokumentasi: panduan ini serta `ai-agent-docs/brand-context.md`.

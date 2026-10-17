@@ -59,7 +59,9 @@ export function VerifyOtpForm() {
 
   // Status feedback
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [remainingAttempts, setRemainingAttempts] = useState<number | null>(null);
+  const [remainingAttempts, setRemainingAttempts] = useState<number | null>(
+    null
+  );
   const [isLocked, setIsLocked] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -102,7 +104,10 @@ export function VerifyOtpForm() {
     }
   }
 
-  function handleKeyDown(index: number, e: React.KeyboardEvent<HTMLInputElement>) {
+  function handleKeyDown(
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) {
     if (e.key === "Backspace" && !digits[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -110,7 +115,10 @@ export function VerifyOtpForm() {
 
   function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
     e.preventDefault();
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, 6);
     if (!pasted) return;
 
     const next = [...digits];
@@ -141,7 +149,9 @@ export function VerifyOtpForm() {
 
       if (result.ok || result.success) {
         setIsSuccess(true);
-        toast.success(result.message ?? "Nomor WhatsApp berhasil diverifikasi!");
+        toast.success(
+          result.message ?? "Nomor WhatsApp berhasil diverifikasi!"
+        );
 
         // Clean up sessionStorage
         if (typeof window !== "undefined") {
@@ -165,7 +175,11 @@ export function VerifyOtpForm() {
         if (result.remainingAttempts !== undefined) {
           setRemainingAttempts(result.remainingAttempts);
         }
-        if (result.isLocked || (result.remainingAttempts !== undefined && result.remainingAttempts <= 0)) {
+        if (
+          result.isLocked ||
+          (result.remainingAttempts !== undefined &&
+            result.remainingAttempts <= 0)
+        ) {
           setIsLocked(true);
         }
         toast.error(result.message ?? "Verifikasi OTP gagal.");
@@ -214,7 +228,7 @@ export function VerifyOtpForm() {
             <PhoneCall className="size-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <p className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
               Dikirim ke nomor WhatsApp
             </p>
             <p className="truncate font-bold text-[#0F263A]">
@@ -274,11 +288,13 @@ export function VerifyOtpForm() {
             <AlertCircle className="mt-0.5 size-4 shrink-0" />
             <div className="space-y-0.5">
               <p className="font-semibold">{errorMessage}</p>
-              {remainingAttempts !== null && remainingAttempts > 0 && !isLocked && (
-                <p className="text-xs opacity-90">
-                  Sisa kesempatan Anda: {remainingAttempts} kali.
-                </p>
-              )}
+              {remainingAttempts !== null &&
+                remainingAttempts > 0 &&
+                !isLocked && (
+                  <p className="text-xs opacity-90">
+                    Sisa kesempatan Anda: {remainingAttempts} kali.
+                  </p>
+                )}
             </div>
           </div>
         )}
@@ -299,7 +315,7 @@ export function VerifyOtpForm() {
             type="button"
             onClick={handleResend}
             disabled={cooldown > 0 || isResending || isPending}
-            className={`cursor-pointer inline-flex items-center gap-1.5 text-sm font-bold transition-colors ${
+            className={`inline-flex cursor-pointer items-center gap-1.5 text-sm font-bold transition-colors ${
               cooldown > 0 || isResending
                 ? "cursor-not-allowed text-slate-400"
                 : "text-[#00B1E1] hover:text-[#0094BD]"
@@ -320,7 +336,7 @@ export function VerifyOtpForm() {
           type="submit"
           size="xl"
           disabled={!isComplete || isPending || isLocked || isSuccess}
-          className="cursor-pointer w-full rounded-full bg-[#00B1E1] font-bold text-[#0F263A] shadow-md shadow-[#00B1E1]/25 hover:bg-[#0094BD] disabled:opacity-50"
+          className="w-full cursor-pointer rounded-full bg-[#00B1E1] font-bold text-[#0F263A] shadow-md shadow-[#00B1E1]/25 hover:bg-[#0094BD] disabled:opacity-50"
         >
           {isPending ? (
             <>

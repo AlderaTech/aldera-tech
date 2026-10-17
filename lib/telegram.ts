@@ -1,5 +1,4 @@
-const BOT_TOKEN =
-  process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN;
+const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN;
 
 export interface SendTelegramMessageArgs {
   chatId: number | string;
@@ -58,7 +57,10 @@ export async function sendTelegramMessage({
 
     if (!res.ok) {
       const errText = await res.text();
-      return { success: false, error: `Telegram API error ${res.status}: ${errText}` };
+      return {
+        success: false,
+        error: `Telegram API error ${res.status}: ${errText}`,
+      };
     }
 
     return { success: true };

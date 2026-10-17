@@ -94,10 +94,10 @@ export function UsageAnalyticsCharts({
   return (
     <div className="space-y-6">
       {/* 4 Summary Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="border shadow-xs">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
               Total Token
             </span>
             <div className="rounded-md bg-indigo-50 p-2 text-indigo-600">
@@ -108,7 +108,7 @@ export function UsageAnalyticsCharts({
             <div className="text-2xl font-bold text-slate-900">
               {summary.totalTokens.toLocaleString("id-ID")}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="mt-1 text-xs text-muted-foreground">
               {summary.totalPromptTokens.toLocaleString("id-ID")} prompt +{" "}
               {summary.totalCompletionTokens.toLocaleString("id-ID")} completion
             </p>
@@ -116,8 +116,8 @@ export function UsageAnalyticsCharts({
         </Card>
 
         <Card className="border shadow-xs">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
               Total Pengeluaran
             </span>
             <div className="rounded-md bg-emerald-50 p-2 text-emerald-600">
@@ -128,15 +128,15 @@ export function UsageAnalyticsCharts({
             <div className="text-2xl font-bold text-slate-900">
               {formatCurrency(summary.totalCostIdr)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="mt-1 text-xs text-muted-foreground">
               Total biaya pemakaian seluruh API Key
             </p>
           </CardContent>
         </Card>
 
         <Card className="border shadow-xs">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
               Total Permintaan
             </span>
             <div className="rounded-md bg-blue-50 p-2 text-blue-600">
@@ -147,15 +147,15 @@ export function UsageAnalyticsCharts({
             <div className="text-2xl font-bold text-slate-900">
               {summary.totalRequests.toLocaleString("id-ID")}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="mt-1 text-xs text-muted-foreground">
               Relay chat & API completions
             </p>
           </CardContent>
         </Card>
 
         <Card className="border shadow-xs">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
               Model Terpopuler
             </span>
             <div className="rounded-md bg-purple-50 p-2 text-purple-600">
@@ -163,10 +163,10 @@ export function UsageAnalyticsCharts({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-bold text-slate-900 truncate">
+            <div className="truncate text-lg font-bold text-slate-900">
               {mostUsedModel}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="mt-1 text-xs text-muted-foreground">
               {maxRequests} kali dipanggil
             </p>
           </CardContent>
@@ -175,13 +175,13 @@ export function UsageAnalyticsCharts({
 
       {/* Interactive Recharts Tabs */}
       <Card className="border shadow-xs">
-        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-3">
+        <CardHeader className="flex flex-col gap-4 pb-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg font-semibold">
               <BarChart2 className="h-5 w-5 text-indigo-600" />
               Grafik Analitik Pemakaian
             </CardTitle>
-            <CardDescription className="text-xs text-muted-foreground mt-0.5">
+            <CardDescription className="mt-0.5 text-xs text-muted-foreground">
               Tren volume token harian, pengeluaran IDR, serta komposisi
               penggunaan model.
             </CardDescription>
@@ -192,14 +192,14 @@ export function UsageAnalyticsCharts({
             onValueChange={setActiveChartTab}
             className="w-auto"
           >
-            <TabsList className="bg-slate-100 p-0.5 h-8">
-              <TabsTrigger value="tokens" className="text-xs px-3 h-7">
+            <TabsList className="h-8 bg-slate-100 p-0.5">
+              <TabsTrigger value="tokens" className="h-7 px-3 text-xs">
                 Konsumsi Token
               </TabsTrigger>
-              <TabsTrigger value="cost" className="text-xs px-3 h-7">
+              <TabsTrigger value="cost" className="h-7 px-3 text-xs">
                 Biaya (IDR)
               </TabsTrigger>
-              <TabsTrigger value="models" className="text-xs px-3 h-7">
+              <TabsTrigger value="models" className="h-7 px-3 text-xs">
                 Sebaran Model
               </TabsTrigger>
             </TabsList>
@@ -209,13 +209,13 @@ export function UsageAnalyticsCharts({
         <CardContent>
           {summary.dailyStats.length === 0 ? (
             <div className="flex h-64 flex-col items-center justify-center rounded-lg border border-dashed text-center">
-              <Layers className="h-8 w-8 text-slate-300 mb-2" />
+              <Layers className="mb-2 h-8 w-8 text-slate-300" />
               <p className="text-sm font-medium text-slate-600">
                 Belum ada data pemakaian untuk divisualisasikan
               </p>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Mulai kirim prompt melalui Playground atau IDE untuk melihat tren
-                analitik.
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Mulai kirim prompt melalui Playground atau IDE untuk melihat
+                tren analitik.
               </p>
             </div>
           ) : (
@@ -392,7 +392,7 @@ export function UsageAnalyticsCharts({
 
               {/* Model Breakdown Pie Chart */}
               {activeChartTab === "models" && (
-                <div className="h-72 w-full min-w-0 flex flex-col md:flex-row items-center justify-around">
+                <div className="flex h-72 w-full min-w-0 flex-col items-center justify-around md:flex-row">
                   <div className="h-64 w-full md:w-1/2">
                     <ResponsiveContainer
                       width="100%"
@@ -435,7 +435,7 @@ export function UsageAnalyticsCharts({
                     </ResponsiveContainer>
                   </div>
 
-                  <div className="w-full md:w-1/2 space-y-2 pr-4 text-xs">
+                  <div className="w-full space-y-2 pr-4 text-xs md:w-1/2">
                     <p className="font-semibold text-slate-700">
                       Rincian per Model:
                     </p>
@@ -447,18 +447,18 @@ export function UsageAnalyticsCharts({
                         >
                           <div className="flex items-center gap-2">
                             <span
-                              className="h-2.5 w-2.5 rounded-full shrink-0"
+                              className="h-2.5 w-2.5 shrink-0 rounded-full"
                               style={{
                                 backgroundColor:
                                   MODEL_COLORS[i % MODEL_COLORS.length],
                               }}
                             />
-                            <span className="font-mono font-medium text-slate-800 truncate max-w-[140px]">
+                            <span className="max-w-[140px] truncate font-mono font-medium text-slate-800">
                               {item.name}
                             </span>
                           </div>
                           <div className="text-right">
-                            <span className="font-semibold text-slate-900 block">
+                            <span className="block font-semibold text-slate-900">
                               {formatCurrency(item.costIdr)}
                             </span>
                             <span className="text-[11px] text-muted-foreground">
@@ -481,34 +481,34 @@ export function UsageAnalyticsCharts({
       <Card className="border shadow-xs">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <div>
-            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg font-semibold">
               <Clock className="h-5 w-5 text-slate-600" />
               Tabel Log Aktivitas Permintaan
             </CardTitle>
-            <CardDescription className="text-xs text-muted-foreground mt-0.5">
+            <CardDescription className="mt-0.5 text-xs text-muted-foreground">
               Riwayat telemetri real-time dari tabel <code>usage_logs</code>.
             </CardDescription>
           </div>
-          <Badge variant="outline" className="text-xs font-mono">
+          <Badge variant="outline" className="font-mono text-xs">
             {logs.length} Log
           </Badge>
         </CardHeader>
 
         <CardContent>
           {logs.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-8 px-4 text-center">
+            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed px-4 py-8 text-center">
               <p className="text-sm font-medium text-slate-700">
                 Belum ada log aktivitas
               </p>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Setiap panggilan API relay akan mencatat token, durasi, dan biaya
-                di sini.
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Setiap panggilan API relay akan mencatat token, durasi, dan
+                biaya di sini.
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-lg border max-h-96">
+            <div className="max-h-96 overflow-x-auto rounded-lg border">
               <Table>
-                <TableHeader className="bg-slate-50/80 sticky top-0 z-10">
+                <TableHeader className="sticky top-0 z-10 bg-slate-50/80">
                   <TableRow>
                     <TableHead className="w-[150px]">Waktu</TableHead>
                     <TableHead>Model</TableHead>
@@ -522,11 +522,11 @@ export function UsageAnalyticsCharts({
                 <TableBody>
                   {logs.map((log) => (
                     <TableRow key={log.id} className="hover:bg-slate-50/50">
-                      <TableCell className="text-xs text-slate-600 font-medium">
+                      <TableCell className="text-xs font-medium text-slate-600">
                         {formatDate(log.created_at)}
                       </TableCell>
                       <TableCell>
-                        <code className="text-xs font-mono font-medium text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded">
+                        <code className="rounded bg-indigo-50 px-1.5 py-0.5 font-mono text-xs font-medium text-indigo-700">
                           {log.model}
                         </code>
                       </TableCell>
@@ -544,7 +544,7 @@ export function UsageAnalyticsCharts({
                       <TableCell className="text-right text-xs font-semibold text-emerald-600">
                         {formatCurrency(log.total_cost)}
                       </TableCell>
-                      <TableCell className="text-right text-xs text-slate-500 font-mono">
+                      <TableCell className="text-right font-mono text-xs text-slate-500">
                         {log.duration_ms}ms
                       </TableCell>
                     </TableRow>

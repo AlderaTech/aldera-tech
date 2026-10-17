@@ -50,7 +50,11 @@ import {
   runLedgerAudit,
 } from "./admin-ai-relay";
 import { queryRouter, closeRouterPool } from "@/lib/router-db";
-import { ensureRouterUser, createTopupRequest, getUserBalance } from "@/lib/actions/ai-relay";
+import {
+  ensureRouterUser,
+  createTopupRequest,
+  getUserBalance,
+} from "@/lib/actions/ai-relay";
 
 describe("Admin AI Operations & Relay Server Actions (M5: F14, F15, F16)", () => {
   const adminTestAuth = {
@@ -249,12 +253,36 @@ describe("Admin AI Operations & Relay Server Actions (M5: F14, F15, F16)", () =>
   // ==========================================================================
   describe("F15: 9router Model Sync & Diffing", () => {
     const upstreamModels: NineRouterModelItem[] = [
-      { id: "gpt-4o", object: "model", created: 1700000000, owned_by: "openai" },
-      { id: "gpt-4o-mini", object: "model", created: 1700000000, owned_by: "openai" },
-      { id: "ag/gemini-3.8-flash-high", object: "model", created: 1700000000, owned_by: "ag" },
-      { id: "ag/claude-opus-5-5-high", object: "model", created: 1700000000, owned_by: "ag" },
+      {
+        id: "gpt-4o",
+        object: "model",
+        created: 1700000000,
+        owned_by: "openai",
+      },
+      {
+        id: "gpt-4o-mini",
+        object: "model",
+        created: 1700000000,
+        owned_by: "openai",
+      },
+      {
+        id: "ag/gemini-3.8-flash-high",
+        object: "model",
+        created: 1700000000,
+        owned_by: "ag",
+      },
+      {
+        id: "ag/claude-opus-5-5-high",
+        object: "model",
+        created: 1700000000,
+        owned_by: "ag",
+      },
     ];
-    const localModelIds = ["gpt-4o", "gpt-4o-mini", "claude-3-5-sonnet-20241022"];
+    const localModelIds = [
+      "gpt-4o",
+      "gpt-4o-mini",
+      "claude-3-5-sonnet-20241022",
+    ];
 
     it("T15.1: identifies new models present in upstream but not locally", () => {
       const diff = diffModelsWithUpstream(upstreamModels, localModelIds);
@@ -275,7 +303,9 @@ describe("Admin AI Operations & Relay Server Actions (M5: F14, F15, F16)", () =>
 
     it("T15.3: identifies local models missing from upstream", () => {
       const diff = diffModelsWithUpstream(upstreamModels, localModelIds);
-      expect(diff.missingUpstreamModels).toContain("claude-3-5-sonnet-20241022");
+      expect(diff.missingUpstreamModels).toContain(
+        "claude-3-5-sonnet-20241022"
+      );
     });
 
     it("T15.4: parses standard OpenAI /v1/models response object", () => {

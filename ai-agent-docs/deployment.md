@@ -226,7 +226,7 @@ Setiap kali melakukan pengembangan atau perubahan fitur pada codebase, pengemban
    - Jika Anda menambahkan route baru di `app/api/cron/<nama-fitur>/route.ts`, Anda **WAJIB**:
      - Mendaftarkan jadwal baru di `docker/crontab`.
      - Memperbarui skrip pendaftaran cron di `docker/entrypoint.sh`.
-     - Menambahkan rincian endpoint dan frekuensi cron pada tabel Bagian 4 dokumen ini (`docs/deployment.md`).
+     - Menambahkan rincian endpoint dan frekuensi cron pada tabel Bagian 4 dokumen ini (`ai-agent-docs/deployment.md`).
 2. **Penambahan Dependensi Sistem / Binary OS**:
    - Jika ada library baru yang membutuhkan binary level OS (misalnya `ffmpeg`, `libvips`, `ghostscript`), **WAJIB** menambahkannya ke baris `RUN apk add --no-cache ...` di `docker/Dockerfile`.
 3. **Perubahan Storage & Mount Volume**:

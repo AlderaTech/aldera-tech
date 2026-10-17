@@ -75,7 +75,7 @@ export function ProjectReviewPrompt({
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="bg-brand-primary/10 text-brand-primary rounded-lg p-2">
+              <div className="rounded-lg bg-brand-primary/10 p-2 text-brand-primary">
                 <MessageSquareQuote className="size-5" />
               </div>
               <div>
@@ -132,7 +132,7 @@ export function ProjectReviewPrompt({
     <Card className="border-brand-primary/30 bg-card shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="bg-brand-primary/10 text-brand-primary rounded-lg p-2">
+          <div className="rounded-lg bg-brand-primary/10 p-2 text-brand-primary">
             <MessageSquareQuote className="size-5" />
           </div>
           <div>
@@ -219,7 +219,7 @@ export function ProjectReviewPrompt({
               type="submit"
               size="sm"
               disabled={isPending}
-              className="bg-brand-primary hover:bg-brand-primary-hover gap-1.5 text-white"
+              className="gap-1.5 bg-brand-primary text-white hover:bg-brand-primary-hover"
             >
               {isPending ? (
                 <Loader2 className="size-4 animate-spin" />

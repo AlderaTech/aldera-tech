@@ -4,7 +4,12 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import type { Role } from "@prisma/client";
-import { getPrimaryRole, isStaff, setAuthHandler, type ExplicitSession } from "@/lib/permissions";
+import {
+  getPrimaryRole,
+  isStaff,
+  setAuthHandler,
+  type ExplicitSession,
+} from "@/lib/permissions";
 
 /**
  * Extend the session type with our custom fields (roles, role, id).

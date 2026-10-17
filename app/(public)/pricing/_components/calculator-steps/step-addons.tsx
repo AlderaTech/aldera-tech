@@ -95,7 +95,8 @@ export function StepAddOns({
                   placeholder="0"
                 />
                 <span className="text-xs text-muted-foreground">
-                  bulan ({ao.minMonths ? `min ${ao.minMonths}, ` : ""}maks {ao.maxMonths} bulan)
+                  bulan ({ao.minMonths ? `min ${ao.minMonths}, ` : ""}maks{" "}
+                  {ao.maxMonths} bulan)
                 </span>
               </div>
             </div>

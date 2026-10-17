@@ -30,45 +30,39 @@ export default async function AdminTestimonialsPage() {
     redirect(ADMIN_ROUTES.home);
   }
 
-  const testimonials = await safeDb<TestimonialItem[]>(
-    async () => {
-      const records = await prisma.testimonial.findMany({
-        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
-        include: {
-          project: {
-            select: { id: true, title: true },
-          },
-          client: {
-            select: { id: true, name: true, email: true },
-          },
+  const testimonials = await safeDb<TestimonialItem[]>(async () => {
+    const records = await prisma.testimonial.findMany({
+      orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+      include: {
+        project: {
+          select: { id: true, title: true },
         },
-      });
-      return records as TestimonialItem[];
-    },
-    []
-  );
+        client: {
+          select: { id: true, name: true, email: true },
+        },
+      },
+    });
+    return records as TestimonialItem[];
+  }, []);
 
-  const completedProjects = await safeDb<CompletedProjectOption[]>(
-    async () => {
-      const list = await prisma.project.findMany({
-        where: { status: "COMPLETED" },
-        orderBy: { updatedAt: "desc" },
-        select: {
-          id: true,
-          title: true,
-          client: {
-            select: { name: true },
-          },
+  const completedProjects = await safeDb<CompletedProjectOption[]>(async () => {
+    const list = await prisma.project.findMany({
+      where: { status: "COMPLETED" },
+      orderBy: { updatedAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        client: {
+          select: { name: true },
         },
-      });
-      return list.map((p) => ({
-        id: p.id,
-        title: p.title,
-        clientName: p.client?.name ?? undefined,
-      }));
-    },
-    []
-  );
+      },
+    });
+    return list.map((p) => ({
+      id: p.id,
+      title: p.title,
+      clientName: p.client?.name ?? undefined,
+    }));
+  }, []);
 
   return (
     <TestimonialManagement

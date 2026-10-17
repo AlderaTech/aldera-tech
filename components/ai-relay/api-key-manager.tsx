@@ -126,7 +126,8 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
         setRevokeTarget(null);
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal mencabut API Key.";
+      const msg =
+        err instanceof Error ? err.message : "Gagal mencabut API Key.";
       toast.error(msg);
     } finally {
       setIsRevoking(false);
@@ -135,20 +136,20 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
 
   return (
     <Card className="border shadow-xs">
-      <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-4">
+      <CardHeader className="flex flex-col gap-4 pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <CardTitle className="flex items-center gap-2 text-xl font-semibold">
             <Key className="h-5 w-5 text-indigo-600" />
             Manajemen API Key
           </CardTitle>
-          <CardDescription className="text-sm text-muted-foreground mt-1">
+          <CardDescription className="mt-1 text-sm text-muted-foreground">
             Gunakan API Key virtual ini untuk menghubungkan model AI ke IDE
             (Cursor, Cline, Roo Code, Continue) atau SDK OpenAI-compatible Anda.
           </CardDescription>
         </div>
         <Button
           onClick={() => setIsCreateOpen(true)}
-          className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs self-start sm:self-auto"
+          className="gap-2 self-start bg-indigo-600 text-white shadow-xs hover:bg-indigo-700 sm:self-auto"
         >
           <Plus className="h-4 w-4" />
           Buat API Key Baru
@@ -157,12 +158,12 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
 
       <CardContent>
         {keys.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-12 px-4 text-center">
-            <div className="rounded-full bg-indigo-50 p-3 text-indigo-600 mb-3">
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed px-4 py-12 text-center">
+            <div className="mb-3 rounded-full bg-indigo-50 p-3 text-indigo-600">
               <Key className="h-6 w-6" />
             </div>
             <h3 className="text-base font-medium">Belum ada API Key aktif</h3>
-            <p className="text-sm text-muted-foreground max-w-sm mt-1 mb-4">
+            <p className="mt-1 mb-4 max-w-sm text-sm text-muted-foreground">
               Buat API Key pertama Anda untuk mulai menguji prompt di Playground
               atau menghubungkannya ke editor kode favorit Anda.
             </p>
@@ -196,7 +197,7 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
                       {k.label}
                     </TableCell>
                     <TableCell>
-                      <code className="rounded bg-slate-100 px-2 py-1 text-xs font-mono font-medium text-slate-800">
+                      <code className="rounded bg-slate-100 px-2 py-1 font-mono text-xs font-medium text-slate-800">
                         {k.key_prefix}...
                       </code>
                     </TableCell>
@@ -204,14 +205,14 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
                       {k.is_active ? (
                         <Badge
                           variant="secondary"
-                          className="bg-emerald-50 text-emerald-700 border-emerald-200"
+                          className="border-emerald-200 bg-emerald-50 text-emerald-700"
                         >
                           Aktif
                         </Badge>
                       ) : (
                         <Badge
                           variant="secondary"
-                          className="bg-slate-100 text-slate-500 border-slate-200"
+                          className="border-slate-200 bg-slate-100 text-slate-500"
                         >
                           Dicabut
                         </Badge>
@@ -224,7 +225,9 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
                       {formatDate(k.created_at)}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {k.last_used_at ? formatDate(k.last_used_at) : "Belum pernah"}
+                      {k.last_used_at
+                        ? formatDate(k.last_used_at)
+                        : "Belum pernah"}
                     </TableCell>
                     <TableCell className="text-right">
                       {k.is_active && (
@@ -232,9 +235,9 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
                           variant="ghost"
                           size="sm"
                           onClick={() => setRevokeTarget(k)}
-                          className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 h-8 px-2"
+                          className="h-8 px-2 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
                         >
-                          <Trash2 className="h-4 w-4 mr-1" />
+                          <Trash2 className="mr-1 h-4 w-4" />
                           Cabut
                         </Button>
                       )}
@@ -253,8 +256,8 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
           <DialogHeader>
             <DialogTitle>Buat API Key Baru</DialogTitle>
             <DialogDescription>
-              Beri nama label yang deskriptif untuk memudahkan identifikasi tempat
-              kunci ini digunakan.
+              Beri nama label yang deskriptif untuk memudahkan identifikasi
+              tempat kunci ini digunakan.
             </DialogDescription>
           </DialogHeader>
 
@@ -285,7 +288,7 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
                 <Button
                   type="submit"
                   disabled={isSubmitting || !label.trim()}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                  className="bg-indigo-600 text-white hover:bg-indigo-700"
                 >
                   {isSubmitting ? (
                     <>
@@ -302,15 +305,15 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
             <div className="space-y-4 py-2">
               <div className="rounded-lg border border-amber-200 bg-amber-50 p-3.5 text-amber-900">
                 <div className="flex gap-2.5">
-                  <ShieldAlert className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+                  <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
                   <div className="text-xs leading-relaxed">
                     <p className="font-semibold text-amber-800">
                       Simpan Kunci Anda Sekarang!
                     </p>
                     <p className="mt-0.5">
                       Demi alasan keamanan, kunci rahasia ini{" "}
-                      <strong>hanya ditampilkan sekali ini saja</strong>. Salin dan
-                      simpan di file environment atau password manager Anda.
+                      <strong>hanya ditampilkan sekali ini saja</strong>. Salin
+                      dan simpan di file environment atau password manager Anda.
                     </p>
                   </div>
                 </div>
@@ -321,14 +324,14 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
                   API Key Rahasia (56 Karakter)
                 </Label>
                 <div className="flex items-center gap-2">
-                  <code className="flex-1 rounded-md border bg-slate-50 p-2.5 text-xs font-mono font-medium text-slate-900 break-all select-all">
+                  <code className="flex-1 rounded-md border bg-slate-50 p-2.5 font-mono text-xs font-medium break-all text-slate-900 select-all">
                     {newlyCreatedKey}
                   </code>
                   <Button
                     type="button"
                     variant="outline"
                     onClick={handleCopyNewKey}
-                    className="shrink-0 gap-1.5 h-10 px-3 border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+                    className="h-10 shrink-0 gap-1.5 border-indigo-200 px-3 text-indigo-700 hover:bg-indigo-50"
                   >
                     {copiedKey ? (
                       <>
@@ -349,7 +352,7 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
                 <Button
                   type="button"
                   onClick={handleCloseCreateModal}
-                  className="w-full bg-slate-900 hover:bg-slate-800 text-white"
+                  className="w-full bg-slate-900 text-white hover:bg-slate-800"
                 >
                   Saya Sudah Menyimpannya
                 </Button>
@@ -366,19 +369,21 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 text-rose-600 mb-2">
+            <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 text-rose-600">
               <AlertTriangle className="h-6 w-6" />
             </div>
             <DialogTitle className="text-center">Cabut API Key?</DialogTitle>
             <DialogDescription className="text-center">
               Apakah Anda yakin ingin mencabut API Key{" "}
               <strong>&ldquo;{revokeTarget?.label}&rdquo;</strong> (
-              <code className="text-xs font-mono">{revokeTarget?.key_prefix}...</code>
+              <code className="font-mono text-xs">
+                {revokeTarget?.key_prefix}...
+              </code>
               )? Panggilan API yang menggunakan kunci ini akan langsung ditolak.
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter className="gap-2 sm:gap-0 pt-2">
+          <DialogFooter className="gap-2 pt-2 sm:gap-0">
             <Button
               type="button"
               variant="outline"
@@ -392,7 +397,7 @@ export function ApiKeyManager({ initialKeys }: ApiKeyManagerProps) {
               variant="destructive"
               onClick={handleConfirmRevoke}
               disabled={isRevoking}
-              className="bg-rose-600 hover:bg-rose-700 text-white"
+              className="bg-rose-600 text-white hover:bg-rose-700"
             >
               {isRevoking ? (
                 <>

@@ -12,9 +12,7 @@ export default async function AuthLayout({
   if (session?.user) {
     const roles =
       session.user.roles ?? (session.user.role ? [session.user.role] : []);
-    redirect(
-      isStaff(roles) ? ADMIN_ROUTES.home : DASHBOARD_ROUTES.home
-    );
+    redirect(isStaff(roles) ? ADMIN_ROUTES.home : DASHBOARD_ROUTES.home);
   }
 
   return (

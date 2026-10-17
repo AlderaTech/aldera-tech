@@ -39,7 +39,9 @@ describe("Router Database Client & Invariants (`aldera_router`)", () => {
 
     it("allows valid UPDATE queries on mutable tables (users, model_pricing, api_keys)", () => {
       expect(() =>
-        assertQuerySafety("UPDATE users SET balance = balance + 100 WHERE id = 1")
+        assertQuerySafety(
+          "UPDATE users SET balance = balance + 100 WHERE id = 1"
+        )
       ).not.toThrow();
       expect(() =>
         assertQuerySafety(
@@ -47,9 +49,7 @@ describe("Router Database Client & Invariants (`aldera_router`)", () => {
         )
       ).not.toThrow();
       expect(() =>
-        assertQuerySafety(
-          "UPDATE api_keys SET is_active = false WHERE id = 1"
-        )
+        assertQuerySafety("UPDATE api_keys SET is_active = false WHERE id = 1")
       ).not.toThrow();
     });
 
@@ -82,9 +82,9 @@ describe("Router Database Client & Invariants (`aldera_router`)", () => {
         assertQuerySafety("TRUNCATE TABLE balance_transactions")
       ).toThrow(/Audit immutability violation/);
 
-      expect(() =>
-        assertQuerySafety("truncate balance_transactions")
-      ).toThrow(/Audit immutability violation/);
+      expect(() => assertQuerySafety("truncate balance_transactions")).toThrow(
+        /Audit immutability violation/
+      );
     });
 
     it("rejects DELETE on usage_logs", () => {

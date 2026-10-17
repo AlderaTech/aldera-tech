@@ -49,9 +49,7 @@ export function Logo({
         >
           Aldera{" "}
           <span
-            className={
-              variant === "dark" ? "text-[#61a3ff]" : "text-hero-blue"
-            }
+            className={variant === "dark" ? "text-[#61a3ff]" : "text-hero-blue"}
           >
             Tech
           </span>

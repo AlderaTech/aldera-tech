@@ -54,10 +54,7 @@ import {
   unlinkTelegramAccountAction,
 } from "./binding";
 
-import {
-  assertQuerySafety,
-  queryRouter,
-} from "@/lib/router-db";
+import { assertQuerySafety, queryRouter } from "@/lib/router-db";
 
 import * as aiRelayAuth from "@/lib/ai-relay-auth";
 
@@ -218,9 +215,9 @@ describe("Adversarial Stress Testing & Acceptance Verification", () => {
         };
 
         const untypedGetModelPricings = getModelPricings as any;
-        await expect(untypedGetModelPricings(maliciousOverride)).rejects.toThrow(
-          /Forbidden/
-        );
+        await expect(
+          untypedGetModelPricings(maliciousOverride)
+        ).rejects.toThrow(/Forbidden/);
 
         const untypedGetFinancialMetrics = getFinancialMetrics as any;
         await expect(
@@ -383,10 +380,9 @@ describe("Adversarial Stress Testing & Acceptance Verification", () => {
         ).rejects.toThrow(/tidak tersedia atau tidak aktif/);
 
         // Zero balance overdraft prevention
-        await queryRouter(
-          "UPDATE users SET balance = 0.0000 WHERE id = $1;",
-          [testClientDbId]
-        );
+        await queryRouter("UPDATE users SET balance = 0.0000 WHERE id = $1;", [
+          testClientDbId,
+        ]);
         await expect(
           executePlaygroundChat({ model: "gpt-4o-mini", prompt: "Hello" })
         ).rejects.toThrow(/Insufficient balance/);
@@ -440,7 +436,9 @@ describe("Adversarial Stress Testing & Acceptance Verification", () => {
 
       // Obfuscated DELETE with schema qualification
       expect(() =>
-        assertQuerySafety("DELETE FROM public.balance_transactions WHERE id = 1;")
+        assertQuerySafety(
+          "DELETE FROM public.balance_transactions WHERE id = 1;"
+        )
       ).toThrow(/Audit immutability violation/);
 
       // Quoted identifiers
@@ -472,7 +470,9 @@ describe("Adversarial Stress Testing & Acceptance Verification", () => {
         assertQuerySafety("UPDATE users SET balance = 100 WHERE id = 1;")
       ).not.toThrow();
       expect(() =>
-        assertQuerySafety("UPDATE model_pricing SET is_active = true WHERE id = 1;")
+        assertQuerySafety(
+          "UPDATE model_pricing SET is_active = true WHERE id = 1;"
+        )
       ).not.toThrow();
     });
 
@@ -511,7 +511,9 @@ describe("Adversarial Stress Testing & Acceptance Verification", () => {
           "UPDATE topup_requests SET status = 'pending' WHERE id = $1;",
           [ticketId]
         )
-      ).rejects.toThrow(/integrity_constraint_violation|terminal and immutable/);
+      ).rejects.toThrow(
+        /integrity_constraint_violation|terminal and immutable/
+      );
 
       // Adversarial Attempt 2: Alter financial amount on approved ticket
       await expect(
@@ -531,7 +533,9 @@ describe("Adversarial Stress Testing & Acceptance Verification", () => {
       expect(topupCheck?.violation_count).toBeGreaterThanOrEqual(1);
 
       // Cleanup the test ticket so DB invariants return to 100% PASS
-      await queryRouter("DELETE FROM topup_requests WHERE id = $1;", [ticketId]);
+      await queryRouter("DELETE FROM topup_requests WHERE id = $1;", [
+        ticketId,
+      ]);
 
       const cleanedInvariants = await runLedgerAudit();
       for (const inv of cleanedInvariants) {

@@ -36,7 +36,10 @@ import {
   unlinkTelegramAccountAction,
 } from "@/lib/actions/binding";
 import { queryRouter } from "@/lib/router-db";
-import { runBalanceGuard, ensureAlertCooldownsTable } from "@/lib/balance-guard";
+import {
+  runBalanceGuard,
+  ensureAlertCooldownsTable,
+} from "@/lib/balance-guard";
 
 const MOCK_MODELS: ModelCatalogItem[] = [
   {
@@ -111,9 +114,10 @@ describe("Milestone 4: Omnichannel Web ↔ Telegram Bot & Alerts", () => {
   afterAll(async () => {
     try {
       // Clean up test data
-      await queryRouter("DELETE FROM user_alert_cooldowns WHERE user_id = $1;", [
-        testRouterUserId,
-      ]);
+      await queryRouter(
+        "DELETE FROM user_alert_cooldowns WHERE user_id = $1;",
+        [testRouterUserId]
+      );
       await queryRouter(
         "DELETE FROM account_binding_tokens WHERE aldera_user_id = $1;",
         [testWebUserId]
@@ -207,7 +211,11 @@ describe("Milestone 4: Omnichannel Web ↔ Telegram Bot & Alerts", () => {
       expect(res.deepLink).toContain(res.token!);
 
       // Verify row exists in account_binding_tokens
-      const dbRes = await queryRouter<{ token: string; code: string; aldera_user_id: string }>(
+      const dbRes = await queryRouter<{
+        token: string;
+        code: string;
+        aldera_user_id: string;
+      }>(
         "SELECT token, code, aldera_user_id FROM account_binding_tokens WHERE token = $1;",
         [res.token]
       );
@@ -415,7 +423,10 @@ describe("Milestone 4: Omnichannel Web ↔ Telegram Bot & Alerts", () => {
       expect(summary.totalChecked).toBeGreaterThanOrEqual(1);
 
       // Verify test user cooldown record was created
-      const cooldownRes = await queryRouter<{ user_id: number; alert_count: number }>(
+      const cooldownRes = await queryRouter<{
+        user_id: number;
+        alert_count: number;
+      }>(
         "SELECT user_id, alert_count FROM user_alert_cooldowns WHERE user_id = $1;",
         [testRouterUserId]
       );

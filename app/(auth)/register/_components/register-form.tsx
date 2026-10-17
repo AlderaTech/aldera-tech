@@ -131,7 +131,8 @@ export function RegisterForm() {
             </p>
           ) : (
             <p className="text-xs text-slate-500">
-              Kode OTP 6-digit akan dikirimkan ke nomor WhatsApp ini untuk verifikasi akun.
+              Kode OTP 6-digit akan dikirimkan ke nomor WhatsApp ini untuk
+              verifikasi akun.
             </p>
           )}
         </div>
@@ -190,7 +191,7 @@ export function RegisterForm() {
           type="submit"
           size="xl"
           disabled={isPending}
-          className="cursor-pointer w-full rounded-full bg-[#00B1E1] font-bold text-[#0F263A] shadow-md shadow-[#00B1E1]/25 hover:bg-[#0094BD]"
+          className="w-full cursor-pointer rounded-full bg-[#00B1E1] font-bold text-[#0F263A] shadow-md shadow-[#00B1E1]/25 hover:bg-[#0094BD]"
         >
           {isPending ? (
             <>

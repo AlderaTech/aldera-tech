@@ -51,7 +51,10 @@ export async function generateBindingTokenAction(): Promise<GenerateBindingResul
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return { success: false, error: "Unauthorized: Silakan login terlebih dahulu." };
+      return {
+        success: false,
+        error: "Unauthorized: Silakan login terlebih dahulu.",
+      };
     }
     const webUserId = session.user.id;
     await ensureRouterUser(
@@ -84,7 +87,8 @@ export async function generateBindingTokenAction(): Promise<GenerateBindingResul
     console.error("[generateBindingTokenAction] Error:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Gagal membuat token binding",
+      error:
+        error instanceof Error ? error.message : "Gagal membuat token binding",
     };
   }
 }
@@ -165,7 +169,10 @@ export async function unlinkTelegramAccountAction(): Promise<UnlinkResult> {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return { success: false, error: "Unauthorized: Silakan login terlebih dahulu." };
+      return {
+        success: false,
+        error: "Unauthorized: Silakan login terlebih dahulu.",
+      };
     }
     const webUserId = session.user.id;
 
@@ -181,7 +188,10 @@ export async function unlinkTelegramAccountAction(): Promise<UnlinkResult> {
     console.error("[unlinkTelegramAccountAction] Error:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Gagal memutuskan tautan Telegram",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Gagal memutuskan tautan Telegram",
     };
   }
 }

@@ -83,8 +83,9 @@ export function AiPlayground({
   const [prompt, setPrompt] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [lastUsage, setLastUsage] =
-    useState<PlaygroundChatResult["usage"] | null>(null);
+  const [lastUsage, setLastUsage] = useState<
+    PlaygroundChatResult["usage"] | null
+  >(null);
   const [lastDuration, setLastDuration] = useState<number | null>(null);
   const [currentBalance, setCurrentBalance] = useState<number>(userBalance);
 
@@ -93,7 +94,9 @@ export function AiPlayground({
   const handleSend = async () => {
     if (!prompt.trim()) return;
     if (currentBalance <= 0) {
-      toast.error("Saldo Anda Rp 0. Silakan top-up terlebih dahulu di tab Saldo.");
+      toast.error(
+        "Saldo Anda Rp 0. Silakan top-up terlebih dahulu di tab Saldo."
+      );
       return;
     }
 
@@ -137,7 +140,8 @@ export function AiPlayground({
         );
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal mengeksekusi chat.";
+      const msg =
+        err instanceof Error ? err.message : "Gagal mengeksekusi chat.";
       toast.error(msg);
     } finally {
       setIsLoading(false);
@@ -158,11 +162,11 @@ export function AiPlayground({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
       {/* Main Chatbed Area (3 cols) */}
-      <Card className="lg:col-span-3 border shadow-xs flex flex-col h-[700px]">
+      <Card className="flex h-[700px] flex-col border shadow-xs lg:col-span-3">
         {/* Playground Header */}
-        <CardHeader className="py-3 px-4 border-b flex flex-row items-center justify-between gap-4">
+        <CardHeader className="flex flex-row items-center justify-between gap-4 border-b px-4 py-3">
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-indigo-600 p-2 text-white">
               <Terminal className="h-4 w-4" />
@@ -184,14 +188,14 @@ export function AiPlayground({
               onValueChange={setSelectedModel}
               disabled={isLoading}
             >
-              <SelectTrigger className="w-[200px] h-8 text-xs font-medium">
+              <SelectTrigger className="h-8 w-[200px] text-xs font-medium">
                 <SelectValue placeholder="Pilih Model" />
               </SelectTrigger>
               <SelectContent>
                 {activeModels.map((m) => (
                   <SelectItem key={m.id} value={m.id} className="text-xs">
                     <span className="font-semibold">{m.displayName}</span>{" "}
-                    <span className="text-slate-400 font-mono text-[10px]">
+                    <span className="font-mono text-[10px] text-slate-400">
                       ({m.category})
                     </span>
                   </SelectItem>
@@ -238,30 +242,30 @@ export function AiPlayground({
                 onChange={(e) => setSystemPrompt(e.target.value)}
                 placeholder="Instruksi perilaku sistem AI..."
                 rows={2}
-                className="text-xs bg-white resize-none"
+                className="resize-none bg-white text-xs"
               />
             </div>
           )}
         </div>
 
         {/* Chat History View */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 space-y-4 overflow-y-auto p-4">
           {messages.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center px-4">
-              <div className="rounded-full bg-indigo-50 p-4 text-indigo-600 mb-3">
+            <div className="flex h-full flex-col items-center justify-center px-4 text-center">
+              <div className="mb-3 rounded-full bg-indigo-50 p-4 text-indigo-600">
                 <Bot className="h-8 w-8" />
               </div>
               <h3 className="text-sm font-semibold text-slate-800">
                 Mulai Uji Coba Prompt
               </h3>
-              <p className="text-xs text-muted-foreground max-w-sm mt-1 mb-6">
+              <p className="mt-1 mb-6 max-w-sm text-xs text-muted-foreground">
                 Kirim prompt untuk mengevaluasi kecepatan respon, penalaran, dan
                 biaya token per request dari model{" "}
                 <strong>{currentModelMeta?.displayName}</strong>.
               </p>
 
               <div className="w-full max-w-md space-y-2">
-                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-left">
+                <span className="block text-left text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
                   Contoh Prompt Cepat:
                 </span>
                 <div className="grid grid-cols-1 gap-1.5 text-left">
@@ -270,7 +274,7 @@ export function AiPlayground({
                       key={idx}
                       type="button"
                       onClick={() => setPrompt(sample)}
-                      className="rounded-lg border bg-white p-2.5 text-xs text-slate-700 hover:bg-slate-50 hover:border-indigo-200 transition-colors text-left"
+                      className="rounded-lg border bg-white p-2.5 text-left text-xs text-slate-700 transition-colors hover:border-indigo-200 hover:bg-slate-50"
                     >
                       &ldquo;{sample}&rdquo;
                     </button>
@@ -287,7 +291,7 @@ export function AiPlayground({
                 }`}
               >
                 {msg.role === "assistant" && (
-                  <div className="h-7 w-7 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white">
                     <Bot className="h-4 w-4" />
                   </div>
                 )}
@@ -295,13 +299,13 @@ export function AiPlayground({
                 <div
                   className={`max-w-[85%] rounded-xl p-3.5 text-xs leading-relaxed ${
                     msg.role === "user"
-                      ? "bg-indigo-600 text-white rounded-tr-xs"
-                      : "bg-slate-100 text-slate-900 border rounded-tl-xs whitespace-pre-wrap"
+                      ? "rounded-tr-xs bg-indigo-600 text-white"
+                      : "rounded-tl-xs border bg-slate-100 whitespace-pre-wrap text-slate-900"
                   }`}
                 >
                   <p>{msg.content}</p>
                   {msg.tokens && (
-                    <div className="mt-2 pt-2 border-t border-slate-200/80 flex items-center gap-3 text-[10px] text-slate-500 font-mono">
+                    <div className="mt-2 flex items-center gap-3 border-t border-slate-200/80 pt-2 font-mono text-[10px] text-slate-500">
                       <span>In: {msg.tokens.prompt}</span>
                       <span>Out: {msg.tokens.completion}</span>
                       <span>Biaya: {formatCurrency(msg.tokens.cost)}</span>
@@ -311,7 +315,7 @@ export function AiPlayground({
                 </div>
 
                 {msg.role === "user" && (
-                  <div className="h-7 w-7 rounded-full bg-slate-800 text-white flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-800 text-white">
                     <User className="h-4 w-4" />
                   </div>
                 )}
@@ -320,11 +324,11 @@ export function AiPlayground({
           )}
 
           {isLoading && (
-            <div className="flex gap-3 justify-start items-center">
-              <div className="h-7 w-7 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0">
+            <div className="flex items-center justify-start gap-3">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white">
                 <Bot className="h-4 w-4" />
               </div>
-              <div className="rounded-xl bg-slate-100 p-3 text-xs border flex items-center gap-2 text-slate-600">
+              <div className="flex items-center gap-2 rounded-xl border bg-slate-100 p-3 text-xs text-slate-600">
                 <Loader2 className="h-4 w-4 animate-spin text-indigo-600" />
                 <span>Memproses melalui relay {selectedModel}...</span>
               </div>
@@ -333,7 +337,7 @@ export function AiPlayground({
         </div>
 
         {/* Input Bar */}
-        <div className="p-3 border-t bg-white">
+        <div className="border-t bg-white p-3">
           <div className="flex gap-2">
             <Textarea
               placeholder="Tulis prompt Anda di sini... (Tekan Enter untuk kirim, Shift+Enter untuk baris baru)"
@@ -342,12 +346,12 @@ export function AiPlayground({
               onKeyDown={handleKeyDown}
               disabled={isLoading}
               rows={2}
-              className="resize-none text-xs min-h-[48px]"
+              className="min-h-[48px] resize-none text-xs"
             />
             <Button
               onClick={handleSend}
               disabled={isLoading || !prompt.trim()}
-              className="self-end bg-indigo-600 hover:bg-indigo-700 text-white h-10 px-4"
+              className="h-10 self-end bg-indigo-600 px-4 text-white hover:bg-indigo-700"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -364,11 +368,11 @@ export function AiPlayground({
         {/* Model Card */}
         <Card className="border shadow-xs">
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <CardTitle className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
               Model Terpilih
             </CardTitle>
             <div className="flex items-center justify-between pt-1">
-              <span className="font-bold text-sm text-slate-900 truncate">
+              <span className="truncate text-sm font-bold text-slate-900">
                 {currentModelMeta?.displayName}
               </span>
               <Badge variant="outline" className="text-[10px]">
@@ -376,7 +380,7 @@ export function AiPlayground({
               </Badge>
             </div>
           </CardHeader>
-          <CardContent className="space-y-2 text-xs pt-1">
+          <CardContent className="space-y-2 pt-1 text-xs">
             <div className="flex justify-between border-b pb-1.5">
               <span className="text-slate-500">Harga Input:</span>
               <span className="font-mono font-medium">
@@ -400,9 +404,9 @@ export function AiPlayground({
         </Card>
 
         {/* Live Token & Cost Telemetry */}
-        <Card className="border shadow-xs bg-slate-50/50">
+        <Card className="border bg-slate-50/50 shadow-xs">
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+            <CardTitle className="flex items-center gap-1.5 text-xs font-semibold tracking-wider text-slate-500 uppercase">
               <Zap className="h-3.5 w-3.5 text-amber-500" />
               Telemetri Permintaan Terakhir
             </CardTitle>
@@ -432,17 +436,17 @@ export function AiPlayground({
                   <span className="text-slate-600">Durasi Response:</span>
                   <span className="font-mono">{lastDuration} ms</span>
                 </div>
-                <div className="flex justify-between border-t pt-2 items-baseline">
+                <div className="flex items-baseline justify-between border-t pt-2">
                   <span className="font-semibold text-slate-900">
                     Biaya Terdebit:
                   </span>
-                  <span className="font-mono font-extrabold text-sm text-emerald-700">
+                  <span className="font-mono text-sm font-extrabold text-emerald-700">
                     {formatCurrency(lastUsage.totalCostIdr)}
                   </span>
                 </div>
               </>
             ) : (
-              <p className="text-muted-foreground text-[11px] py-3 text-center">
+              <p className="py-3 text-center text-[11px] text-muted-foreground">
                 Belum ada request yang dieksekusi di sesi ini.
               </p>
             )}
@@ -450,18 +454,18 @@ export function AiPlayground({
         </Card>
 
         {/* Current Balance Widget */}
-        <Card className="border shadow-xs bg-indigo-50/40 border-indigo-100">
+        <Card className="border border-indigo-100 bg-indigo-50/40 shadow-xs">
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-semibold text-indigo-700 uppercase tracking-wider flex items-center gap-1.5">
+            <CardTitle className="flex items-center gap-1.5 text-xs font-semibold tracking-wider text-indigo-700 uppercase">
               <Coins className="h-3.5 w-3.5 text-indigo-600" />
               Sisa Saldo Real-Time
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-black text-indigo-950 font-mono">
+            <div className="font-mono text-xl font-black text-indigo-950">
               {formatCurrency(currentBalance)}
             </div>
-            <p className="text-[10px] text-indigo-600/90 mt-1">
+            <p className="mt-1 text-[10px] text-indigo-600/90">
               Diproses secara atomik via trigger PostgreSQL.
             </p>
           </CardContent>

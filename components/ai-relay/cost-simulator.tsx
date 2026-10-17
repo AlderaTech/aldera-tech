@@ -1,11 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Calculator,
-  Sliders,
-  TrendingDown,
-} from "lucide-react";
+import { Calculator, Sliders, TrendingDown } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -77,7 +73,8 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
     : 0;
 
   const costDiff = Math.abs(costA - costB);
-  const higherModel = costA >= costB ? modelA?.displayName : modelB?.displayName;
+  const higherModel =
+    costA >= costB ? modelA?.displayName : modelB?.displayName;
   const lowerModel = costA >= costB ? modelB?.displayName : modelA?.displayName;
   const higherCost = Math.max(costA, costB);
   const savingsPercent =
@@ -88,26 +85,26 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
       {/* Side-by-Side Model Comparison Tool */}
       <Card className="border shadow-xs">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-lg font-semibold">
             <Sliders className="h-5 w-5 text-indigo-600" />
             Komparasi Model Berdampingan (Side-by-Side)
           </CardTitle>
-          <CardDescription className="text-xs text-muted-foreground mt-0.5">
+          <CardDescription className="mt-0.5 text-xs text-muted-foreground">
             Bandingkan harga, batas konteks, dan kapabilitas antar model sebelum
             menentukan arsitektur relay Anda.
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {/* Model A Selector & Card */}
-            <div className="rounded-xl border p-4 space-y-3 bg-slate-50/60">
+            <div className="space-y-3 rounded-xl border bg-slate-50/60 p-4">
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-slate-700">
                   Model Pilihan Pertama (A):
                 </Label>
                 <Select value={modelAId} onValueChange={setModelAId}>
-                  <SelectTrigger className="h-9 text-xs bg-white font-medium">
+                  <SelectTrigger className="h-9 bg-white text-xs font-medium">
                     <SelectValue placeholder="Pilih Model A" />
                   </SelectTrigger>
                   <SelectContent>
@@ -121,7 +118,7 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
               </div>
 
               {modelA && (
-                <div className="space-y-2 text-xs pt-1">
+                <div className="space-y-2 pt-1 text-xs">
                   <div className="flex justify-between border-b pb-1.5">
                     <span className="text-slate-500">Kategori:</span>
                     <Badge variant="outline" className="text-[10px]">
@@ -147,7 +144,7 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
                     </span>
                   </div>
                   <div className="pt-1">
-                    <span className="text-slate-500 block mb-0.5">
+                    <span className="mb-0.5 block text-slate-500">
                       Rekomendasi:
                     </span>
                     <p className="text-slate-700 italic">
@@ -159,13 +156,13 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
             </div>
 
             {/* Model B Selector & Card */}
-            <div className="rounded-xl border p-4 space-y-3 bg-slate-50/60">
+            <div className="space-y-3 rounded-xl border bg-slate-50/60 p-4">
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-slate-700">
                   Model Pilihan Kedua (B):
                 </Label>
                 <Select value={modelBId} onValueChange={setModelBId}>
-                  <SelectTrigger className="h-9 text-xs bg-white font-medium">
+                  <SelectTrigger className="h-9 bg-white text-xs font-medium">
                     <SelectValue placeholder="Pilih Model B" />
                   </SelectTrigger>
                   <SelectContent>
@@ -179,7 +176,7 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
               </div>
 
               {modelB && (
-                <div className="space-y-2 text-xs pt-1">
+                <div className="space-y-2 pt-1 text-xs">
                   <div className="flex justify-between border-b pb-1.5">
                     <span className="text-slate-500">Kategori:</span>
                     <Badge variant="outline" className="text-[10px]">
@@ -205,7 +202,7 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
                     </span>
                   </div>
                   <div className="pt-1">
-                    <span className="text-slate-500 block mb-0.5">
+                    <span className="mb-0.5 block text-slate-500">
                       Rekomendasi:
                     </span>
                     <p className="text-slate-700 italic">
@@ -220,13 +217,13 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
       </Card>
 
       {/* Monthly Cost Simulator Slider */}
-      <Card className="border shadow-xs bg-gradient-to-br from-white to-slate-50">
+      <Card className="border bg-gradient-to-br from-white to-slate-50 shadow-xs">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-lg font-semibold">
             <Calculator className="h-5 w-5 text-emerald-600" />
             Kalkulator Simulasi Estimasi Biaya Bulanan
           </CardTitle>
-          <CardDescription className="text-xs text-muted-foreground mt-0.5">
+          <CardDescription className="mt-0.5 text-xs text-muted-foreground">
             Geser parameter beban kerja harian Anda untuk melihat proyeksi biaya
             bulanan (30 hari kerja) secara transparan.
           </CardDescription>
@@ -234,14 +231,14 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
 
         <CardContent className="space-y-6">
           {/* Sliders Area */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
             {/* Daily requests */}
             <div className="space-y-2 rounded-lg border bg-white p-3.5 shadow-2xs">
-              <div className="flex justify-between items-center text-xs">
+              <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-slate-700">
                   Permintaan / Hari
                 </span>
-                <span className="font-mono font-bold text-indigo-600 text-sm">
+                <span className="font-mono text-sm font-bold text-indigo-600">
                   {dailyRequests.toLocaleString("id-ID")} req
                 </span>
               </div>
@@ -252,7 +249,7 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
                 step="10"
                 value={dailyRequests}
                 onChange={(e) => setDailyRequests(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-indigo-600"
               />
               <div className="flex justify-between text-[10px] text-slate-400">
                 <span>10 req</span>
@@ -263,11 +260,11 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
 
             {/* Prompt tokens */}
             <div className="space-y-2 rounded-lg border bg-white p-3.5 shadow-2xs">
-              <div className="flex justify-between items-center text-xs">
+              <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-slate-700">
                   Rata-rata Prompt
                 </span>
-                <span className="font-mono font-bold text-indigo-600 text-sm">
+                <span className="font-mono text-sm font-bold text-indigo-600">
                   {avgPromptTokens.toLocaleString("id-ID")} tokens
                 </span>
               </div>
@@ -278,7 +275,7 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
                 step="100"
                 value={avgPromptTokens}
                 onChange={(e) => setAvgPromptTokens(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-indigo-600"
               />
               <div className="flex justify-between text-[10px] text-slate-400">
                 <span>200 tokens</span>
@@ -289,11 +286,11 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
 
             {/* Completion tokens */}
             <div className="space-y-2 rounded-lg border bg-white p-3.5 shadow-2xs">
-              <div className="flex justify-between items-center text-xs">
+              <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-slate-700">
                   Rata-rata Completion
                 </span>
-                <span className="font-mono font-bold text-indigo-600 text-sm">
+                <span className="font-mono text-sm font-bold text-indigo-600">
                   {avgCompletionTokens.toLocaleString("id-ID")} tokens
                 </span>
               </div>
@@ -304,7 +301,7 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
                 step="50"
                 value={avgCompletionTokens}
                 onChange={(e) => setAvgCompletionTokens(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-indigo-600"
               />
               <div className="flex justify-between text-[10px] text-slate-400">
                 <span>50 tokens</span>
@@ -315,12 +312,12 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
           </div>
 
           {/* Results Comparison Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-            <div className="rounded-xl border border-indigo-100 bg-white p-4 space-y-1 shadow-2xs">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <div className="grid grid-cols-1 gap-4 pt-2 md:grid-cols-2">
+            <div className="space-y-1 rounded-xl border border-indigo-100 bg-white p-4 shadow-2xs">
+              <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
                 Proyeksi {modelA?.displayName || "Model A"}
               </span>
-              <div className="text-2xl font-extrabold text-slate-900 font-mono">
+              <div className="font-mono text-2xl font-extrabold text-slate-900">
                 {formatCurrency(costA)}
               </div>
               <p className="text-[11px] text-muted-foreground">
@@ -328,11 +325,11 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
               </p>
             </div>
 
-            <div className="rounded-xl border border-indigo-100 bg-white p-4 space-y-1 shadow-2xs">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <div className="space-y-1 rounded-xl border border-indigo-100 bg-white p-4 shadow-2xs">
+              <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
                 Proyeksi {modelB?.displayName || "Model B"}
               </span>
-              <div className="text-2xl font-extrabold text-slate-900 font-mono">
+              <div className="font-mono text-2xl font-extrabold text-slate-900">
                 {formatCurrency(costB)}
               </div>
               <p className="text-[11px] text-muted-foreground">
@@ -343,9 +340,9 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
 
           {/* Savings Callout Banner */}
           {costDiff > 0 && (
-            <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex flex-col justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 sm:flex-row sm:items-center">
               <div className="flex items-center gap-3">
-                <div className="rounded-full bg-emerald-600 text-white p-2 shrink-0">
+                <div className="shrink-0 rounded-full bg-emerald-600 p-2 text-white">
                   <TrendingDown className="h-5 w-5" />
                 </div>
                 <div>
@@ -353,7 +350,7 @@ export function CostSimulator({ catalog }: CostSimulatorProps) {
                     Penghematan Potensial: {formatCurrency(costDiff)} / bulan (
                     {savingsPercent}%)
                   </h4>
-                  <p className="text-xs text-emerald-800 mt-0.5">
+                  <p className="mt-0.5 text-xs text-emerald-800">
                     Memilih <strong>{lowerModel}</strong> dibanding{" "}
                     <strong>{higherModel}</strong> menghemat pengeluaran hingga{" "}
                     {savingsPercent}% untuk beban kerja yang sama.

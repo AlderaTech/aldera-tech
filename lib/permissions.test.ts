@@ -135,9 +135,7 @@ describe("Permissions Matrix & Role Guard Verification", () => {
       expect(hasPermission("DEVELOPER", PERMISSIONS.AI_RELAY_MANAGE)).toBe(
         false
       );
-      expect(hasPermission("DEVELOPER", PERMISSIONS.AI_RELAY_VIEW)).toBe(
-        false
-      );
+      expect(hasPermission("DEVELOPER", PERMISSIONS.AI_RELAY_VIEW)).toBe(false);
 
       // CLIENT must be strictly rejected
       expect(canAccessAiRelayAdmin("CLIENT")).toBe(false);
@@ -174,9 +172,7 @@ describe("Permissions Matrix & Role Guard Verification", () => {
         expect(() => isClient(invalidRole)).not.toThrow();
         expect(isClient(invalidRole)).toBe(false);
 
-        expect(() =>
-          canAccessAiRelayAdmin(invalidRole)
-        ).not.toThrow();
+        expect(() => canAccessAiRelayAdmin(invalidRole)).not.toThrow();
         expect(canAccessAiRelayAdmin(invalidRole)).toBe(false);
 
         expect(() => getPrimaryRole(invalidRole)).not.toThrow();
@@ -185,20 +181,16 @@ describe("Permissions Matrix & Role Guard Verification", () => {
         expect(() =>
           hasPermission(invalidRole, PERMISSIONS.USER_MANAGE)
         ).not.toThrow();
-        expect(
-          hasPermission(invalidRole, PERMISSIONS.USER_MANAGE)
-        ).toBe(false);
+        expect(hasPermission(invalidRole, PERMISSIONS.USER_MANAGE)).toBe(false);
 
         expect(() =>
           hasAnyPermission(invalidRole, PERMISSIONS.USER_MANAGE)
         ).not.toThrow();
-        expect(
-          hasAnyPermission(invalidRole, PERMISSIONS.USER_MANAGE)
-        ).toBe(false);
+        expect(hasAnyPermission(invalidRole, PERMISSIONS.USER_MANAGE)).toBe(
+          false
+        );
 
-        expect(() =>
-          getEffectivePermissions(invalidRole)
-        ).not.toThrow();
+        expect(() => getEffectivePermissions(invalidRole)).not.toThrow();
         expect(getEffectivePermissions(invalidRole)).toEqual([]);
       }
     });
@@ -214,9 +206,7 @@ describe("Permissions Matrix & Role Guard Verification", () => {
         expect(isClient(invalidRole)).toBe(false);
         expect(canAccessAiRelayAdmin(invalidRole)).toBe(false);
         expect(getPrimaryRole(invalidRole)).toBe("CLIENT");
-        expect(
-          hasPermission(invalidRole, PERMISSIONS.USER_MANAGE)
-        ).toBe(false);
+        expect(hasPermission(invalidRole, PERMISSIONS.USER_MANAGE)).toBe(false);
         expect(getEffectivePermissions(invalidRole)).toEqual([]);
       }
     });
@@ -301,4 +291,3 @@ describe("Permissions Matrix & Role Guard Verification", () => {
     });
   });
 });
-

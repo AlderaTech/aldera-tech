@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
@@ -62,16 +63,45 @@ const navIcons: Record<DashboardNavIcon, LucideIcon> = {
   users2: Users2,
 };
 
-function isActive(pathname: string, href: string) {
+export function isNavItemActive(
+  pathname: string,
+  href: string,
+  allHrefs: string[] = []
+): boolean {
   if (href === ADMIN_ROUTES.home || href === DASHBOARD_ROUTES.home) {
     return pathname === href;
   }
 
-  return pathname === href || pathname.startsWith(`${href}/`);
+  const matches = pathname === href || pathname.startsWith(`${href}/`);
+  if (!matches) {
+    return false;
+  }
+
+  if (pathname === href) {
+    return true;
+  }
+
+  // If matched via prefix, make sure there is no more specific (longer) match among registered routes
+  const hasMoreSpecificMatch = allHrefs.some(
+    (other) =>
+      other !== href &&
+      other.length > href.length &&
+      (pathname === other || pathname.startsWith(`${other}/`))
+  );
+
+  return !hasMoreSpecificMatch;
 }
 
-function hasActiveChild(pathname: string, item: DashboardNavItem) {
-  return item.items?.some((child) => isActive(pathname, child.href)) ?? false;
+function hasActiveChild(
+  pathname: string,
+  item: DashboardNavItem,
+  allHrefs: string[]
+) {
+  return (
+    item.items?.some((child) =>
+      isNavItemActive(pathname, child.href, allHrefs)
+    ) ?? false
+  );
 }
 
 function NavLink({
@@ -128,7 +158,28 @@ export function DashboardSidebar({
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
-  const footerActive = footerItem ? isActive(pathname, footerItem.href) : false;
+
+  const allHrefs = useMemo(() => {
+    const hrefs: string[] = [];
+    for (const group of groups) {
+      for (const item of group.items) {
+        hrefs.push(item.href);
+        if (item.items) {
+          for (const child of item.items) {
+            hrefs.push(child.href);
+          }
+        }
+      }
+    }
+    if (footerItem) {
+      hrefs.push(footerItem.href);
+    }
+    return hrefs;
+  }, [groups, footerItem]);
+
+  const footerActive = footerItem
+    ? isNavItemActive(pathname, footerItem.href, allHrefs)
+    : false;
 
   return (
     <aside className="flex h-full w-full flex-col border-r border-slate-200/80 bg-white text-slate-900">
@@ -153,8 +204,8 @@ export function DashboardSidebar({
               <div className="space-y-1">
                 {group.items.map((item) => {
                   const active =
-                    isActive(pathname, item.href) ||
-                    hasActiveChild(pathname, item);
+                    isNavItemActive(pathname, item.href, allHrefs) ||
+                    hasActiveChild(pathname, item, allHrefs);
                   const childItems = item.items ?? [];
 
                   return (
@@ -170,7 +221,11 @@ export function DashboardSidebar({
                             <NavLink
                               key={child.href}
                               item={child}
-                              active={isActive(pathname, child.href)}
+                              active={isNavItemActive(
+                                pathname,
+                                child.href,
+                                allHrefs
+                              )}
                               child
                               onNavigate={onNavigate}
                             />
