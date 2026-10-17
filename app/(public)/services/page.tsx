@@ -6,6 +6,7 @@ import { safeDb } from "@/lib/safe-db";
 import { ServicesCta } from "./_components/services-cta";
 import { ServicesGrid } from "./_components/services-grid";
 import { ServicesHero } from "./_components/services-hero";
+import styles from "./_components/services.module.css";
 
 export const metadata: Metadata = {
   title: "Layanan",
@@ -24,10 +25,10 @@ export default async function ServicesPage() {
   }, services);
 
   return (
-    <>
+    <div className={styles.servicesPage}>
       <ServicesHero />
       <ServicesGrid services={serviceList} />
       <ServicesCta />
-    </>
+    </div>
   );
 }

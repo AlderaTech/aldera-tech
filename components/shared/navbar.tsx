@@ -3,11 +3,12 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
-import { Menu } from "lucide-react";
+import { useReducedMotion } from "framer-motion";
+import { ArrowUpRight, Menu } from "lucide-react";
 import type { Session } from "next-auth";
 
 import { Logo } from "@/components/shared/logo";
+import { NavbarLinks } from "@/components/shared/navbar-links";
 import { UserMenu } from "@/components/shared/user-menu";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,16 +18,35 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { publicNavLinks } from "@/lib/nav-config";
 import { AUTH_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
+import studioStyles from "./studio-navbar.module.css";
 
 export function Navbar({ session }: { session: Session | null }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const isHome = pathname === "/";
-  const transparent = isHome && !scrolled;
+  const shouldReduceMotion = useReducedMotion();
+  const isServicesPage = pathname === PUBLIC_ROUTES.services;
+  const isAiRelayPage = pathname === PUBLIC_ROUTES.aiRelay;
+  const isPricingPage = pathname === PUBLIC_ROUTES.pricing;
+  const isContactPage = pathname === PUBLIC_ROUTES.contact;
+  const isBlogPage =
+    pathname === PUBLIC_ROUTES.blog ||
+    pathname.startsWith(`${PUBLIC_ROUTES.blog}/`);
+  const isPortfolioPage =
+    pathname === PUBLIC_ROUTES.portfolio ||
+    pathname.startsWith(`${PUBLIC_ROUTES.portfolio}/`);
+  const usesStudioChrome =
+    pathname === PUBLIC_ROUTES.home ||
+    pathname === PUBLIC_ROUTES.about ||
+    isServicesPage ||
+    isPortfolioPage ||
+    isAiRelayPage ||
+    isPricingPage ||
+    isBlogPage ||
+    isContactPage;
+  const transparent = usesStudioChrome && !scrolled;
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -38,56 +58,47 @@ export function Navbar({ session }: { session: Session | null }) {
   return (
     <header
       className={cn(
-        "public-container-px sticky top-0 z-40 w-full border-b backdrop-blur-xl transition-all",
+        "tech-playful sticky top-4 z-40 mx-auto mt-4 w-[calc(100%-2rem)] max-w-[90rem] rounded-2xl border border-brand-divider/80 font-jakarta text-brand-navy backdrop-blur-md transition-[background-color,box-shadow] duration-300 motion-reduce:transition-none lg:w-[calc(100%-4rem)]",
+        usesStudioChrome && studioStyles.navbar,
+        isServicesPage && studioStyles.servicesNavbar,
+        isPortfolioPage && studioStyles.portfolioNavbar,
+        isAiRelayPage && studioStyles.aiRelayNavbar,
+        isPricingPage && studioStyles.pricingNavbar,
+        isBlogPage && studioStyles.blogNavbar,
+        isContactPage && studioStyles.contactNavbar,
+        usesStudioChrome && scrolled && studioStyles.scrolled,
         transparent
-          ? "border-transparent bg-transparent shadow-none"
-          : "border-black/10 bg-[#f4f2ea]/95",
+          ? isServicesPage ||
+            isPortfolioPage ||
+            isAiRelayPage ||
+            isPricingPage ||
+            isBlogPage ||
+            isContactPage
+            ? "bg-transparent"
+            : "bg-brand-surface/80"
+          : "bg-brand-surface/90",
         scrolled && !transparent
-          ? "shadow-[0_10px_28px_rgba(8,9,13,0.06)]"
-          : "shadow-none"
+          ? "shadow-lg shadow-brand-navy/8"
+          : "shadow-sm shadow-brand-navy/3"
       )}
     >
-      <div
-        className={cn(
-          "mx-auto flex h-[72px] w-full max-w-screen-xxxl items-center justify-between transition-all",
-          transparent ? "text-white" : "text-[#08090d]"
-        )}
-      >
-        <Logo size="md" variant={transparent ? "dark" : "light"} />
+      <div className="mx-auto flex h-16 w-full items-center justify-between gap-2 px-3 sm:h-[72px] sm:gap-4 sm:px-5 lg:px-6">
+        <Logo
+          size="sm"
+          variant="light"
+          className={cn(
+            "gap-2 [&>span]:text-sm sm:[&>span]:text-lg",
+            usesStudioChrome && studioStyles.brand
+          )}
+        />
 
-        <nav className="relative hidden items-center gap-7 xl:flex">
-          {publicNavLinks.map((link) => {
-            const active =
-              link.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "relative py-2 text-sm font-semibold transition-colors",
-                  active
-                    ? "text-[#0b6bff]"
-                    : transparent
-                      ? "text-white/72 hover:text-white"
-                      : "text-black/62 hover:text-black"
-                )}
-              >
-                {active && (
-                  <motion.span
-                    layoutId="nav-underline"
-                    className="absolute inset-x-0 -bottom-1 h-0.5 rounded-full bg-[#0b6bff]"
-                    transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-                  />
-                )}
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
+        <NavbarLinks
+          pathname={pathname}
+          modern={usesStudioChrome}
+          reduceMotion={shouldReduceMotion ?? false}
+        />
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           {session?.user ? (
             <UserMenu session={session} />
           ) : (
@@ -95,7 +106,10 @@ export function Navbar({ session }: { session: Session | null }) {
               <Button
                 asChild
                 size="sm"
-                className="bg-[#0b6bff] font-bold text-white hover:bg-[#075bd8] sm:hidden"
+                className={cn(
+                  "h-11 rounded-full bg-brand-navy px-2.5 text-xs font-bold text-white hover:bg-brand-navy-light motion-reduce:active:scale-100 sm:hidden",
+                  usesStudioChrome && studioStyles.consultation
+                )}
               >
                 <Link href={PUBLIC_ROUTES.contact}>Konsultasi</Link>
               </Button>
@@ -105,10 +119,8 @@ export function Navbar({ session }: { session: Session | null }) {
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    "font-semibold",
-                    transparent
-                      ? "text-white/72 hover:bg-white/10 hover:text-white"
-                      : "text-black/58 hover:bg-black/5 hover:text-black"
+                    "h-10 rounded-full bg-brand-canvas px-4 font-semibold text-slate-600 hover:bg-brand-divider/60 hover:text-brand-navy motion-reduce:active:scale-100",
+                    usesStudioChrome && studioStyles.login
                   )}
                 >
                   <Link href={AUTH_ROUTES.login}>Masuk</Link>
@@ -117,13 +129,18 @@ export function Navbar({ session }: { session: Session | null }) {
                   asChild
                   size="sm"
                   className={cn(
-                    "font-bold text-white",
-                    transparent
-                      ? "bg-white/15 backdrop-blur-md hover:bg-white/25"
-                      : "bg-[#08090d] hover:bg-black"
+                    "h-10 rounded-full bg-brand-navy px-5 font-bold text-white shadow-sm hover:bg-brand-navy-light motion-reduce:active:scale-100",
+                    usesStudioChrome && studioStyles.consultation
                   )}
                 >
-                  <Link href={PUBLIC_ROUTES.contact}>Konsultasi</Link>
+                  <Link href={PUBLIC_ROUTES.contact}>
+                    Konsultasi
+                    {usesStudioChrome && (
+                      <span className={studioStyles.consultationIcon}>
+                        <ArrowUpRight className="size-3.5" aria-hidden="true" />
+                      </span>
+                    )}
+                  </Link>
                 </Button>
               </div>
             </>
@@ -134,8 +151,8 @@ export function Navbar({ session }: { session: Session | null }) {
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  "xl:hidden",
-                  transparent ? "hover:bg-white/10" : "hover:bg-black/5"
+                  "size-11 rounded-xl text-brand-navy hover:bg-brand-canvas motion-reduce:active:scale-100 xl:hidden",
+                  usesStudioChrome && studioStyles.menuTrigger
                 )}
                 aria-label="Buka menu"
               >
@@ -144,44 +161,39 @@ export function Navbar({ session }: { session: Session | null }) {
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="flex w-[85%] flex-col xs:w-80"
+              aria-describedby={undefined}
+              className={cn(
+                "tech-playful flex w-[90%] max-w-sm flex-col overflow-y-auto border-brand-divider bg-brand-surface font-jakarta text-brand-navy",
+                usesStudioChrome && studioStyles.drawer
+              )}
             >
               <SheetTitle className="sr-only">Menu Navigasi</SheetTitle>
               <Logo size="md" />
-              <nav className="mt-6 flex flex-1 flex-col gap-1">
-                {publicNavLinks.map((link) => {
-                  const active =
-                    link.href === "/"
-                      ? pathname === "/"
-                      : pathname.startsWith(link.href);
-                  return (
-                    <SheetClose asChild key={link.href}>
-                      <Link
-                        href={link.href}
-                        className={cn(
-                          "rounded-md px-3 py-2.5 text-base font-semibold transition-colors",
-                          active
-                            ? "bg-[#0b6bff]/10 text-[#0b6bff]"
-                            : "text-black/65 hover:bg-black/5 hover:text-black"
-                        )}
-                      >
-                        {link.label}
-                      </Link>
-                    </SheetClose>
-                  );
-                })}
-              </nav>
+              <NavbarLinks
+                pathname={pathname}
+                modern={usesStudioChrome}
+                mobile
+              />
               {!session?.user && (
-                <div className="flex flex-col gap-2 border-t pt-4">
+                <div
+                  className={cn(
+                    "flex flex-col gap-2 border-t pt-4",
+                    usesStudioChrome && studioStyles.drawerActions
+                  )}
+                >
                   <SheetClose asChild>
-                    <Button asChild variant="outline">
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="h-11 rounded-full motion-reduce:active:scale-100"
+                    >
                       <Link href={AUTH_ROUTES.login}>Masuk</Link>
                     </Button>
                   </SheetClose>
                   <SheetClose asChild>
                     <Button
                       asChild
-                      className="bg-[#0b6bff] text-white hover:bg-[#075bd8]"
+                      className="h-11 rounded-full bg-brand-cyan font-bold text-brand-navy hover:bg-brand-cyan-hover motion-reduce:active:scale-100"
                     >
                       <Link href={PUBLIC_ROUTES.contact}>Konsultasi</Link>
                     </Button>

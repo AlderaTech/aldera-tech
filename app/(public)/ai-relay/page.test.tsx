@@ -118,7 +118,9 @@ describe("Public Showcase & Marketing Page (F17)", () => {
       const publicVisible = filterModelCatalog(catalogWithInactive, {
         activeOnly: true,
       });
-      expect(publicVisible.some((m) => m.id === "test-inactive-model")).toBe(false);
+      expect(publicVisible.some((m) => m.id === "test-inactive-model")).toBe(
+        false
+      );
       expect(publicVisible.length).toBe(DEFAULT_MODEL_CATALOG.length);
     });
 
@@ -174,7 +176,9 @@ describe("Public Showcase & Marketing Page (F17)", () => {
       const snippet = generateIdePresetConfig("cursor", params);
       const parsed = JSON.parse(snippet);
       expect(parsed["openai-api-key"]).toBe("sk-toko-YOUR_API_KEY");
-      expect(parsed["openai-base-url"]).toBe("https://aldera.tech/api/relay/v1");
+      expect(parsed["openai-base-url"]).toBe(
+        "https://aldera.tech/api/relay/v1"
+      );
       expect(parsed.model).toBe("claude-3-5-sonnet-20241022");
     });
 
@@ -210,7 +214,9 @@ describe("Public Showcase & Marketing Page (F17)", () => {
       const snippet = generateIdePresetConfig("openwebui", params);
       const parsed = JSON.parse(snippet);
       expect(parsed.OPENAI_API_KEY).toBe("sk-toko-YOUR_API_KEY");
-      expect(parsed.OPENAI_API_BASE_URL).toBe("https://aldera.tech/api/relay/v1");
+      expect(parsed.OPENAI_API_BASE_URL).toBe(
+        "https://aldera.tech/api/relay/v1"
+      );
       expect(parsed.DEFAULT_MODELS).toBe("claude-3-5-sonnet-20241022");
     });
   });

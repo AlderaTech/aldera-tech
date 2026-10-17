@@ -1,7 +1,9 @@
-import { Lightbulb, Target, TrendingUp } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Code2, Lightbulb, Target, TrendingUp } from "lucide-react";
 import { FadeUp } from "@/components/shared/motion";
+import { cn } from "@/lib/utils";
+import shared from "../../../_components/studio.module.css";
 import type { PortfolioDetail } from "../../_data/portfolio";
+import styles from "./portfolio-detail.module.css";
 
 type PortfolioDetailContentProps = {
   item: PortfolioDetail;
@@ -15,35 +17,64 @@ export function PortfolioDetailContent({ item }: PortfolioDetailContentProps) {
   ];
 
   return (
-    <article className="editorial-surface">
-      <div className="public-container-px mx-auto max-w-screen-md space-y-12 py-10 pb-20">
-        {sections.map((section) => (
-          <FadeUp key={section.title}>
-            <div className="mb-3 flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-[#0b6bff] text-white">
-                <section.icon className="size-5" />
-              </div>
-              <h2 className="text-3xl font-black">{section.title}</h2>
-            </div>
-            <div className="prose max-w-none prose-neutral">
-              <p>{section.text}</p>
-            </div>
-          </FadeUp>
-        ))}
-
-        {item.techStack.length > 0 && (
-          <FadeUp>
-            <h2 className="mb-3 text-3xl font-black">Teknologi</h2>
-            <div className="flex flex-wrap gap-2">
-              {item.techStack.map((tech) => (
-                <Badge key={tech} variant="outline">
-                  {tech}
-                </Badge>
-              ))}
-            </div>
-          </FadeUp>
-        )}
+    <section className={styles.details} aria-labelledby="case-story-heading">
+      <div className={shared.container}>
+        <FadeUp className={styles.sectionHeader}>
+          <p className={styles.eyebrow}>Cerita proyek</p>
+          <h2 id="case-story-heading">
+            Di balik <span>proyek ini.</span>
+          </h2>
+        </FadeUp>
+        <div
+          className={cn(
+            styles.contentGrid,
+            !item.techStack.length && styles.textOnly
+          )}
+        >
+          <div className={styles.story}>
+            {sections.map((section, index) => (
+              <FadeUp key={section.title}>
+                <article
+                  className={cn(
+                    styles.storyCard,
+                    index === 2 && styles.resultCard
+                  )}
+                >
+                  <header className={styles.cardHeader}>
+                    <span className={styles.storyIcon} aria-hidden="true">
+                      <section.icon className="size-5" strokeWidth={1.6} />
+                    </span>
+                    <h3>{section.title}</h3>
+                    <span className={styles.stepIndex} aria-hidden="true">
+                      / {String(index + 1).padStart(2, "0")}
+                    </span>
+                  </header>
+                  <p>{section.text}</p>
+                </article>
+              </FadeUp>
+            ))}
+          </div>
+          {item.techStack.length > 0 && (
+            <aside
+              className={styles.techAside}
+              aria-labelledby="case-tech-heading"
+            >
+              <FadeUp className={styles.techPanel}>
+                <span className={styles.techIcon} aria-hidden="true">
+                  <Code2 className="size-6" strokeWidth={1.5} />
+                </span>
+                <p className={styles.eyebrow}>Stack proyek</p>
+                <h3 id="case-tech-heading">Teknologi</h3>
+                <div className={styles.techStack}>
+                  {item.techStack.map((tech) => (
+                    <span key={tech}>{tech}</span>
+                  ))}
+                </div>
+              </FadeUp>
+            </aside>
+          )}
+        </div>
       </div>
-    </article>
+    </section>
   );
 }

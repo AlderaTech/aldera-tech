@@ -1,0 +1,7 @@
+.sections > section {
+  border-bottom: 0;
+}
+
+.sections > section + section {
+  border-top: 1px solid var(--home-line);
+}

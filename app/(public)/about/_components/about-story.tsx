@@ -1,38 +1,58 @@
+import { CircleHelp, Eye, HeartHandshake } from "lucide-react";
 import { FadeUp } from "@/components/shared/motion";
+import { cn } from "@/lib/utils";
+import { AboutStoryStep } from "./about-story-step";
+import { AboutStoryVisual } from "./about-story-visual";
+import shared from "../../_components/studio.module.css";
+import styles from "./about-story.module.css";
 
 export function AboutStory() {
   return (
-    <section className="editorial-surface">
-      <div className="public-container-px mx-auto max-w-screen-xxxl py-14 sm:py-20">
-        <div className="grid gap-10 lg:grid-cols-2">
-          <FadeUp>
-            <div className="editorial-kicker border-black/20 text-black/60">
-              Cerita Kami
-            </div>
-            <h2 className="editorial-display mt-5 text-4xl sm:text-5xl">
-              Dari frustasi, lahirlah solusi.
+    <section
+      className={cn(shared.section, styles.section)}
+      aria-labelledby="about-story-heading"
+    >
+      <div className={shared.container}>
+        <div className={styles.content}>
+          <FadeUp className={styles.header}>
+            <p className={cn(shared.eyebrow, styles.eyebrow)}>Cerita Kami</p>
+            <h2 id="about-story-heading" className={styles.heading}>
+              Dari frustasi, <span>lahirlah solusi.</span>
             </h2>
           </FadeUp>
-          <FadeUp delay={0.1}>
-            <div className="prose max-w-none prose-neutral">
-              <p>
+          <div className={styles.body}>
+            <FadeUp className="min-w-0">
+              <AboutStoryVisual />
+            </FadeUp>
+            <FadeUp delay={0.1} className={styles.steps}>
+              <AboutStoryStep
+                icon={CircleHelp}
+                title="Tantangan yang kami lihat"
+              >
                 Bertahun-tahun bekerja sebagai pengembang dan desainer untuk
                 startup dan korporat, kami sering melihat pola yang sama: klien
                 tidak tahu apa yang sedang dikerjakan tim teknis, invoice yang
                 tidak terduga, dan proyek yang molor tanpa penjelasan.
-              </p>
-              <p>
+              </AboutStoryStep>
+              <AboutStoryStep
+                icon={Eye}
+                title="Prinsip yang kami bawa"
+                emphasized
+              >
                 Kami pikir, ini bisa lebih baik. Aldera Tech dibangun dengan
                 prinsip <strong>transparansi radikal</strong>. Setiap klien
                 mendapat akses dashboard langsung. Setiap milestone
                 dikomunikasikan. Setiap invoice punya rincian jelas.
-              </p>
-              <p>
+              </AboutStoryStep>
+              <AboutStoryStep
+                icon={HeartHandshake}
+                title="Perjalanan bersama mitra"
+              >
                 Hari ini, kami melayani 30+ klien dari UMKM sampai korporat,
                 membuktikan bahwa freelance bisa profesional sekaligus humanis.
-              </p>
-            </div>
-          </FadeUp>
+              </AboutStoryStep>
+            </FadeUp>
+          </div>
         </div>
       </div>
     </section>

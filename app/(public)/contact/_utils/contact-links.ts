@@ -1,4 +1,7 @@
 import {
+  Github,
+  Instagram,
+  Linkedin,
   Mail,
   MapPin,
   MessageCircle,
@@ -57,4 +60,35 @@ export function toWhatsappHref(value: string) {
   if (value.startsWith("http")) return value;
   const digits = value.replace(/\D/g, "");
   return digits ? `https://wa.me/${digits}` : value;
+}
+
+export function getContactSocialLinks(
+  settings: PublicSiteSettings
+): ContactInfoItem[] {
+  return [
+    settings.githubUrl
+      ? {
+          icon: Github,
+          label: "GitHub",
+          value: "GitHub",
+          href: settings.githubUrl,
+        }
+      : null,
+    settings.linkedinUrl
+      ? {
+          icon: Linkedin,
+          label: "LinkedIn",
+          value: "LinkedIn",
+          href: settings.linkedinUrl,
+        }
+      : null,
+    settings.instagramUrl
+      ? {
+          icon: Instagram,
+          label: "Instagram",
+          value: "Instagram",
+          href: settings.instagramUrl,
+        }
+      : null,
+  ].filter(Boolean) as ContactInfoItem[];
 }

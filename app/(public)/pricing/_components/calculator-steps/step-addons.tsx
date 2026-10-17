@@ -2,12 +2,12 @@
 
 import { ArrowLeft, ArrowRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import type { AddOn, Config } from "../../_types/calculator";
+import { CalculatorChoice } from "../calculator-choice";
 
 type StepAddOnsProps = {
   availableAddOns: AddOn[];
@@ -18,6 +18,7 @@ type StepAddOnsProps = {
   config: Config;
   onBack: () => void;
   onNext: () => void;
+  studio?: boolean;
 };
 
 export function StepAddOns({
@@ -29,6 +30,7 @@ export function StepAddOns({
   config,
   onBack,
   onNext,
+  studio = false,
 }: StepAddOnsProps) {
   return (
     <div className="space-y-5">
@@ -96,27 +98,31 @@ export function StepAddOns({
           Timeline & Prioritas
         </h4>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Card
+          <CalculatorChoice
             className={`cursor-pointer p-4 transition-all ${
               urgency === "normal"
                 ? "border-primary bg-primary/5 ring-2 ring-primary/20"
                 : "border-border hover:bg-muted/30"
             }`}
-            onClick={() => onUrgencyChange("normal")}
+            onSelect={() => onUrgencyChange("normal")}
+            studio={studio}
+            selected={urgency === "normal"}
           >
             <p className="font-semibold text-foreground">Standar (Normal)</p>
             <p className="mt-1 text-xs text-muted-foreground">
               Timeline sprint wajar sesuai cakupan fitur produk Anda.
             </p>
-          </Card>
+          </CalculatorChoice>
 
-          <Card
+          <CalculatorChoice
             className={`cursor-pointer p-4 transition-all ${
               urgency === "urgent"
                 ? "border-amber-500 bg-amber-500/5 ring-2 ring-amber-500/20"
                 : "border-border hover:bg-muted/30"
             }`}
-            onClick={() => onUrgencyChange("urgent")}
+            onSelect={() => onUrgencyChange("urgent")}
+            studio={studio}
+            selected={urgency === "urgent"}
           >
             <div className="flex items-center gap-2">
               <Zap className="size-4 text-amber-500" />
@@ -135,7 +141,7 @@ export function StepAddOns({
               Alokasi tim dedikasi penuh untuk rilis cepat (&lt;
               {config?.urgencyThresholdDays || 14} hari).
             </p>
-          </Card>
+          </CalculatorChoice>
         </div>
       </div>
 

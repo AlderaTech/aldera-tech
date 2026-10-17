@@ -1,54 +1,97 @@
-import { Card } from "@/components/ui/card";
+import { ArrowUpRight, Clock3 } from "lucide-react";
 import type { ContactInfoItem } from "../_utils/contact-links";
+import styles from "./contact.module.css";
 
 export function ContactInfoPanel({
   contactInfo,
+  socialLinks,
   operatingHours,
   responseTime,
 }: {
   contactInfo: ContactInfoItem[];
+  socialLinks: ContactInfoItem[];
   operatingHours: string;
   responseTime: string;
 }) {
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-black">Info kontak lain</h2>
-      <div className="space-y-3">
+    <div id="kanal-kontak" className={styles.infoPanel}>
+      <div className={styles.infoIntro}>
+        <p className={styles.eyebrow}>
+          <span aria-hidden="true" /> Pilih cara terhubung
+        </p>
+        <h2>Ada ide? Kami siap mendengar.</h2>
+      </div>
+
+      <div className={styles.contactList} aria-label="Saluran kontak">
         {contactInfo.map((item) => {
           const content = (
-            <div className="editorial-card flex items-start gap-3 rounded-xl p-4 transition-all hover:-translate-y-0.5">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#0b6bff] text-white">
-                <item.icon className="size-4" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs text-black/62">{item.label}</div>
-                <div className="truncate text-sm font-medium">{item.value}</div>
-              </div>
-            </div>
+            <>
+              <span className={styles.contactIcon} aria-hidden="true">
+                <item.icon />
+              </span>
+              <span className={styles.contactCopy}>
+                <small>{item.label}</small>
+                <strong>{item.value}</strong>
+              </span>
+              {item.href && (
+                <ArrowUpRight
+                  className={styles.contactArrow}
+                  aria-hidden="true"
+                />
+              )}
+            </>
           );
+
           return item.href ? (
             <a
               key={item.label}
               href={item.href}
               target={item.href.startsWith("http") ? "_blank" : undefined}
-              rel="noopener noreferrer"
-              className="block"
+              rel={
+                item.href.startsWith("http") ? "noopener noreferrer" : undefined
+              }
+              className={styles.contactItem}
             >
               {content}
             </a>
           ) : (
-            <div key={item.label}>{content}</div>
+            <div key={item.label} className={styles.contactItem}>
+              {content}
+            </div>
           );
         })}
       </div>
-      <Card className="gap-0 rounded-xl border-black bg-[#08090d] p-5 text-white">
-        <h3 className="mb-1 text-sm font-semibold">Jam operasional</h3>
-        <p className="text-xs leading-relaxed text-white/68">
-          {operatingHours || "Hubungi kami untuk jadwal terbaru."}
-          <br />
-          Respon awal: {responseTime}
-        </p>
-      </Card>
+
+      <div className={styles.hoursCard}>
+        <span className={styles.hoursIcon} aria-hidden="true">
+          <Clock3 />
+        </span>
+        <div>
+          <h3>Jam operasional</h3>
+          <p>{operatingHours || "Hubungi kami untuk jadwal terbaru."}</p>
+          <small>Respon awal: {responseTime}</small>
+        </div>
+      </div>
+
+      {socialLinks.length > 0 && (
+        <div className={styles.socials}>
+          <span>Temukan kami juga di</span>
+          <div>
+            {socialLinks.map((item) => (
+              <a
+                key={item.label}
+                href={item.href ?? undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={item.label}
+                title={item.label}
+              >
+                <item.icon aria-hidden="true" />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

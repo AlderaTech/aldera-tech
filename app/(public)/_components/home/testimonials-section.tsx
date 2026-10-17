@@ -1,10 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { FadeUp } from "@/components/shared/motion";
+import styles from "../studio.module.css";
 import {
   TestimonialsCarousel,
   type TestimonialCard,
 } from "./testimonials-carousel";
+import testimonialStyles from "./testimonials.module.css";
 
 const fallback: TestimonialCard[] = [
   {
@@ -55,47 +57,58 @@ export async function TestimonialsSection() {
   }, fallback);
 
   return (
-    <section className="border-t border-slate-100 bg-white py-16 sm:py-24">
-      <div className="public-container-px mx-auto max-w-screen-xxxl">
-        {/* High-Contrast Stat Callout Inspired by Reference */}
-        <FadeUp className="mb-16 overflow-hidden rounded-3xl border border-slate-200/90 bg-[#F8FAFC] p-8 shadow-sm lg:p-12">
-          <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-16">
+    <section className={testimonialStyles.section}>
+      <div className={styles.container}>
+        <FadeUp className={testimonialStyles.trustPanel}>
+          <div className={testimonialStyles.trustCopy}>
+            <p className={testimonialStyles.eyebrow}>
+              <span aria-hidden="true">01</span>
+              Kepercayaan Klien & Dampak Terukur
+            </p>
             <div>
-              <div className="mb-4 h-1.5 w-12 rounded-full bg-[#00B1E1]" />
-              <div className="text-xs font-bold tracking-wider text-[#00B1E1] uppercase">
-                Kepercayaan Klien & Dampak Terukur
-              </div>
-              <h3 className="mt-2 font-serif text-2xl font-bold text-[#0F263A] sm:text-3xl lg:text-4xl">
-                Founder, CTO, dan Pimpinan Produk Memilih Aldera Tech
+              <h3 className={testimonialStyles.trustHeading}>
+                Founder, CTO, dan Pimpinan Produk
+                <span>Memilih Aldera Tech</span>
               </h3>
-              <p className="mt-3 max-w-2xl text-base text-slate-600">
+              <p className={testimonialStyles.trustDescription}>
                 Kami tidak sekadar menyerahkan kode, kami memastikan sistem
                 beroperasi stabil, performa tinggi, dan menjadi fondasi
                 pertumbuhan bisnis.
               </p>
             </div>
+          </div>
 
-            {/* Massive Display Serif Stat */}
-            <div className="flex flex-col items-start rounded-2xl border border-slate-200/80 bg-white p-6 shadow-md lg:min-w-[240px] lg:items-center lg:p-8">
-              <span className="font-serif text-6xl font-black text-[#0F263A] lg:text-7xl">
-                98%
-              </span>
-              <span className="mt-2 text-center text-xs font-bold tracking-wider text-slate-500 uppercase">
-                Klien Repeat & Retensi
-              </span>
+          <div className={testimonialStyles.processCard}>
+            <span className={testimonialStyles.processLabel}>Alur kerja</span>
+            <div className={testimonialStyles.processSteps}>
+              {[
+                ["01", "Scope"],
+                ["02", "Sprint"],
+                ["03", "Rilis"],
+              ].map(([number, step]) => (
+                <span key={step} className={testimonialStyles.processStep}>
+                  <span aria-hidden="true">{number}</span>
+                  {step}
+                </span>
+              ))}
+            </div>
+            <div className={testimonialStyles.processLine} aria-hidden="true">
+              <span />
             </div>
           </div>
         </FadeUp>
 
-        {/* Testimonials Header */}
-        <FadeUp className="mb-12 grid gap-6 lg:grid-cols-[0.8fr_1fr] lg:items-end">
-          <div>
-            <div className="mb-4 h-1.5 w-12 rounded-full bg-[#00B1E1]" />
-            <h2 className="font-serif text-3xl font-extrabold tracking-tight text-[#0F263A] sm:text-4xl lg:text-5xl">
-              Apa Kata Mereka Tentang Kami
+        <FadeUp className={testimonialStyles.sectionHeader}>
+          <div className={testimonialStyles.headingBlock}>
+            <p className={testimonialStyles.eyebrow}>
+              <span aria-hidden="true">02</span>
+              Cerita dari Mitra Kami
+            </p>
+            <h2 className={testimonialStyles.heading}>
+              Apa Kata Mereka <span>Tentang Kami</span>
             </h2>
           </div>
-          <p className="max-w-2xl text-base leading-relaxed text-slate-600 lg:justify-self-end">
+          <p className={testimonialStyles.sectionDescription}>
             Dengar langsung pengalaman founder dan manajer teknologi yang telah
             bermitra dan mempercepat produk digital mereka bersama Aldera Tech.
           </p>

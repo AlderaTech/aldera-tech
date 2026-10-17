@@ -5,6 +5,9 @@ import { ServicesPreview } from "./_components/home/services-preview";
 import { PortfolioPreview } from "./_components/home/portfolio-preview";
 import { TestimonialsSection } from "./_components/home/testimonials-section";
 import { CtaSection } from "./_components/home/cta-section";
+import { HomeSummary } from "./_components/home/home-summary";
+import { ServicesIntro } from "./_components/home/services-intro";
+import styles from "./_components/home/home-sections.module.css";
 import { OrganizationLd } from "@/components/seo/json-ld";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 
@@ -20,12 +23,16 @@ export default function HomePage() {
   return (
     <>
       <OrganizationLd appUrl={appUrl} />
-      <HomeHero />
-      <FeaturesSection />
-      <ServicesPreview />
-      <PortfolioPreview />
-      <TestimonialsSection />
-      <CtaSection />
+      <div className={styles.sections}>
+        <HomeHero />
+        <HomeSummary />
+        <ServicesIntro />
+        <CtaSection />
+        <ServicesPreview />
+        <FeaturesSection />
+        <PortfolioPreview />
+        <TestimonialsSection />
+      </div>
     </>
   );
 }

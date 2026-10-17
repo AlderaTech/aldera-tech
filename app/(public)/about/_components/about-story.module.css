@@ -1,0 +1,301 @@
+.section {
+  background: linear-gradient(
+    180deg,
+    var(--home-paper),
+    color-mix(in srgb, var(--home-sky) 38%, var(--home-paper))
+  );
+}
+.content {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3rem);
+}
+.header {
+  max-width: 52rem;
+  margin-inline: auto;
+  text-align: center;
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  line-height: 1.8;
+}
+.eyebrow::before,
+.eyebrow::after {
+  width: 1.5rem;
+  height: 1px;
+  flex-shrink: 0;
+  background: currentColor;
+  content: "";
+}
+.heading {
+  max-width: 24ch;
+  margin: 1rem auto 0;
+  color: var(--home-ink);
+  font-size: clamp(2rem, 3.3vw, 2.875rem);
+  font-weight: 750;
+  line-height: 1.16;
+  letter-spacing: -0.04em;
+  text-align: center;
+  text-wrap: balance;
+}
+.heading > span {
+  display: block;
+  color: var(--home-blue);
+}
+.body {
+  display: grid;
+  align-items: center;
+  gap: 2rem;
+}
+.body > div {
+  min-width: 0;
+}
+.visual {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 1.75rem;
+  border: 1px solid var(--home-line);
+  border-radius: 1.75rem;
+  background:
+    radial-gradient(ellipse at 65% 35%, var(--home-sky), transparent 70%),
+    var(--home-soft);
+}
+.visual::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--home-blue) 16%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 20px 20px;
+  mask-image: radial-gradient(ellipse at 100% 0, black, transparent 65%);
+  pointer-events: none;
+  content: "";
+}
+.visualHeader {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--home-ink);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+.visualHeader > span {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid var(--home-line);
+  border-radius: 50%;
+  background: var(--home-paper);
+  color: var(--home-blue);
+}
+.canvas {
+  position: relative;
+  height: 24rem;
+  margin-block: 0.75rem;
+}
+.visualOrbit {
+  position: absolute;
+  inset: 24% -2% 14%;
+  border: 1px solid color-mix(in srgb, var(--home-blue) 15%, transparent);
+  border-radius: 50%;
+  rotate: -16deg;
+}
+.visualShadow {
+  position: absolute;
+  right: 14%;
+  bottom: 13%;
+  left: 14%;
+  height: 1rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--home-ink) 15%, transparent);
+  filter: blur(14px);
+}
+.artwork {
+  position: absolute;
+  inset: 0;
+}
+.image {
+  object-fit: contain;
+  filter: drop-shadow(
+    0 12px 14px color-mix(in srgb, var(--home-ink) 9%, transparent)
+  );
+}
+.visualFooter {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 0.875rem 0.25rem;
+  border: 1px solid var(--home-line);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--home-paper) 80%, transparent);
+  backdrop-filter: blur(12px);
+}
+.visualFooter > span {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--home-muted);
+  font-size: 0.625rem;
+  line-height: 1.5;
+}
+.visualFooter > span + span {
+  border-left: 1px solid var(--home-line);
+}
+.visualFooter svg {
+  flex-shrink: 0;
+  color: var(--home-blue);
+}
+.steps {
+  display: grid;
+  gap: 2rem;
+}
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  align-items: start;
+  gap: 1.125rem;
+}
+.step:not(:last-child)::before {
+  position: absolute;
+  top: 2.875rem;
+  bottom: -2rem;
+  left: 1.25rem;
+  width: 1px;
+  background: var(--home-line);
+  content: "";
+}
+.stepIcon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border: 1px solid var(--home-line);
+  border-radius: 50%;
+  background: var(--home-soft);
+  color: var(--home-blue);
+}
+.solution .stepIcon {
+  border-color: var(--home-ink);
+  background: var(--home-ink);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--home-blue) 15%, transparent);
+  color: var(--home-paper);
+}
+.stepBody h3 {
+  padding-top: 0.4375rem;
+  color: var(--home-ink);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+.stepBody p {
+  margin-top: 0.625rem;
+  color: var(--home-muted);
+  max-width: 55ch;
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  text-wrap: pretty;
+}
+.solution .stepBody {
+  padding: 1.25rem 1.5rem;
+  border-left: 2px solid var(--home-blue);
+  border-radius: 0 1rem 1rem 0;
+  background: var(--home-soft);
+}
+.solution .stepBody h3 {
+  padding-top: 0;
+}
+.stepBody strong {
+  color: var(--home-blue);
+  font-weight: 600;
+}
+@media (min-width: 768px) {
+  .body {
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 2.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .body {
+    gap: 4rem;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .visual {
+    padding: 1.25rem;
+  }
+  .canvas {
+    height: 18rem;
+  }
+  .visualFooter > span {
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+  .step {
+    gap: 0.875rem;
+  }
+}
+@media (max-width: 639px) {
+  .visual {
+    padding: 1.25rem;
+    border-radius: 1.5rem;
+  }
+  .canvas {
+    height: 18rem;
+  }
+  .visualFooter > span {
+    gap: 0.375rem;
+    font-size: 0.5625rem;
+  }
+  .visualFooter svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+  .step {
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: 0.875rem;
+  }
+  .stepIcon {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+  .step:not(:last-child)::before {
+    top: 2.625rem;
+    left: 1.125rem;
+  }
+  .stepBody h3 {
+    padding-top: 0.3125rem;
+    font-size: 1rem;
+  }
+  .stepBody p {
+    font-size: 0.875rem;
+  }
+  .solution .stepBody {
+    padding: 1rem;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .artwork {
+    animation: story-float 8s ease-in-out infinite;
+  }
+}
+@keyframes story-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}

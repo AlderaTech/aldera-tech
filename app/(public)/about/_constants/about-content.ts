@@ -1,7 +1,7 @@
 import {
   HeartHandshake,
   Rocket,
-  Sparkles,
+  Code2,
   Target,
   type LucideIcon,
 } from "lucide-react";
@@ -25,7 +25,7 @@ export const aboutValues: AboutValue[] = [
       "Kami mengukur sukses dari dampak bisnis, bukan dari seberapa banyak fitur yang kami tulis.",
   },
   {
-    icon: Sparkles,
+    icon: Code2,
     title: "Craft yang serius",
     description:
       "Kode bersih, dokumentasi rapi, dan ketelitian detail adalah standar minimum kami.",

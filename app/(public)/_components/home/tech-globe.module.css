@@ -1,0 +1,43 @@
+.globe {
+  isolation: isolate;
+  width: 9rem;
+  aspect-ratio: 1;
+  animation: float 7s ease-in-out infinite;
+}
+
+.globe::after {
+  position: absolute;
+  z-index: -1;
+  inset: auto 18% -5%;
+  height: 12%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--home-ink) 24%, transparent),
+    transparent 72%
+  );
+  filter: blur(5px);
+  content: "";
+}
+
+.image {
+  object-fit: contain;
+  filter: drop-shadow(
+      0 12px 12px color-mix(in srgb, var(--home-ink) 24%, transparent)
+    )
+    drop-shadow(0 4px 6px color-mix(in srgb, var(--home-blue) 12%, transparent));
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .globe {
+    animation: none;
+  }
+}

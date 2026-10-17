@@ -1,21 +1,49 @@
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { FadeUp } from "@/components/shared/motion";
+import { cn } from "@/lib/utils";
+import shared from "../../_components/studio.module.css";
+import type { PortfolioItem } from "../_data/portfolio";
+import { PortfolioHeroVisual } from "./portfolio-hero-visual";
+import styles from "./portfolio-page.module.css";
 
-export function PortfolioHero() {
+type PortfolioHeroProps = {
+  items: PortfolioItem[];
+};
+
+export function PortfolioHero({ items }: PortfolioHeroProps) {
   return (
-    <section className="editorial-surface">
-      <div className="public-container-px mx-auto max-w-screen-xxxl py-10 text-center sm:py-14">
-        <FadeUp>
-          <div className="editorial-kicker mx-auto border-black/20 text-black/60">
-            Portfolio
-          </div>
-          <h1 className="editorial-display mx-auto mt-6 max-w-4xl text-5xl text-balance sm:text-6xl lg:text-7xl">
-            Proyek yang kami banggakan
-          </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-lg text-black/60">
+    <section className={styles.hero} aria-labelledby="portfolio-heading">
+      <div className={cn(shared.container, styles.heroContainer)}>
+        <FadeUp className={styles.heroLabel}>
+          <p className={styles.eyebrow}>
+            <span aria-hidden="true" />
+            Portofolio Aldera Tech
+          </p>
+        </FadeUp>
+
+        <FadeUp delay={0.1} className={styles.visualWrap}>
+          <PortfolioHeroVisual items={items} />
+        </FadeUp>
+
+        <FadeUp className={styles.heroCopy}>
+          <p className={styles.heroDescription}>
             Dari startup ke korporat, inilah kolaborasi yang telah kami bangun
             bersama klien kami.
           </p>
+          <a className={styles.exploreLink} href="#daftar-proyek">
+            Jelajahi proyek
+            <ArrowDown className="size-4" aria-hidden="true" />
+          </a>
         </FadeUp>
+
+        <div className={styles.heroFootnote}>
+          <span>Studi kasus pilihan</span>
+          <span aria-hidden="true" className={styles.heroFootnoteLine} />
+          <a href="#daftar-proyek">
+            Lihat seluruh proyek{" "}
+            <ArrowUpRight className="size-4" aria-hidden="true" />
+          </a>
+        </div>
       </div>
     </section>
   );
