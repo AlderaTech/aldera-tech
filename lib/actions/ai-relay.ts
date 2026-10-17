@@ -48,10 +48,12 @@ export async function ensureRouterUser(
   name?: string,
   email?: string
 ): Promise<{ id: number; balance: number }> {
-  const existing = await queryRouter<{ id: string | number; balance: string | number }>(
-    "SELECT id, balance FROM users WHERE web_user_id = $1 LIMIT 1;",
-    [webUserId]
-  );
+  const existing = await queryRouter<{
+    id: string | number;
+    balance: string | number;
+  }>("SELECT id, balance FROM users WHERE web_user_id = $1 LIMIT 1;", [
+    webUserId,
+  ]);
 
   if (existing.rows.length > 0) {
     return {
@@ -63,7 +65,10 @@ export async function ensureRouterUser(
   const username = email || `user_${webUserId.slice(0, 8)}`;
   const fullName = name || "AI Relay Client";
 
-  const inserted = await queryRouter<{ id: string | number; balance: string | number }>(
+  const inserted = await queryRouter<{
+    id: string | number;
+    balance: string | number;
+  }>(
     `INSERT INTO users (web_user_id, full_name, username, balance, is_active)
      VALUES ($1, $2, $3, 0.0000, true)
      ON CONFLICT (web_user_id) DO UPDATE SET updated_at = NOW()
@@ -77,7 +82,11 @@ export async function ensureRouterUser(
   };
 }
 
-async function resolveCurrentUser(): Promise<{ id: number; balance: number; webUserId: string }> {
+async function resolveCurrentUser(): Promise<{
+  id: number;
+  balance: number;
+  webUserId: string;
+}> {
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error("Unauthorized: Anda harus login untuk mengakses AI Relay.");
@@ -100,13 +109,18 @@ async function resolveCurrentUser(): Promise<{ id: number; balance: number; webU
 // Server Actions: F4 (Balance, Top-up & Ledger History)
 // ============================================================================
 
-export async function getUserBalance(): Promise<{ balance: number; userId: number; webUserId: string }> {
+export async function getUserBalance(): Promise<{
+  balance: number;
+  userId: number;
+  webUserId: string;
+}> {
   const user = await resolveCurrentUser();
   const res = await queryRouter<{ balance: string | number }>(
     "SELECT balance FROM users WHERE id = $1;",
     [user.id]
   );
-  const balance = res.rows.length > 0 ? Number(res.rows[0].balance) : user.balance;
+  const balance =
+    res.rows.length > 0 ? Number(res.rows[0].balance) : user.balance;
 
   return {
     balance,
@@ -115,9 +129,7 @@ export async function getUserBalance(): Promise<{ balance: number; userId: numbe
   };
 }
 
-export async function createTopupRequest(
-  amount: number
-): Promise<{
+export async function createTopupRequest(amount: number): Promise<{
   success: boolean;
   topup: TopupRequestRecord;
 }> {
@@ -193,7 +205,7 @@ export async function uploadTopupProof(
     approved_at: Date | null;
   }>(
     `UPDATE topup_requests
-     SET proof_file_id = $1, updated_at = NOW()
+     SET proof_file_id = $1
      WHERE id = $2 AND user_id = $3 AND status = 'pending'
      RETURNING id, user_id, amount, unique_code, total_transfer, proof_file_id, status, admin_id, created_at, approved_at;`,
     [proofFileId.trim(), topupId, user.id]
@@ -293,9 +305,7 @@ export async function listApiKeys(): Promise<ApiKeyRecord[]> {
   }));
 }
 
-export async function createApiKey(
-  label: string
-): Promise<{
+export async function createApiKey(label: string): Promise<{
   success: boolean;
   id: number;
   rawKey: string;
@@ -341,9 +351,7 @@ export async function revokeApiKey(
 // Server Actions: F5 (Token Usage Analytics & Activity Logs)
 // ============================================================================
 
-export async function getUsageLogs(
-  limit = 100
-): Promise<UsageLogRecord[]> {
+export async function getUsageLogs(limit = 100): Promise<UsageLogRecord[]> {
   const user = await resolveCurrentUser();
   const res = await queryRouter<{
     id: string | number;
@@ -469,13 +477,11 @@ export async function getModelHealthMetrics(): Promise<ModelHealthStatus[]> {
 // Server Actions: F6 (In-Browser AI Playground Relay & Atomic Debit)
 // ============================================================================
 
-export async function executePlaygroundChat(
-  params: {
-    model: string;
-    prompt: string;
-    systemPrompt?: string;
-  }
-): Promise<PlaygroundChatResult> {
+export async function executePlaygroundChat(params: {
+  model: string;
+  prompt: string;
+  systemPrompt?: string;
+}): Promise<PlaygroundChatResult> {
   const { model, prompt, systemPrompt } = params;
   if (!prompt || !prompt.trim()) {
     throw new Error("Prompt tidak boleh kosong.");
@@ -510,7 +516,8 @@ export async function executePlaygroundChat(
     "SELECT balance FROM users WHERE id = $1;",
     [user.id]
   );
-  const initialBalance = balanceCheck.rows.length > 0 ? Number(balanceCheck.rows[0].balance) : 0;
+  const initialBalance =
+    balanceCheck.rows.length > 0 ? Number(balanceCheck.rows[0].balance) : 0;
   if (initialBalance <= 0) {
     throw new Error(
       "Insufficient balance: Saldo Anda tidak mencukupi untuk melakukan chat. Silakan top-up terlebih dahulu."
@@ -518,29 +525,38 @@ export async function executePlaygroundChat(
   }
 
   // 3. Upstream 9router Call or Realistic Local Relay
-  const upstreamBaseUrl = process.env.NINE_ROUTER_BASE_URL || "http://localhost:20128";
+  const upstreamBaseUrl =
+    process.env.NINE_ROUTER_BASE_URL || "http://localhost:20128";
   const startTime = Date.now();
   let content = "";
-  let promptTokens = Math.max(8, Math.ceil((prompt.length + (systemPrompt?.length || 0)) / 4));
+  let promptTokens = Math.max(
+    8,
+    Math.ceil((prompt.length + (systemPrompt?.length || 0)) / 4)
+  );
   let completionTokens = 0;
 
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 12000);
 
-    const upstreamRes = await fetch(`${upstreamBaseUrl.replace(/\/+$/, "")}/v1/chat/completions`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model,
-        messages: [
-          ...(systemPrompt ? [{ role: "system", content: systemPrompt }] : []),
-          { role: "user", content: prompt },
-        ],
-        stream: false,
-      }),
-      signal: controller.signal,
-    });
+    const upstreamRes = await fetch(
+      `${upstreamBaseUrl.replace(/\/+$/, "")}/v1/chat/completions`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model,
+          messages: [
+            ...(systemPrompt
+              ? [{ role: "system", content: systemPrompt }]
+              : []),
+            { role: "user", content: prompt },
+          ],
+          stream: false,
+        }),
+        signal: controller.signal,
+      }
+    );
     clearTimeout(timeoutId);
 
     if (upstreamRes.ok) {
@@ -550,7 +566,8 @@ export async function executePlaygroundChat(
       };
       content = data.choices?.[0]?.message?.content || "";
       if (data.usage?.prompt_tokens) promptTokens = data.usage.prompt_tokens;
-      if (data.usage?.completion_tokens) completionTokens = data.usage.completion_tokens;
+      if (data.usage?.completion_tokens)
+        completionTokens = data.usage.completion_tokens;
       else completionTokens = Math.max(10, Math.ceil(content.length / 4));
     } else {
       throw new Error(`Upstream returned HTTP ${upstreamRes.status}`);
@@ -563,7 +580,12 @@ export async function executePlaygroundChat(
   }
 
   const durationMs = Math.max(50, Date.now() - startTime);
-  const totalCost = calculateTokenCost(promptTokens, completionTokens, inputPrice, outputPrice);
+  const totalCost = calculateTokenCost(
+    promptTokens,
+    completionTokens,
+    inputPrice,
+    outputPrice
+  );
 
   // 4. Atomic Transaction: Debit balance, record usage_log and balance_transactions
   const transactionResult = await transactionRouter(async (client) => {

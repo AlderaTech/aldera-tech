@@ -31,7 +31,10 @@ export async function GET(req: NextRequest) {
 
   try {
     if (staff) {
-      const canViewProjects = hasPermission(roles, PERMISSIONS.PROJECT_VIEW_ALL);
+      const canViewProjects = hasPermission(
+        roles,
+        PERMISSIONS.PROJECT_VIEW_ALL
+      );
       const canViewInvoices = hasPermission(roles, PERMISSIONS.INVOICE_VIEW);
       const canViewUsers = hasPermission(roles, PERMISSIONS.USER_MANAGE);
       const canViewBlog = hasPermission(roles, PERMISSIONS.BLOG_VIEW);
@@ -46,7 +49,11 @@ export async function GET(req: NextRequest) {
                 ],
               },
               take: 5,
-              select: { id: true, title: true, client: { select: { name: true } } },
+              select: {
+                id: true,
+                title: true,
+                client: { select: { name: true } },
+              },
             })
           : Promise.resolve([]),
         canViewInvoices

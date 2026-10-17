@@ -43,7 +43,10 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? undefined;
 
-  const [state, formAction, isPending] = useActionState(loginAction, initialState);
+  const [state, formAction, isPending] = useActionState(
+    loginAction,
+    initialState
+  );
   const { showPassword, togglePassword } = usePasswordVisibility();
 
   useEffect(() => {

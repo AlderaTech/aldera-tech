@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
-import { sendWhatsApp } from "@/lib/whatsapp";
 import { waTemplates } from "@/lib/whatsapp-templates";
 import { notify } from "@/lib/notifications";
 import { formatCurrency } from "@/lib/utils";
@@ -196,29 +195,19 @@ export async function POST(request: Request) {
         }
       });
 
-      // Kirim WhatsApp alert ke nomor WhatsApp klien
-      if (invoice.client.phone) {
-        const tpl = waTemplates.invoicePaid(
-          invoice.number,
-          formatCurrency(Number(invoice.total))
-        );
-        sendWhatsApp({
-          to: invoice.client.phone,
-          message: `*${tpl.title}*\n\n${tpl.message}`,
-        }).catch((err) => {
-          console.error("Gagal mengirim WhatsApp invoice paid:", err);
-        });
-      }
-
-      // Notifikasi in-app
+      // Deduplicated notification: exactly one WhatsApp message dispatched via notify()
+      const tpl = waTemplates.invoicePaid(
+        invoice.number,
+        formatCurrency(Number(invoice.total))
+      );
       await notify({
         userId: invoice.clientId,
         type: "INVOICE_SENT",
-        title: "Invoice Lunas",
-        message: `Invoice ${invoice.number} senilai ${formatCurrency(
-          Number(invoice.total)
-        )} telah lunas diverifikasi via Midtrans.`,
-      }).catch(() => {});
+        title: tpl.title,
+        message: tpl.message,
+      }).catch((err) => {
+        console.error("Gagal mengirim notifikasi invoice paid:", err);
+      });
 
       // Revalidasi cache halaman terkait
       revalidatePath(ADMIN_ROUTES.invoices);
@@ -228,10 +217,7 @@ export async function POST(request: Request) {
       // Perbarui status pembayaran menjadi GAGAL
       const existingPayment = await prisma.payment.findFirst({
         where: {
-          OR: [
-            { transactionId },
-            { invoiceId: invoice.id, status: "PENDING" },
-          ],
+          OR: [{ transactionId }, { invoiceId: invoice.id, status: "PENDING" }],
         },
         orderBy: { createdAt: "desc" },
       });
@@ -336,10 +322,7 @@ export async function POST(request: Request) {
       // Rekam pembayaran pending
       const existingPayment = await prisma.payment.findFirst({
         where: {
-          OR: [
-            { transactionId },
-            { invoiceId: invoice.id, status: "PENDING" },
-          ],
+          OR: [{ transactionId }, { invoiceId: invoice.id, status: "PENDING" }],
         },
         orderBy: { createdAt: "desc" },
       });

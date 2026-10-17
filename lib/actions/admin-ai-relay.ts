@@ -35,10 +35,15 @@ export type {
 // Internal Admin Authorization Resolver
 // ============================================================================
 
-async function resolveAdminSession(): Promise<{ adminId: number; webUserId: string }> {
+async function resolveAdminSession(): Promise<{
+  adminId: number;
+  webUserId: string;
+}> {
   const session = await auth();
   if (!session?.user?.id) {
-    throw new Error("Unauthorized: Anda harus login untuk melakukan aksi admin.");
+    throw new Error(
+      "Unauthorized: Anda harus login untuk melakukan aksi admin."
+    );
   }
 
   const roles =
@@ -128,16 +133,14 @@ export async function getModelPricings(): Promise<ModelPricingItem[]> {
 /**
  * Creates a new model pricing entry in `model_pricing`.
  */
-export async function createModelPricing(
-  data: {
-    model_name: string;
-    display_name: string;
-    input_price_per_m: number;
-    output_price_per_m: number;
-    is_active?: boolean;
-    upstream_input_cost_per_m?: number;
-  }
-): Promise<{ success: boolean; id: number }> {
+export async function createModelPricing(data: {
+  model_name: string;
+  display_name: string;
+  input_price_per_m: number;
+  output_price_per_m: number;
+  is_active?: boolean;
+  upstream_input_cost_per_m?: number;
+}): Promise<{ success: boolean; id: number }> {
   await resolveAdminSession();
 
   if (!data.model_name || !data.model_name.trim()) {
@@ -348,7 +351,10 @@ export async function syncModelsFromUpstream(options?: {
 
   // If mock data provided (for tests / offline simulation)
   if (options?.mockUpstreamModels) {
-    const diff = diffModelsWithUpstream(options.mockUpstreamModels, localModelIds);
+    const diff = diffModelsWithUpstream(
+      options.mockUpstreamModels,
+      localModelIds
+    );
     return {
       success: true,
       upstreamUrl: "mock://upstream/v1/models",
@@ -356,7 +362,8 @@ export async function syncModelsFromUpstream(options?: {
     };
   }
 
-  const rawBaseUrl = process.env.NINE_ROUTER_BASE_URL || "http://localhost:20128";
+  const rawBaseUrl =
+    process.env.NINE_ROUTER_BASE_URL || "http://localhost:20128";
   const upstreamUrl = `${rawBaseUrl.replace(/\/+$/, "")}/v1/models`;
 
   try {
@@ -443,15 +450,13 @@ export async function activateNewModelFromUpstream(
   const inputPrice = customPricing?.inputPricePerM ?? 25000;
   const outputPrice = customPricing?.outputPricePerM ?? 50000;
 
-  return await createModelPricing(
-    {
-      model_name: modelId,
-      display_name: displayName,
-      input_price_per_m: inputPrice,
-      output_price_per_m: outputPrice,
-      is_active: true,
-    }
-  );
+  return await createModelPricing({
+    model_name: modelId,
+    display_name: displayName,
+    input_price_per_m: inputPrice,
+    output_price_per_m: outputPrice,
+    is_active: true,
+  });
 }
 
 // ============================================================================
@@ -511,7 +516,9 @@ export async function getFinancialMetrics(): Promise<FinancialMetricsSummary> {
 /**
  * Lists all pending top-up tickets with user details for approval queue.
  */
-export async function getPendingTopupRequests(): Promise<PendingTopupRequestItem[]> {
+export async function getPendingTopupRequests(): Promise<
+  PendingTopupRequestItem[]
+> {
   await resolveAdminSession();
 
   const res = await queryRouter<{
@@ -613,7 +620,9 @@ export async function approveTopupRequest(
     }>("SELECT id, balance FROM users WHERE id = $1 FOR UPDATE;", [userId]);
 
     if (userRes.rows.length === 0) {
-      throw new Error(`User #${userId} untuk tiket #${requestId} tidak ditemukan.`);
+      throw new Error(
+        `User #${userId} untuk tiket #${requestId} tidak ditemukan.`
+      );
     }
 
     const currentBalance = Number(userRes.rows[0].balance);

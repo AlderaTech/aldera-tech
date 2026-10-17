@@ -58,17 +58,17 @@ export default function AdminTestimonialsLoading() {
               </div>
 
               {/* Star rating */}
-              <div className="hidden sm:flex items-center gap-1">
+              <div className="hidden items-center gap-1 sm:flex">
                 {Array.from({ length: 5 }).map((_, starIdx) => (
                   <Skeleton key={starIdx} className="size-3.5 rounded-full" />
                 ))}
               </div>
 
               {/* Content snippet */}
-              <Skeleton className="hidden md:block h-4 w-60 max-w-xs" />
+              <Skeleton className="hidden h-4 w-60 max-w-xs md:block" />
 
               {/* Project badge */}
-              <Skeleton className="hidden lg:block h-5 w-24 rounded-md" />
+              <Skeleton className="hidden h-5 w-24 rounded-md lg:block" />
 
               {/* Published status badge */}
               <Skeleton className="h-5 w-20 rounded-full" />

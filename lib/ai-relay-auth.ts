@@ -77,7 +77,10 @@ export function hashKey(rawKey: string): string {
     throw new Error("Cannot hash an invalid or empty API key.");
   }
   const trimmed = rawKey.trim();
-  return createHash("sha256").update(trimmed, "utf8").digest("hex").toLowerCase();
+  return createHash("sha256")
+    .update(trimmed, "utf8")
+    .digest("hex")
+    .toLowerCase();
 }
 
 /**

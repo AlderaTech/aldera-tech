@@ -28,7 +28,7 @@ export default async function DashboardCalculatorPage() {
       >
         <Link
           href={DASHBOARD_ROUTES.home}
-          className="flex items-center gap-1 cursor-pointer transition-colors hover:text-foreground"
+          className="flex cursor-pointer items-center gap-1 transition-colors hover:text-foreground"
         >
           <Home className="size-3.5" />
           <span>Dashboard</span>
@@ -36,7 +36,7 @@ export default async function DashboardCalculatorPage() {
         <ChevronRight className="size-3 text-muted-foreground/60" />
         <Link
           href={DASHBOARD_ROUTES.orders}
-          className="flex items-center gap-1 cursor-pointer transition-colors hover:text-foreground"
+          className="flex cursor-pointer items-center gap-1 transition-colors hover:text-foreground"
         >
           <Receipt className="size-3.5" />
           <span>Riwayat Estimasi</span>
@@ -56,7 +56,8 @@ export default async function DashboardCalculatorPage() {
               Kalkulator Estimasi Proyek
             </h1>
             <p className="text-sm text-muted-foreground">
-              Rancang spesifikasi sistem, estimasikan biaya transparan, dan kirimkan order request langsung ke tim engineering Aldera Tech.
+              Rancang spesifikasi sistem, estimasikan biaya transparan, dan
+              kirimkan order request langsung ke tim engineering Aldera Tech.
             </p>
           </div>
         </div>

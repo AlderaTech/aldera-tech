@@ -20,7 +20,13 @@ import {
   X,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -82,13 +88,17 @@ export function AiRelayAdminClientView({
   const [isPending, startTransition] = useTransition();
 
   // Financial Metrics State
-  const [metrics, setMetrics] = useState<FinancialMetricsSummary>(initialMetrics);
+  const [metrics, setMetrics] =
+    useState<FinancialMetricsSummary>(initialMetrics);
 
   // Model Pricing State (F14)
-  const [pricingList, setPricingList] = useState<ModelPricingItem[]>(initialPricing);
+  const [pricingList, setPricingList] =
+    useState<ModelPricingItem[]>(initialPricing);
   const [modelSearch, setModelSearch] = useState<string>("");
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
-  const [editingModel, setEditingModel] = useState<ModelPricingItem | null>(null);
+  const [editingModel, setEditingModel] = useState<ModelPricingItem | null>(
+    null
+  );
 
   // Add Model Form State
   const [newModelName, setNewModelName] = useState("");
@@ -111,7 +121,9 @@ export function AiRelayAdminClientView({
     diff: ModelSyncDiffResult;
     error?: string;
   } | null>(null);
-  const [activatingModelId, setActivatingModelId] = useState<string | null>(null);
+  const [activatingModelId, setActivatingModelId] = useState<string | null>(
+    null
+  );
 
   // Top-up Approval Queue State (F16)
   const [pendingTopups, setPendingTopups] =
@@ -159,7 +171,9 @@ export function AiRelayAdminClientView({
       try {
         await toggleModelPricingStatus(item.id, nextStatus);
         setPricingList((prev) =>
-          prev.map((p) => (p.id === item.id ? { ...p, is_active: nextStatus } : p))
+          prev.map((p) =>
+            p.id === item.id ? { ...p, is_active: nextStatus } : p
+          )
         );
         showNotification(
           "success",
@@ -201,7 +215,9 @@ export function AiRelayAdminClientView({
       } catch (err) {
         showNotification(
           "error",
-          err instanceof Error ? err.message : "Gagal menyimpan perubahan harga."
+          err instanceof Error
+            ? err.message
+            : "Gagal menyimpan perubahan harga."
         );
       }
     });
@@ -286,7 +302,9 @@ export function AiRelayAdminClientView({
             ...syncResult,
             diff: {
               ...syncResult.diff,
-              newModels: syncResult.diff.newModels.filter((m) => m.id !== modelId),
+              newModels: syncResult.diff.newModels.filter(
+                (m) => m.id !== modelId
+              ),
               syncedModels: [
                 ...syncResult.diff.syncedModels,
                 { id: modelId, object: "model" },
@@ -398,7 +416,7 @@ export function AiRelayAdminClientView({
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-5">
+      <div className="flex flex-col gap-4 border-b pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="rounded-xl bg-slate-900 p-2.5 text-white shadow-xs">
             <Bot className="h-6 w-6" />
@@ -408,12 +426,13 @@ export function AiRelayAdminClientView({
               <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                 AI Operations & Admin Portal
               </h1>
-              <Badge className="bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-100">
+              <Badge className="border-amber-300 bg-amber-100 text-amber-800 hover:bg-amber-100">
                 ADMIN ONLY
               </Badge>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Kelola dynamic pricing, sinkronisasi model 9router, antrean tiket top-up, dan validasi integritas audit ledger.
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Kelola dynamic pricing, sinkronisasi model 9router, antrean tiket
+              top-up, dan validasi integritas audit ledger.
             </p>
           </div>
         </div>
@@ -424,10 +443,10 @@ export function AiRelayAdminClientView({
             size="sm"
             onClick={handleRunAudit}
             disabled={isAuditing}
-            className="text-xs h-9"
+            className="h-9 text-xs"
           >
             <ShieldCheck
-              className={`h-4 w-4 mr-1.5 ${
+              className={`mr-1.5 h-4 w-4 ${
                 allInvariantsPass ? "text-emerald-600" : "text-rose-600"
               }`}
             />
@@ -437,10 +456,10 @@ export function AiRelayAdminClientView({
             size="sm"
             onClick={handleSync9router}
             disabled={isSyncing}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-9 shadow-xs"
+            className="h-9 bg-indigo-600 text-xs text-white shadow-xs hover:bg-indigo-700"
           >
             <RefreshCw
-              className={`h-3.5 w-3.5 mr-1.5 ${isSyncing ? "animate-spin" : ""}`}
+              className={`mr-1.5 h-3.5 w-3.5 ${isSyncing ? "animate-spin" : ""}`}
             />
             {isSyncing ? "Menghubungi 9router..." : "Sync 9router"}
           </Button>
@@ -450,23 +469,23 @@ export function AiRelayAdminClientView({
       {/* Global Toast / Notification */}
       {notification && (
         <div
-          className={`flex items-center justify-between px-4 py-3 rounded-lg text-xs font-medium border shadow-xs transition-all ${
+          className={`flex items-center justify-between rounded-lg border px-4 py-3 text-xs font-medium shadow-xs transition-all ${
             notification.type === "success"
-              ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-800"
               : notification.type === "error"
-              ? "bg-rose-50 text-rose-800 border-rose-200"
-              : "bg-blue-50 text-blue-800 border-blue-200"
+                ? "border-rose-200 bg-rose-50 text-rose-800"
+                : "border-blue-200 bg-blue-50 text-blue-800"
           }`}
         >
           <div className="flex items-center gap-2">
             {notification.type === "success" && (
-              <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
             )}
             {notification.type === "error" && (
-              <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
             )}
             {notification.type === "info" && (
-              <AlertTriangle className="h-4 w-4 text-blue-600 shrink-0" />
+              <AlertTriangle className="h-4 w-4 shrink-0 text-blue-600" />
             )}
             <span>{notification.message}</span>
           </div>
@@ -480,54 +499,58 @@ export function AiRelayAdminClientView({
       )}
 
       {/* Main Tabs Navigation */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="bg-slate-100 p-1 rounded-xl h-auto flex flex-wrap gap-1 border">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
+        <TabsList className="flex h-auto flex-wrap gap-1 rounded-xl border bg-slate-100 p-1">
           <TabsTrigger
             value="overview"
-            className="rounded-lg text-xs font-medium py-2 px-3 data-[state=active]:bg-white data-[state=active]:shadow-2xs"
+            className="rounded-lg px-3 py-2 text-xs font-medium data-[state=active]:bg-white data-[state=active]:shadow-2xs"
           >
-            <TrendingUp className="h-3.5 w-3.5 mr-1.5" />
+            <TrendingUp className="mr-1.5 h-3.5 w-3.5" />
             Ringkasan Keuangan
           </TabsTrigger>
           <TabsTrigger
             value="pricing"
-            className="rounded-lg text-xs font-medium py-2 px-3 data-[state=active]:bg-white data-[state=active]:shadow-2xs"
+            className="rounded-lg px-3 py-2 text-xs font-medium data-[state=active]:bg-white data-[state=active]:shadow-2xs"
           >
-            <DollarSign className="h-3.5 w-3.5 mr-1.5" />
+            <DollarSign className="mr-1.5 h-3.5 w-3.5" />
             Manajemen Harga Model ({pricingList.length})
           </TabsTrigger>
           <TabsTrigger
             value="sync"
-            className="rounded-lg text-xs font-medium py-2 px-3 data-[state=active]:bg-white data-[state=active]:shadow-2xs"
+            className="rounded-lg px-3 py-2 text-xs font-medium data-[state=active]:bg-white data-[state=active]:shadow-2xs"
           >
-            <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+            <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
             Sinkronisasi 9router
             {syncResult?.diff?.newModels?.length ? (
-              <span className="ml-1.5 bg-rose-500 text-white rounded-full px-1.5 py-0.2 text-[10px] font-bold">
+              <span className="py-0.2 ml-1.5 rounded-full bg-rose-500 px-1.5 text-[10px] font-bold text-white">
                 {syncResult.diff.newModels.length} baru
               </span>
             ) : null}
           </TabsTrigger>
           <TabsTrigger
             value="topup"
-            className="rounded-lg text-xs font-medium py-2 px-3 data-[state=active]:bg-white data-[state=active]:shadow-2xs"
+            className="rounded-lg px-3 py-2 text-xs font-medium data-[state=active]:bg-white data-[state=active]:shadow-2xs"
           >
-            <Clock className="h-3.5 w-3.5 mr-1.5" />
+            <Clock className="mr-1.5 h-3.5 w-3.5" />
             Tiket Top-up
             {pendingTopups.length > 0 && (
-              <span className="ml-1.5 bg-amber-500 text-white rounded-full px-1.5 py-0.2 text-[10px] font-bold">
+              <span className="py-0.2 ml-1.5 rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white">
                 {pendingTopups.length}
               </span>
             )}
           </TabsTrigger>
           <TabsTrigger
             value="audit"
-            className="rounded-lg text-xs font-medium py-2 px-3 data-[state=active]:bg-white data-[state=active]:shadow-2xs"
+            className="rounded-lg px-3 py-2 text-xs font-medium data-[state=active]:bg-white data-[state=active]:shadow-2xs"
           >
-            <ShieldCheck className="h-3.5 w-3.5 mr-1.5" />
+            <ShieldCheck className="mr-1.5 h-3.5 w-3.5" />
             Audit Ledger
             <span
-              className={`ml-1.5 rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
+              className={`py-0.2 ml-1.5 rounded-full px-1.5 text-[10px] font-bold ${
                 allInvariantsPass
                   ? "bg-emerald-500 text-white"
                   : "bg-rose-500 text-white"
@@ -540,21 +563,21 @@ export function AiRelayAdminClientView({
 
         {/* TAB 1: Ringkasan Keuangan */}
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card className="shadow-2xs">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <CardTitle className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                   Total Omzet Top-up
                 </CardTitle>
-                <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600">
+                <div className="rounded-lg bg-emerald-50 p-2 text-emerald-600">
                   <TrendingUp className="h-4 w-4" />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold font-mono text-slate-900">
+                <div className="font-mono text-2xl font-bold text-slate-900">
                   {formatCurrency(metrics.totalOmzet)}
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-1">
+                <p className="mt-1 text-[11px] text-muted-foreground">
                   Dari {metrics.approvedCount} tiket top-up disetujui
                 </p>
               </CardContent>
@@ -562,18 +585,18 @@ export function AiRelayAdminClientView({
 
             <Card className="shadow-2xs">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <CardTitle className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                   Volume Token Terpakai
                 </CardTitle>
-                <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600">
+                <div className="rounded-lg bg-indigo-50 p-2 text-indigo-600">
                   <Cpu className="h-4 w-4" />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold font-mono text-slate-900">
+                <div className="font-mono text-2xl font-bold text-slate-900">
                   {metrics.totalTokens.toLocaleString("id-ID")}
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-1">
+                <p className="mt-1 text-[11px] text-muted-foreground">
                   Prompt + Completion tokens
                 </p>
               </CardContent>
@@ -581,18 +604,18 @@ export function AiRelayAdminClientView({
 
             <Card className="shadow-2xs">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <CardTitle className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                   Total Biaya Pemakaian
                 </CardTitle>
-                <div className="p-2 rounded-lg bg-blue-50 text-blue-600">
+                <div className="rounded-lg bg-blue-50 p-2 text-blue-600">
                   <DollarSign className="h-4 w-4" />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold font-mono text-slate-900">
+                <div className="font-mono text-2xl font-bold text-slate-900">
                   {formatCurrency(metrics.totalUsageCost)}
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-1">
+                <p className="mt-1 text-[11px] text-muted-foreground">
                   Pengurangan saldo dari gateway relay
                 </p>
               </CardContent>
@@ -600,11 +623,11 @@ export function AiRelayAdminClientView({
 
             <Card className="shadow-2xs">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <CardTitle className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                   Net Margin Kas
                 </CardTitle>
                 <div
-                  className={`p-2 rounded-lg ${
+                  className={`rounded-lg p-2 ${
                     metrics.netMargin >= 0
                       ? "bg-emerald-50 text-emerald-600"
                       : "bg-rose-50 text-rose-600"
@@ -615,23 +638,25 @@ export function AiRelayAdminClientView({
               </CardHeader>
               <CardContent>
                 <div
-                  className={`text-2xl font-bold font-mono ${
-                    metrics.netMargin >= 0 ? "text-emerald-700" : "text-rose-600"
+                  className={`font-mono text-2xl font-bold ${
+                    metrics.netMargin >= 0
+                      ? "text-emerald-700"
+                      : "text-rose-600"
                   }`}
                 >
                   {formatCurrency(metrics.netMargin)}
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-1">
+                <p className="mt-1 text-[11px] text-muted-foreground">
                   Omzet - Biaya terpakai
                 </p>
               </CardContent>
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Card className="shadow-2xs">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold flex items-center justify-between">
+                <CardTitle className="flex items-center justify-between text-sm font-semibold">
                   <span>Status Antrean Top-up</span>
                   <Badge variant="outline">
                     {metrics.pendingCount} Menunggu
@@ -642,24 +667,36 @@ export function AiRelayAdminClientView({
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="flex items-center justify-between py-1.5 border-b text-xs">
-                  <span className="text-muted-foreground">Menunggu Persetujuan (Pending)</span>
-                  <span className="font-bold text-amber-600">{metrics.pendingCount} tiket</span>
+                <div className="flex items-center justify-between border-b py-1.5 text-xs">
+                  <span className="text-muted-foreground">
+                    Menunggu Persetujuan (Pending)
+                  </span>
+                  <span className="font-bold text-amber-600">
+                    {metrics.pendingCount} tiket
+                  </span>
                 </div>
-                <div className="flex items-center justify-between py-1.5 border-b text-xs">
-                  <span className="text-muted-foreground">Telah Disetujui (Approved)</span>
-                  <span className="font-bold text-emerald-600">{metrics.approvedCount} tiket</span>
+                <div className="flex items-center justify-between border-b py-1.5 text-xs">
+                  <span className="text-muted-foreground">
+                    Telah Disetujui (Approved)
+                  </span>
+                  <span className="font-bold text-emerald-600">
+                    {metrics.approvedCount} tiket
+                  </span>
                 </div>
                 <div className="flex items-center justify-between py-1.5 text-xs">
-                  <span className="text-muted-foreground">Telah Ditolak (Rejected)</span>
-                  <span className="font-bold text-slate-500">{metrics.rejectedCount} tiket</span>
+                  <span className="text-muted-foreground">
+                    Telah Ditolak (Rejected)
+                  </span>
+                  <span className="font-bold text-slate-500">
+                    {metrics.rejectedCount} tiket
+                  </span>
                 </div>
 
                 {metrics.pendingCount > 0 && (
                   <Button
                     size="sm"
                     onClick={() => setActiveTab("topup")}
-                    className="w-full mt-2 bg-amber-600 hover:bg-amber-700 text-white text-xs"
+                    className="mt-2 w-full bg-amber-600 text-xs text-white hover:bg-amber-700"
                   >
                     Buka Antrean Top-up ({metrics.pendingCount})
                   </Button>
@@ -669,29 +706,30 @@ export function AiRelayAdminClientView({
 
             <Card className="shadow-2xs">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold flex items-center justify-between">
+                <CardTitle className="flex items-center justify-between text-sm font-semibold">
                   <span>Status Integritas Audit Ledger</span>
                   <Badge
                     className={
                       allInvariantsPass
-                        ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                        : "bg-rose-100 text-rose-800 border-rose-300"
+                        ? "border-emerald-300 bg-emerald-100 text-emerald-800"
+                        : "border-rose-300 bg-rose-100 text-rose-800"
                     }
                   >
                     {allInvariantsPass ? "SEMUA PASS" : "ADA MASALAH"}
                   </Badge>
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Hasil diagnostik prosedur `verify_ledger_invariants()` PostgreSQL
+                  Hasil diagnostik prosedur `verify_ledger_invariants()`
+                  PostgreSQL
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {auditResults.map((inv) => (
                   <div
                     key={inv.check_name}
-                    className="flex items-center justify-between py-1.5 border-b last:border-0 text-xs"
+                    className="flex items-center justify-between border-b py-1.5 text-xs last:border-0"
                   >
-                    <span className="font-mono text-[11px] text-slate-700 truncate max-w-[240px]">
+                    <span className="max-w-[240px] truncate font-mono text-[11px] text-slate-700">
                       {inv.check_name}
                     </span>
                     <div className="flex items-center gap-2">
@@ -702,8 +740,8 @@ export function AiRelayAdminClientView({
                         variant="outline"
                         className={
                           inv.status === "PASS"
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-300 text-[10px]"
-                            : "bg-rose-50 text-rose-700 border-rose-300 text-[10px]"
+                            ? "border-emerald-300 bg-emerald-50 text-[10px] text-emerald-700"
+                            : "border-rose-300 bg-rose-50 text-[10px] text-rose-700"
                         }
                       >
                         {inv.status}
@@ -716,7 +754,7 @@ export function AiRelayAdminClientView({
                   variant="outline"
                   size="sm"
                   onClick={() => setActiveTab("audit")}
-                  className="w-full mt-2 text-xs"
+                  className="mt-2 w-full text-xs"
                 >
                   Lihat Detail Audit Ledger
                 </Button>
@@ -728,32 +766,34 @@ export function AiRelayAdminClientView({
         {/* TAB 2: Manajemen Harga Model */}
         <TabsContent value="pricing" className="space-y-4">
           <Card className="shadow-2xs">
-            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3">
+            <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle className="text-base font-semibold">
                   Katalog & Dynamic Pricing Manager
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Atur harga jual token per 1M (Input/Output dalam IDR), kelola status aktifasi, dan pantau estimasi margin kotor terhadap modal upstream 9router.
+                  Atur harga jual token per 1M (Input/Output dalam IDR), kelola
+                  status aktifasi, dan pantau estimasi margin kotor terhadap
+                  modal upstream 9router.
                 </CardDescription>
               </div>
 
               <div className="flex items-center gap-2">
                 <div className="relative w-48 sm:w-60">
-                  <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+                  <Search className="absolute top-2.5 left-2.5 h-3.5 w-3.5 text-muted-foreground" />
                   <Input
                     placeholder="Cari model..."
                     value={modelSearch}
                     onChange={(e) => setModelSearch(e.target.value)}
-                    className="pl-8 text-xs h-8"
+                    className="h-8 pl-8 text-xs"
                   />
                 </div>
                 <Button
                   size="sm"
                   onClick={() => setIsAddModalOpen(true)}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-8"
+                  className="h-8 bg-indigo-600 text-xs text-white hover:bg-indigo-700"
                 >
-                  <Plus className="h-3.5 w-3.5 mr-1" />
+                  <Plus className="mr-1 h-3.5 w-3.5" />
                   Tambah Model
                 </Button>
               </div>
@@ -765,18 +805,31 @@ export function AiRelayAdminClientView({
                   <TableRow>
                     <TableHead className="text-xs">Model ID</TableHead>
                     <TableHead className="text-xs">Nama Display</TableHead>
-                    <TableHead className="text-xs text-right">Harga Input / 1M</TableHead>
-                    <TableHead className="text-xs text-right">Harga Output / 1M</TableHead>
-                    <TableHead className="text-xs text-right">Estimasi Modal</TableHead>
-                    <TableHead className="text-xs text-center">Gross Margin</TableHead>
-                    <TableHead className="text-xs text-center">Status</TableHead>
-                    <TableHead className="text-xs text-right">Aksi</TableHead>
+                    <TableHead className="text-right text-xs">
+                      Harga Input / 1M
+                    </TableHead>
+                    <TableHead className="text-right text-xs">
+                      Harga Output / 1M
+                    </TableHead>
+                    <TableHead className="text-right text-xs">
+                      Estimasi Modal
+                    </TableHead>
+                    <TableHead className="text-center text-xs">
+                      Gross Margin
+                    </TableHead>
+                    <TableHead className="text-center text-xs">
+                      Status
+                    </TableHead>
+                    <TableHead className="text-right text-xs">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredPricing.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-6 text-muted-foreground text-xs">
+                      <TableCell
+                        colSpan={8}
+                        className="py-6 text-center text-xs text-muted-foreground"
+                      >
                         Tidak ada model yang sesuai dengan pencarian.
                       </TableCell>
                     </TableRow>
@@ -791,13 +844,13 @@ export function AiRelayAdminClientView({
                           <TableCell className="text-xs font-medium text-slate-700">
                             {item.display_name}
                           </TableCell>
-                          <TableCell className="text-xs font-mono text-right text-slate-900">
+                          <TableCell className="text-right font-mono text-xs text-slate-900">
                             {formatCurrency(item.input_price_per_m)}
                           </TableCell>
-                          <TableCell className="text-xs font-mono text-right text-slate-900">
+                          <TableCell className="text-right font-mono text-xs text-slate-900">
                             {formatCurrency(item.output_price_per_m)}
                           </TableCell>
-                          <TableCell className="text-xs font-mono text-right text-slate-500 text-[11px]">
+                          <TableCell className="text-right font-mono text-xs text-[11px] text-slate-500">
                             {item.upstream_input_cost_per_m
                               ? `${formatCurrency(item.upstream_input_cost_per_m)} / ${formatCurrency(item.upstream_output_cost_per_m || 0)}`
                               : "-"}
@@ -805,15 +858,17 @@ export function AiRelayAdminClientView({
                           <TableCell className="text-center">
                             <Badge
                               variant="outline"
-                              className={`text-[11px] font-mono ${
+                              className={`font-mono text-[11px] ${
                                 avgMargin >= 30
-                                  ? "bg-emerald-50 text-emerald-700 border-emerald-300"
+                                  ? "border-emerald-300 bg-emerald-50 text-emerald-700"
                                   : avgMargin >= 10
-                                  ? "bg-amber-50 text-amber-700 border-amber-300"
-                                  : "bg-rose-50 text-rose-700 border-rose-300"
+                                    ? "border-amber-300 bg-amber-50 text-amber-700"
+                                    : "border-rose-300 bg-rose-50 text-rose-700"
                               }`}
                             >
-                              {avgMargin > 0 ? `+${avgMargin}%` : `${avgMargin}%`}
+                              {avgMargin > 0
+                                ? `+${avgMargin}%`
+                                : `${avgMargin}%`}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-center">
@@ -847,14 +902,15 @@ export function AiRelayAdminClientView({
         {/* TAB 3: Sinkronisasi 9router */}
         <TabsContent value="sync" className="space-y-4">
           <Card className="shadow-2xs">
-            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3">
+            <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base font-semibold">
                   <Server className="h-4 w-4 text-indigo-600" />
                   <span>Sinkronisasi Katalog dari Upstream 9router</span>
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Deteksi model baru di 9router (`/v1/models`) yang belum terdaftar di database lokal, dan aktifkan dalam 1-klik.
+                  Deteksi model baru di 9router (`/v1/models`) yang belum
+                  terdaftar di database lokal, dan aktifkan dalam 1-klik.
                 </CardDescription>
               </div>
 
@@ -862,21 +918,26 @@ export function AiRelayAdminClientView({
                 onClick={handleSync9router}
                 disabled={isSyncing}
                 size="sm"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-9 shadow-xs"
+                className="h-9 bg-indigo-600 text-xs text-white shadow-xs hover:bg-indigo-700"
               >
                 <RefreshCw
-                  className={`h-3.5 w-3.5 mr-1.5 ${isSyncing ? "animate-spin" : ""}`}
+                  className={`mr-1.5 h-3.5 w-3.5 ${isSyncing ? "animate-spin" : ""}`}
                 />
-                {isSyncing ? "Menghubungi Upstream..." : "Sync dari 9router Sekarang"}
+                {isSyncing
+                  ? "Menghubungi Upstream..."
+                  : "Sync dari 9router Sekarang"}
               </Button>
             </CardHeader>
 
             <CardContent className="space-y-4">
-              <div className="rounded-lg bg-slate-50 border p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div className="flex flex-col justify-between gap-2 rounded-lg border bg-slate-50 p-3 text-xs sm:flex-row sm:items-center">
                 <div>
-                  <span className="font-semibold text-slate-700 block">Upstream Endpoint:</span>
-                  <code className="text-indigo-600 text-[11px]">
-                    {syncResult?.upstreamUrl || "http://localhost:20128/v1/models"}
+                  <span className="block font-semibold text-slate-700">
+                    Upstream Endpoint:
+                  </span>
+                  <code className="text-[11px] text-indigo-600">
+                    {syncResult?.upstreamUrl ||
+                      "http://localhost:20128/v1/models"}
                   </code>
                 </div>
                 {syncResult && (
@@ -884,8 +945,8 @@ export function AiRelayAdminClientView({
                     variant="outline"
                     className={
                       syncResult.success
-                        ? "bg-emerald-50 text-emerald-700 border-emerald-300"
-                        : "bg-rose-50 text-rose-700 border-rose-300"
+                        ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                        : "border-rose-300 bg-rose-50 text-rose-700"
                     }
                   >
                     {syncResult.success ? "Terhubung" : "Gagal Terhubung"}
@@ -896,23 +957,30 @@ export function AiRelayAdminClientView({
               {syncResult && (
                 <div className="space-y-4 pt-2">
                   <div>
-                    <h3 className="text-xs font-semibold text-slate-900 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold tracking-wider text-slate-900 uppercase">
                       <span className="h-2 w-2 rounded-full bg-rose-500"></span>
                       Model Baru Terdeteksi ({syncResult.diff.newModels.length})
                     </h3>
 
                     {syncResult.diff.newModels.length === 0 ? (
-                      <div className="rounded-lg border border-dashed p-4 text-center text-xs text-muted-foreground bg-slate-50/50">
-                        Tidak ada model baru di upstream. Semua model telah tersinkronisasi dengan database lokal.
+                      <div className="rounded-lg border border-dashed bg-slate-50/50 p-4 text-center text-xs text-muted-foreground">
+                        Tidak ada model baru di upstream. Semua model telah
+                        tersinkronisasi dengan database lokal.
                       </div>
                     ) : (
-                      <div className="border rounded-lg overflow-hidden">
+                      <div className="overflow-hidden rounded-lg border">
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead className="text-xs">Model ID</TableHead>
-                              <TableHead className="text-xs">Owner / Provider</TableHead>
-                              <TableHead className="text-xs text-right">Aksi 1-Click</TableHead>
+                              <TableHead className="text-xs">
+                                Model ID
+                              </TableHead>
+                              <TableHead className="text-xs">
+                                Owner / Provider
+                              </TableHead>
+                              <TableHead className="text-right text-xs">
+                                Aksi 1-Click
+                              </TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -929,9 +997,9 @@ export function AiRelayAdminClientView({
                                     size="sm"
                                     onClick={() => handleActivateNewModel(m.id)}
                                     disabled={activatingModelId === m.id}
-                                    className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-7 px-2.5 shadow-2xs"
+                                    className="h-7 bg-emerald-600 px-2.5 text-xs text-white shadow-2xs hover:bg-emerald-700"
                                   >
-                                    <Check className="h-3 w-3 mr-1" />
+                                    <Check className="mr-1 h-3 w-3" />
                                     {activatingModelId === m.id
                                       ? "Mengaktifkan..."
                                       : "1-Click Aktifkan"}
@@ -946,16 +1014,17 @@ export function AiRelayAdminClientView({
                   </div>
 
                   <div>
-                    <h3 className="text-xs font-semibold text-slate-900 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold tracking-wider text-slate-900 uppercase">
                       <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
-                      Model Tersinkronisasi Aktif ({syncResult.diff.syncedModels.length})
+                      Model Tersinkronisasi Aktif (
+                      {syncResult.diff.syncedModels.length})
                     </h3>
                     <div className="flex flex-wrap gap-1.5">
                       {syncResult.diff.syncedModels.map((m) => (
                         <Badge
                           key={m.id}
                           variant="outline"
-                          className="font-mono text-[11px] bg-slate-50 text-slate-700"
+                          className="bg-slate-50 font-mono text-[11px] text-slate-700"
                         >
                           {m.id}
                         </Badge>
@@ -965,16 +1034,17 @@ export function AiRelayAdminClientView({
 
                   {syncResult.diff.missingUpstreamModels.length > 0 && (
                     <div>
-                      <h3 className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                      <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold tracking-wider text-amber-800 uppercase">
                         <span className="h-2 w-2 rounded-full bg-amber-500"></span>
-                        Model Lokal Tidak Ada di Upstream ({syncResult.diff.missingUpstreamModels.length})
+                        Model Lokal Tidak Ada di Upstream (
+                        {syncResult.diff.missingUpstreamModels.length})
                       </h3>
                       <div className="flex flex-wrap gap-1.5">
                         {syncResult.diff.missingUpstreamModels.map((id) => (
                           <Badge
                             key={id}
                             variant="outline"
-                            className="font-mono text-[11px] bg-amber-50 text-amber-800 border-amber-200"
+                            className="border-amber-200 bg-amber-50 font-mono text-[11px] text-amber-800"
                           >
                             {id}
                           </Badge>
@@ -991,14 +1061,15 @@ export function AiRelayAdminClientView({
         {/* TAB 4: Tiket Top-up */}
         <TabsContent value="topup" className="space-y-4">
           <Card className="shadow-2xs">
-            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3">
+            <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base font-semibold">
                   <Clock className="h-4 w-4 text-amber-600" />
                   <span>Antrean Persetujuan Top-up Saldo</span>
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Verifikasi transfer manual QRIS / bank pengguna, cocokkan kode unik 3-digit, dan setujui penambahan saldo secara real-time.
+                  Verifikasi transfer manual QRIS / bank pengguna, cocokkan kode
+                  unik 3-digit, dan setujui penambahan saldo secara real-time.
                 </CardDescription>
               </div>
 
@@ -1006,39 +1077,50 @@ export function AiRelayAdminClientView({
                 variant="outline"
                 size="sm"
                 onClick={refreshFinancialData}
-                className="text-xs h-8"
+                className="h-8 text-xs"
               >
-                <RefreshCw className="h-3.5 w-3.5 mr-1" />
+                <RefreshCw className="mr-1 h-3.5 w-3.5" />
                 Segarkan Antrean
               </Button>
             </CardHeader>
 
             <CardContent>
               {pendingTopups.length === 0 ? (
-                <div className="py-12 text-center space-y-2">
-                  <div className="inline-flex p-3 rounded-full bg-emerald-50 text-emerald-600">
+                <div className="space-y-2 py-12 text-center">
+                  <div className="inline-flex rounded-full bg-emerald-50 p-3 text-emerald-600">
                     <CheckCircle2 className="h-8 w-8" />
                   </div>
                   <h3 className="text-sm font-semibold text-slate-800">
                     Tidak Ada Tiket Top-up Menunggu
                   </h3>
-                  <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                    Seluruh tiket top-up pengguna telah diproses. Tiket baru yang masuk akan muncul secara otomatis di antrean ini.
+                  <p className="mx-auto max-w-sm text-xs text-muted-foreground">
+                    Seluruh tiket top-up pengguna telah diproses. Tiket baru
+                    yang masuk akan muncul secara otomatis di antrean ini.
                   </p>
                 </div>
               ) : (
-                <div className="border rounded-lg overflow-hidden">
+                <div className="overflow-hidden rounded-lg border">
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead className="text-xs">ID Tiket</TableHead>
                         <TableHead className="text-xs">Pengguna</TableHead>
-                        <TableHead className="text-xs text-right">Nominal Pokok</TableHead>
-                        <TableHead className="text-xs text-center">Kode Unik</TableHead>
-                        <TableHead className="text-xs text-right">Wajib Transfer</TableHead>
-                        <TableHead className="text-xs text-center">Bukti</TableHead>
+                        <TableHead className="text-right text-xs">
+                          Nominal Pokok
+                        </TableHead>
+                        <TableHead className="text-center text-xs">
+                          Kode Unik
+                        </TableHead>
+                        <TableHead className="text-right text-xs">
+                          Wajib Transfer
+                        </TableHead>
+                        <TableHead className="text-center text-xs">
+                          Bukti
+                        </TableHead>
                         <TableHead className="text-xs">Waktu</TableHead>
-                        <TableHead className="text-xs text-right">Aksi</TableHead>
+                        <TableHead className="text-right text-xs">
+                          Aksi
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -1048,24 +1130,24 @@ export function AiRelayAdminClientView({
                             #{ticket.id}
                           </TableCell>
                           <TableCell className="text-xs">
-                            <span className="font-semibold text-slate-900 block">
+                            <span className="block font-semibold text-slate-900">
                               {ticket.user_name}
                             </span>
-                            <span className="text-[10px] text-muted-foreground font-mono">
+                            <span className="font-mono text-[10px] text-muted-foreground">
                               {ticket.telegram_id
                                 ? `TG: ${ticket.telegram_id}`
                                 : ticket.web_user_id
-                                ? `Web: ${ticket.web_user_id.slice(0, 10)}...`
-                                : `User #${ticket.user_id}`}
+                                  ? `Web: ${ticket.web_user_id.slice(0, 10)}...`
+                                  : `User #${ticket.user_id}`}
                             </span>
                           </TableCell>
-                          <TableCell className="text-xs font-mono text-right text-slate-900">
+                          <TableCell className="text-right font-mono text-xs text-slate-900">
                             {formatCurrency(ticket.amount)}
                           </TableCell>
-                          <TableCell className="text-xs font-mono text-center font-bold text-amber-700">
+                          <TableCell className="text-center font-mono text-xs font-bold text-amber-700">
                             +{ticket.unique_code}
                           </TableCell>
-                          <TableCell className="text-xs font-mono text-right font-bold text-emerald-700">
+                          <TableCell className="text-right font-mono text-xs font-bold text-emerald-700">
                             {formatCurrency(ticket.total_transfer)}
                           </TableCell>
                           <TableCell className="text-center">
@@ -1074,7 +1156,7 @@ export function AiRelayAdminClientView({
                                 variant="outline"
                                 size="sm"
                                 onClick={() => setViewProofTicket(ticket)}
-                                className="h-6 text-[11px] px-2 text-indigo-600"
+                                className="h-6 px-2 text-[11px] text-indigo-600"
                               >
                                 Lihat Bukti
                               </Button>
@@ -1084,7 +1166,7 @@ export function AiRelayAdminClientView({
                               </span>
                             )}
                           </TableCell>
-                          <TableCell className="text-xs text-muted-foreground text-[11px]">
+                          <TableCell className="text-xs text-[11px] text-muted-foreground">
                             {formatDate(ticket.created_at, {
                               day: "numeric",
                               month: "short",
@@ -1097,7 +1179,7 @@ export function AiRelayAdminClientView({
                               <Button
                                 size="sm"
                                 onClick={() => setApprovingTicket(ticket)}
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-7 px-2.5 shadow-2xs"
+                                className="h-7 bg-emerald-600 px-2.5 text-xs text-white shadow-2xs hover:bg-emerald-700"
                               >
                                 Setujui
                               </Button>
@@ -1105,7 +1187,7 @@ export function AiRelayAdminClientView({
                                 variant="outline"
                                 size="sm"
                                 onClick={() => setRejectingTicket(ticket)}
-                                className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 text-xs h-7 px-2.5"
+                                className="h-7 px-2.5 text-xs text-rose-600 hover:bg-rose-50 hover:text-rose-700"
                               >
                                 Tolak
                               </Button>
@@ -1124,14 +1206,17 @@ export function AiRelayAdminClientView({
         {/* TAB 5: Audit Ledger */}
         <TabsContent value="audit" className="space-y-4">
           <Card className="shadow-2xs">
-            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3">
+            <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base font-semibold">
                   <ShieldCheck className="h-4 w-4 text-emerald-600" />
                   <span>Live Database Invariant Audit Runner</span>
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Eksekusi langsung stored procedure `verify_ledger_invariants()` pada database PostgreSQL `aldera_router` untuk memastikan kepatuhan 5 aturan invarian keuangan & telemetri.
+                  Eksekusi langsung stored procedure
+                  `verify_ledger_invariants()` pada database PostgreSQL
+                  `aldera_router` untuk memastikan kepatuhan 5 aturan invarian
+                  keuangan & telemetri.
                 </CardDescription>
               </div>
 
@@ -1139,25 +1224,38 @@ export function AiRelayAdminClientView({
                 onClick={handleRunAudit}
                 disabled={isAuditing}
                 size="sm"
-                className="bg-slate-900 hover:bg-slate-800 text-white text-xs h-9 shadow-xs"
+                className="h-9 bg-slate-900 text-xs text-white shadow-xs hover:bg-slate-800"
               >
                 <ShieldCheck
-                  className={`h-3.5 w-3.5 mr-1.5 ${isAuditing ? "animate-pulse" : ""}`}
+                  className={`mr-1.5 h-3.5 w-3.5 ${isAuditing ? "animate-pulse" : ""}`}
                 />
-                {isAuditing ? "Menjalankan Prosedur..." : "Jalankan Audit Sekarang"}
+                {isAuditing
+                  ? "Menjalankan Prosedur..."
+                  : "Jalankan Audit Sekarang"}
               </Button>
             </CardHeader>
 
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between text-xs text-muted-foreground pb-2 border-b">
+              <div className="flex items-center justify-between border-b pb-2 text-xs text-muted-foreground">
                 <span>
                   Status Terakhir:{" "}
-                  <strong className={allInvariantsPass ? "text-emerald-700" : "text-rose-600"}>
-                    {allInvariantsPass ? "5 dari 5 Invarian PASS (0 Pelanggaran)" : "Ditemukan Pelanggaran Invarian!"}
+                  <strong
+                    className={
+                      allInvariantsPass ? "text-emerald-700" : "text-rose-600"
+                    }
+                  >
+                    {allInvariantsPass
+                      ? "5 dari 5 Invarian PASS (0 Pelanggaran)"
+                      : "Ditemukan Pelanggaran Invarian!"}
                   </strong>
                 </span>
                 <span>
-                  Terakhir diaudit: {formatDate(lastAuditedAt, { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                  Terakhir diaudit:{" "}
+                  {formatDate(lastAuditedAt, {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  })}
                 </span>
               </div>
 
@@ -1165,10 +1263,10 @@ export function AiRelayAdminClientView({
                 {auditResults.map((inv, idx) => (
                   <div
                     key={inv.check_name}
-                    className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
+                    className={`flex flex-col justify-between gap-3 rounded-xl border p-4 transition-colors sm:flex-row sm:items-center ${
                       inv.status === "PASS"
-                        ? "bg-emerald-50/30 border-emerald-200"
-                        : "bg-rose-50/30 border-rose-200"
+                        ? "border-emerald-200 bg-emerald-50/30"
+                        : "border-rose-200 bg-rose-50/30"
                     }`}
                   >
                     <div className="space-y-1">
@@ -1187,16 +1285,17 @@ export function AiRelayAdminClientView({
                         </Badge>
                       </div>
                       <p className="text-xs text-slate-600">
-                        {inv.details || "Pengecekan integritas invarian pada database."}
+                        {inv.details ||
+                          "Pengecekan integritas invarian pada database."}
                       </p>
                     </div>
 
-                    <div className="text-right sm:text-right shrink-0">
-                      <span className="text-[10px] uppercase tracking-wider text-slate-400 block font-semibold">
+                    <div className="shrink-0 text-right sm:text-right">
+                      <span className="block text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
                         Violasi Terdeteksi
                       </span>
                       <span
-                        className={`text-lg font-extrabold font-mono ${
+                        className={`font-mono text-lg font-extrabold ${
                           inv.violation_count === 0
                             ? "text-emerald-600"
                             : "text-rose-600"
@@ -1221,7 +1320,8 @@ export function AiRelayAdminClientView({
               Tambah Model Baru ke Katalog
             </DialogTitle>
             <DialogDescription className="text-xs">
-              Masukkan spesifikasi model dan harga per 1,000,000 token dalam Rupiah.
+              Masukkan spesifikasi model dan harga per 1,000,000 token dalam
+              Rupiah.
             </DialogDescription>
           </DialogHeader>
 
@@ -1293,9 +1393,9 @@ export function AiRelayAdminClientView({
               />
             </div>
 
-            <div className="rounded-lg bg-slate-50 border p-3 flex items-center justify-between">
+            <div className="flex items-center justify-between rounded-lg border bg-slate-50 p-3">
               <div>
-                <span className="text-[11px] font-semibold text-slate-700 block">
+                <span className="block text-[11px] font-semibold text-slate-700">
                   Estimasi Gross Margin:
                 </span>
                 <span className="text-[10px] text-muted-foreground">
@@ -1304,12 +1404,16 @@ export function AiRelayAdminClientView({
               </div>
               <Badge
                 className={`font-mono text-xs ${
-                  calculateGrossMarginPercentage(newInputPrice, newUpstreamCost) >= 30
+                  calculateGrossMarginPercentage(
+                    newInputPrice,
+                    newUpstreamCost
+                  ) >= 30
                     ? "bg-emerald-600 text-white"
                     : "bg-amber-600 text-white"
                 }`}
               >
-                {calculateGrossMarginPercentage(newInputPrice, newUpstreamCost)}%
+                {calculateGrossMarginPercentage(newInputPrice, newUpstreamCost)}
+                %
               </Badge>
             </div>
           </div>
@@ -1327,7 +1431,7 @@ export function AiRelayAdminClientView({
               size="sm"
               onClick={handleCreateModel}
               disabled={isPending}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs"
+              className="bg-indigo-600 text-xs text-white hover:bg-indigo-700"
             >
               Simpan & Aktifkan
             </Button>
@@ -1362,7 +1466,9 @@ export function AiRelayAdminClientView({
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label className="text-xs font-semibold">Harga Input / 1M</Label>
+                <Label className="text-xs font-semibold">
+                  Harga Input / 1M
+                </Label>
                 <Input
                   type="number"
                   value={editInputPrice}
@@ -1372,7 +1478,9 @@ export function AiRelayAdminClientView({
               </div>
 
               <div className="space-y-1">
-                <Label className="text-xs font-semibold">Harga Output / 1M</Label>
+                <Label className="text-xs font-semibold">
+                  Harga Output / 1M
+                </Label>
                 <Input
                   type="number"
                   value={editOutputPrice}
@@ -1394,12 +1502,12 @@ export function AiRelayAdminClientView({
               />
             </div>
 
-            <div className="rounded-lg bg-slate-50 border p-3 flex items-center justify-between">
+            <div className="flex items-center justify-between rounded-lg border bg-slate-50 p-3">
               <div>
-                <span className="text-[11px] font-semibold text-slate-700 block">
+                <span className="block text-[11px] font-semibold text-slate-700">
                   Gross Margin Input Baru:
                 </span>
-                <span className="text-[10px] text-muted-foreground font-mono">
+                <span className="font-mono text-[10px] text-muted-foreground">
                   Modal upstream: {formatCurrency(editUpstreamCost)}
                 </span>
               </div>
@@ -1435,7 +1543,7 @@ export function AiRelayAdminClientView({
               size="sm"
               onClick={handleSaveEdit}
               disabled={isPending}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs"
+              className="bg-indigo-600 text-xs text-white hover:bg-indigo-700"
             >
               Simpan Perubahan
             </Button>
@@ -1454,13 +1562,14 @@ export function AiRelayAdminClientView({
               Setujui Tiket Top-up #{approvingTicket?.id}
             </DialogTitle>
             <DialogDescription className="text-xs">
-              Konfirmasi persetujuan transfer dana pengguna. Saldo akan otomatis ditambahkan ke akun pengguna secara atomik.
+              Konfirmasi persetujuan transfer dana pengguna. Saldo akan otomatis
+              ditambahkan ke akun pengguna secara atomik.
             </DialogDescription>
           </DialogHeader>
 
           {approvingTicket && (
             <div className="space-y-2 py-2 text-xs">
-              <div className="rounded-lg bg-emerald-50/50 border border-emerald-200 p-3 space-y-2">
+              <div className="space-y-2 rounded-lg border border-emerald-200 bg-emerald-50/50 p-3">
                 <div className="flex justify-between">
                   <span className="text-slate-600">Pengguna:</span>
                   <span className="font-semibold text-slate-900">
@@ -1483,7 +1592,7 @@ export function AiRelayAdminClientView({
                   <span className="font-semibold text-slate-700">
                     Total Transfer Wajib:
                   </span>
-                  <span className="font-mono font-extrabold text-emerald-700 text-sm">
+                  <span className="font-mono text-sm font-extrabold text-emerald-700">
                     {formatCurrency(approvingTicket.total_transfer)}
                   </span>
                 </div>
@@ -1504,7 +1613,7 @@ export function AiRelayAdminClientView({
               size="sm"
               onClick={handleConfirmApprove}
               disabled={isPending}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs"
+              className="bg-emerald-600 text-xs text-white hover:bg-emerald-700"
             >
               Ya, Setujui & Tambah Saldo
             </Button>
@@ -1523,7 +1632,8 @@ export function AiRelayAdminClientView({
               Tolak Tiket Top-up #{rejectingTicket?.id}
             </DialogTitle>
             <DialogDescription className="text-xs">
-              Tiket ini akan ditandai sebagai ditolak (`rejected`) dan saldo tidak akan ditambahkan.
+              Tiket ini akan ditandai sebagai ditolak (`rejected`) dan saldo
+              tidak akan ditambahkan.
             </DialogDescription>
           </DialogHeader>
 
@@ -1554,7 +1664,7 @@ export function AiRelayAdminClientView({
               size="sm"
               onClick={handleConfirmReject}
               disabled={isPending}
-              className="bg-rose-600 hover:bg-rose-700 text-white text-xs"
+              className="bg-rose-600 text-xs text-white hover:bg-rose-700"
             >
               Konfirmasi Tolak
             </Button>
@@ -1579,8 +1689,8 @@ export function AiRelayAdminClientView({
 
           <div className="py-2 text-center">
             {viewProofTicket?.proof_file_id ? (
-              <div className="rounded-lg border p-4 bg-slate-50 flex flex-col items-center gap-3">
-                <div className="relative max-h-72 w-full overflow-hidden rounded-md border bg-white flex items-center justify-center p-2">
+              <div className="flex flex-col items-center gap-3 rounded-lg border bg-slate-50 p-4">
+                <div className="relative flex max-h-72 w-full items-center justify-center overflow-hidden rounded-md border bg-white p-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={
@@ -1590,7 +1700,7 @@ export function AiRelayAdminClientView({
                         : `/api/upload/${viewProofTicket.proof_file_id}`
                     }
                     alt="Bukti Transfer"
-                    className="max-h-64 object-contain rounded"
+                    className="max-h-64 rounded object-contain"
                   />
                 </div>
                 <div className="flex flex-col items-center gap-1.5">
@@ -1606,7 +1716,7 @@ export function AiRelayAdminClientView({
                     }
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-brand-primary hover:underline font-medium inline-flex items-center gap-1"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-brand-primary hover:underline"
                   >
                     Buka Berkas Penuh &rarr;
                   </a>

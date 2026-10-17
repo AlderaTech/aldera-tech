@@ -3,12 +3,7 @@
 // ============================================================================
 
 export type ModelCategory =
-  | "Coding"
-  | "Reasoning"
-  | "Vision"
-  | "Fast"
-  | "Budget"
-  | "All";
+  "Coding" | "Reasoning" | "Vision" | "Fast" | "Budget" | "All";
 
 export interface ModelCatalogItem {
   id: string;
@@ -239,7 +234,10 @@ export function generateUniqueCode(): number {
 /**
  * Calculates total transfer nominal (nominal pokok + kode unik).
  */
-export function calculateTotalTransfer(amount: number, uniqueCode: number): number {
+export function calculateTotalTransfer(
+  amount: number,
+  uniqueCode: number
+): number {
   if (amount <= 0) {
     throw new Error("Amount must be positive");
   }
@@ -271,13 +269,20 @@ export function calculateTokenCost(
 /**
  * Aggregates usage logs into comprehensive analytics (totals, daily series, and per-model breakdown).
  */
-export function aggregateUsageLogs(logs: UsageLogRecord[]): UsageAnalyticsSummary {
+export function aggregateUsageLogs(
+  logs: UsageLogRecord[]
+): UsageAnalyticsSummary {
   let promptSum = 0;
   let compSum = 0;
   let costSum = 0;
   const dailyMap: Record<
     string,
-    { promptTokens: number; completionTokens: number; totalTokens: number; costIdr: number }
+    {
+      promptTokens: number;
+      completionTokens: number;
+      totalTokens: number;
+      costIdr: number;
+    }
   > = {};
   const breakdown: Record<
     string,
@@ -522,7 +527,10 @@ export interface BindingTokenRecord {
 }
 
 export function generateBindingToken(): string {
-  if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.getRandomValues === "function"
+  ) {
     const bytes = new Uint8Array(32);
     crypto.getRandomValues(bytes);
     return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
@@ -562,7 +570,10 @@ export function verifyBindingToken(
     return { valid: false, error: "Binding token has expired (15m limit)" };
   }
   if (record.token !== tokenOrCode && record.code !== tokenOrCode) {
-    return { valid: false, error: "Invalid binding token or verification code" };
+    return {
+      valid: false,
+      error: "Invalid binding token or verification code",
+    };
   }
   return { valid: true };
 }
@@ -685,7 +696,10 @@ export const UPSTREAM_BASELINE_COSTS: Record<
 > = {
   "gpt-4o": { inputCostPerM: 30000, outputCostPerM: 120000 },
   "gpt-4o-mini": { inputCostPerM: 1500, outputCostPerM: 6000 },
-  "claude-3-5-sonnet-20241022": { inputCostPerM: 36000, outputCostPerM: 180000 },
+  "claude-3-5-sonnet-20241022": {
+    inputCostPerM: 36000,
+    outputCostPerM: 180000,
+  },
   "claude-3-5-haiku-20241022": { inputCostPerM: 10000, outputCostPerM: 50000 },
   "deepseek-chat": { inputCostPerM: 1000, outputCostPerM: 2000 },
   "deepseek-reasoner": { inputCostPerM: 5000, outputCostPerM: 20000 },
@@ -703,7 +717,8 @@ export function calculateGrossMarginPercentage(
     if (upstreamCostPerM <= 0) return 0;
     return -100;
   }
-  const margin = ((sellingPricePerM - upstreamCostPerM) / sellingPricePerM) * 100;
+  const margin =
+    ((sellingPricePerM - upstreamCostPerM) / sellingPricePerM) * 100;
   return Number(margin.toFixed(2));
 }
 
@@ -733,7 +748,9 @@ export function diffModelsWithUpstream(
 
   const newModels = upstreamModels.filter((m) => !localSet.has(m.id));
   const syncedModels = upstreamModels.filter((m) => localSet.has(m.id));
-  const missingUpstreamModels = localModelIds.filter((id) => !upstreamSet.has(id));
+  const missingUpstreamModels = localModelIds.filter(
+    (id) => !upstreamSet.has(id)
+  );
 
   return {
     newModels,
@@ -793,4 +810,3 @@ export function calculateFinancialMetrics(
     netMargin,
   };
 }
-

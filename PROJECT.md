@@ -27,7 +27,7 @@ Aldera Tech is a high-performance digital product and software engineering consu
 | 9   | `R2-DASHBOARD-CLEAN`      | Eliminate breadcrumbs across all `/dashboard/*` and `/admin/*` pages                       | M2        | ORIGINAL_REQUEST §R2       |
 | 10  | `R2-NO-EMOJI-NO-AI`       | Purge all emojis (replace with Lucide) and eliminate generic AI robot gimmicks             | M2        | ORIGINAL_REQUEST §R2       |
 | 11  | `R2-ASSET-MIGRATION`      | Purge `public/generated/solvo-tech/`, generate optimized WebP in `public/images/`          | M2        | ORIGINAL_REQUEST §R2, R5.4 |
-| 12  | `R2-DESIGN-DOCS`          | Sync design system guidelines into `docs/brand-context.md`                                 | M2        | ORIGINAL_REQUEST §R2       |
+| 12  | `R2-DESIGN-DOCS`          | Sync design system guidelines into `ai-agent-docs/brand-context.md`                        | M2        | ORIGINAL_REQUEST §R2       |
 | 13  | `R6.1-PRICING-SSOT`       | Delete `pricing-settings-tab.tsx`; centralize pricing to `/admin/calculator`               | M3        | ORIGINAL_REQUEST §R6.1     |
 | 14  | `R6.2-USERS-TEAM-MERGE`   | Merge `/admin/team` workload cards into `/admin/users` tabs; delete `/admin/team`          | M3        | ORIGINAL_REQUEST §R6.2     |
 | 15  | `R6.3-STOPWATCH-REMOVAL`  | Delete `timer-bar.tsx` & `use-time-tracker.ts`; preserve pure manual timesheet logging     | M3        | ORIGINAL_REQUEST §R6.3     |
@@ -110,7 +110,7 @@ export async function verifyTurnstileToken(
 - `package.json`, `bun.lock`: Owned by Milestone 1.
 - `docker/Dockerfile`, `docker/entrypoint.sh`, `.github/workflows/build-and-deploy.yml`: Owned by Milestone 1.
 - `proxy.ts` (deleted) -> `middleware.ts`: Owned by Milestone 1.
-- `app/globals.css`, `docs/brand-context.md`: Owned by Milestone 2.
+- `app/globals.css`, `ai-agent-docs/brand-context.md`: Owned by Milestone 2.
 - `app/(public)/_components/home/*`, `app/(public)/page.tsx`: Owned by Milestone 2.
 - `app/(auth)/*`: Owned by Milestone 2.
 - `components/dashboard/dashboard-header.tsx`: Owned by Milestone 2.

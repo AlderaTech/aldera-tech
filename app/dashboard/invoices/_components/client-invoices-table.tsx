@@ -113,7 +113,7 @@ export function ClientInvoicesTable({
                             }
                             className={
                               inv.status !== "PENDING_VERIFICATION"
-                                ? "bg-brand-primary hover:bg-brand-primary-hover h-8 gap-1.5 text-xs text-white"
+                                ? "h-8 gap-1.5 bg-brand-primary text-xs text-white hover:bg-brand-primary-hover"
                                 : "h-8 gap-1.5 text-xs"
                             }
                             onClick={() => handleOpenUpload(inv)}

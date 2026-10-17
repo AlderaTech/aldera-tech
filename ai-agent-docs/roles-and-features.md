@@ -251,7 +251,7 @@ permissions_registry:
 ## 3. Matriks Rute & Otorisasi (Route Authorization Matrix)
 
 > [!IMPORTANT]
-> Dalam kode program, **dilarang menulis rute URL secara langsung (_hardcoded string_)**. Seluruh rute dan endpoint sistem didaftarkan secara terpusat pada [`lib/routes.ts`](../lib/routes.ts). Silakan merujuk ke [`docs/routes-and-navigation.md`](routes-and-navigation.md) untuk panduan implementasi.
+> Dalam kode program, **dilarang menulis rute URL secara langsung (_hardcoded string_)**. Seluruh rute dan endpoint sistem didaftarkan secara terpusat pada [`lib/routes.ts`](../lib/routes.ts). Silakan merujuk ke [`ai-agent-docs/routes-and-navigation.md`](routes-and-navigation.md) untuk panduan implementasi.
 
 Pemetaan pola URL ke peran dan izin yang disyaratkan:
 
@@ -266,7 +266,7 @@ Pemetaan pola URL ke peran dan izin yang disyaratkan:
 | `/login`, `/register`                         | `GUEST` (redirect jika login)           | `-`                              | Autentikasi sesi dan pembuatan akun klien baru.                                           |
 | `/forgot-password`, `/reset-password`         | `GUEST`                                 | Token Reset                      | Pemulihan akses kata sandi via WhatsApp API (Fonnte).                                     |
 | `/dashboard`                                  | `CLIENT`                                | `-`                              | Overview portal klien, KPI proyek aktif, tagihan unpaid.                                  |
-| `/dashboard/calculator`                       | `CLIENT`, `ADMIN`                       | `-`                              | Kalkulator estimasi proyek terintegrasi di dalam tata letak dashboard portal klien.        |
+| `/dashboard/calculator`                       | `CLIENT`, `ADMIN`                       | `-`                              | Kalkulator estimasi proyek terintegrasi di dalam tata letak dashboard portal klien.       |
 | `/dashboard/orders`                           | `CLIENT`                                | `-`                              | Riwayat status order request (`PENDING`, `REVIEWED`, `CONVERTED`).                        |
 | `/dashboard/projects`                         | `CLIENT`                                | `-`                              | Daftar proyek pribadi klien dan ringkasan progres.                                        |
 | `/dashboard/projects/[id]`                    | `CLIENT` (Khusus Pemilik Proyek)        | `-`                              | Timeline milestone, persetujuan milestone, Kanban, diskusi, files, invoice.               |

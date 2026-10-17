@@ -28,14 +28,27 @@ export type CalculationItem = {
 export type OrderCalculationParams = {
   basePrice?: number;
   projectTypeId?: string;
-  dependentFields?: Array<{ value: number; pricePerUnit: number; label?: string }>;
+  dependentFields?: Array<{
+    value: number;
+    pricePerUnit: number;
+    label?: string;
+  }>;
   featurePrices?: number[];
   selectedFeatureIds?: string[];
   features?: Array<{ id?: string; name?: string; price: number }>;
   customFeatureCount?: number;
   customFeaturePrice?: number;
-  customFeatures?: Array<{ name: string; description?: string; price?: number }>;
-  addOns?: Array<{ id?: string; name?: string; pricePerMonth: number; months: number }>;
+  customFeatures?: Array<{
+    name: string;
+    description?: string;
+    price?: number;
+  }>;
+  addOns?: Array<{
+    id?: string;
+    name?: string;
+    pricePerMonth: number;
+    months: number;
+  }>;
   selectedAddOnIds?: string[] | Record<string, number>;
   urgency?: "normal" | "urgent" | string;
   urgencyMultiplier?: number;
@@ -137,7 +150,9 @@ export function calculateOrderBreakdown(
       if (amount > 0) {
         dependentFieldsTotal += amount;
         dependentItems.push({
-          label: df.label ? `${df.label} (${val} unit)` : `Biaya Skala Proyek (${val} unit)`,
+          label: df.label
+            ? `${df.label} (${val} unit)`
+            : `Biaya Skala Proyek (${val} unit)`,
           amount,
           type: "dependent_field",
           category: "dependent_field",
@@ -182,12 +197,17 @@ export function calculateOrderBreakdown(
   let customFeaturesTotal = 0;
   const customItems: CalculationItem[] = [];
   let customCount = 0;
-  const customUnitPrice = Math.max(0, Number(params.customFeaturePrice ?? 500000));
+  const customUnitPrice = Math.max(
+    0,
+    Number(params.customFeaturePrice ?? 500000)
+  );
 
   if (params.customFeatures && Array.isArray(params.customFeatures)) {
     customCount = params.customFeatures.length;
     for (const cf of params.customFeatures) {
-      const itemPrice = cf.price ? Math.max(0, Number(cf.price)) : customUnitPrice;
+      const itemPrice = cf.price
+        ? Math.max(0, Number(cf.price))
+        : customUnitPrice;
       customFeaturesTotal += itemPrice;
       customItems.push({
         label: `Kustom: ${cf.name}`,
@@ -222,7 +242,9 @@ export function calculateOrderBreakdown(
         const cost = monthlyPrice * months;
         addOnsTotal += cost;
         addOnItems.push({
-          label: addOn.name ? `${addOn.name} (${months} bulan)` : `Add-on (${months} bulan)`,
+          label: addOn.name
+            ? `${addOn.name} (${months} bulan)`
+            : `Add-on (${months} bulan)`,
           amount: cost,
           type: "addon",
           category: "addon",
@@ -264,13 +286,18 @@ export function calculateOrderBreakdown(
     rawPct = rawPct * 100;
   }
   const discountPercentage = rawPct;
-  const discountFromPercentage = Math.round(grossTotal * (discountPercentage / 100));
+  const discountFromPercentage = Math.round(
+    grossTotal * (discountPercentage / 100)
+  );
 
   const rawFixedDiscount = Math.max(0, Number(params.discountAmount || 0));
   const discountAmount = isNaN(rawFixedDiscount) ? 0 : rawFixedDiscount;
 
   // Total discount cannot exceed gross total (never negative total)
-  const discountTotal = Math.min(grossTotal, discountFromPercentage + discountAmount);
+  const discountTotal = Math.min(
+    grossTotal,
+    discountFromPercentage + discountAmount
+  );
   const finalTotal = Math.max(0, grossTotal - discountTotal);
 
   // 7. Assemble comprehensive itemized list
@@ -303,11 +330,12 @@ export function calculateOrderBreakdown(
       amount: -discountTotal,
       type: "discount",
       category: "discount",
-      details: discountPercentage > 0 && discountAmount > 0
-        ? `Diskon ${discountPercentage}% + potongan Rp ${discountAmount.toLocaleString("id-ID")}`
-        : discountPercentage > 0
-          ? `Diskon ${discountPercentage}%`
-          : `Potongan langsung Rp ${discountAmount.toLocaleString("id-ID")}`,
+      details:
+        discountPercentage > 0 && discountAmount > 0
+          ? `Diskon ${discountPercentage}% + potongan Rp ${discountAmount.toLocaleString("id-ID")}`
+          : discountPercentage > 0
+            ? `Diskon ${discountPercentage}%`
+            : `Potongan langsung Rp ${discountAmount.toLocaleString("id-ID")}`,
     });
   }
 
@@ -363,41 +391,47 @@ export const getCalculatorData = cache(async (): Promise<CalculatorData> => {
           }),
         ]);
 
-      const formattedProjectTypes: CalculatorProjectType[] = projectTypes.map((pt) => ({
-        id: pt.id,
-        name: pt.name,
-        slug: pt.slug,
-        description: pt.description,
-        basePrice: Number(pt.basePrice),
-        icon: pt.icon,
-        dependentFields: pt.dependentFields,
-        order: pt.order,
-        active: pt.active,
-      }));
+      const formattedProjectTypes: CalculatorProjectType[] = projectTypes.map(
+        (pt) => ({
+          id: pt.id,
+          name: pt.name,
+          slug: pt.slug,
+          description: pt.description,
+          basePrice: Number(pt.basePrice),
+          icon: pt.icon,
+          dependentFields: pt.dependentFields,
+          order: pt.order,
+          active: pt.active,
+        })
+      );
 
-      const formattedFeatures: CalculatorFeatureOption[] = featureOptions.map((f) => ({
-        id: f.id,
-        name: f.name,
-        description: f.description,
-        price: Number(f.price),
-        isMajor: f.isMajor,
-        disclaimer: f.disclaimer,
-        order: f.order,
-        active: f.active,
-        projectTypeId: f.projectTypeId,
-      }));
+      const formattedFeatures: CalculatorFeatureOption[] = featureOptions.map(
+        (f) => ({
+          id: f.id,
+          name: f.name,
+          description: f.description,
+          price: Number(f.price),
+          isMajor: f.isMajor,
+          disclaimer: f.disclaimer,
+          order: f.order,
+          active: f.active,
+          projectTypeId: f.projectTypeId,
+        })
+      );
 
-      const formattedAddOns: CalculatorAddOnOption[] = addOnOptions.map((a) => ({
-        id: a.id,
-        name: a.name,
-        description: a.description,
-        pricePerMonth: Number(a.pricePerMonth),
-        minMonths: a.minMonths,
-        maxMonths: a.maxMonths,
-        order: a.order,
-        active: a.active,
-        projectTypeId: a.projectTypeId,
-      }));
+      const formattedAddOns: CalculatorAddOnOption[] = addOnOptions.map(
+        (a) => ({
+          id: a.id,
+          name: a.name,
+          description: a.description,
+          pricePerMonth: Number(a.pricePerMonth),
+          minMonths: a.minMonths,
+          maxMonths: a.maxMonths,
+          order: a.order,
+          active: a.active,
+          projectTypeId: a.projectTypeId,
+        })
+      );
 
       const formattedConfig: CalculatorConfigData | null = calculatorConfig
         ? {
