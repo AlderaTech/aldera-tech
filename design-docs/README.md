@@ -15,27 +15,29 @@ Direktori ini dipisahkan dari [`ai-agent-docs/`](../ai-agent-docs/README.md) aga
 
 ## 2. Daftar Dokumen Perancangan Halaman Antarmuka (UI Specifications)
 
-| Dokumen                                  | Deskripsi Halaman                                                                |
-| :--------------------------------------- | :------------------------------------------------------------------------------- |
-| [**`about-ui.md`**](about-ui.md)         | Konsep visual, layout cerita, nilai, dan maskot pada halaman Tentang (`/about`). |
-| [**`ai-relay-ui.md`**](ai-relay-ui.md)   | Konsep presentasional showcase halaman pemasaran AI Relay (`/ai-relay`).         |
-| [**`blog-ui.md`**](blog-ui.md)           | Konsep layout editorial dan tipografi halaman Blog publik (`/blog`).             |
-| [**`contact-ui.md`**](contact-ui.md)     | Konsep visual hero dan penempatan maskot halaman Kontak (`/contact`).            |
-| [**`portfolio-ui.md`**](portfolio-ui.md) | Konsep layout grid portofolio dan studi kasus (`/portfolio`).                    |
-| [**`pricing-ui.md`**](pricing-ui.md)     | Konsep visual kartu paket harga dan wizard kalkulator (`/pricing`).              |
+| Dokumen                                                    | Deskripsi Halaman                                                                |
+| :--------------------------------------------------------- | :------------------------------------------------------------------------------- |
+| [**`about-ui.md`**](about-ui.md)                           | Konsep visual, layout cerita, nilai, dan maskot pada halaman Tentang (`/about`). |
+| [**`ai-relay-ui.md`**](ai-relay-ui.md)                     | Konsep presentasional showcase halaman pemasaran AI Relay (`/ai-relay`).         |
+| [**`blog-ui.md`**](blog-ui.md)                             | Konsep layout editorial dan tipografi halaman Blog publik (`/blog`).             |
+| [**`contact-ui.md`**](contact-ui.md)                       | Konsep visual hero dan penempatan maskot halaman Kontak (`/contact`).            |
+| [**`dashboard-ai-relay-ui.md`**](dashboard-ai-relay-ui.md) | Implementasi visual dashboard AI Gateway / Relay (`/dashboard/ai-relay`).        |
+| [**`portfolio-ui.md`**](portfolio-ui.md)                   | Konsep layout grid portofolio dan studi kasus (`/portfolio`).                    |
+| [**`pricing-ui.md`**](pricing-ui.md)                       | Konsep visual kartu paket harga dan wizard kalkulator (`/pricing`).              |
 
 ---
 
 ## 3. Daftar Dokumen & Log Prompt Generasi Aset (3D Artwork & Mascots)
 
-| Dokumen                                                    | Deskripsi Aset & Prompt                                                            |
-| :--------------------------------------------------------- | :--------------------------------------------------------------------------------- |
-| [**`medikare-artwork.md`**](medikare-artwork.md)           | Prompt generasi aset ilustrasi studi kasus rumah sakit Medikare.                   |
-| [**`service-cards-artwork.md`**](service-cards-artwork.md) | Prompt generasi 6 ilustrasi kartu layanan (AI, Cloud, Commerce, dll.).             |
-| [**`service-page-artwork.md`**](service-page-artwork.md)   | Prompt generasi aset visual hero dan section detail layanan.                       |
-| [**`services-artwork.md`**](services-artwork.md)           | Prompt ilustrasi suite solusi layanan digital.                                     |
-| [**`services-mascot.md`**](services-mascot.md)             | Prompt pose maskot kucing untuk halaman Layanan.                                   |
-| [**`story-artwork.md`**](story-artwork.md)                 | Prompt ilustrasi workflow cerita transparansi radikal pada halaman Tentang.        |
-| [**`technology-artwork.md`**](technology-artwork.md)       | Prompt ilustrasi 3D 6 kategori teknologi (Web, Mobile, Backend, Cloud, UI/UX, AI). |
-| [**`values-artwork.md`**](values-artwork.md)               | Prompt ilustrasi patung modular 4 fondasi nilai perusahaan.                        |
-| [**`vision-mascot.md`**](vision-mascot.md)                 | Prompt pose maskot kucing visioner untuk panel Visi & Misi.                        |
+| Dokumen                                                              | Deskripsi Aset & Prompt                                                            |
+| :------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| [**`medikare-artwork.md`**](medikare-artwork.md)                     | Prompt generasi aset ilustrasi studi kasus rumah sakit Medikare.                   |
+| [**`dashboard-ai-relay-mascots.md`**](dashboard-ai-relay-mascots.md) | Lokasi, spesifikasi, dan prompt mini maskot dashboard AI Relay.                    |
+| [**`service-cards-artwork.md`**](service-cards-artwork.md)           | Prompt generasi 6 ilustrasi kartu layanan (AI, Cloud, Commerce, dll.).             |
+| [**`service-page-artwork.md`**](service-page-artwork.md)             | Prompt generasi aset visual hero dan section detail layanan.                       |
+| [**`services-artwork.md`**](services-artwork.md)                     | Prompt ilustrasi suite solusi layanan digital.                                     |
+| [**`services-mascot.md`**](services-mascot.md)                       | Prompt pose maskot kucing untuk halaman Layanan.                                   |
+| [**`story-artwork.md`**](story-artwork.md)                           | Prompt ilustrasi workflow cerita transparansi radikal pada halaman Tentang.        |
+| [**`technology-artwork.md`**](technology-artwork.md)                 | Prompt ilustrasi 3D 6 kategori teknologi (Web, Mobile, Backend, Cloud, UI/UX, AI). |
+| [**`values-artwork.md`**](values-artwork.md)                         | Prompt ilustrasi patung modular 4 fondasi nilai perusahaan.                        |
+| [**`vision-mascot.md`**](vision-mascot.md)                           | Prompt pose maskot kucing visioner untuk panel Visi & Misi.                        |

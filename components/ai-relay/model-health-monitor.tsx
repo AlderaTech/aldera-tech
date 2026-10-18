@@ -28,9 +28,13 @@ import { type ModelHealthStatus } from "@/lib/actions/ai-relay";
 
 interface ModelHealthMonitorProps {
   healthMetrics: ModelHealthStatus[];
+  dashboard?: boolean;
 }
 
-export function ModelHealthMonitor({ healthMetrics }: ModelHealthMonitorProps) {
+export function ModelHealthMonitor({
+  healthMetrics,
+  dashboard = false,
+}: ModelHealthMonitorProps) {
   // Aggregate system-wide stats
   const activeMetrics = healthMetrics.filter((m) => m.totalRequests > 0);
   const avgSystemLatency =
@@ -106,11 +110,19 @@ export function ModelHealthMonitor({ healthMetrics }: ModelHealthMonitorProps) {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-1.5 text-xl font-bold text-emerald-600">
-              <CheckCircle2 className="h-5 w-5" />
-              100% Online
+              {dashboard ? (
+                "Lihat status per model"
+              ) : (
+                <>
+                  <CheckCircle2 className="h-5 w-5" />
+                  100% Online
+                </>
+              )}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              Cluster 9router upstream terhubung
+              {dashboard
+                ? "Ringkasan status pada tabel model di bawah."
+                : "Cluster 9router upstream terhubung"}
             </p>
           </CardContent>
         </Card>
@@ -126,7 +138,11 @@ export function ModelHealthMonitor({ healthMetrics }: ModelHealthMonitorProps) {
           </CardHeader>
           <CardContent>
             <div className="font-mono text-2xl font-bold text-slate-900">
-              {avgSystemLatency > 0 ? `${avgSystemLatency} ms` : "< 800 ms"}
+              {avgSystemLatency > 0
+                ? `${avgSystemLatency} ms`
+                : dashboard
+                  ? "Belum ada data"
+                  : "< 800 ms"}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
               Waktu ke respons pertama (TTFT)
@@ -147,7 +163,9 @@ export function ModelHealthMonitor({ healthMetrics }: ModelHealthMonitorProps) {
             <div className="font-mono text-2xl font-bold text-slate-900">
               {avgSystemThroughput > 0
                 ? `${avgSystemThroughput} t/s`
-                : "~45 t/s"}
+                : dashboard
+                  ? "Belum ada data"
+                  : "~45 t/s"}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
               Token completion per detik
@@ -223,13 +241,17 @@ export function ModelHealthMonitor({ healthMetrics }: ModelHealthMonitorProps) {
                           {item.avgLatencyMs} ms
                         </span>
                       ) : (
-                        <span className="text-slate-400">Normal</span>
+                        <span className="text-slate-400">
+                          {dashboard ? "Belum ada data" : "Normal"}
+                        </span>
                       )}
                     </TableCell>
                     <TableCell className="text-right font-mono text-xs font-medium text-indigo-600">
                       {item.tokensPerSec > 0
                         ? `${item.tokensPerSec} tokens/detik`
-                        : "Optimal"}
+                        : dashboard
+                          ? "Belum ada data"
+                          : "Optimal"}
                     </TableCell>
                     <TableCell className="text-right text-xs text-slate-600">
                       {item.totalRequests.toLocaleString("id-ID")} request

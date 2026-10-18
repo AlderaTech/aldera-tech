@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Code2, Copy, FileCode } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { Check, Code2, Copy, FileCode, Info } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +27,10 @@ import {
   type IdeTarget,
 } from "@/lib/ai-relay-utils";
 
+import { IDE_TARGETS } from "./_data/ide-targets";
+
 interface PresetConfigModalProps {
+  illustration?: ReactNode;
   isOpen: boolean;
   onClose: () => void;
   modelId: string;
@@ -35,45 +38,8 @@ interface PresetConfigModalProps {
   baseUrl?: string;
 }
 
-const IDE_TARGETS: {
-  id: IdeTarget;
-  name: string;
-  fileHint: string;
-  docsUrl: string;
-}[] = [
-  {
-    id: "cursor",
-    name: "Cursor IDE",
-    fileHint: "Cursor Settings > Models > OpenAI API Key & Base URL",
-    docsUrl: "https://cursor.com",
-  },
-  {
-    id: "cline",
-    name: "Cline (VS Code)",
-    fileHint: "cline_mcp_settings.json / Cline Extension Settings",
-    docsUrl: "https://github.com/cline/cline",
-  },
-  {
-    id: "roo",
-    name: "Roo Code",
-    fileHint: "Roo Code Settings > Providers > OpenAI Compatible",
-    docsUrl: "https://github.com/RooVetGit/Roo-Code",
-  },
-  {
-    id: "continue",
-    name: "Continue.dev",
-    fileHint: "~/.continue/config.json",
-    docsUrl: "https://continue.dev",
-  },
-  {
-    id: "openwebui",
-    name: "OpenWebUI",
-    fileHint: "docker-compose.yml / Admin Panel > Settings > Connections",
-    docsUrl: "https://openwebui.com",
-  },
-];
-
 export function PresetConfigModal({
+  illustration,
   isOpen,
   onClose,
   modelId,
@@ -119,7 +85,8 @@ export function PresetConfigModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-xl">
-        <DialogHeader>
+        <DialogHeader data-relay-ide-header>
+          {illustration && <span data-relay-ide-mascot>{illustration}</span>}
           <DialogTitle className="flex items-center gap-2 text-lg">
             <Code2 className="h-5 w-5 text-indigo-600" />
             Gunakan Model di IDE ({modelId})
@@ -133,7 +100,10 @@ export function PresetConfigModal({
         <div className="space-y-4 py-2">
           {/* Key Selection */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-slate-700">
+            <Label
+              htmlFor="relay-ide-key"
+              className="text-xs font-semibold text-slate-700"
+            >
               Pilih API Key untuk Konfigurasi:
             </Label>
             {activeApiKeys.filter((k) => k.is_active).length > 0 ? (
@@ -144,7 +114,7 @@ export function PresetConfigModal({
                   setCustomKey("");
                 }}
               >
-                <SelectTrigger className="h-9 text-xs">
+                <SelectTrigger id="relay-ide-key" className="h-9 text-xs">
                   <SelectValue placeholder="Pilih API Key Aktif" />
                 </SelectTrigger>
                 <SelectContent>
@@ -166,6 +136,7 @@ export function PresetConfigModal({
               </Select>
             ) : (
               <Input
+                id="relay-ide-key"
                 placeholder="Masukkan API Key Anda (sk-toko-...)"
                 value={customKey}
                 onChange={(e) => setCustomKey(e.target.value)}
@@ -230,7 +201,8 @@ export function PresetConfigModal({
           {/* Notice info */}
           <div className="space-y-1 rounded-lg border bg-slate-50 p-3 text-[11px] text-slate-600">
             <p>
-              💡 <strong>Catatan:</strong> Jika Anda menyalin kunci bertanda{" "}
+              <Info className="mr-1 inline size-3.5" aria-hidden="true" />{" "}
+              <strong>Catatan:</strong> Jika Anda menyalin kunci bertanda{" "}
               <code className="font-mono text-slate-800">••••</code>, ganti
               dengan API Key lengkap 56-karakter yang Anda simpan saat pembuatan
               kunci.
