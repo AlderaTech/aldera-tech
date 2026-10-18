@@ -384,24 +384,30 @@ Setiap modifikasi kode (fitur baru, perbaikan bug, atau refactoring) wajib diver
 
 ---
 
-## 17. Disiplin Git Branching & Squash Merge (No Direct Commit to Main)
+## 17. Disiplin Git Branching Model: `main` <- `staging` <- `feat/*`, `fix/*` (Dilarang Commit/PR Langsung ke Main)
 
 ### Prinsip
 
-Branch `main` adalah representasi cabang produksi yang stabil dan suci. Dilarang keras melakukan commit langsung ke branch `main`.
+Repositori menerapkan model percabangan 3-tingkat: `main` (Production) $\leftarrow$ `staging` (Staging) $\leftarrow$ `feat/*`, `fix/*`. Branch `main` dan `staging` diproteksi. Dilarang keras melakukan commit langsung ke `main` maupun `staging`.
 
 ### Aturan Operasional
 
-1. **Wajib Buat Branch Baru**: Setiap penanganan issue/task harus dimulai dengan membuat branch baru dari `main` terkini:
+1. **Wajib Buat Branch Baru dari `origin/staging`**: Setiap penanganan issue/task harus dimulai dengan mencabangkan branch baru dari `origin/staging`:
+   ```bash
+   git fetch origin
+   git checkout -b feat/<fitur-singkat> origin/staging
+   ```
+   Prefix penamaan:
    - `feat/<fitur-singkat>` untuk fitur baru
    - `fix/<deskripsi-bug>` untuk perbaikan bug
    - `refactor/<komponen>` untuk refactoring kode
    - `docs/<topik>` untuk dokumentasi
    - `chore/<tugas>` untuk dependensi dan konfigurasi
 2. **Commit Terstruktur pada Branch**: Lakukan commit pada branch kerja menggunakan format Conventional Commits (`feat: ...`, `fix: ...`).
-3. **Pull Request & Squash and Merge**:
-   - Ajukan Pull Request (PR) dari branch kerja menuju `main`.
-   - Penggabungan ke branch `main` **WAJIB menggunakan strategi Squash and Merge** untuk memadatkan riwayat pengerjaan menjadi satu commit bersih dan informatif di `main`.
+3. **Pull Request & Squash and Merge ke `staging`**:
+   - Ajukan Pull Request (PR) dari branch kerja menuju branch **`staging`** (`base: staging`, `compare: feat/...`).
+   - Penggabungan ke branch `staging` **WAJIB menggunakan strategi Squash and Merge**. Merge ke `staging` memicu otomatisasi CI/CD deploy ke VPS Staging (`staging.aldera.tech`).
+   - Penggabungan dari `staging` ke `main` hanya dilakukan melalui Release PR terverifikasi setelah lulus pengujian di staging. Dilarang PR langsung dari branch fitur ke `main`.
 
 ---
 
@@ -430,7 +436,7 @@ Seluruh komponen visual, formulir interaktif, dialog modal, dan halaman rute Nex
 
 Sebelum menyelesaikan task pembuatan/modifikasi fitur, pastikan:
 
-- [ ] Bekerja pada branch kerja terpisah (`feat/...`, `fix/...`), BUKAN langsung di branch `main`.
+- [ ] Bekerja pada branch kerja terpisah (`feat/...`, `fix/...`) yang dicabangkan dari `origin/staging`, BUKAN langsung di branch `main` atau `staging`, dan PR ditargetkan ke `staging`.
 - [ ] Telah mencari file test terkait (`find . -name "*.test.*"` atau grep).
 - [ ] Memperbarui skenario test yang ada atau menambahkan test baru untuk setiap perubahan logika/bugfix.
 - [ ] Setiap komponen UI, form, modal, atau halaman rute memiliki file pengujian UI (`*.test.tsx` / `*.test.ts`) yang lolos 100% (`bun test`).
