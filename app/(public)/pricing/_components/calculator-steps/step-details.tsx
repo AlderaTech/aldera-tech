@@ -14,6 +14,7 @@ type StepDetailsProps = {
   onDepValueChange: (label: string, value: number) => void;
   onBack: () => void;
   onNext: () => void;
+  dashboard?: boolean;
 };
 
 export function StepDetails({
@@ -23,6 +24,7 @@ export function StepDetails({
   onDepValueChange,
   onBack,
   onNext,
+  dashboard = false,
 }: StepDetailsProps) {
   const isInvalid =
     depFields.length > 0 &&
@@ -49,7 +51,11 @@ export function StepDetails({
       ) : (
         <div className="space-y-4">
           {depFields.map((field) => (
-            <div key={field.label} className="space-y-1.5">
+            <div
+              key={field.label}
+              className="space-y-1.5"
+              data-scale-field={dashboard || undefined}
+            >
               <Label
                 htmlFor={`field-${field.label}`}
                 className="text-sm font-medium"
@@ -70,17 +76,43 @@ export function StepDetails({
                 }
                 placeholder={`Jumlah ${field.unit} (misal ${field.min || 1})`}
                 className="max-w-sm"
+                aria-describedby={
+                  dashboard
+                    ? `field-${encodeURIComponent(field.label)}-help`
+                    : undefined
+                }
               />
+              {dashboard && (
+                <p
+                  id={`field-${encodeURIComponent(field.label)}-help`}
+                  data-field-help
+                >
+                  Minimal {field.min || 1} {field.unit}. Biaya dihitung dari
+                  jumlah yang Anda masukkan.
+                </p>
+              )}
             </div>
           ))}
         </div>
+      )}
+      {dashboard && isInvalid && (
+        <p id="scale-validation" data-field-help role="status">
+          Lengkapi jumlah sesuai minimum untuk melanjutkan ke pilihan fitur.
+        </p>
       )}
 
       <div className="flex flex-wrap gap-2 pt-2">
         <Button variant="outline" onClick={onBack} className="gap-2">
           <ArrowLeft className="size-4" /> Kembali
         </Button>
-        <Button onClick={onNext} disabled={isInvalid} className="gap-2">
+        <Button
+          onClick={onNext}
+          disabled={isInvalid}
+          aria-describedby={
+            dashboard && isInvalid ? "scale-validation" : undefined
+          }
+          className="gap-2"
+        >
           Pilih Fitur <ArrowRight className="size-4" />
         </Button>
       </div>

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { formatCurrency } from "@/lib/utils";
 import type { Config, Feature } from "../../_types/calculator";
 
@@ -26,6 +27,7 @@ type StepFeaturesProps = {
   config: Config;
   onBack: () => void;
   onNext: () => void;
+  dashboard?: boolean;
 };
 
 export function StepFeatures({
@@ -37,6 +39,7 @@ export function StepFeatures({
   config,
   onBack,
   onNext,
+  dashboard = false,
 }: StepFeaturesProps) {
   return (
     <div className="space-y-5">
@@ -58,7 +61,7 @@ export function StepFeatures({
         </div>
       )}
 
-      <div className="space-y-2">
+      <div className="space-y-2" data-feature-list={dashboard || undefined}>
         {availableFeatures.map((f) => {
           const isChecked = selectedFeatures.includes(f.id);
           return (
@@ -115,17 +118,29 @@ export function StepFeatures({
         </div>
 
         {customFeatures.map((cf, i) => (
-          <div key={i} className="flex gap-2">
-            <Input
-              placeholder="Nama fitur spesifik (misal: Integrasi IoT Dashboard)"
-              value={cf.name}
-              onChange={(e) => {
-                const arr = [...customFeatures];
-                arr[i] = { ...arr[i], name: e.target.value };
-                onCustomFeaturesChange(arr);
-              }}
-              className="text-sm"
-            />
+          <div
+            key={i}
+            className="flex gap-2"
+            data-custom-feature={dashboard || undefined}
+          >
+            <div className={dashboard ? "min-w-0 flex-1" : "contents"}>
+              {dashboard && (
+                <Label htmlFor={`custom-feature-${i}`}>
+                  Nama fitur {i + 1}
+                </Label>
+              )}
+              <Input
+                id={dashboard ? `custom-feature-${i}` : undefined}
+                placeholder="Nama fitur spesifik (misal: Integrasi IoT Dashboard)"
+                value={cf.name}
+                onChange={(e) => {
+                  const arr = [...customFeatures];
+                  arr[i] = { ...arr[i], name: e.target.value };
+                  onCustomFeaturesChange(arr);
+                }}
+                className="text-sm"
+              />
+            </div>
             <Button
               size="icon"
               variant="ghost"

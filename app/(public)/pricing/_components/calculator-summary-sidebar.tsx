@@ -3,6 +3,8 @@
 import { Card } from "@/components/ui/card";
 import { cn, formatCurrency } from "@/lib/utils";
 import styles from "./pricing-calculator.module.css";
+import dashboardStyles from "./calculator-dashboard.module.css";
+import { Calculator, ListChecks } from "lucide-react";
 import type {
   ProjectType,
   Feature,
@@ -24,6 +26,7 @@ type Props = {
   config: Config;
   total: number;
   studio?: boolean;
+  dashboard?: boolean;
 };
 
 export function CalculatorSummarySidebar({
@@ -39,19 +42,53 @@ export function CalculatorSummarySidebar({
   config,
   total,
   studio = false,
+  dashboard = false,
 }: Props) {
+  const Container = dashboard ? "aside" : "div";
+  const emptyMessage = (
+    <p className="text-xs text-muted-foreground">
+      Pilih jenis proyek pada langkah pertama untuk melihat rincian estimasi
+      biaya secara otomatis.
+    </p>
+  );
   return (
-    <div className={cn("h-fit lg:sticky lg:top-24", studio && styles.summary)}>
+    <Container
+      id={dashboard ? "calculator-estimate" : undefined}
+      aria-label={dashboard ? "Ringkasan estimasi biaya" : undefined}
+      className={cn(
+        "h-fit lg:sticky lg:top-24",
+        studio && styles.summary,
+        dashboard && dashboardStyles.summary
+      )}
+    >
       <Card
         className={cn(
           "space-y-3 border-border bg-card p-5 shadow-sm",
-          studio && styles.summaryCard
+          studio && styles.summaryCard,
+          dashboard && dashboardStyles.summaryCard
         )}
       >
-        <h3 className="font-semibold text-foreground">Estimasi Biaya</h3>
+        {dashboard && (
+          <div className={dashboardStyles.summaryHeading}>
+            <span>
+              <Calculator aria-hidden="true" />
+            </span>
+            <div>
+              <p>Ringkasan proyek</p>
+              <h3>Estimasi Biaya</h3>
+            </div>
+          </div>
+        )}
+        {!dashboard && (
+          <h3 className="font-semibold text-foreground">Estimasi Biaya</h3>
+        )}
         {pt ? (
           <div
-            className={cn("space-y-2 text-sm", studio && styles.summaryDetails)}
+            className={cn(
+              "space-y-2 text-sm",
+              studio && styles.summaryDetails,
+              dashboard && dashboardStyles.summaryDetails
+            )}
           >
             <div className="flex justify-between">
               <span className="text-muted-foreground">Base ({pt.name})</span>
@@ -128,42 +165,61 @@ export function CalculatorSummarySidebar({
               </div>
             )}
           </div>
+        ) : dashboard ? (
+          <div className={dashboardStyles.summaryEmpty}>
+            <ListChecks aria-hidden="true" />
+            {emptyMessage}
+          </div>
         ) : (
-          <p className="text-xs text-muted-foreground">
-            Pilih jenis proyek pada langkah pertama untuk melihat rincian
-            estimasi biaya secara otomatis.
-          </p>
+          emptyMessage
         )}
-        <div className="border-t border-border pt-3">
+        {(!dashboard || pt) && (
           <div
             className={cn(
-              "flex justify-between text-lg font-bold text-foreground",
-              studio && styles.summaryTotal
+              "border-t border-border pt-3",
+              dashboard && dashboardStyles.summaryFooter
             )}
           >
-            <span>Total Estimasi</span>
-            <span className="text-primary tabular-nums">
-              {formatCurrency(total)}
-            </span>
-          </div>
-          {config?.dpPercentage ? (
-            <div className="mt-2 flex justify-between border-t border-dashed border-border pt-2 text-sm">
-              <span className="text-muted-foreground">
-                DP ({config.dpPercentage}%)
-              </span>
-              <span className="font-semibold tabular-nums">
-                {formatCurrency(
-                  Math.round((total * config.dpPercentage) / 100)
-                )}
+            <div
+              className={cn(
+                "flex justify-between text-lg font-bold text-foreground",
+                studio && styles.summaryTotal,
+                dashboard && dashboardStyles.summaryTotal
+              )}
+            >
+              <span>Total Estimasi</span>
+              <span className="text-primary tabular-nums">
+                <span
+                  role={dashboard ? "status" : undefined}
+                  aria-label={
+                    dashboard
+                      ? `Total estimasi ${formatCurrency(total)}`
+                      : undefined
+                  }
+                >
+                  {formatCurrency(total)}
+                </span>
               </span>
             </div>
-          ) : null}
-          <p className="mt-2 text-xs text-muted-foreground">
-            *Estimasi transparan, finalisasi ruang lingkup disesuaikan saat
-            konsultasi tim.
-          </p>
-        </div>
+            {config?.dpPercentage ? (
+              <div className="mt-2 flex justify-between border-t border-dashed border-border pt-2 text-sm">
+                <span className="text-muted-foreground">
+                  DP ({config.dpPercentage}%)
+                </span>
+                <span className="font-semibold tabular-nums">
+                  {formatCurrency(
+                    Math.round((total * config.dpPercentage) / 100)
+                  )}
+                </span>
+              </div>
+            ) : null}
+            <p className="mt-2 text-xs text-muted-foreground">
+              *Estimasi transparan, finalisasi ruang lingkup disesuaikan saat
+              konsultasi tim.
+            </p>
+          </div>
+        )}
       </Card>
-    </div>
+    </Container>
   );
 }

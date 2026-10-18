@@ -1,108 +1,89 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
-import Link from "next/link";
-import { toast } from "sonner";
-import { Loader2, MessageSquare } from "lucide-react";
-
+import { Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  requestPasswordResetAction,
-  type ResetActionState,
-} from "@/lib/actions/password-reset";
-import { AUTH_ROUTES } from "@/lib/routes";
-
-const initialState: ResetActionState = { ok: false };
+import { useForgotPasswordForm } from "../_hooks/use-forgot-password-form";
+import formStyles from "../../login/_components/login-form.module.css";
+import { RequestStatus } from "./request-status";
+import styles from "./forgot-password.module.css";
 
 export function ForgotPasswordForm() {
-  const [state, formAction, isPending] = useActionState(
-    async (prevState: ResetActionState, formData: FormData) => {
-      const email = String(formData.get("email") ?? "").trim();
-      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        return {
-          ok: false,
-          message: "Email tidak valid.",
-          errors: { email: "Format email tidak valid" },
-        };
-      }
-      const res = await requestPasswordResetAction(prevState, formData);
-      if (!res.ok && res.message?.toLowerCase().includes("email")) {
-        return {
-          ...res,
-          errors: { email: res.message },
-        };
-      }
-      return res;
-    },
-    initialState
-  );
-
-  useEffect(() => {
-    if (state.ok) {
-      toast.success(state.message ?? "Cek WhatsApp Anda.");
-    } else if (state.message) {
-      toast.error(state.message);
-    }
-  }, [state]);
+  const { state, formAction, isPending, email, setEmail } =
+    useForgotPasswordForm();
 
   return (
-    <form action={formAction}>
-      <CardContent className="space-y-5 px-6 pb-2 sm:px-8">
-        <div className="space-y-2">
-          <Label
-            htmlFor="email"
-            className="text-sm font-semibold text-[#0F263A]"
+    <form
+      action={formAction}
+      aria-busy={isPending}
+      aria-labelledby="forgot-password-title"
+      className={formStyles.form}
+    >
+      <RequestStatus state={state} />
+      <div className={formStyles.field}>
+        <Label htmlFor="email" className={formStyles.label}>
+          Email
+        </Label>
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          placeholder="nama@email.com"
+          autoComplete="email"
+          inputMode="email"
+          autoCapitalize="none"
+          spellCheck={false}
+          required
+          aria-invalid={!!state.errors?.email}
+          aria-describedby={
+            state.errors?.email
+              ? "forgot-password-email-error"
+              : "forgot-password-email-hint"
+          }
+          className={formStyles.input}
+        />
+        {state.errors?.email ? (
+          <p
+            id="forgot-password-email-error"
+            role="alert"
+            className={formStyles.fieldError}
           >
-            Email
-          </Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="nama@email.com"
-            autoComplete="email"
-            required
-            aria-invalid={!!state.errors?.email}
-            className="h-12 rounded-xl border-slate-200 bg-white text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
-          />
-          {state.errors?.email && (
-            <p role="alert" className="text-xs font-medium text-destructive">
-              {state.errors.email}
-            </p>
-          )}
-        </div>
-      </CardContent>
-      <CardFooter className="flex-col gap-4 px-6 pt-5 pb-6 sm:px-8 sm:pb-8">
+            {state.errors.email}
+          </p>
+        ) : (
+          <p id="forgot-password-email-hint" className={styles.hint}>
+            Gunakan email yang terhubung ke akun Aldera Tech Anda.
+          </p>
+        )}
+      </div>
+      <div className={formStyles.footer}>
         <Button
           type="submit"
           size="xl"
           disabled={isPending}
-          className="w-full rounded-full bg-[#00B1E1] font-bold text-[#0F263A] shadow-md shadow-[#00B1E1]/25 hover:bg-[#0094BD]"
+          className={formStyles.submit}
         >
           {isPending ? (
             <>
-              <Loader2 className="size-4 animate-spin text-[#0F263A]" />{" "}
+              <Loader2
+                className="size-4 animate-spin motion-reduce:animate-none"
+                aria-hidden="true"
+              />
               Mengirim...
             </>
           ) : (
             <>
-              <MessageSquare className="size-4" /> Kirim link via WhatsApp
+              <Send className="size-4" aria-hidden="true" /> Kirim Tautan Reset
             </>
           )}
         </Button>
-        <p className="text-center text-sm text-slate-500">
-          Ingat password Anda?{" "}
-          <Link
-            href={AUTH_ROUTES.login}
-            className="font-bold text-[#00B1E1] transition-colors hover:text-[#0094BD]"
-          >
-            Masuk
-          </Link>
-        </p>
-      </CardFooter>
+      </div>
+      <span role="status" aria-live="polite" className="sr-only">
+        {isPending ? "Mengirim permintaan reset password." : ""}
+      </span>
     </form>
   );
 }

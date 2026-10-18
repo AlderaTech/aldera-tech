@@ -2,7 +2,7 @@
 
 ## Lingkup dan tema
 
-Rute `/dashboard/ai-relay` memakai tema dashboard: Plus Jakarta Sans, navy/biru elektrik, putih, kartu membulat, border tipis, dan tombol pill. Navigasi sidebar memakai `DASHBOARD_ROUTES.aiRelay` dari konfigurasi menu yang sudah tersedia; status aktif ditentukan oleh `isNavItemActive` pada sidebar.
+Rute `/dashboard/ai-relay` memakai tema dashboard: Plus Jakarta Sans, navy/biru elektrik, putih, kartu membulat, border tipis, dan tombol pill. Header dan sidebar memakai varian studio melalui `getStudioDashboardSection`, seperti pada [Ringkasan pengguna](dashboard-overview-ui.md). Navigasi sidebar memakai `DASHBOARD_ROUTES.aiRelay` dari konfigurasi menu yang sudah tersedia; status aktif ditentukan oleh `isNavItemActive` pada sidebar.
 
 `relay-workspace.module.css` memakai kelas lokal `workspace`. Gaya portal dialog dan dropdown dibatasi dengan `body:has(.workspace)`, sehingga hanya aktif ketika halaman ini terpasang. Komponen dashboard lain, halaman publik AI Relay, dan penggunaan komponen bersama tanpa ilustrasi opsional mempertahankan tampilannya. Tidak ada perubahan CSS global atau primitif UI bersama.
 
