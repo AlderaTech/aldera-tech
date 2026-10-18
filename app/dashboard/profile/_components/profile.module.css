@@ -1,0 +1,522 @@
+.page {
+  min-width: 0;
+}
+.page :is(a, button, input):focus-visible {
+  outline: 2px solid var(--overview-blue);
+  outline-offset: 3px;
+}
+.headerIcon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid var(--overview-line);
+  border-radius: 15px;
+  background: var(--overview-paper);
+  color: var(--overview-blue);
+}
+.content {
+  min-width: 0;
+  container-type: inline-size;
+}
+.layout {
+  display: grid;
+  align-items: start;
+  gap: 1.25rem;
+  min-width: 0;
+}
+.identityColumn {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+.identityCard,
+.formCard {
+  min-width: 0;
+  border: 1px solid var(--overview-line);
+  border-radius: 22px;
+  background: var(--overview-paper);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--overview-ink) 3%, transparent);
+}
+.identityCard {
+  overflow: hidden;
+}
+.identityBanner {
+  position: relative;
+  display: none;
+  height: 86px;
+  overflow: hidden;
+  background: linear-gradient(
+    115deg,
+    var(--overview-sky),
+    var(--overview-cyan)
+  );
+}
+.identityBanner::after {
+  content: "";
+  position: absolute;
+  right: -14px;
+  top: -55px;
+  width: 145px;
+  height: 145px;
+  border: 1px solid color-mix(in srgb, var(--overview-blue) 12%, transparent);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 24px color-mix(in srgb, var(--overview-paper) 20%, transparent),
+    0 0 0 49px color-mix(in srgb, var(--overview-paper) 14%, transparent);
+}
+.identityBanner > svg {
+  position: absolute;
+  top: 30px;
+  right: 20px;
+  color: color-mix(in srgb, var(--overview-blue) 10%, transparent);
+}
+.identityBody {
+  padding: 1.25rem;
+}
+.identityHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+}
+.avatar {
+  width: 64px;
+  height: 64px;
+  border: 4px solid var(--overview-paper);
+  box-shadow: 0 3px 12px
+    color-mix(in srgb, var(--overview-blue) 10%, transparent);
+}
+.initials {
+  color: var(--overview-blue);
+  background: var(--overview-sky);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+.identityCopy {
+  min-width: 0;
+}
+.eyebrow {
+  color: var(--overview-muted);
+  font-size: 0.58rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.identityCopy h2 {
+  margin-top: 0.3rem;
+  color: var(--overview-ink);
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+.email {
+  margin-top: 0.2rem;
+  color: var(--overview-muted);
+  font-size: 0.74rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
+.roles > span {
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 8px;
+  background: var(--overview-canvas);
+  color: var(--overview-blue);
+  font-size: 0.65rem;
+  font-weight: 650;
+}
+.joined {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--overview-line);
+  color: var(--overview-muted);
+}
+.joined > svg {
+  flex-shrink: 0;
+}
+.joined p {
+  font-size: 0.61rem;
+}
+.joined time {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--overview-ink);
+  font-size: 0.73rem;
+  font-weight: 600;
+}
+.readOnlyNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  color: var(--overview-muted);
+  font-size: 0.65rem;
+  line-height: 1.7;
+}
+.readOnlyNote svg {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  color: var(--overview-blue);
+}
+.helpPanel {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 18px;
+  background: linear-gradient(
+    125deg,
+    var(--overview-sky),
+    var(--overview-paper)
+  );
+}
+.helpPanel > div {
+  min-width: 0;
+  flex: 1;
+}
+.helpPanel p {
+  color: var(--overview-ink);
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+.helpPanel span {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--overview-muted);
+  font-size: 0.68rem;
+  line-height: 1.8;
+}
+.helpMascot {
+  flex-shrink: 0;
+  height: 82px;
+  width: 72px;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(
+    0 7px 10px color-mix(in srgb, var(--overview-blue) 10%, transparent)
+  );
+}
+.formCard {
+  padding: 1.35rem;
+}
+.formHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--overview-line);
+}
+.formHeader > span {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  flex-shrink: 0;
+  border: 1px solid var(--overview-line);
+  border-radius: 12px;
+  background: var(--overview-canvas);
+  color: var(--overview-blue);
+}
+.formHeader h2 {
+  color: var(--overview-ink);
+  font-size: 1rem;
+  font-weight: 750;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+.formHeader p {
+  margin-top: 0.35rem;
+  color: var(--overview-muted);
+  font-size: 0.74rem;
+  line-height: 1.75;
+}
+.formSection {
+  padding-block: 1.35rem;
+}
+.formSection + .formSection {
+  border-top: 1px solid var(--overview-line);
+}
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1.1rem;
+}
+.sectionHeading > span {
+  display: grid;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--overview-sky);
+  color: var(--overview-blue);
+  font-size: 0.64rem;
+  font-weight: 750;
+}
+.formSection:nth-of-type(2) .sectionHeading > span {
+  background: var(--overview-cyan);
+  color: var(--overview-success);
+}
+.sectionHeading h3 {
+  color: var(--overview-ink);
+  font-size: 0.79rem;
+  font-weight: 700;
+}
+.sectionHeading p {
+  margin-top: 0.2rem;
+  color: var(--overview-muted);
+  font-size: 0.67rem;
+  line-height: 1.7;
+}
+.field {
+  display: grid;
+  min-width: 0;
+  gap: 0.6rem;
+}
+.field label {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  color: var(--overview-ink);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.7;
+}
+.field .required {
+  color: var(--color-rose-700);
+}
+.optional {
+  color: var(--overview-muted);
+  font-size: 0.69rem;
+  font-weight: 400;
+}
+.field input {
+  height: 46px;
+  padding: 0.6rem 0.85rem;
+  border-color: var(--overview-line);
+  border-radius: 11px;
+  background: var(--overview-paper);
+  color: var(--overview-ink);
+  font-size: 0.83rem;
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--overview-ink) 2%, transparent);
+}
+.field input::placeholder {
+  color: var(--overview-muted);
+}
+.field input:hover:not(:disabled) {
+  border-color: color-mix(
+    in srgb,
+    var(--overview-blue) 38%,
+    var(--overview-line)
+  );
+}
+.field input:disabled {
+  background: var(--overview-canvas);
+  opacity: 0.75;
+}
+.field input[aria-invalid="true"] {
+  border-color: var(--color-rose-500);
+}
+.fieldHint {
+  color: var(--overview-muted);
+  font-size: 0.65rem;
+  line-height: 1.7;
+}
+.fieldError {
+  color: var(--color-rose-700);
+  font-size: 0.72rem;
+  line-height: 1.7;
+}
+.formFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--overview-line);
+}
+.formFooter > p {
+  max-width: 190px;
+  color: var(--overview-muted);
+  font-size: 0.67rem;
+  line-height: 1.8;
+}
+.formCard .saveButton {
+  min-height: 44px;
+  height: auto;
+  gap: 0.5rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: 999px;
+  background: var(--overview-blue);
+  color: var(--overview-paper);
+  font-size: 0.75rem;
+  font-weight: 650;
+  box-shadow: 0 5px 14px
+    color-mix(in srgb, var(--overview-blue) 15%, transparent);
+}
+.formCard .saveButton:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--overview-blue) 85%, var(--overview-ink));
+}
+.formCard .saveButton:disabled {
+  cursor: wait;
+  box-shadow: none;
+}
+.feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 11px;
+  color: var(--overview-success);
+  background: var(--overview-success-soft);
+  font-size: 0.75rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.feedback > svg {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+.feedback[data-kind="error"] {
+  color: var(--color-rose-700);
+  background: var(--color-rose-50);
+  border-color: var(--color-rose-200);
+}
+.unavailable {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  min-width: 0;
+  padding: 1.4rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 20px;
+  background: var(--overview-paper);
+}
+.unavailable > span {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 14px;
+  color: var(--color-amber-700);
+  background: var(--overview-peach);
+}
+.unavailable > div {
+  flex: 1 1 200px;
+}
+.unavailable h2 {
+  color: var(--overview-ink);
+  font-size: 0.95rem;
+  font-weight: 750;
+}
+.unavailable p {
+  margin-top: 0.3rem;
+  color: var(--overview-muted);
+  font-size: 0.76rem;
+  line-height: 1.8;
+}
+.unavailable button {
+  min-height: 42px;
+  border-radius: 11px;
+  border-color: var(--overview-line);
+}
+.skeletonBanner {
+  height: 86px;
+  border-radius: 0;
+  background: var(--overview-sky);
+}
+.skeletonField {
+  margin-block: 2rem;
+}
+@container (min-width: 760px) {
+  .layout {
+    grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.65fr);
+    gap: 1.5rem;
+  }
+  .identityBanner {
+    display: block;
+  }
+  .identityHeader {
+    position: relative;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+  .identityBody {
+    padding: 1.4rem;
+  }
+  .avatar {
+    width: 80px;
+    height: 80px;
+    margin-top: -3.7rem;
+    border-width: 5px;
+  }
+  .identityCopy h2 {
+    font-size: 1.25rem;
+  }
+  .helpPanel {
+    display: flex;
+  }
+  .formCard {
+    padding: 1.6rem;
+  }
+}
+@media (max-width: 479px) {
+  .headerIcon {
+    display: none;
+  }
+  .identityBody {
+    padding: 1.1rem;
+  }
+  .identityCopy h2 {
+    font-size: 1rem;
+  }
+  .identityCopy .email {
+    font-size: 0.68rem;
+  }
+  .formCard {
+    padding: 1.1rem;
+  }
+  .formHeader {
+    gap: 0.65rem;
+  }
+  .formFooter {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .formFooter > p {
+    max-width: none;
+    text-align: center;
+  }
+  .field input {
+    font-size: 1rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page :is(input, button) {
+    transition: none;
+  }
+  .page button:active {
+    scale: 1;
+  }
+}
