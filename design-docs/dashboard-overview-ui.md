@@ -2,7 +2,7 @@
 
 ## Batas tampilan
 
-Konten Ringkasan aktif pada rute tepat `/dashboard`. `OverviewShell` memakai `usePathname` untuk memberi tema lokal pada wrapper aplikasi; konten tetap dirender oleh server. Sidebar dan header memakai tema studio pada Ringkasan, daftar `/dashboard/projects`, riwayat `/dashboard/orders`, `/dashboard/calculator`, dan `/dashboard/ai-relay` melalui `getStudioDashboardSection`, dengan konfigurasi navigasi bertipe `client`. Halaman detail proyek dan Invoice mempertahankan tampilannya masing-masing. AI Gateway / Relay mengikuti [tema dashboard yang sama](dashboard-ai-relay-ui.md). Rincian tersedia di [Panduan UI Proyek Saya](dashboard-projects-ui.md), [Panduan UI Pesanan & Estimasi](dashboard-orders-ui.md), dan [Panduan UI Kalkulator](dashboard-calculator-ui.md).
+Konten Ringkasan aktif pada rute tepat `/dashboard`. `OverviewShell` memakai `usePathname` untuk memberi tema lokal pada wrapper aplikasi; konten tetap dirender oleh server. Sidebar dan header memakai tema studio pada Ringkasan, daftar `/dashboard/projects`, riwayat `/dashboard/orders`, `/dashboard/calculator`, `/dashboard/ai-relay`, dan `/dashboard/invoices` melalui `getStudioDashboardSection`, dengan konfigurasi navigasi bertipe `client`. Halaman detail proyek dan rute lain mempertahankan tampilannya masing-masing. Rincian tersedia di [UI Proyek Saya](dashboard-projects-ui.md), [UI Pesanan & Estimasi](dashboard-orders-ui.md), [UI Kalkulator](dashboard-calculator-ui.md), [UI AI Relay](dashboard-ai-relay-ui.md), dan [UI Invoice & Pembayaran](dashboard-invoices-ui.md).
 
 Palet memakai navy `#102651`, biru `#245FE5`, putih, gradasi biru-es/slate, serta pastel peach/cyan. Tipografi Plus Jakarta Sans, radius, border, bayangan, dan fokus mengikuti identitas Login/Register. Seluruh token tema didefinisikan dalam CSS Module dan tidak diterapkan pada root global.
 
@@ -49,6 +49,6 @@ Onboarding tetap menjalankan query profil, jumlah proyek, pesan pengguna pada pr
 - Browser desktop/tablet/HP pada lebar 1440, 1280, 1024, 768, 390, dan 320px: tidak ada overflow horizontal, statistik sesuai database akun uji, seluruh empat langkah terlihat, dan onboarding 1/4 menampilkan 25%.
 - Akun uji belum memiliki proyek atau aktivitas; kedua empty state diverifikasi. Data tidak diisi atau diganti dengan dummy untuk keperluan tampilan.
 - Menu mobile terbuka, menandai Ringkasan aktif, dan menutup setelah navigasi. Pencarian membuka command palette; dropdown akun dapat dibuka dengan keyboard. Fokus pada tautan onboarding terlihat jelas.
-- Seluruh lima tujuan navigasi pengguna dapat dibuka. Di luar Ringkasan, daftar Proyek Saya, dan Pesanan & Estimasi, token tema lokal tidak aktif dan lebar sidebar kembali ke tampilan semula.
+- Seluruh tujuan navigasi pengguna dapat dibuka. Token tema lokal dan lebar sidebar studio aktif hanya pada rute tepat yang tercantum dalam batas tampilan di atas; rute lain mempertahankan tema semula.
 - Reduced motion mematikan animasi masuk dan menampilkan nilai counter langsung. Skeleton dibatasi lebar container melalui scope Ringkasan; loading/error serta mekanisme komponen lain tetap dipertahankan.
 - Tidak ada perubahan data, pengiriman pesan, transaksi, test suite, atau build produksi dalam pekerjaan UI ini.
