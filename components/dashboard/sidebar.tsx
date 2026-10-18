@@ -37,6 +37,8 @@ import {
 } from "@/lib/dashboard-nav";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
+import styles from "./overview-chrome.module.css";
+import { getStudioDashboardSection } from "./studio-dashboard-routes";
 
 const navIcons: Record<DashboardNavIcon, LucideIcon> = {
   activity: Activity,
@@ -121,6 +123,7 @@ function NavLink({
     <Link
       href={item.href}
       onClick={onNavigate}
+      aria-current={active ? "page" : undefined}
       className={cn(
         "group flex min-h-10 items-center gap-3 rounded-lg text-sm font-medium transition-colors",
         "focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:outline-none",
@@ -158,6 +161,8 @@ export function DashboardSidebar({
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
+  const isStudio =
+    variant === "client" && getStudioDashboardSection(pathname) !== null;
 
   const allHrefs = useMemo(() => {
     const hrefs: string[] = [];
@@ -182,7 +187,12 @@ export function DashboardSidebar({
     : false;
 
   return (
-    <aside className="flex h-full w-full flex-col border-r border-slate-200/80 bg-white text-slate-900">
+    <aside
+      className={cn(
+        "flex h-full w-full flex-col border-r border-slate-200/80 bg-white text-slate-900",
+        isStudio && [styles.scope, styles.sidebar]
+      )}
+    >
       <div className="flex h-16 items-center border-b border-slate-200/80 px-5">
         <div className="flex min-w-0 items-center gap-3">
           <Logo size="md" />

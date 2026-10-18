@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Menu, Bell, Search } from "lucide-react";
 import type { Session } from "next-auth";
+import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,9 @@ import { UserMenu } from "@/components/shared/user-menu";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { CommandPalette } from "@/components/dashboard/command-palette";
 import type { DashboardNavConfig } from "@/lib/dashboard-nav";
+import { cn } from "@/lib/utils";
+import styles from "./overview-chrome.module.css";
+import { getStudioDashboardSection } from "./studio-dashboard-routes";
 
 type DashboardHeaderProps = {
   session: Session;
@@ -23,9 +27,17 @@ type DashboardHeaderProps = {
 
 export function DashboardHeader({ session, navConfig }: DashboardHeaderProps) {
   const [open, setOpen] = React.useState(false);
+  const pathname = usePathname();
+  const studioSection =
+    navConfig.variant === "client" ? getStudioDashboardSection(pathname) : null;
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-slate-200/80 bg-white/90 px-4 shadow-sm shadow-slate-950/[0.02] backdrop-blur-md sm:px-6">
+    <header
+      className={cn(
+        "sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-slate-200/80 bg-white/90 px-4 shadow-sm shadow-slate-950/[0.02] backdrop-blur-md sm:px-6",
+        studioSection && [styles.scope, styles.header]
+      )}
+    >
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button
@@ -48,6 +60,13 @@ export function DashboardHeader({ session, navConfig }: DashboardHeaderProps) {
         </SheetContent>
       </Sheet>
 
+      {studioSection && (
+        <div className={styles.headerTitle}>
+          <span>Workspace</span>
+          <span aria-hidden="true">/</span>
+          <strong>{studioSection}</strong>
+        </div>
+      )}
       <div className="flex-1" />
 
       <div className="flex items-center gap-1">

@@ -4,15 +4,18 @@ import type { ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import styles from "./pricing-calculator.module.css";
+import dashboardStyles from "./calculator-dashboard.module.css";
 
 export function CalculatorChoice({
   studio = false,
+  dashboard = false,
   selected,
   onSelect,
   className,
   children,
 }: {
   studio?: boolean;
+  dashboard?: boolean;
   selected: boolean;
   onSelect: () => void;
   className?: string;
@@ -20,13 +23,17 @@ export function CalculatorChoice({
 }) {
   return (
     <Card
-      className={cn(className, studio && styles.choice)}
+      className={cn(
+        className,
+        studio && styles.choice,
+        dashboard && dashboardStyles.choice
+      )}
       onClick={onSelect}
-      role={studio ? "button" : undefined}
-      tabIndex={studio ? 0 : undefined}
-      aria-pressed={studio ? selected : undefined}
+      role={studio || dashboard ? "button" : undefined}
+      tabIndex={studio || dashboard ? 0 : undefined}
+      aria-pressed={studio || dashboard ? selected : undefined}
       onKeyDown={
-        studio
+        studio || dashboard
           ? (event) => {
               if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();

@@ -19,6 +19,7 @@ type StepAddOnsProps = {
   onBack: () => void;
   onNext: () => void;
   studio?: boolean;
+  dashboard?: boolean;
 };
 
 export function StepAddOns({
@@ -31,6 +32,7 @@ export function StepAddOns({
   onBack,
   onNext,
   studio = false,
+  dashboard = false,
 }: StepAddOnsProps) {
   return (
     <div className="space-y-5">
@@ -52,6 +54,7 @@ export function StepAddOns({
             <div
               key={ao.id}
               className="space-y-2 rounded-lg border border-border bg-card p-3.5"
+              data-addon={dashboard || undefined}
             >
               <div className="flex flex-wrap items-center justify-between gap-1">
                 <span className="text-sm font-medium text-foreground">
@@ -66,7 +69,10 @@ export function StepAddOns({
                   {ao.description}
                 </p>
               )}
-              <div className="flex items-center gap-2 pt-1">
+              <div
+                className="flex items-center gap-2 pt-1"
+                data-addon-duration={dashboard || undefined}
+              >
                 <Label
                   htmlFor={`addon-${ao.id}`}
                   className="text-xs text-muted-foreground"
@@ -93,8 +99,14 @@ export function StepAddOns({
                     onAddOnChange(ao.id, clamped);
                   }}
                   placeholder="0"
+                  aria-describedby={
+                    dashboard ? `addon-${ao.id}-help` : undefined
+                  }
                 />
-                <span className="text-xs text-muted-foreground">
+                <span
+                  id={dashboard ? `addon-${ao.id}-help` : undefined}
+                  className="text-xs text-muted-foreground"
+                >
                   bulan ({ao.minMonths ? `min ${ao.minMonths}, ` : ""}maks{" "}
                   {ao.maxMonths} bulan)
                 </span>
@@ -118,6 +130,7 @@ export function StepAddOns({
             }`}
             onSelect={() => onUrgencyChange("normal")}
             studio={studio}
+            dashboard={dashboard}
             selected={urgency === "normal"}
           >
             <p className="font-semibold text-foreground">Standar (Normal)</p>
@@ -134,6 +147,7 @@ export function StepAddOns({
             }`}
             onSelect={() => onUrgencyChange("urgent")}
             studio={studio}
+            dashboard={dashboard}
             selected={urgency === "urgent"}
           >
             <div className="flex items-center gap-2">

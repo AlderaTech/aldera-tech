@@ -15,15 +15,21 @@ Direktori ini dipisahkan dari [`ai-agent-docs/`](../ai-agent-docs/README.md) aga
 
 ## 2. Daftar Dokumen Perancangan Halaman Antarmuka (UI Specifications)
 
-| Dokumen                                                    | Deskripsi Halaman                                                                |
-| :--------------------------------------------------------- | :------------------------------------------------------------------------------- |
-| [**`about-ui.md`**](about-ui.md)                           | Konsep visual, layout cerita, nilai, dan maskot pada halaman Tentang (`/about`). |
-| [**`ai-relay-ui.md`**](ai-relay-ui.md)                     | Konsep presentasional showcase halaman pemasaran AI Relay (`/ai-relay`).         |
-| [**`blog-ui.md`**](blog-ui.md)                             | Konsep layout editorial dan tipografi halaman Blog publik (`/blog`).             |
-| [**`contact-ui.md`**](contact-ui.md)                       | Konsep visual hero dan penempatan maskot halaman Kontak (`/contact`).            |
-| [**`dashboard-ai-relay-ui.md`**](dashboard-ai-relay-ui.md) | Implementasi visual dashboard AI Gateway / Relay (`/dashboard/ai-relay`).        |
-| [**`portfolio-ui.md`**](portfolio-ui.md)                   | Konsep layout grid portofolio dan studi kasus (`/portfolio`).                    |
-| [**`pricing-ui.md`**](pricing-ui.md)                       | Konsep visual kartu paket harga dan wizard kalkulator (`/pricing`).              |
+| Dokumen                                                        | Deskripsi Halaman                                                                |
+| :------------------------------------------------------------- | :------------------------------------------------------------------------------- |
+| [**`about-ui.md`**](about-ui.md)                               | Konsep visual, layout cerita, nilai, dan maskot pada halaman Tentang (`/about`). |
+| [**`ai-relay-ui.md`**](ai-relay-ui.md)                         | Konsep presentasional showcase halaman pemasaran AI Relay (`/ai-relay`).         |
+| [**`blog-ui.md`**](blog-ui.md)                                 | Konsep layout editorial dan tipografi halaman Blog publik (`/blog`).             |
+| [**`contact-ui.md`**](contact-ui.md)                           | Konsep visual hero dan penempatan maskot halaman Kontak (`/contact`).            |
+| [**`dashboard-ai-relay-ui.md`**](dashboard-ai-relay-ui.md)     | Implementasi visual dashboard AI Gateway / Relay (`/dashboard/ai-relay`).        |
+| [**`register-ui.md`**](register-ui.md)                         | Layout dan formulir pendaftaran akun dengan maskot baru (`/register`).           |
+| [**`forgot-password-ui.md`**](forgot-password-ui.md)           | Layout dan status formulir pemulihan akses (`/forgot-password`).                 |
+| [**`dashboard-overview-ui.md`**](dashboard-overview-ui.md)     | Ringkasan pengguna, statistik, onboarding, dan chrome dashboard.                 |
+| [**`dashboard-projects-ui.md`**](dashboard-projects-ui.md)     | Daftar Proyek Saya dan kondisi loading/kosong/error.                             |
+| [**`dashboard-orders-ui.md`**](dashboard-orders-ui.md)         | Riwayat Pesanan & Estimasi dan hierarki kartu.                                   |
+| [**`dashboard-calculator-ui.md`**](dashboard-calculator-ui.md) | Seluruh tahap kalkulator serta ringkasan biaya dashboard.                        |
+| [**`portfolio-ui.md`**](portfolio-ui.md)                       | Konsep layout grid portofolio dan studi kasus (`/portfolio`).                    |
+| [**`pricing-ui.md`**](pricing-ui.md)                           | Konsep visual kartu paket harga dan wizard kalkulator (`/pricing`).              |
 
 ---
 
@@ -33,6 +39,7 @@ Direktori ini dipisahkan dari [`ai-agent-docs/`](../ai-agent-docs/README.md) aga
 | :------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
 | [**`medikare-artwork.md`**](medikare-artwork.md)                     | Prompt generasi aset ilustrasi studi kasus rumah sakit Medikare.                   |
 | [**`dashboard-ai-relay-mascots.md`**](dashboard-ai-relay-mascots.md) | Lokasi, spesifikasi, dan prompt mini maskot dashboard AI Relay.                    |
+| [**`login-mascot.md`**](login-mascot.md)                             | Maskot kartu akses dan komposisi halaman Login.                                    |
 | [**`service-cards-artwork.md`**](service-cards-artwork.md)           | Prompt generasi 6 ilustrasi kartu layanan (AI, Cloud, Commerce, dll.).             |
 | [**`service-page-artwork.md`**](service-page-artwork.md)             | Prompt generasi aset visual hero dan section detail layanan.                       |
 | [**`services-artwork.md`**](services-artwork.md)                     | Prompt ilustrasi suite solusi layanan digital.                                     |
