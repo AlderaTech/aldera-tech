@@ -1,27 +1,21 @@
 "use client";
-
-import { useState } from "react";
+import type { ReactNode } from "react";
 import {
-  Bot,
   ChevronDown,
   ChevronUp,
-  Coins,
   Loader2,
   RotateCcw,
   Send,
+  SlidersHorizontal,
   Sparkles,
   Terminal,
-  User,
-  Zap,
 } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
 import {
   Select,
@@ -31,140 +25,56 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import {
-  executePlaygroundChat,
-  type ModelCatalogItem,
-  type PlaygroundChatResult,
-} from "@/lib/actions/ai-relay";
-import { formatCurrency } from "@/lib/utils";
-
-interface ChatMessage {
-  id: string;
-  role: "user" | "assistant" | "system";
-  content: string;
-  tokens?: {
-    prompt: number;
-    completion: number;
-    cost: number;
-    durationMs: number;
-  };
-}
+import type { ModelCatalogItem } from "@/lib/ai-relay-utils";
+import { useAiPlayground } from "./_hooks/use-ai-playground";
+import { PlaygroundMessages } from "./_components/playground-messages";
+import { PlaygroundTelemetry } from "./_components/playground-telemetry";
 
 interface AiPlaygroundProps {
+  emptyIllustration?: ReactNode;
   models: ModelCatalogItem[];
   userBalance: number;
   onBalanceChange?: (newBalance: number) => void;
 }
 
-const SAMPLE_PROMPTS = [
-  "Buatkan contoh implementasi debounce search di React 19.",
-  "Bagaimana cara mengoptimalkan SQL query dengan index di PostgreSQL?",
-  "Tuliskan fungsi algoritma Dijkstra dalam TypeScript modern.",
-  "Jelaskan perbedaan mendasar antara RAG dan fine-tuning LLM.",
-];
-
 export function AiPlayground({
+  emptyIllustration,
   models,
   userBalance,
   onBalanceChange,
 }: AiPlaygroundProps) {
-  const activeModels = models.filter((m) => m.isActive);
-  const defaultModel =
-    activeModels.find((m) => m.id === "gpt-4o-mini")?.id ||
-    activeModels[0]?.id ||
-    "gpt-4o-mini";
-
-  const [selectedModel, setSelectedModel] = useState<string>(defaultModel);
-  const [systemPrompt, setSystemPrompt] = useState<string>(
-    "Anda adalah asisten AI yang cerdas, efisien, dan ramah dari Aldera Tech."
-  );
-  const [showSystemPrompt, setShowSystemPrompt] = useState<boolean>(false);
-  const [prompt, setPrompt] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [lastUsage, setLastUsage] = useState<
-    PlaygroundChatResult["usage"] | null
-  >(null);
-  const [lastDuration, setLastDuration] = useState<number | null>(null);
-  const [currentBalance, setCurrentBalance] = useState<number>(userBalance);
-
-  const currentModelMeta = models.find((m) => m.id === selectedModel);
-
-  const handleSend = async () => {
-    if (!prompt.trim()) return;
-    if (currentBalance <= 0) {
-      toast.error(
-        "Saldo Anda Rp 0. Silakan top-up terlebih dahulu di tab Saldo."
-      );
-      return;
-    }
-
-    const userMessageContent = prompt.trim();
-    const userMsgId = String(Date.now());
-    const newMessages: ChatMessage[] = [
-      ...messages,
-      { id: userMsgId, role: "user", content: userMessageContent },
-    ];
-
-    setMessages(newMessages);
-    setPrompt("");
-    setIsLoading(true);
-
-    try {
-      const res = await executePlaygroundChat({
-        model: selectedModel,
-        prompt: userMessageContent,
-        systemPrompt: systemPrompt.trim() || undefined,
-      });
-
-      if (res.success) {
-        const assistantMsg: ChatMessage = {
-          id: String(Date.now() + 1),
-          role: "assistant",
-          content: res.content,
-          tokens: {
-            prompt: res.usage.promptTokens,
-            completion: res.usage.completionTokens,
-            cost: res.usage.totalCostIdr,
-            durationMs: res.durationMs,
-          },
-        };
-        setMessages([...newMessages, assistantMsg]);
-        setLastUsage(res.usage);
-        setLastDuration(res.durationMs);
-        setCurrentBalance(res.newBalance);
-        onBalanceChange?.(res.newBalance);
-        toast.success(
-          `Respons diterima! Biaya: ${formatCurrency(res.usage.totalCostIdr)}`
-        );
-      }
-    } catch (err: unknown) {
-      const msg =
-        err instanceof Error ? err.message : "Gagal mengeksekusi chat.";
-      toast.error(msg);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const handleClearHistory = () => {
-    setMessages([]);
-    setLastUsage(null);
-    setLastDuration(null);
-  };
+  const {
+    activeModels,
+    selectedModel,
+    setSelectedModel,
+    systemPrompt,
+    setSystemPrompt,
+    showSystemPrompt,
+    setShowSystemPrompt,
+    prompt,
+    setPrompt,
+    isLoading,
+    messages,
+    lastUsage,
+    lastDuration,
+    currentBalance,
+    currentModelMeta,
+    handleSend,
+    handleKeyDown,
+    handleClearHistory,
+  } = useAiPlayground({ models, userBalance, onBalanceChange });
+  const InstructionIcon = emptyIllustration ? SlidersHorizontal : Sparkles;
 
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+    <div
+      className="grid grid-cols-1 gap-6 lg:grid-cols-4"
+      data-relay-playground
+    >
       {/* Main Chatbed Area (3 cols) */}
-      <Card className="flex h-[700px] flex-col border shadow-xs lg:col-span-3">
+      <Card
+        data-relay-chat
+        className="flex h-[700px] flex-col border shadow-xs lg:col-span-3"
+      >
         {/* Playground Header */}
         <CardHeader className="flex flex-row items-center justify-between gap-4 border-b px-4 py-3">
           <div className="flex items-center gap-3">
@@ -188,7 +98,10 @@ export function AiPlayground({
               onValueChange={setSelectedModel}
               disabled={isLoading}
             >
-              <SelectTrigger className="h-8 w-[200px] text-xs font-medium">
+              <SelectTrigger
+                aria-label="Model Playground"
+                className="h-8 w-[200px] text-xs font-medium"
+              >
                 <SelectValue placeholder="Pilih Model" />
               </SelectTrigger>
               <SelectContent>
@@ -211,6 +124,7 @@ export function AiPlayground({
                 disabled={isLoading}
                 className="h-8 w-8 text-slate-400 hover:text-slate-700"
                 title="Bersihkan Percakapan"
+                aria-label="Bersihkan percakapan"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
               </Button>
@@ -223,10 +137,11 @@ export function AiPlayground({
           <button
             type="button"
             onClick={() => setShowSystemPrompt(!showSystemPrompt)}
+            aria-expanded={showSystemPrompt}
             className="flex w-full items-center justify-between text-xs font-semibold text-slate-600 hover:text-slate-900"
           >
             <span className="flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
+              <InstructionIcon className="h-3.5 w-3.5 text-indigo-500" />
               System Prompt Instruksi
             </span>
             {showSystemPrompt ? (
@@ -238,6 +153,7 @@ export function AiPlayground({
           {showSystemPrompt && (
             <div className="mt-2">
               <Textarea
+                aria-label="Instruksi system prompt"
                 value={systemPrompt}
                 onChange={(e) => setSystemPrompt(e.target.value)}
                 placeholder="Instruksi perilaku sistem AI..."
@@ -248,98 +164,20 @@ export function AiPlayground({
           )}
         </div>
 
-        {/* Chat History View */}
-        <div className="flex-1 space-y-4 overflow-y-auto p-4">
-          {messages.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center px-4 text-center">
-              <div className="mb-3 rounded-full bg-indigo-50 p-4 text-indigo-600">
-                <Bot className="h-8 w-8" />
-              </div>
-              <h3 className="text-sm font-semibold text-slate-800">
-                Mulai Uji Coba Prompt
-              </h3>
-              <p className="mt-1 mb-6 max-w-sm text-xs text-muted-foreground">
-                Kirim prompt untuk mengevaluasi kecepatan respon, penalaran, dan
-                biaya token per request dari model{" "}
-                <strong>{currentModelMeta?.displayName}</strong>.
-              </p>
-
-              <div className="w-full max-w-md space-y-2">
-                <span className="block text-left text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
-                  Contoh Prompt Cepat:
-                </span>
-                <div className="grid grid-cols-1 gap-1.5 text-left">
-                  {SAMPLE_PROMPTS.map((sample, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setPrompt(sample)}
-                      className="rounded-lg border bg-white p-2.5 text-left text-xs text-slate-700 transition-colors hover:border-indigo-200 hover:bg-slate-50"
-                    >
-                      &ldquo;{sample}&rdquo;
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : (
-            messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex gap-3 ${
-                  msg.role === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                {msg.role === "assistant" && (
-                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white">
-                    <Bot className="h-4 w-4" />
-                  </div>
-                )}
-
-                <div
-                  className={`max-w-[85%] rounded-xl p-3.5 text-xs leading-relaxed ${
-                    msg.role === "user"
-                      ? "rounded-tr-xs bg-indigo-600 text-white"
-                      : "rounded-tl-xs border bg-slate-100 whitespace-pre-wrap text-slate-900"
-                  }`}
-                >
-                  <p>{msg.content}</p>
-                  {msg.tokens && (
-                    <div className="mt-2 flex items-center gap-3 border-t border-slate-200/80 pt-2 font-mono text-[10px] text-slate-500">
-                      <span>In: {msg.tokens.prompt}</span>
-                      <span>Out: {msg.tokens.completion}</span>
-                      <span>Biaya: {formatCurrency(msg.tokens.cost)}</span>
-                      <span>{msg.tokens.durationMs}ms</span>
-                    </div>
-                  )}
-                </div>
-
-                {msg.role === "user" && (
-                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-800 text-white">
-                    <User className="h-4 w-4" />
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-
-          {isLoading && (
-            <div className="flex items-center justify-start gap-3">
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white">
-                <Bot className="h-4 w-4" />
-              </div>
-              <div className="flex items-center gap-2 rounded-xl border bg-slate-100 p-3 text-xs text-slate-600">
-                <Loader2 className="h-4 w-4 animate-spin text-indigo-600" />
-                <span>Memproses melalui relay {selectedModel}...</span>
-              </div>
-            </div>
-          )}
-        </div>
+        <PlaygroundMessages
+          messages={messages}
+          isLoading={isLoading}
+          selectedModel={selectedModel}
+          currentModelMeta={currentModelMeta}
+          onSample={setPrompt}
+          emptyIllustration={emptyIllustration}
+        />
 
         {/* Input Bar */}
         <div className="border-t bg-white p-3">
           <div className="flex gap-2">
             <Textarea
+              aria-label="Prompt untuk model AI"
               placeholder="Tulis prompt Anda di sini... (Tekan Enter untuk kirim, Shift+Enter untuk baris baru)"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
@@ -349,6 +187,7 @@ export function AiPlayground({
               className="min-h-[48px] resize-none text-xs"
             />
             <Button
+              aria-label="Kirim prompt"
               onClick={handleSend}
               disabled={isLoading || !prompt.trim()}
               className="h-10 self-end bg-indigo-600 px-4 text-white hover:bg-indigo-700"
@@ -363,114 +202,12 @@ export function AiPlayground({
         </div>
       </Card>
 
-      {/* Live Cost & Telemetry Tracker (1 col) */}
-      <div className="space-y-4">
-        {/* Model Card */}
-        <Card className="border shadow-xs">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
-              Model Terpilih
-            </CardTitle>
-            <div className="flex items-center justify-between pt-1">
-              <span className="truncate text-sm font-bold text-slate-900">
-                {currentModelMeta?.displayName}
-              </span>
-              <Badge variant="outline" className="text-[10px]">
-                {currentModelMeta?.category}
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-2 pt-1 text-xs">
-            <div className="flex justify-between border-b pb-1.5">
-              <span className="text-slate-500">Harga Input:</span>
-              <span className="font-mono font-medium">
-                {formatCurrency(currentModelMeta?.inputPricePerM || 0)} / 1M
-              </span>
-            </div>
-            <div className="flex justify-between border-b pb-1.5">
-              <span className="text-slate-500">Harga Output:</span>
-              <span className="font-mono font-medium">
-                {formatCurrency(currentModelMeta?.outputPricePerM || 0)} / 1M
-              </span>
-            </div>
-            <div className="flex justify-between pb-1">
-              <span className="text-slate-500">Konteks:</span>
-              <span className="font-mono">
-                {(currentModelMeta?.contextWindow || 0).toLocaleString("id-ID")}{" "}
-                token
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Live Token & Cost Telemetry */}
-        <Card className="border bg-slate-50/50 shadow-xs">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-1.5 text-xs font-semibold tracking-wider text-slate-500 uppercase">
-              <Zap className="h-3.5 w-3.5 text-amber-500" />
-              Telemetri Permintaan Terakhir
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-xs">
-            {lastUsage ? (
-              <>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Prompt Tokens:</span>
-                  <span className="font-mono font-bold text-indigo-700">
-                    {lastUsage.promptTokens}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Completion Tokens:</span>
-                  <span className="font-mono font-bold text-emerald-700">
-                    {lastUsage.completionTokens}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Total Tokens:</span>
-                  <span className="font-mono font-bold text-slate-900">
-                    {lastUsage.totalTokens}
-                  </span>
-                </div>
-                <div className="flex justify-between border-t pt-1.5">
-                  <span className="text-slate-600">Durasi Response:</span>
-                  <span className="font-mono">{lastDuration} ms</span>
-                </div>
-                <div className="flex items-baseline justify-between border-t pt-2">
-                  <span className="font-semibold text-slate-900">
-                    Biaya Terdebit:
-                  </span>
-                  <span className="font-mono text-sm font-extrabold text-emerald-700">
-                    {formatCurrency(lastUsage.totalCostIdr)}
-                  </span>
-                </div>
-              </>
-            ) : (
-              <p className="py-3 text-center text-[11px] text-muted-foreground">
-                Belum ada request yang dieksekusi di sesi ini.
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Current Balance Widget */}
-        <Card className="border border-indigo-100 bg-indigo-50/40 shadow-xs">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-1.5 text-xs font-semibold tracking-wider text-indigo-700 uppercase">
-              <Coins className="h-3.5 w-3.5 text-indigo-600" />
-              Sisa Saldo Real-Time
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="font-mono text-xl font-black text-indigo-950">
-              {formatCurrency(currentBalance)}
-            </div>
-            <p className="mt-1 text-[10px] text-indigo-600/90">
-              Diproses secara atomik via trigger PostgreSQL.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <PlaygroundTelemetry
+        currentModelMeta={currentModelMeta}
+        lastUsage={lastUsage}
+        lastDuration={lastDuration}
+        currentBalance={currentBalance}
+      />
     </div>
   );
 }
