@@ -10,7 +10,7 @@ Tabel berikut menentukan perintah apa saja yang boleh dijalankan otomatis oleh A
 
 | Kategori Perintah        | Contoh Perintah                                       | Boleh Dijalankan Otomatis? | Keterangan & Aturan                                                                                   |
 | :----------------------- | :---------------------------------------------------- | :------------------------: | :---------------------------------------------------------------------------------------------------- |
-| **Branching**            | `git checkout -b feat/...`                            |         ✅ **YA**          | **Wajib membuat branch baru** untuk setiap task. Dilarang bekerja/commit langsung di `main`.          |
+| **Branching**            | `git checkout -b feat/... origin/staging`             |         ✅ **YA**          | **Wajib membuat branch baru dari `origin/staging`**. Dilarang bekerja/commit langsung di `staging` atau `main`. |
 | **Pencarian Test**       | `find . -name "*.test.*"`, `grep ...`                 |         ✅ **YA**          | **Wajib dijalankan** untuk memetakan file pengujian yang menguji modul yang diubah.                   |
 | **Modul Test Execution** | `bun test <file.test.ts>`, `bun test <file.test.tsx>` |         ✅ **YA**          | **Wajib dijalankan** untuk memverifikasi file test unit / UI yang diperbarui/dibuat.                  |
 | **Full Test Suite**      | `bun test`                                            |         ✅ **YA**          | **Wajib dijalankan** sebelum menyelesaikan task untuk menjamin 0 regresi di seluruh sistem.           |
@@ -22,9 +22,9 @@ Tabel berikut menentukan perintah apa saja yang boleh dijalankan otomatis oleh A
 | **Generasi Skema**       | `bun run db:generate`                                 |         ✅ **YA**          | Dijalankan saat ada perubahan pada `prisma/schema.prisma`.                                            |
 | **Pembersihan File**     | `rm ...`, file deletion                               |         ✅ **YA**          | Wajib untuk membersihkan dead code / scratch files terkait task.                                      |
 | **Production Build**     | `bun run build`, `next build`                         |        ❌ **TIDAK**        | Jalankan jika diminta pengguna atau sebagai gerbang verifikasi rilis final.                           |
-| **Git Commit ke `main`** | `git commit` di branch `main`                         |      🚫 **DILARANG**       | **DILARANG KERAS**. Seluruh commit wajib berada di feature/fix branch.                                |
-| **Git Commit di Branch** | `git commit -m "..."` di non-main branch              |         ✅ **YA**          | Dilakukan pada branch kerja dengan pesan Conventional Commits.                                        |
-| **PR & Squash Merge**    | Buat PR & Squash and Merge ke `main`                  |         ✅ **YA**          | Alur wajib penggabungan perubahan ke branch `main`.                                                   |
+| **Git Commit ke `main`/`staging`** | `git commit` di branch `main` atau `staging`|      🚫 **DILARANG**       | **DILARANG KERAS**. Seluruh commit wajib berada di feature/fix branch.                                |
+| **Git Commit di Branch** | `git commit -m "..."` di feature branch              |         ✅ **YA**          | Dilakukan pada branch kerja dengan pesan Conventional Commits.                                        |
+| **PR & Squash Merge**    | Buat PR & Squash and Merge ke `staging`               |         ✅ **YA**          | Alur wajib penggabungan perubahan ke branch `staging`. Promosi ke `main` via release PR teruji.       |
 
 ---
 
@@ -33,8 +33,9 @@ Tabel berikut menentukan perintah apa saja yang boleh dijalankan otomatis oleh A
 Setiap AI Agent wajib memeriksa seluruh checklist berikut sebelum menyatakan bahwa tugas telah selesai:
 
 ```
-[ ] 1. Git Branching Check (Non-Main Branch)
-    - Pastikan TIDAK berada di branch `main` saat melakukan commit.
+[ ] 1. Git Branching Check (Non-Main, Non-Staging Branch)
+    - Pastikan TIDAK berada di branch `main` atau `staging` saat melakukan commit.
+    - Dicabangkan dari `origin/staging`: `git checkout -b feat/... origin/staging`.
     - Telah membuat branch kerja: `feat/...`, `fix/...`, `refactor/...`, `docs/...`, atau `chore/...`.
 
 [ ] 2. Kode & Perubahan Utama Selesai
@@ -98,9 +99,10 @@ Setiap AI Agent wajib memeriksa seluruh checklist berikut sebelum menyatakan bah
 
 [ ] 11. Pemeriksaan Integritas Git & PR Workflow
     - Jalankan `git status` untuk meninjau status direktori kerja (tidak ada file sampah untracked).
-    - Lakukan commit pada branch kerja (BUKAN di `main`).
-    - Buka Pull Request (PR) ke `main`.
-    - Terapkan strategi Squash and Merge saat penggabungan ke `main`.
+    - Lakukan commit pada branch kerja (BUKAN di `main` atau `staging`).
+    - Buka Pull Request (PR) ke `staging` (`base: staging`, `compare: feat/...`).
+    - Terapkan strategi Squash and Merge saat penggabungan ke `staging`.
+    - Promosi ke `main` hanya melalui Release PR terverifikasi setelah lulus pengujian di staging.
 ```
 
 ---
@@ -137,39 +139,43 @@ Dokumentasi dalam folder `ai-agent-docs/` dirancang agar dapat dikonsumsi secara
 
 ## 5. Protokol Git Branching, Commit, PR & Squash Merge
 
-Untuk menjaga integritas dan kebersihan riwayat repositori, seluruh AI Agent **WAJIB** menerapkan alur kerja berikut:
+Untuk menjaga integritas dan kebersihan riwayat repositori, seluruh AI Agent **WAJIB** menerapkan model percabangan 3-tingkat: `main` (Production) $\leftarrow$ `staging` (Staging / Pre-Production) $\leftarrow$ `feat/*`, `fix/*`, `refactor/*`, `docs/*`, `chore/*`:
 
-### 1. Larangan Commit Langsung ke `main`
+### 1. Larangan Commit Langsung ke `main` dan `staging`
 
-- Branch `main` diproteksi sebagai representasi kode produksi yang stabil.
-- Tidak ada pengembang maupun agen AI yang diizinkan menjalankan `git commit` langsung saat berada di branch `main`.
+- Branch `main` diproteksi sebagai representasi kode produksi yang stabil (auto-deploy ke production VPS stack).
+- Branch `staging` diproteksi sebagai representasi lingkungan staging terintegrasi (auto-deploy ke staging VPS stack).
+- **DILARANG KERAS** menjalankan `git commit` langsung saat berada di branch `main` maupun `staging`.
+- **DILARANG KERAS** membuat PR langsung ke `main` untuk penanganan task atau fitur reguler.
 
-### 2. Standar Alur Kerja (Branch -> Commit -> PR -> Squash & Merge)
+### 2. Standar Alur Kerja (Branch from Staging -> Commit -> PR to Staging -> Squash & Merge -> Promotion to Main)
 
-1. **Pemeriksaan Branch Awal**:
+1. **Pemeriksaan Branch Awal & Fetch**:
    ```bash
    git status
-   git branch --show-current
+   git fetch origin
    ```
-2. **Pembuatan Branch Baru**:
-   Buat branch baru dari `main` terkini dengan format prefix yang sesuai:
-   - `git checkout -b feat/<nama-fitur>` (untuk penambahan fitur baru)
-   - `git checkout -b fix/<deskripsi-bug>` (untuk perbaikan bug)
-   - `git checkout -b refactor/<komponen>` (untuk restrukturisasi kode)
-   - `git checkout -b docs/<nama-dokumen>` (untuk pembaruan dokumentasi)
-   - `git checkout -b chore/<nama-tugas>` (untuk pemeliharaan dependensi/infrastruktur)
+2. **Pembuatan Branch Baru dari `origin/staging`**:
+   Buat branch baru dari `origin/staging` terkini dengan format prefix yang sesuai:
+   - `git checkout -b feat/<nama-fitur> origin/staging` (untuk penambahan fitur baru)
+   - `git checkout -b fix/<deskripsi-bug> origin/staging` (untuk perbaikan bug)
+   - `git checkout -b refactor/<komponen> origin/staging` (untuk restrukturisasi kode)
+   - `git checkout -b docs/<nama-dokumen> origin/staging` (untuk pembaruan dokumentasi)
+   - `git checkout -b chore/<nama-tugas> origin/staging` (untuk pemeliharaan dependensi/infrastruktur)
 3. **Pengerjaan & Pengujian**:
    Implementasikan kode, cari dan perbarui skenario test terkait, jalankan formatter, linter, typecheck, dan unit test.
 4. **Commit pada Branch Kerja**:
-   Lakukan commit pada branch yang baru dibuat dengan pesan Conventional Commits yang deskriptif:
+   Lakukan commit pada branch kerja yang baru dibuat dengan pesan Conventional Commits yang deskriptif:
    ```bash
    git add <file-terkait>
    git commit -m "fix(calculator): overhaul admin layout and fix double active menu"
    ```
-5. **Pengajuan Pull Request (PR)**:
-   Buat Pull Request dari branch kerja menuju branch `main`.
-6. **Squash and Merge**:
-   Saat menggabungkan PR ke `main`, **WAJIB** menggunakan metode **Squash and Merge**. Metode ini memadatkan seluruh commit eksperimen/tahapan pengerjaan pada branch fitur menjadi tepat 1 commit bersih pada branch `main`.
+5. **Pengajuan Pull Request (PR) ke `staging`**:
+   Buat Pull Request dari branch kerja menuju branch **`staging`** (`base: staging`, `compare: feat/...`).
+6. **Squash and Merge ke `staging`**:
+   Saat menggabungkan PR ke `staging`, **WAJIB** menggunakan metode **Squash and Merge**. Penggabungan ke `staging` secara otomatis memicu pipeline CI/CD GitHub Actions untuk membangun image Docker dengan tag `:staging` dan men-deploy secara otomatis ke direktori VPS `/opt/docker-stack/applications/aldera-tech-staging` (`staging.aldera.tech`).
+7. **Promosi Teruji ke `main`**:
+   Promosi dari `staging` ke `main` hanya dilakukan melalui Release PR (`base: main`, `compare: staging`) setelah seluruh fungsi diverifikasi beroperasi normal pada stack staging. Push/merge ke `main` memicu build image `:latest` dan deployment ke stack produksi.
 
 ---
 
@@ -232,8 +238,8 @@ AI Agent menyusun respon penutup task dengan format konsisten seperti contoh ber
 
 #### 1. Git Branching & PR Status:
 
-- **Branch Aktif**: `feat/nama-fitur-baru` (atau `fix/...`)
-- **Status Workflow**: Siap diajukan Pull Request ke `main` dengan strategi **Squash and Merge**.
+- **Branch Aktif**: `feat/nama-fitur-baru` (dicabangkan dari `origin/staging`)
+- **Status Workflow**: Siap diajukan Pull Request ke `staging` dengan strategi **Squash and Merge**. Promosi ke `main` via Release PR terverifikasi.
 
 #### 2. Perubahan Berkas:
 

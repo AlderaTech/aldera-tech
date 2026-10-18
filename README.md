@@ -48,6 +48,24 @@ npm run db:studio   # open Prisma Studio
 npm run db:migrate  # create a migration
 ```
 
+## Git Branching Model & CI/CD Workflow
+
+Repositori ini menerapkan model percabangan 3-tingkat:
+- **`main`**: Protected Production branch. Otomatisasi CI/CD membangun image `:latest` dan men-deploy ke VPS production (`/opt/docker-stack/applications/aldera-tech` & `https://aldera.tech`).
+- **`staging`**: Integration branch. Otomatisasi CI/CD membangun image `:staging` dan men-deploy ke VPS staging (`/opt/docker-stack/applications/aldera-tech-staging` & `https://staging.aldera.tech`).
+- **`feat/*`, `fix/*`**: Branch tugas kerja.
+
+**Aturan Kerja Wajib**:
+1. Seluruh pengerjaan wajib dicabangkan dari `origin/staging`:
+   ```bash
+   git fetch origin
+   git checkout -b feat/<nama-fitur> origin/staging
+   ```
+2. Pull Request ditargetkan ke branch **`staging`** menggunakan strategi **Squash and Merge**.
+3. DILARANG KERAS melakukan commit langsung ke `main` atau `staging`, dan dilarang membuat PR langsung ke `main` untuk task reguler.
+4. Promosi ke `main` hanya dilakukan via Release PR setelah verifikasi staging.
+5. Panduan lengkap AI Agent dan pengembang tersedia di [`AGENTS.md`](AGENTS.md) dan [`ai-agent-docs/agent-workflow.md`](ai-agent-docs/agent-workflow.md).
+
 ## Architecture
 
 ```

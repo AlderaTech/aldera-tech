@@ -10,6 +10,27 @@ Aldera Tech is a high-performance digital product and software engineering consu
 4. **Administration & CMS (`app/admin/*`)**: Unified operational hub for project management, team workload distribution, pricing SSOT, portfolio/testimonial CMS, and invoice management.
 5. **System Core & API Layer (`lib/*`, `app/api/*`)**: Clean RSC boundaries, pure utility functions, Zod schema validations, rate limiting, secure webhook handlers, and timing-safe cron authentication.
 
+### Multi-Stack Staging Architecture & Dual-Bot Topology (VPS `45.66.153.149`)
+
+Aldera Tech implements an isolated multi-stack environment operating side-by-side on VPS `45.66.153.149`:
+
+- **Production Stack (`main`)**:
+  - Web Application: `https://aldera.tech` (Proxy to container `aldera-tech:3000`, directory `/opt/docker-stack/applications/aldera-tech`)
+  - Database: `aldera_tech` / `solvo_tech` (PostgreSQL)
+  - Telegram Relay Bot: `@aldera_tech_bot` (Token: `[REDACTED_TELEGRAM_BOT_TOKEN]`, directory `/opt/docker-stack/applications/aldera-router`, DB `aldera_router`)
+  - CI/CD Deployment: Push to `main` builds `:latest` tag and triggers production deploy.
+
+- **Staging Stack (`staging`)**:
+  - Web Application: `https://staging.aldera.tech` (Proxy to container `aldera-tech-staging:3000`, directory `/opt/docker-stack/applications/aldera-tech-staging`)
+  - Database: `aldera_tech_staging` (PostgreSQL, isolated)
+  - Telegram Relay Bot: `@aldera_tech_staging_bot` (Token: `[REDACTED_TELEGRAM_BOT_TOKEN]`, directory `/opt/docker-stack/applications/aldera-router-staging`, DB `aldera_router_staging`)
+  - CI/CD Deployment: Push to `staging` builds `:staging` tag and triggers staging deploy.
+
+- **Git Branching Hierarchy**:
+  - `main` $\leftarrow$ `staging` $\leftarrow$ `feat/*`, `fix/*`, `refactor/*`, `docs/*`.
+  - All development branches MUST branch from `origin/staging` (`git checkout -b feat/... origin/staging`).
+  - Pull Requests MUST target `staging` with **Squash and Merge**. Direct commits/PRs to `main` for regular tasks are strictly prohibited. Promotion to `main` happens via verified Release PR.
+
 ---
 
 ## Feature Inventory
