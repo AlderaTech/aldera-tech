@@ -1,0 +1,412 @@
+.dialog {
+  width: calc(100% - 2rem);
+  max-width: 600px;
+  max-height: calc(100dvh - 2rem);
+  gap: 1.25rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.6rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 24px;
+  background: var(--overview-paper);
+  box-shadow: 0 24px 90px
+    color-mix(in srgb, var(--overview-ink) 18%, transparent);
+}
+.dialog [data-slot="dialog-close"] {
+  top: 1.2rem;
+  right: 1.2rem;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--overview-canvas);
+  color: var(--overview-muted);
+}
+.dialog :is(button, a, textarea):focus-visible {
+  outline: 2px solid var(--overview-blue);
+  outline-offset: 3px;
+}
+.header {
+  gap: 0.45rem;
+  text-align: left;
+  padding-right: 1.25rem;
+}
+.headerIcon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 0.3rem;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--overview-sky);
+  color: var(--overview-blue);
+}
+.header [data-slot="dialog-title"] {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+.header [data-slot="dialog-description"] {
+  color: var(--overview-muted);
+  font-size: 0.76rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.header strong {
+  color: var(--overview-ink);
+  font-weight: 600;
+}
+.invoiceSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 15px;
+  background: linear-gradient(
+    110deg,
+    var(--overview-sky),
+    var(--overview-canvas)
+  );
+}
+.invoiceSummary dt {
+  color: var(--overview-muted);
+  font-size: 0.64rem;
+}
+.invoiceSummary dd {
+  margin-top: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.invoiceSummary > div:first-child dd {
+  font-size: 1.6rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.055em;
+}
+.tabs {
+  min-width: 0;
+  gap: 1rem;
+}
+.tabsList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100%;
+  height: auto;
+  padding: 0.3rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 12px;
+  background: var(--overview-canvas);
+}
+.tabsList button {
+  min-width: 0;
+  min-height: 42px;
+  padding: 0.5rem;
+  gap: 0.4rem;
+  border-radius: 9px;
+  color: var(--overview-muted);
+  font-size: 0.69rem;
+  white-space: normal;
+}
+.tabsList button svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+.tabsList button[data-state="active"] {
+  background: var(--overview-paper);
+  border-color: var(--overview-line);
+  color: var(--overview-blue);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--overview-ink) 5%, transparent);
+}
+.onlinePanel,
+.manualForm {
+  display: grid;
+  gap: 1rem;
+}
+.methodIntro {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+.methodIntro > span {
+  display: grid;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--overview-success-soft);
+  color: var(--overview-success);
+}
+.methodIntro h3 {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.methodIntro p,
+.methodNote {
+  margin-top: 0.3rem;
+  color: var(--overview-muted);
+  font-size: 0.72rem;
+  line-height: 1.8;
+}
+.methods {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.methods span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 42px;
+  padding: 0.5rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 10px;
+  color: var(--overview-ink);
+  font-size: 0.68rem;
+}
+.methods svg {
+  flex-shrink: 0;
+  color: var(--overview-blue);
+}
+.methodNote {
+  margin-top: 0;
+  padding: 0.8rem 1rem;
+  border-radius: 11px;
+  background: var(--overview-canvas);
+}
+.primaryButton {
+  min-width: 0;
+  min-height: 44px;
+  height: auto;
+  padding: 0.75rem 1rem;
+  gap: 0.45rem;
+  border-radius: 11px;
+  background: var(--overview-blue);
+  color: var(--overview-paper);
+  font-size: 0.75rem;
+  font-weight: 650;
+  white-space: normal;
+  line-height: 1.5;
+}
+.primaryButton:hover {
+  background: color-mix(in srgb, var(--overview-blue) 86%, var(--overview-ink));
+}
+.bankSection {
+  display: grid;
+  gap: 0.6rem;
+}
+.sectionLabel {
+  color: var(--overview-muted);
+  font-size: 0.6rem;
+  line-height: 1.7;
+  font-weight: 700;
+  letter-spacing: 0.065em;
+  text-transform: uppercase;
+}
+.bankAccount {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 12px;
+  background: var(--overview-canvas);
+}
+.bankAccount > svg {
+  flex-shrink: 0;
+  color: var(--overview-blue);
+}
+.bankAccount > div {
+  flex: 1;
+  min-width: 0;
+}
+.bankAccount h3 {
+  font-size: 0.72rem;
+  font-weight: 650;
+}
+.bankAccount p {
+  margin-top: 0.2rem;
+  color: var(--overview-muted);
+  font-size: 0.63rem;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.bankAccount .accountNumber {
+  color: var(--overview-ink);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.85rem;
+  font-weight: 650;
+  letter-spacing: 0.025em;
+}
+.bankAccount button {
+  min-height: 38px;
+  padding: 0.5rem;
+  gap: 0.35rem;
+  color: var(--overview-blue);
+  font-size: 0.65rem;
+}
+.bankAccount button svg {
+  width: 14px;
+  height: 14px;
+}
+.field {
+  display: grid;
+  gap: 0.55rem;
+  min-width: 0;
+}
+.field label {
+  color: var(--overview-ink);
+  font-size: 0.75rem;
+}
+.fieldHint {
+  color: var(--overview-muted);
+  font-size: 0.65rem;
+  line-height: 1.7;
+}
+.required {
+  color: var(--color-rose-700);
+}
+.fileChooser {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px dashed var(--overview-line);
+  border-radius: 13px;
+  background: var(--overview-canvas);
+}
+.fileChooser > svg {
+  color: var(--overview-blue);
+  flex-shrink: 0;
+}
+.fileChooser > div {
+  flex: 1 1 170px;
+  min-width: 0;
+}
+.fileChooser p {
+  font-size: 0.74rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.fileChooser span {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--overview-muted);
+  font-size: 0.64rem;
+  line-height: 1.7;
+}
+.fileChooser button {
+  min-height: 40px;
+  border-color: var(--overview-line);
+  border-radius: 9px;
+  background: var(--overview-paper);
+  font-size: 0.68rem;
+}
+.preview {
+  position: relative;
+  height: 176px;
+  overflow: hidden;
+  border: 1px solid var(--overview-line);
+  border-radius: 12px;
+  background: var(--overview-canvas);
+}
+.pdfPreview {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 10px;
+  color: var(--overview-blue);
+  font-size: 0.72rem;
+  overflow-wrap: anywhere;
+}
+.pdfPreview svg {
+  flex-shrink: 0;
+}
+.field textarea {
+  min-height: 72px;
+  resize: vertical;
+  padding: 0.75rem;
+  border-color: var(--overview-line);
+  border-radius: 11px;
+  font-size: 0.75rem;
+  line-height: 1.7;
+}
+.field textarea::placeholder {
+  color: var(--overview-muted);
+}
+.error {
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--color-rose-200);
+  border-radius: 9px;
+  background: var(--color-rose-50);
+  color: var(--color-rose-700);
+  font-size: 0.72rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.formActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--overview-line);
+}
+.formActions > button:not(.primaryButton) {
+  min-height: 44px;
+  border-radius: 11px;
+  border-color: var(--overview-line);
+  font-size: 0.75rem;
+}
+@media (max-width: 479px) {
+  .dialog {
+    padding: 1.2rem;
+    gap: 1rem;
+    border-radius: 20px;
+  }
+  .tabProvider {
+    display: none;
+  }
+  .tabsList button {
+    font-size: 0.65rem;
+    gap: 0.3rem;
+  }
+  .methods {
+    gap: 0.35rem;
+  }
+  .methods span {
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.62rem;
+  }
+  .bankAccount {
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+  .bankAccount > svg {
+    display: none;
+  }
+  .bankAccount button span {
+    display: none;
+  }
+  .formActions {
+    align-items: stretch;
+  }
+  .formActions .primaryButton {
+    flex: 1;
+  }
+  .invoiceSummary > div:first-child dd {
+    font-size: 1.4rem;
+  }
+}
