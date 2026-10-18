@@ -235,3 +235,42 @@ Setiap kali melakukan pengembangan atau perubahan fitur pada codebase, pengemban
    - Jika ada env var baru yang esensial untuk runtime, **WAJIB** mencatatnya pada [`.env.example`](../.env.example) dan menyertakannya di blok `environment` pada `docker/docker-compose.yml`.
 5. **Perubahan Port Aplikasi**:
    - Jika port default diubah dari 3000, sesuaikan variabel `PORT`, `EXPOSE`, dan `HEALTHCHECK` pada `docker/Dockerfile` serta `docker/docker-compose.yml`.
+
+---
+
+## 7. Arsitektur Multi-Stack Staging & Produksi di VPS (`45.66.153.149`)
+
+Aldera Tech menerapkan isolasi lingkungan multi-stack pada server VPS produksi tunggal (`45.66.153.149`) yang memisahkan lingkungan **Staging** dan **Production** secara menyeluruh (jaringan container, filesystem, volume, bot Telegram, dan database).
+
+### 7.1 Ringkasan Lingkungan & Pemetaan Port/Direktori
+
+| Komponen | Staging (`staging`) | Production (`main`) |
+|---|---|---|
+| **Web App Domain** | `https://staging.aldera.tech` | `https://aldera.tech` |
+| **Web App Directory** | `/opt/docker-stack/applications/aldera-tech-staging` | `/opt/docker-stack/applications/aldera-tech` |
+| **Web App Database** | `aldera_tech_staging` (PostgreSQL) | `solvo_tech` / `aldera_tech` (PostgreSQL) |
+| **Web App Docker Tag** | `ghcr.io/alderatech/aldera-tech:staging` | `ghcr.io/alderatech/aldera-tech:latest` |
+| **Telegram Bot** | `@aldera_tech_staging_bot` | `@aldera_tech_bot` |
+| **Telegram Bot Token** | `8916243706:AAEMDoEFcwexK2Mhj6ymicycBb0JsLDBSfw` | `8852955622:AAEXFz4P8hMNwsW_oaExomiLJk8LDPYbkXM` |
+| **Router Stack Directory** | `/opt/docker-stack/applications/aldera-router-staging` | `/opt/docker-stack/applications/aldera-router` |
+| **Router Relay Database** | `aldera_router_staging` (PostgreSQL) | `aldera_router` (PostgreSQL) |
+| **Router Docker Tag** | `:staging` (`router-telegram-bot:staging`, etc.) | `:latest` |
+| **CI/CD Auto-Deploy** | Push ke branch `staging` | Push ke branch `main` |
+
+### 7.2 Alur Otomatisasi CI/CD GitHub Actions
+1. **Push ke `staging`**:
+   - Memvalidasi linter dan typecheck Next.js.
+   - Mem-build image dengan tag `:staging` dan tag `sha-<hash>` ke GitHub Container Registry (`ghcr.io`).
+   - Memicu SSH deploy action ke VPS: masuk ke direktori `/opt/docker-stack/applications/aldera-tech-staging` dan menjalankan `./update.sh`.
+2. **Push ke `main`**:
+   - Mem-build image dengan tag `:latest` dan tag semver `v*`.
+   - Memicu SSH deploy action ke VPS: masuk ke direktori `/opt/docker-stack/applications/aldera-tech` dan menjalankan `./update.sh`.
+
+### 7.3 Topologi Jaringan & Isolasi
+- Seluruh container staging router berjalan pada jaringan internal terisolasi `aldera_router_staging_internal`.
+- Nginx Proxy Manager terhubung ke jaringan `nginx_proxy_manager_network` untuk merutekan request masuk ke container masing-masing:
+  - `aldera.tech` $\rightarrow$ `http://aldera-tech:3000`
+  - `staging.aldera.tech` $\rightarrow$ `http://aldera-tech-staging:3000`
+- Service staging router proxy tidak menggunakan alias generik `billing-proxy` pada bridge proxy untuk mencegah tabrakan rute (collision).
+- Database staging `aldera_tech_staging` dan `aldera_router_staging` terisolasi penuh dari database produksi untuk mencegah kontaminasi data transaksi finansial dan pengguna.
+

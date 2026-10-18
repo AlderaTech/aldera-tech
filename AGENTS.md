@@ -19,19 +19,31 @@ Setiap AI Agent yang bekerja pada repositori ini **WAJIB** mematuhi aturan dan p
 - **Wajib** menghapus file, folder, komponen, rute, atau skrip yang sudah tidak digunakan lagi (_dead code/unused files_) terkait perubahan task saat itu.
 - Dilarang meninggalkan file sementara (_temporary scratch files_), file tes coba-coba, atau artefak yang tidak sengaja terbuat.
 
-## 3. Aturan Git Branching, Commit & Pull Request (Dilarang Commit Langsung ke `main`)
+## 3. Aturan Git Branching Model: `main` <- `staging` <- `feat/*`, `fix/*` (Dilarang Commit/PR Langsung ke `main`)
 
-- **DILARANG KERAS** melakukan commit langsung ke branch `main` (`Direct commit to main is strictly prohibited`).
-- **Alur Kerja Branching Wajib (Branch -> Commit -> PR -> Squash & Merge)**:
-  1. **Buat Branch Baru**: Setiap penanganan tugas, perbaikan bug, atau penambahan fitur wajib dikerjakan pada branch terpisah yang dicabangkan dari `main` dengan konvensi:
+Repositori ini menerapkan model percabangan 3-tingkat terstruktur: `main` (Production) $\leftarrow$ `staging` (Staging / Pre-Production) $\leftarrow$ `feat/*`, `fix/*`, `refactor/*`, `docs/*`, `chore/*`.
+
+- **LARANGAN KERAS**:
+  1. **DILARANG KERAS** melakukan commit langsung ke branch `main` maupun branch `staging`.
+  2. **DILARANG KERAS** membuka Pull Request (PR) langsung ke `main` untuk task reguler/fitur/bugfix.
+- **Alur Kerja Branching Wajib (Staging -> Feature Branch -> PR to Staging -> Squash & Merge -> Promotion to Main)**:
+  1. **Buat Branch Baru dari `staging`**: Setiap penanganan tugas, perbaikan bug, atau penambahan fitur **WAJIB dicabangkan dari `origin/staging`**:
+     ```bash
+     git fetch origin
+     git checkout -b feat/<nama-fitur> origin/staging
+     # atau untuk perbaikan bug:
+     git checkout -b fix/<deskripsi-bug> origin/staging
+     ```
+     Konvensi penamaan:
      - `feat/<nama-fitur>`: Penambahan fitur baru
      - `fix/<deskripsi-bug>`: Perbaikan bug atau celah keamanan
-     - `refactor/<komponen-atau-alur>`: Restrukturisasi atau pembersihan kode
-     - `chore/<nama-tugas>` atau `docs/<nama-dokumen>`: Tugas infrastruktur atau dokumentasi
-  2. **Commit pada Branch**: Lakukan commit pada branch baru tersebut dengan pesan commit yang jelas mengikuti konvensi Conventional Commits (`feat: ...`, `fix: ...`, `refactor: ...`).
-  3. **Buat Pull Request (PR)**: Ajukan Pull Request dari branch fitur/fix tersebut ke branch `main`.
-  4. **Squash and Merge**: Penggabungan PR ke branch `main` **WAJIB** menggunakan metode **Squash and Merge** agar riwayat commit di branch `main` tetap bersih, linier, dan mudah di-audit.
-- Jika pengguna meminta commit/push, selalu pastikan Anda berada di branch kerja (bukan `main`), atau tanyakan pembuatan branch terlebih dahulu jika saat ini masih di `main`.
+     - `refactor/<komponen>`: Restrukturisasi atau pembersihan kode
+     - `docs/<nama-dokumen>`: Pembaruan dokumentasi
+     - `chore/<nama-tugas>`: Pemeliharaan dependensi / konfigurasi build
+  2. **Commit pada Branch Kerja**: Lakukan commit pada branch kerja dengan pesan Conventional Commits (`feat: ...`, `fix: ...`, `refactor: ...`).
+  3. **Buat Pull Request (PR) ke `staging`**: Ajukan PR dengan target branch **`staging`** (`base: staging`, `compare: feat/...`).
+  4. **Squash and Merge ke `staging`**: Penggabungan PR ke branch `staging` **WAJIB** menggunakan metode **Squash and Merge**. Push ke `staging` memicu otomatisasi CI/CD untuk build image `:staging` dan deploy ke VPS Staging Stack (`/opt/docker-stack/applications/aldera-tech-staging` & `staging.aldera.tech`).
+  5. **Promosi Teruji ke `main`**: Penggabungan dari `staging` ke `main` hanya dilakukan melalui Release PR (`base: main`, `compare: staging`) setelah seluruh pengujian E2E di VPS staging lulus dan diverifikasi.
 
 ## 4. Protokol Pengetesan & Pembaruan Test (Mandatory Test Mapping & Updating)
 
@@ -89,7 +101,7 @@ Setiap kali menyelesaikan task, berikan ringkasan terstruktur yang memuat:
   15. **The 4 UI States Rule**: Setiap antarmuka data wajib menangani 4 kondisi: Loading (Skeleton UI mirroring layout asli), Empty State (ikon/pesan ramah + CTA), Error State (pesan error informatif + retry/toast), dan Large Dataset State (paginasi URL / batas per-halaman).
   16. **Standarisasi Input Form**: Setiap field input/select wajib memiliki placeholder kontekstual yang informatif. Label field required wajib bertanda bintang merah (`*`), dan field opsional wajib mencantumkan keterangan `(Opsional)` secara eksplisit.
   17. **Integritas Pengetesan & Test Maintenance**: Setiap perubahan kode wajib mencari file test terkait, memperbarui/menambah skenario pengujian, dan memastikan 100% test lulus (`bun test`).
-  18. **Git Branching & Squash Merge**: Dilarang commit langsung ke `main`; wajib buat branch baru, buat PR, dan gunakan Squash and Merge saat penggabungan.
+  18. **Git Branching & Squash Merge**: Wajib cabang dari `staging` (`git checkout -b feat/... origin/staging`), buka PR ke `staging`, dan gunakan Squash and Merge. Dilarang commit/PR langsung ke `main`.
   19. **Kewajiban Pengujian UI (Mandatory UI Testing)**: Setiap komponen antarmuka, modal, formulir, dan halaman rute (`page.tsx`) wajib memiliki UI test pendamping (`*.test.tsx`) yang menguji rendering, form input, 4 kondisi antarmuka, dan integritas navigasi (merujuk ke [`ai-agent-docs/ui-testing.md`](ai-agent-docs/ui-testing.md)).
 - Rincian panduan UI/UX lengkap wajib merujuk ke [`ai-agent-docs/ai-guidelines.md`](ai-agent-docs/ai-guidelines.md) dan [`ai-agent-docs/ui-testing.md`](ai-agent-docs/ui-testing.md).
 
@@ -101,3 +113,15 @@ Setiap kali menyelesaikan task, berikan ringkasan terstruktur yang memuat:
 
 - **DILARANG KERAS** menuliskan path absolut mesin atau skema lokal (seperti `file:///...`, `/home/...`, `/Users/...`, `C:\...`) ke dalam berkas repositori (kode program, skrip, maupun dokumentasi markdown).
 - Seluruh tautan file dan import antar berkas dalam repositori **WAJIB** menggunakan path relatif atau module alias (`@/`) agar repositori portabel dan tidak mengalami kerusakan tautan saat dipindahkan ke direktori atau perangkat lain.
+
+## 11. Arsitektur Dual-Bot & Multi-Stack Staging Topology
+
+Aldera Tech beroperasi dalam topologi multi-stack yang memisahkan lingkungan Staging dan Produksi secara berdampingan pada VPS `45.66.153.149`:
+- **Lingkungan Staging (`staging`)**:
+  - Web App: `https://staging.aldera.tech` (direktori server `/opt/docker-stack/applications/aldera-tech-staging`, database `aldera_tech_staging`).
+  - Telegram Bot: `@aldera_tech_staging_bot` (Token: `8916243706:AAEMDoEFcwexK2Mhj6ymicycBb0JsLDBSfw`, direktori server `/opt/docker-stack/applications/aldera-router-staging`, database `aldera_router_staging`).
+- **Lingkungan Produksi (`main`)**:
+  - Web App: `https://aldera.tech` (direktori server `/opt/docker-stack/applications/aldera-tech`, database `aldera_tech` / `solvo_tech`).
+  - Telegram Bot: `@aldera_tech_bot` (Token: `8852955622:AAEXFz4P8hMNwsW_oaExomiLJk8LDPYbkXM`, direktori server `/opt/docker-stack/applications/aldera-router`, database `aldera_router`).
+- **CI/CD Triggers**: Push ke `staging` memicu build image `:staging` dan auto-deploy ke direktori staging di VPS. Push ke `main` memicu build image `:latest` dan auto-deploy ke direktori produksi di VPS. Detail teknis lengkap terdapat di [`ai-agent-docs/deployment.md`](ai-agent-docs/deployment.md).
+

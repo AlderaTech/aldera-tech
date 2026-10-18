@@ -22,7 +22,7 @@ Dokumen ini merupakan panduan arsitektur dan kualitas kode resmi untuk repositor
 14. [Sinkronisasi State ke URL Parameters (Shareable Deep-Linking)](#14-sinkronisasi-state-ke-url-parameters-shareable-deep-linking)
 15. [Standar Penanganan 4 UI States & Input Form Hygiene](#15-standar-penanganan-4-ui-states--input-form-hygiene)
 16. [Integritas Pengetesan & Sinkronisasi Test Suite (Test Mapping & Maintenance)](#16-integritas-pengetesan--sinkronisasi-test-suite-test-mapping--maintenance)
-17. [Disiplin Git Branching & Squash Merge (No Direct Commit to Main)](#17-disiplin-git-branching--squash-merge-no-direct-commit-to-main)
+17. [Disiplin Git Branching Model: main <- staging <- feat/* (Dilarang Commit/PR Langsung ke Main)](#17-disiplin-git-branching-model-main---staging---feat-fix-dilarang-commitpr-langsung-ke-main)
 18. [Kewajiban Pengujian UI untuk Setiap Komponen & Halaman (Mandatory UI Testing)](#18-kewajiban-pengujian-ui-untuk-setiap-komponen--halaman-mandatory-ui-testing)
 
 ---
@@ -384,24 +384,30 @@ Setiap modifikasi kode (fitur baru, perbaikan bug, atau refactoring) wajib diver
 
 ---
 
-## 17. Disiplin Git Branching & Squash Merge (No Direct Commit to Main)
+## 17. Disiplin Git Branching Model: `main` <- `staging` <- `feat/*`, `fix/*` (Dilarang Commit/PR Langsung ke Main)
 
 ### Prinsip
 
-Branch `main` adalah representasi cabang produksi yang stabil dan suci. Dilarang keras melakukan commit langsung ke branch `main`.
+Repositori menerapkan model percabangan 3-tingkat: `main` (Production) $\leftarrow$ `staging` (Staging) $\leftarrow$ `feat/*`, `fix/*`. Branch `main` dan `staging` diproteksi. Dilarang keras melakukan commit langsung ke `main` maupun `staging`.
 
 ### Aturan Operasional
 
-1. **Wajib Buat Branch Baru**: Setiap penanganan issue/task harus dimulai dengan membuat branch baru dari `main` terkini:
+1. **Wajib Buat Branch Baru dari `origin/staging`**: Setiap penanganan issue/task harus dimulai dengan mencabangkan branch baru dari `origin/staging`:
+   ```bash
+   git fetch origin
+   git checkout -b feat/<fitur-singkat> origin/staging
+   ```
+   Prefix penamaan:
    - `feat/<fitur-singkat>` untuk fitur baru
    - `fix/<deskripsi-bug>` untuk perbaikan bug
    - `refactor/<komponen>` untuk refactoring kode
    - `docs/<topik>` untuk dokumentasi
    - `chore/<tugas>` untuk dependensi dan konfigurasi
 2. **Commit Terstruktur pada Branch**: Lakukan commit pada branch kerja menggunakan format Conventional Commits (`feat: ...`, `fix: ...`).
-3. **Pull Request & Squash and Merge**:
-   - Ajukan Pull Request (PR) dari branch kerja menuju `main`.
-   - Penggabungan ke branch `main` **WAJIB menggunakan strategi Squash and Merge** untuk memadatkan riwayat pengerjaan menjadi satu commit bersih dan informatif di `main`.
+3. **Pull Request & Squash and Merge ke `staging`**:
+   - Ajukan Pull Request (PR) dari branch kerja menuju branch **`staging`** (`base: staging`, `compare: feat/...`).
+   - Penggabungan ke branch `staging` **WAJIB menggunakan strategi Squash and Merge**. Merge ke `staging` memicu otomatisasi CI/CD deploy ke VPS Staging (`staging.aldera.tech`).
+   - Penggabungan dari `staging` ke `main` hanya dilakukan melalui Release PR terverifikasi setelah lulus pengujian di staging. Dilarang PR langsung dari branch fitur ke `main`.
 
 ---
 
@@ -430,7 +436,7 @@ Seluruh komponen visual, formulir interaktif, dialog modal, dan halaman rute Nex
 
 Sebelum menyelesaikan task pembuatan/modifikasi fitur, pastikan:
 
-- [ ] Bekerja pada branch kerja terpisah (`feat/...`, `fix/...`), BUKAN langsung di branch `main`.
+- [ ] Bekerja pada branch kerja terpisah (`feat/...`, `fix/...`) yang dicabangkan dari `origin/staging`, BUKAN langsung di branch `main` atau `staging`, dan PR ditargetkan ke `staging`.
 - [ ] Telah mencari file test terkait (`find . -name "*.test.*"` atau grep).
 - [ ] Memperbarui skenario test yang ada atau menambahkan test baru untuk setiap perubahan logika/bugfix.
 - [ ] Setiap komponen UI, form, modal, atau halaman rute memiliki file pengujian UI (`*.test.tsx` / `*.test.ts`) yang lolos 100% (`bun test`).
@@ -449,4 +455,4 @@ Sebelum menyelesaikan task pembuatan/modifikasi fitur, pastikan:
 - [ ] Seluruh field input memiliki placeholder kontekstual, label field required bertanda bintang merah (`*`), dan field optional bertuliskan `(Opsional)`.
 - [ ] Kode telah diformat menggunakan Prettier (`bun run format`) dan urutan utility class Tailwind tertata otomatis.
 - [ ] Tidak ada URI/path absolut mesin (`file:///...`, `/home/...`) yang tersimpan di dalam berkas repositori (Portability Check).
-- [ ] Siap diajukan Pull Request (PR) ke `main` dengan strategi Squash and Merge.
+- [ ] Siap diajukan Pull Request (PR) ke `staging` dengan strategi Squash and Merge (promosi ke `main` via Release PR teruji).
