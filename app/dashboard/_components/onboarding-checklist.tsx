@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { Check, ArrowRight, Layers } from "lucide-react";
 import { auth } from "@/auth";
-import { Card } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
 import { DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
 import { cn } from "@/lib/utils";
+import styles from "./overview.module.css";
+import onboardingStyles from "./overview-onboarding.module.css";
 
 type Step = {
   id: string;
@@ -83,77 +84,63 @@ export async function OnboardingChecklist() {
   const percent = Math.round((completed / total) * 100);
 
   return (
-    <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-background to-chart-4/5 p-5 sm:p-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <section className={styles.panel} aria-labelledby="onboarding-heading">
+      <div className={styles.panelHeader}>
         <div>
-          <div className="mb-1 inline-flex items-center gap-2 text-xs font-medium tracking-wider text-primary uppercase">
-            <Layers className="size-3.5" />
-            Mulai di sini
-          </div>
-          <h2 className="text-lg font-semibold">Checklist Onboarding</h2>
-          <p className="text-sm text-muted-foreground">
-            Selesaikan {completed} dari {total} langkah untuk memaksimalkan
-            pengalaman Anda.
+          <p className={styles.eyebrow}>
+            <Layers aria-hidden="true" /> Mulai di sini
           </p>
+          <h2 id="onboarding-heading" className={styles.sectionTitle}>
+            Checklist Onboarding
+          </h2>
         </div>
-        <div className="text-right">
-          <div className="text-2xl font-bold tabular-nums">{percent}%</div>
-        </div>
+        <span className={onboardingStyles.percent}>{percent}%</span>
       </div>
-
-      <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full bg-primary transition-all duration-500"
-          style={{ width: `${percent}%` }}
-        />
-      </div>
-
-      <ul className="mt-5 space-y-2">
-        {steps.map((step) => (
+      <p className={onboardingStyles.summary}>
+        Selesaikan{" "}
+        <strong>
+          {completed} dari {total} langkah
+        </strong>{" "}
+        untuk memaksimalkan pengalaman Anda.
+      </p>
+      <progress
+        className={styles.progress}
+        value={percent}
+        max={100}
+        aria-label="Progres onboarding"
+      >
+        {percent}%
+      </progress>
+      <ul className={onboardingStyles.steps}>
+        {steps.map((step, index) => (
           <li
             key={step.id}
             className={cn(
-              "flex items-start gap-3 rounded-lg border p-3 transition-colors",
-              step.done
-                ? "border-success/20 bg-success/5"
-                : "hover:bg-accent/30"
+              onboardingStyles.step,
+              step.done && onboardingStyles.done
             )}
           >
-            <div
-              className={cn(
-                "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full",
-                step.done
-                  ? "bg-success text-success-foreground"
-                  : "border-2 border-muted-foreground/30"
-              )}
-            >
-              {step.done && <Check className="size-3.5" />}
-            </div>
-            <div className="min-w-0 flex-1">
-              <div
-                className={cn(
-                  "text-sm font-medium",
-                  step.done && "line-through opacity-60"
-                )}
-              >
+            <span className={onboardingStyles.stepIcon} aria-hidden="true">
+              {step.done ? <Check /> : String(index + 1).padStart(2, "0")}
+            </span>
+            <div className={onboardingStyles.stepCopy}>
+              <h3>
                 {step.title}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {step.description}
-              </div>
+                <span className="sr-only">
+                  {step.done ? ": selesai" : ": belum selesai"}
+                </span>
+              </h3>
+              <p>{step.description}</p>
+              {!step.done && (
+                <Link href={step.cta.href} className={styles.textLink}>
+                  {step.cta.label}
+                  <ArrowRight aria-hidden="true" />
+                </Link>
+              )}
             </div>
-            {!step.done && (
-              <Link
-                href={step.cta.href}
-                className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-primary transition-all hover:gap-2"
-              >
-                {step.cta.label}
-                <ArrowRight className="size-3" />
-              </Link>
-            )}
           </li>
         ))}
       </ul>
-    </Card>
+    </section>
   );
 }

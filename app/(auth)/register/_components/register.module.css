@@ -1,0 +1,47 @@
+.experience .content {
+  max-width: 28rem;
+  margin-block: 1.15rem;
+}
+
+.experience .description {
+  max-width: 24rem;
+  margin-bottom: 1.35rem;
+}
+
+.fields {
+  gap: 1rem;
+}
+
+.fieldPair {
+  display: grid;
+  min-width: 0;
+  align-items: start;
+  gap: 1rem;
+}
+
+.hint {
+  margin: 0;
+  color: var(--login-muted);
+  font-size: 0.71rem;
+  line-height: 1.5;
+}
+
+.required {
+  color: var(--login-blue);
+}
+
+.experience .loginPrompt {
+  margin-top: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .fieldPair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  .experience .content {
+    margin-block: 1.15rem 0.85rem;
+  }
+}

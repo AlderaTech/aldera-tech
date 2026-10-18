@@ -7,11 +7,13 @@ import { Input } from "@/components/ui/input";
 type PasswordInputProps = ComponentProps<typeof Input> & {
   showPassword: boolean;
   onTogglePassword: () => void;
+  toggleLabel?: string;
 };
 
 export function PasswordInput({
   showPassword,
   onTogglePassword,
+  toggleLabel,
   className,
   ...props
 }: PasswordInputProps) {
@@ -27,7 +29,8 @@ export function PasswordInput({
         onClick={onTogglePassword}
         className="absolute top-1/2 right-3 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-black/42 transition-colors hover:bg-black/5 hover:text-black"
         aria-label={
-          showPassword ? "Sembunyikan password" : "Tampilkan password"
+          toggleLabel ??
+          (showPassword ? "Sembunyikan password" : "Tampilkan password")
         }
       >
         {showPassword ? (

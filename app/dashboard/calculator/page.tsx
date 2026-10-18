@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Calculator, ChevronRight, Home, Receipt } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import { CalculatorWizard } from "@/app/(public)/pricing/_components/calculator-wizard";
 import { getCalculatorData } from "@/lib/calculator";
 import { getSiteSettings } from "@/lib/public-settings";
 import { DASHBOARD_ROUTES } from "@/lib/routes";
+import styles from "./_components/calculator-page.module.css";
 
 export const metadata: Metadata = {
   title: "Kalkulator Estimasi Proyek | Dashboard",
@@ -20,12 +20,9 @@ export default async function DashboardCalculatorPage() {
   ]);
 
   return (
-    <div className="space-y-6">
+    <div className={styles.page}>
       {/* Breadcrumb Navigation */}
-      <nav
-        aria-label="Breadcrumb"
-        className="flex items-center gap-1.5 text-xs text-muted-foreground sm:text-sm"
-      >
+      <nav aria-label="Breadcrumb" className={styles.breadcrumb}>
         <Link
           href={DASHBOARD_ROUTES.home}
           className="flex cursor-pointer items-center gap-1 transition-colors hover:text-foreground"
@@ -46,33 +43,29 @@ export default async function DashboardCalculatorPage() {
       </nav>
 
       {/* Header Banner */}
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-center gap-3">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Calculator className="size-5" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Kalkulator Estimasi Proyek
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Rancang spesifikasi sistem, estimasikan biaya transparan, dan
-              kirimkan order request langsung ke tim engineering Aldera Tech.
-            </p>
-          </div>
+      <header className={styles.header}>
+        <div>
+          <p className={styles.eyebrow}>
+            <Calculator aria-hidden="true" /> Rencanakan proyek Anda
+          </p>
+          <h1>Kalkulator Estimasi Proyek</h1>
+          <p className={styles.description}>
+            Rancang spesifikasi sistem, estimasikan biaya transparan, dan
+            kirimkan order request langsung ke tim engineering Aldera Tech.
+          </p>
         </div>
-      </div>
+        <Link className={styles.history} href={DASHBOARD_ROUTES.orders}>
+          <Receipt aria-hidden="true" /> Riwayat Estimasi
+        </Link>
+      </header>
 
       {/* Embedded In-Dashboard Calculator Wizard */}
-      <Card className="border shadow-sm">
-        <CardContent className="p-4 sm:p-6 lg:p-8">
-          <CalculatorWizard
-            data={calculatorData}
-            isAuthenticated={true}
-            whatsappNumber={siteSettings.whatsapp}
-          />
-        </CardContent>
-      </Card>
+      <CalculatorWizard
+        data={calculatorData}
+        isAuthenticated={true}
+        whatsappNumber={siteSettings.whatsapp}
+        appearance="dashboard"
+      />
     </div>
   );
 }

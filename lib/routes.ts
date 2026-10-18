@@ -38,6 +38,8 @@ export const PUBLIC_ROUTES = {
 export const AUTH_ROUTES = {
   login: "/login",
   register: "/register",
+  verifyOtpWithPhone: (phone: string) =>
+    `/verify-otp?phone=${encodeURIComponent(phone)}`,
   forgotPassword: "/forgot-password",
   resetPassword: "/reset-password",
   loginWithCallback: (callbackUrl: string) =>

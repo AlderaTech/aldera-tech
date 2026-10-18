@@ -23,6 +23,7 @@ type StepReviewProps = {
   whatsappNumber?: string;
   onBack: () => void;
   onSubmit: () => void;
+  dashboard?: boolean;
 };
 
 export function StepReview({
@@ -38,6 +39,7 @@ export function StepReview({
   whatsappNumber,
   onBack,
   onSubmit,
+  dashboard = false,
 }: StepReviewProps) {
   const rawDigits = (whatsappNumber || "6281234567890").replace(/\D/g, "");
   let waDigits = rawDigits;
@@ -59,6 +61,18 @@ export function StepReview({
           Tinjau ringkasan, lengkapi catatan proyek, dan ajukan estimasi Anda.
         </p>
       </div>
+
+      {dashboard && (
+        <div data-review-project>
+          <span>Spesifikasi proyek</span>
+          <strong>{ptName}</strong>
+          <p>
+            Periksa konfigurasi dan rincian biaya pada panel estimasi sebelum
+            mengajukan. Gunakan Kembali untuk menyesuaikan pilihan.
+          </p>
+          <a href="#calculator-estimate">Lihat rincian estimasi</a>
+        </div>
+      )}
 
       {config?.revisionPolicy && (
         <div className="space-y-2 rounded-lg border border-border bg-muted/40 p-4 text-xs">
@@ -113,13 +127,18 @@ export function StepReview({
         </Button>
 
         {isAuthenticated ? (
-          <Button onClick={onSubmit} disabled={pending} className="gap-2">
+          <Button
+            onClick={onSubmit}
+            disabled={pending}
+            aria-busy={pending}
+            className="gap-2"
+          >
             {pending ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (
               <Send className="size-4" />
             )}
-            Ajukan Proyek
+            {dashboard && pending ? "Mengajukan..." : "Ajukan Proyek"}
           </Button>
         ) : (
           <div className="flex flex-wrap items-center gap-2.5">

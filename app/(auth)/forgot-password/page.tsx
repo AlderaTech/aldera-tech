@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AuthShell } from "../_components/auth-shell";
+import { ForgotPasswordExperience } from "./_components/forgot-password-experience";
 import { ForgotPasswordForm } from "./_components/forgot-password-form";
 
 export const metadata: Metadata = {
@@ -9,13 +9,8 @@ export const metadata: Metadata = {
 
 export default function ForgotPasswordPage() {
   return (
-    <AuthShell
-      eyebrow="Pemulihan"
-      title="Pulihkan akses akun Anda."
-      description="Masukkan email akun Anda. Kami akan mengirim link reset jika email tersebut terdaftar."
-      variant="forgot"
-    >
+    <ForgotPasswordExperience>
       <ForgotPasswordForm />
-    </AuthShell>
+    </ForgotPasswordExperience>
   );
 }
