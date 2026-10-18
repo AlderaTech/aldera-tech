@@ -5,9 +5,15 @@ import { readingTime } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ReadingProgressBar } from "./_components/reading-progress-bar";
 import { BlogViewIncrementer } from "./_components/blog-view-incrementer";
+import { auth } from "@/auth";
+import { isAdmin } from "@/lib/permissions";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 import { BlogArticleLayout } from "./_components/blog-article-layout";
-import { getBlogDetailPost, getBlogStaticParams } from "./_data/blog-detail";
+import {
+  getBlogDetailPost,
+  getBlogStaticParams,
+  getBlogEngagement,
+} from "./_data/blog-detail";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -48,6 +54,18 @@ export default async function BlogDetail({ params }: PageProps) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const featuredImage = resolveBlogPostImage(post.slug, post.featuredImage);
 
+  const session = await auth();
+  const currentUserId = session?.user?.id;
+  type UserWithRoles = {
+    roles?: import("@prisma/client").Role[];
+    role?: import("@prisma/client").Role;
+  };
+  const sessionUser = session?.user as unknown as UserWithRoles | undefined;
+  const userRoles = sessionUser?.roles ?? sessionUser?.role;
+  const isAdminUser = isAdmin(userRoles);
+
+  const engagement = await getBlogEngagement(post.id, currentUserId);
+
   return (
     <>
       <JsonLd
@@ -83,6 +101,9 @@ export default async function BlogDetail({ params }: PageProps) {
         post={post}
         minutes={minutes}
         featuredImage={featuredImage}
+        engagement={engagement}
+        currentUserId={currentUserId}
+        isAdminUser={isAdminUser}
       />
     </>
   );

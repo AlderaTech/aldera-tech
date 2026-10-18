@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { MoreHorizontal, Eye, EyeOff, Trash2 } from "lucide-react";
+import { MoreHorizontal, Eye, EyeOff, Trash2, Pin } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -16,18 +16,22 @@ import {
 import {
   togglePublishBlogPostAction,
   deleteBlogPostAction,
+  togglePinBlogPostAction,
 } from "@/lib/actions/blog";
 
 export function BlogRowActions({
   id,
   published,
+  isPinned,
 }: {
   id: string;
   published: boolean;
+  isPinned?: boolean;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [pinned, setPinned] = useState(Boolean(isPinned));
   return (
     <>
       <DropdownMenu>
@@ -42,6 +46,28 @@ export function BlogRowActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            onClick={() =>
+              startTransition(async () => {
+                try {
+                  const res = await togglePinBlogPostAction(id);
+                  const nextState = res?.isPinned ?? !pinned;
+                  setPinned(nextState);
+                  toast.success(
+                    nextState ? "Post disematkan" : "Pin post dilepas"
+                  );
+                  router.refresh();
+                } catch (err: unknown) {
+                  toast.error(
+                    err instanceof Error ? err.message : "Gagal mengubah status pin"
+                  );
+                }
+              })
+            }
+          >
+            <Pin className="size-4" />
+            {pinned ? "Lepas Pin" : "Sematkan"}
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
               startTransition(async () => {
