@@ -53,6 +53,25 @@ async function main() {
     },
   });
 
+  await prisma.user.upsert({
+    where: { email: "dev@aldera.tech" },
+    update: {
+      name: "Aldera Developer",
+      roles: ["DEVELOPER"],
+      isActive: true,
+      phoneVerified: new Date(),
+    },
+    create: {
+      email: "dev@aldera.tech",
+      name: "Aldera Developer",
+      roles: ["DEVELOPER"],
+      password: hashedPassword,
+      isActive: true,
+      emailVerified: new Date(),
+      phoneVerified: new Date(),
+    },
+  });
+
   const staffGading = await prisma.user.upsert({
     where: { email: "gading@gmail.com" },
     update: {
@@ -180,6 +199,25 @@ async function main() {
       email: "rafli-client@gmail.com",
       name: "Rafli",
       phone: "085367271303",
+      roles: ["CLIENT"],
+      password: hashedPassword,
+      isActive: true,
+      emailVerified: new Date(),
+      phoneVerified: new Date(),
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: "client@aldera.tech" },
+    update: {
+      name: "Aldera Client",
+      roles: ["CLIENT"],
+      isActive: true,
+      phoneVerified: new Date(),
+    },
+    create: {
+      email: "client@aldera.tech",
+      name: "Aldera Client",
       roles: ["CLIENT"],
       password: hashedPassword,
       isActive: true,
