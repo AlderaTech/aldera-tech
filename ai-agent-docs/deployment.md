@@ -251,7 +251,7 @@ Aldera Tech menerapkan isolasi lingkungan multi-stack pada server VPS produksi t
 | **Web App Database** | `aldera_tech_staging` (PostgreSQL) | `solvo_tech` / `aldera_tech` (PostgreSQL) |
 | **Web App Docker Tag** | `ghcr.io/alderatech/aldera-tech:staging` | `ghcr.io/alderatech/aldera-tech:latest` |
 | **Telegram Bot** | `@aldera_tech_staging_bot` | `@aldera_tech_bot` |
-| **Telegram Bot Token** | `[REDACTED_TELEGRAM_BOT_TOKEN]` | `[REDACTED_TELEGRAM_BOT_TOKEN]` |
+| **Telegram Bot Token** | `[REDACTED_IN_VAULT]` | `[REDACTED_IN_VAULT]` |
 | **Router Stack Directory** | `/opt/docker-stack/applications/aldera-router-staging` | `/opt/docker-stack/applications/aldera-router` |
 | **Router Relay Database** | `aldera_router_staging` (PostgreSQL) | `aldera_router` (PostgreSQL) |
 | **Router Docker Tag** | `:staging` (`router-telegram-bot:staging`, etc.) | `:latest` |
