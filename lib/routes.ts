@@ -93,6 +93,7 @@ export const ADMIN_ROUTES = {
   projectDetail: (id: string) => `/admin/projects/${id}`,
   proposalDetail: (id: string) => `/admin/proposals/${id}`,
   aiRelay: "/admin/ai-relay",
+  telegramBot: "/admin/telegram-bot",
 } as const;
 
 export const API_ROUTES = {

@@ -10,6 +10,8 @@ export type BlogListItem = {
   content: string;
   featuredImage: string | null;
   publishedAt: Date | null;
+  isPinned: boolean;
+  pinnedAt: Date | null;
   author: { name: string } | null;
   category: { name: string; slug: string } | null;
 };
@@ -29,22 +31,28 @@ const fallback: BlogListItem[] = publicBlogPosts.map((post) => ({
   content: post.content,
   featuredImage: post.featuredImage,
   publishedAt: post.publishedAt,
+  isPinned: post.isPinned ?? false,
+  pinnedAt: post.pinnedAt ?? null,
   author: post.author ? { name: post.author.name } : null,
   category: post.category,
 }));
 
-export async function getBlogList(params: {
-  page: number;
+export async function getBlogList(params?: {
+  page?: number;
+  limit?: number;
   category?: string;
   q?: string;
 }) {
+  const page = params?.page ?? 1;
+  const pageSize = params?.limit ?? BLOG_PAGE_SIZE;
+
   return safeDb<BlogListItem[]>(
     async () => {
       const data = await prisma.blogPost.findMany({
         where: {
           published: true,
-          ...(params.category ? { category: { slug: params.category } } : {}),
-          ...(params.q
+          ...(params?.category ? { category: { slug: params.category } } : {}),
+          ...(params?.q
             ? {
                 OR: [
                   { title: { contains: params.q, mode: "insensitive" } },
@@ -53,9 +61,9 @@ export async function getBlogList(params: {
               }
             : {}),
         },
-        orderBy: { publishedAt: "desc" },
-        skip: (params.page - 1) * BLOG_PAGE_SIZE,
-        take: BLOG_PAGE_SIZE,
+        orderBy: [{ isPinned: "desc" }, { publishedAt: "desc" }],
+        skip: (page - 1) * pageSize,
+        take: pageSize,
         select: {
           id: true,
           slug: true,
@@ -64,11 +72,13 @@ export async function getBlogList(params: {
           content: true,
           featuredImage: true,
           publishedAt: true,
+          isPinned: true,
+          pinnedAt: true,
           author: { select: { name: true } },
           category: { select: { name: true, slug: true } },
         },
       });
-      if (params.q || params.category) {
+      if (params?.q || params?.category) {
         return data.length
           ? data.map((post) => ({
               ...post,
@@ -86,7 +96,7 @@ export async function getBlogList(params: {
           }))
         : fallback;
     },
-    params.q || params.category ? [] : fallback
+    params?.q || params?.category ? [] : fallback
   );
 }
 

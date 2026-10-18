@@ -10,6 +10,7 @@ import {
   type LedgerInvariantResult,
 } from "@/lib/router-db";
 import { ensureRouterUser } from "@/lib/actions/ai-relay";
+import { sendTelegramMessage } from "@/lib/telegram";
 import {
   calculateGrossMarginPercentage,
   diffModelsWithUpstream,
@@ -659,8 +660,27 @@ export async function approveTopupRequest(
       [requestId, adminId]
     );
 
-    return newBalance;
+    return { newBalance, amount, userId };
   });
+
+  // 6. Real-time Telegram notification to user (non-blocking, errors do not roll back financial approval)
+  try {
+    const userRes = await queryRouter<{ telegram_id: string | number | null }>(
+      "SELECT u.telegram_id FROM topup_requests tr JOIN users u ON tr.user_id = u.id WHERE tr.id = $1 LIMIT 1;",
+      [requestId]
+    );
+    const telegramId = userRes.rows[0]?.telegram_id;
+    if (telegramId) {
+      const msgText = `🎉 Top-Up Berhasil! Tiket #${requestId} sebesar Rp ${result.amount.toLocaleString("id-ID")} telah disetujui oleh Admin.`;
+      await sendTelegramMessage({
+        chatId: telegramId,
+        text: msgText,
+        parseMode: "HTML",
+      });
+    }
+  } catch (tgErr) {
+    console.warn(`[approveTopupRequest] Failed to dispatch Telegram notification for ticket #${requestId}:`, tgErr);
+  }
 
   try {
     revalidatePath("/admin/ai-relay");
@@ -669,7 +689,7 @@ export async function approveTopupRequest(
     // ignore
   }
 
-  return { success: true, newBalance: result };
+  return { success: true, newBalance: result.newBalance };
 }
 
 /**
@@ -682,11 +702,15 @@ export async function rejectTopupRequest(
   await resolveAdminSession();
   void _reason;
 
+  let ticketInfo: { userId: number; amount: number } | null = null;
+
   await transactionRouter(async (client) => {
     const ticketRes = await client.query<{
       id: string | number;
+      user_id: string | number;
+      amount: string | number;
       status: string;
-    }>("SELECT id, status FROM topup_requests WHERE id = $1 FOR UPDATE;", [
+    }>("SELECT id, user_id, amount, status FROM topup_requests WHERE id = $1 FOR UPDATE;", [
       requestId,
     ]);
 
@@ -701,11 +725,38 @@ export async function rejectTopupRequest(
       );
     }
 
+    ticketInfo = {
+      userId: Number(ticket.user_id),
+      amount: Number(ticket.amount),
+    };
+
     await client.query(
       "UPDATE topup_requests SET status = 'rejected' WHERE id = $1;",
       [requestId]
     );
   });
+
+  // Real-time Telegram notification to user (non-blocking)
+  if (ticketInfo) {
+    try {
+      const userRes = await queryRouter<{ telegram_id: string | number | null }>(
+        "SELECT u.telegram_id FROM topup_requests tr JOIN users u ON tr.user_id = u.id WHERE tr.id = $1 LIMIT 1;",
+        [requestId]
+      );
+      const telegramId = userRes.rows[0]?.telegram_id;
+      if (telegramId) {
+        const info = ticketInfo as { userId: number; amount: number };
+        const msgText = `⚠️ Tiket Top-Up #${requestId} Anda sebesar Rp ${info.amount.toLocaleString("id-ID")} ditolak oleh Admin.`;
+        await sendTelegramMessage({
+          chatId: telegramId,
+          text: msgText,
+          parseMode: "HTML",
+        });
+      }
+    } catch (tgErr) {
+      console.warn(`[rejectTopupRequest] Failed to dispatch Telegram notification for ticket #${requestId}:`, tgErr);
+    }
+  }
 
   try {
     revalidatePath("/admin/ai-relay");

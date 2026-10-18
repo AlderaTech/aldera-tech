@@ -27,6 +27,8 @@ export type PublicBlogPost = {
   publishedAt: Date | null;
   scheduledAt: Date | null;
   views: number;
+  isPinned: boolean;
+  pinnedAt: Date | null;
   draftContent: string | null;
   draftSavedAt: Date | null;
   authorId: string;
@@ -127,6 +129,8 @@ export const publicBlogPosts: PublicBlogPost[] = [
     publishedAt: fallbackDate,
     scheduledAt: null,
     views: 1280,
+    isPinned: false,
+    pinnedAt: null,
     draftContent: null,
     draftSavedAt: null,
     authorId: "fallback-author-aldera",
