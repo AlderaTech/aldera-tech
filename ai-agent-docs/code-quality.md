@@ -22,7 +22,7 @@ Dokumen ini merupakan panduan arsitektur dan kualitas kode resmi untuk repositor
 14. [Sinkronisasi State ke URL Parameters (Shareable Deep-Linking)](#14-sinkronisasi-state-ke-url-parameters-shareable-deep-linking)
 15. [Standar Penanganan 4 UI States & Input Form Hygiene](#15-standar-penanganan-4-ui-states--input-form-hygiene)
 16. [Integritas Pengetesan & Sinkronisasi Test Suite (Test Mapping & Maintenance)](#16-integritas-pengetesan--sinkronisasi-test-suite-test-mapping--maintenance)
-17. [Disiplin Git Branching & Squash Merge (No Direct Commit to Main)](#17-disiplin-git-branching--squash-merge-no-direct-commit-to-main)
+17. [Disiplin Git Branching Model: main <- staging <- feat/* (Dilarang Commit/PR Langsung ke Main)](#17-disiplin-git-branching-model-main---staging---feat-fix-dilarang-commitpr-langsung-ke-main)
 18. [Kewajiban Pengujian UI untuk Setiap Komponen & Halaman (Mandatory UI Testing)](#18-kewajiban-pengujian-ui-untuk-setiap-komponen--halaman-mandatory-ui-testing)
 
 ---
@@ -455,4 +455,4 @@ Sebelum menyelesaikan task pembuatan/modifikasi fitur, pastikan:
 - [ ] Seluruh field input memiliki placeholder kontekstual, label field required bertanda bintang merah (`*`), dan field optional bertuliskan `(Opsional)`.
 - [ ] Kode telah diformat menggunakan Prettier (`bun run format`) dan urutan utility class Tailwind tertata otomatis.
 - [ ] Tidak ada URI/path absolut mesin (`file:///...`, `/home/...`) yang tersimpan di dalam berkas repositori (Portability Check).
-- [ ] Siap diajukan Pull Request (PR) ke `main` dengan strategi Squash and Merge.
+- [ ] Siap diajukan Pull Request (PR) ke `staging` dengan strategi Squash and Merge (promosi ke `main` via Release PR teruji).

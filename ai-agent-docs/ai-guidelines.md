@@ -261,17 +261,17 @@ Formulir merupakan titik kontak utama antara pengguna dan sistem Aldera Tech. Se
 
 ---
 
-## 9. Disiplin Git Branching, Commit & Squash Merge (No Direct Commit to Main)
+## 9. Disiplin Git Branching Model: main <- staging <- feat/* (Dilarang Commit/PR Langsung ke Main)
 
-Untuk menjaga stabilitas cabang produksi dan kemudahan peninjauan kode, seluruh pengembang dan agen AI wajib menerapkan alur kerja branching berikut:
+Untuk menjaga stabilitas cabang produksi dan kemudahan peninjauan kode, seluruh pengembang dan agen AI wajib menerapkan hierarki branching `main <- staging <- feat/*, fix/*`:
 
-### 1. Larangan Commit Langsung ke `main`
+### 1. Larangan Commit dan PR Langsung ke `main`
 
-- Branch `main` merupakan representasi dari kode produksi yang siap dirilis. Dilarang keras melakukan `git commit` maupun `git push` langsung pada branch `main`.
+- Branch `main` merupakan representasi dari kode produksi yang siap dirilis. Dilarang keras melakukan `git commit`, `git push`, maupun mengajukan Pull Request (PR) langsung ke branch `main` untuk pengerjaan tugas reguler. Seluruh pengembangan fitur dan perbaikan bug wajib melalui alur integrasi branch `staging`.
 
 ### 2. Konvensi Branch Kerja
 
-Setiap kali mengerjakan fitur, bugfix, atau perbaikan, wajib membuat branch baru dari `main`:
+Setiap kali mengerjakan fitur, bugfix, atau perbaikan, wajib membuat branch baru dari `origin/staging`:
 
 - `feat/<nama-fitur>`: Penambahan fitur atau rute baru
 - `fix/<deskripsi-bug>`: Perbaikan bug atau celah keamanan
@@ -281,11 +281,11 @@ Setiap kali mengerjakan fitur, bugfix, atau perbaikan, wajib membuat branch baru
 
 ### 3. Alur Kerja Pull Request & Squash Merge
 
-1. Buat branch baru: `git checkout -b <type>/<nama-tugas>`.
+1. Buat branch baru dari `origin/staging`: `git checkout -b <type>/<nama-tugas> origin/staging`.
 2. Lakukan perubahan kode, formatting, linting, dan pengujian.
 3. Commit pada branch kerja dengan pesan Conventional Commits (`feat: ...`, `fix: ...`).
-4. Buat Pull Request (PR) ke branch `main`.
-5. Penggabungan ke `main` **WAJIB menggunakan Squash and Merge** sehingga riwayat commit di `main` tetap bersih, linier, dan terdokumentasi rapi.
+4. Buat Pull Request (PR) ke branch `staging` (`base: staging`, `compare: <type>/<nama-tugas>`).
+5. Penggabungan ke `staging` **WAJIB menggunakan Squash and Merge**. Promosi dari `staging` ke `main` hanya dilakukan melalui Release PR teruji setelah verifikasi menyeluruh di staging stack.
 
 ---
 
