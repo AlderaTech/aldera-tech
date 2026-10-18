@@ -1,4 +1,19 @@
-const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN;
+export function getTelegramConfig() {
+  const rawBaseUrl =
+    process.env.TELEGRAM_API_BASE_URL ||
+    process.env.TELEGRAM_MOCK_URL ||
+    process.env.TELEGRAM_API_URL ||
+    process.env.TELEGRAM_API_SERVER ||
+    "https://api.telegram.org";
+  const baseUrl = rawBaseUrl.replace(/\/+$/, "");
+  const isMockMode = baseUrl !== "https://api.telegram.org";
+  const botToken =
+    process.env.TELEGRAM_BOT_TOKEN ||
+    process.env.BOT_TOKEN ||
+    (isMockMode ? "test_mock_token" : undefined);
+
+  return { baseUrl, botToken, isMockMode };
+}
 
 export interface SendTelegramMessageArgs {
   chatId: number | string;
@@ -15,7 +30,7 @@ export interface SendTelegramResult {
 
 /**
  * Sends a message to a Telegram chat/user via Telegram Bot API.
- * Falls back to console.log simulation if BOT_TOKEN is not configured.
+ * Falls back to console.log simulation if BOT_TOKEN is not configured and not in mock mode.
  */
 export async function sendTelegramMessage({
   chatId,
@@ -27,7 +42,9 @@ export async function sendTelegramMessage({
     return { success: false, error: "Invalid Telegram chat ID" };
   }
 
-  if (!BOT_TOKEN) {
+  const { baseUrl, botToken, isMockMode } = getTelegramConfig();
+
+  if (!botToken && !isMockMode) {
     console.log("[Telegram] No BOT_TOKEN configured. Simulated message:", {
       chatId,
       text,
@@ -37,7 +54,7 @@ export async function sendTelegramMessage({
   }
 
   try {
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    const url = `${baseUrl}/bot${botToken}/sendMessage`;
     const body: Record<string, unknown> = {
       chat_id: chatId,
       text,

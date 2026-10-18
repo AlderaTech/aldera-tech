@@ -133,6 +133,11 @@ enum NotificationType {
   TASK_COMPLETED
 }
 
+enum BlogReactionType {
+  LIKE
+  DISLIKE
+}
+
 // ----------------------------------------------------------------
 // Models
 // ----------------------------------------------------------------
@@ -166,6 +171,8 @@ model User {
   orderRequests       OrderRequest[]
   verifiedPayments    Payment[]            @relation("PaymentVerifier")
   testimonials        Testimonial[]        @relation("ClientTestimonials")
+  blogComments        BlogComment[]
+  blogReactions       BlogReaction[]
 
   @@index([email])
 }
@@ -408,6 +415,8 @@ model BlogPost {
   publishedAt   DateTime?
   scheduledAt   DateTime?
   views         Int       @default(0)
+  isPinned      Boolean   @default(false)
+  pinnedAt      DateTime?
 
   draftContent String?   @db.Text
   draftSavedAt DateTime?
@@ -418,11 +427,15 @@ model BlogPost {
   categoryId String?
   category   BlogCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
+  comments  BlogComment[]
+  reactions BlogReaction[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([slug])
   @@index([published, publishedAt])
+  @@index([published, isPinned, publishedAt])
   @@index([scheduledAt])
   @@index([categoryId])
   @@index([authorId])
@@ -887,4 +900,66 @@ model VerificationToken {
   @@index([identifier, type])
   @@index([expiresAt])
 }
+
+model BlogComment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([postId, createdAt])
+  @@map("blog_comments")
+}
+
+model BlogReaction {
+  id        String           @id @default(cuid())
+  type      BlogReactionType
+  postId    String
+  userId    String
+  createdAt DateTime         @default(now())
+
+  post      BlogPost         @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId, type])
+  @@map("blog_reactions")
+}
+
+model TelegramBotConfig {
+  id                    String   @id @default("default")
+  ticketTemplate        String   @db.Text
+  importantNotes        String   @db.Text
+  nextStepsNotes        String   @db.Text
+  topupAmounts          Json     @default("[25000, 50000, 100000, 250000, 500000]")
+  adminTelegramUsername String   @default("aldera_admin")
+  welcomeText           String?  @db.Text
+  helpText              String?  @db.Text
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("telegram_bot_configs")
+}
+
+model PaymentMethodSetting {
+  id            String   @id @default(cuid())
+  type          String   @default("BANK")
+  name          String
+  accountNumber String
+  accountName   String
+  qrisImageUrl  String?
+  instructions  String?  @db.Text
+  isActive      Boolean  @default(true)
+  displayOrder  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("payment_method_settings")
+}
+
 

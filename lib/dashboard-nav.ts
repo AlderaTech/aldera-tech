@@ -185,6 +185,13 @@ const adminNavGroups: DashboardNavGroup[] = [
         description: "Pricing model, router sync & audit",
         permission: PERMISSIONS.AI_RELAY_MANAGE,
       },
+      {
+        href: ADMIN_ROUTES.telegramBot,
+        label: "Telegram Bot & Pembayaran",
+        icon: "bot",
+        description: "CMS template bot & metode pembayaran",
+        permission: PERMISSIONS.AI_RELAY_MANAGE,
+      },
     ],
   },
   {
