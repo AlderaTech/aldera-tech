@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - main
+      - staging
     tags:
       - v*
   pull_request:
+    branches:
+      - main
+      - staging
   workflow_dispatch:
 
 permissions:
@@ -59,7 +63,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.DOCKER_TOKEN }}
+          password: ${{ secrets.DOCKER_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Docker metadata
         id: meta
@@ -67,7 +71,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=staging,enable=${{ github.ref == 'refs/heads/staging' }}
             type=ref,event=branch
             type=ref,event=tag
             type=sha,prefix=sha-
@@ -83,11 +88,11 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}
-            NEXTAUTH_URL=${{ vars.NEXTAUTH_URL || vars.NEXT_PUBLIC_APP_URL }}
+            NEXT_PUBLIC_APP_URL=${{ github.ref == 'refs/heads/staging' && (vars.NEXT_PUBLIC_APP_URL_STAGING || 'https://staging.aldera.tech') || (vars.NEXT_PUBLIC_APP_URL || 'https://aldera.tech') }}
+            NEXTAUTH_URL=${{ github.ref == 'refs/heads/staging' && (vars.NEXTAUTH_URL_STAGING || 'https://staging.aldera.tech') || (vars.NEXTAUTH_URL || vars.NEXT_PUBLIC_APP_URL || 'https://aldera.tech') }}
 
-      - name: Deploy to VPS
-        if: github.event_name != 'pull_request'
+      - name: Deploy to VPS (Staging)
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/staging'
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -95,5 +100,19 @@ jobs:
           port: ${{ secrets.VPS_SSH_PORT }}
           key: ${{ secrets.VPS_KEY }}
           script: |
+            set -eu
+            cd /opt/docker-stack/applications/aldera-tech-staging
+            ./update.sh
+
+      - name: Deploy to VPS (Production)
+        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          key: ${{ secrets.VPS_KEY }}
+          script: |
+            set -eu
             cd /opt/docker-stack/applications/aldera-tech
             ./update.sh
