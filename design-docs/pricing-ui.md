@@ -23,7 +23,7 @@ Review mempertahankan status autentikasi, tombol pending, toast sukses/error, la
 
 ## Variasi kalkulator dan lingkup CSS
 
-`CalculatorWizard` menerima prop presentasi opsional `appearance` dengan nilai awal `default`. Hanya `PricingCalculatorSection` yang mengirim `appearance="studio"`. Halaman `/dashboard/calculator` tetap memakai tampilan default.
+`CalculatorWizard` menerima prop presentasi opsional `appearance` dengan nilai awal `default`. `PricingCalculatorSection` mengirim `appearance="studio"`. Halaman `/dashboard/calculator` memakai `appearance="dashboard"` dengan CSS terpisah, tanpa menerapkan gaya dashboard pada halaman Harga. Rincian tersedia di [Panduan UI Kalkulator dashboard](dashboard-calculator-ui.md). `CalculatorStepper` merender indikator asli untuk varian publik dan stepper bernomor khusus varian dashboard.
 
 Kelas studio hanya diterapkan pada varian tersebut. Token warna, kontrol, progres langkah, pilihan proyek/urgensi, dan sidebar dirapikan melalui `pricing-calculator.module.css`. Warna aksen amber pada modul kalkulator diarahkan ke biru studio dan teks WhatsApp memakai hijau yang cukup gelap pada permukaan terang. Ringkasan menampilkan nama item utuh serta nominal dan total yang mudah dibaca.
 
@@ -69,4 +69,4 @@ Aktivasi tema publik dibatasi melalui:
 - `components/shared/navbar.tsx`
 - `components/shared/studio-navbar.module.css`
 
-Panduan visual terkait: [brand-context.md](brand-context.md). Tidak ada dependensi, env var, rute, atau aset gambar baru.
+Panduan visual terkait: [brand-context.md](../ai-agent-docs/brand-context.md). Tidak ada dependensi, env var, rute, atau aset gambar baru.

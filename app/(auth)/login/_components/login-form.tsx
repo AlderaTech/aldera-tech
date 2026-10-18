@@ -16,6 +16,8 @@ import { usePasswordVisibility } from "../../_hooks/use-password-visibility";
 import { loginAction, type ActionState } from "@/lib/actions/auth";
 import { isStaff } from "@/lib/permissions";
 import { ADMIN_ROUTES, AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
+import { cn } from "@/lib/utils";
+import styles from "./login-form.module.css";
 
 const initialState: ActionState = { ok: false };
 
@@ -64,13 +66,20 @@ export function LoginForm() {
   }, [state, callbackUrl, router]);
 
   return (
-    <form action={formAction}>
-      <CardContent className="space-y-5 px-6 pb-2 sm:px-8">
-        <div className="space-y-2">
-          <Label
-            htmlFor="email"
-            className="text-sm font-semibold text-[#0F263A]"
-          >
+    <form
+      action={formAction}
+      aria-busy={isPending}
+      aria-labelledby="login-title"
+      className={styles.form}
+    >
+      {!state.ok && state.message && (
+        <p role="alert" className={styles.formError}>
+          {state.message}
+        </p>
+      )}
+      <CardContent className={styles.fields}>
+        <div className={styles.field}>
+          <Label htmlFor="email" className={styles.label}>
             Email
           </Label>
           <Input
@@ -79,77 +88,86 @@ export function LoginForm() {
             type="email"
             placeholder="nama@email.com"
             autoComplete="email"
+            inputMode="email"
+            autoCapitalize="none"
+            spellCheck={false}
             required
             aria-invalid={!!state.errors?.email}
-            className="h-12 rounded-xl border-slate-200 bg-white text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
+            aria-describedby={
+              state.errors?.email ? "login-email-error" : undefined
+            }
+            className={styles.input}
           />
           {state.errors?.email && (
-            <p role="alert" className="text-xs font-medium text-destructive">
+            <p
+              id="login-email-error"
+              role="alert"
+              className={styles.fieldError}
+            >
               {state.errors.email}
             </p>
           )}
         </div>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between gap-4">
-            <Label
-              htmlFor="password"
-              className="text-sm font-semibold text-[#0F263A]"
-            >
+        <div className={styles.field}>
+          <div className="flex min-h-10 items-center justify-between gap-3">
+            <Label htmlFor="password" className={styles.label}>
               Password
             </Label>
             <Link
               href={AUTH_ROUTES.forgotPassword}
-              className="text-xs font-semibold text-[#00B1E1] transition-colors hover:text-[#0094BD]"
-              tabIndex={-1}
+              className={styles.forgotLink}
             >
               Lupa password?
             </Link>
           </div>
-          <PasswordInput
-            id="password"
-            name="password"
-            placeholder="Masukkan password"
-            autoComplete="current-password"
-            required
-            aria-invalid={!!state.errors?.password}
-            showPassword={showPassword}
-            onTogglePassword={togglePassword}
-            className="h-12 rounded-xl border-slate-200 bg-white pr-11 text-[#0F263A] shadow-none focus-visible:border-[#00B1E1] focus-visible:ring-2 focus-visible:ring-[#00B1E1]/20"
-          />
+          <div className={styles.passwordControl}>
+            <PasswordInput
+              id="password"
+              name="password"
+              placeholder="Masukkan password"
+              autoComplete="current-password"
+              required
+              aria-invalid={!!state.errors?.password}
+              aria-describedby={
+                state.errors?.password ? "login-password-error" : undefined
+              }
+              showPassword={showPassword}
+              onTogglePassword={togglePassword}
+              className={cn(styles.input, styles.passwordInput)}
+            />
+          </div>
           {state.errors?.password && (
-            <p role="alert" className="text-xs font-medium text-destructive">
+            <p
+              id="login-password-error"
+              role="alert"
+              className={styles.fieldError}
+            >
               {state.errors.password}
             </p>
           )}
         </div>
       </CardContent>
-      <CardFooter className="flex-col gap-4 px-6 pt-5 pb-6 sm:px-8 sm:pb-8">
+      <CardFooter className={styles.footer}>
         <Button
           type="submit"
           size="xl"
           disabled={isPending}
-          className="w-full rounded-full bg-[#00B1E1] font-bold text-[#0F263A] shadow-md shadow-[#00B1E1]/25 hover:bg-[#0094BD]"
+          className={styles.submit}
         >
           {isPending ? (
             <>
-              <Loader2 className="size-4 animate-spin text-[#0F263A]" />{" "}
+              <Loader2
+                className="size-4 animate-spin motion-reduce:animate-none"
+                aria-hidden="true"
+              />{" "}
               Memproses...
             </>
           ) : (
             <>
-              <LogIn className="size-4" /> Masuk
+              <LogIn className="size-4" aria-hidden="true" /> Masuk
             </>
           )}
         </Button>
-        <p className="text-center text-sm text-slate-500">
-          Belum punya akun?{" "}
-          <Link
-            href={AUTH_ROUTES.register}
-            className="font-bold text-[#00B1E1] transition-colors hover:text-[#0094BD]"
-          >
-            Daftar sekarang
-          </Link>
-        </p>
       </CardFooter>
     </form>
   );

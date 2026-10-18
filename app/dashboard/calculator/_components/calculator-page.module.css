@@ -1,0 +1,96 @@
+.page {
+  display: grid;
+  gap: 1.5rem;
+  min-width: 0;
+}
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--overview-muted);
+  font-size: 0.7rem;
+}
+.breadcrumb svg {
+  flex-shrink: 0;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.6rem;
+  color: var(--overview-blue);
+  font-size: 0.65rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.eyebrow svg {
+  width: 1rem;
+  height: 1rem;
+}
+.header h1 {
+  color: var(--overview-ink);
+  font-size: clamp(1.5rem, 2.25vw, 2rem);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.045em;
+}
+.description {
+  max-width: 42rem;
+  margin-top: 0.6rem;
+  color: var(--overview-muted);
+  font-size: 0.8125rem;
+  line-height: 1.8;
+}
+.history {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 999px;
+  background: var(--overview-paper);
+  color: var(--overview-ink);
+  font-size: 0.75rem;
+  font-weight: 650;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+.history svg {
+  width: 1rem;
+  height: 1rem;
+}
+.history:hover {
+  border-color: var(--overview-blue);
+  background: var(--overview-sky);
+}
+.page a:focus-visible {
+  outline: 2px solid var(--overview-blue);
+  outline-offset: 3px;
+}
+@media (max-width: 767px) {
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .page {
+    gap: 1.25rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .history {
+    transition: none;
+  }
+}

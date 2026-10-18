@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { AuthShell } from "../_components/auth-shell";
+import { LoginExperience } from "./_components/login-experience";
 import { LoginForm } from "./_components/login-form";
 
 export const metadata: Metadata = {
@@ -11,15 +11,10 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <AuthShell
-      eyebrow="Masuk"
-      title="Lanjutkan progres proyek Anda."
-      description="Akses dashboard klien untuk memantau milestone, invoice, dan dokumen proyek."
-      variant="login"
-    >
+    <LoginExperience>
       <Suspense>
         <LoginForm />
       </Suspense>
-    </AuthShell>
+    </LoginExperience>
   );
 }
