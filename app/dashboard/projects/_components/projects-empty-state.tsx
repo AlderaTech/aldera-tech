@@ -17,6 +17,8 @@ export function ProjectsEmptyState() {
         src={mascot}
         alt=""
         aria-hidden="true"
+        width={128}
+        height={128}
         className={styles.mascot}
         sizes="(min-width: 640px) 128px, 96px"
         quality={90}

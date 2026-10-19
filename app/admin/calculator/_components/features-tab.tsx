@@ -32,6 +32,7 @@ import {
   deleteFeatureOption,
 } from "@/lib/actions/calculator";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { useUrlState } from "@/lib/hooks/use-url-state";
 import type {
   AdminFeature,
   AdminProjectType,
@@ -45,11 +46,11 @@ export function FeaturesTab({
   projectTypes: AdminProjectType[];
 }) {
   const router = useRouter();
+  const { getParam, setParam } = useUrlState();
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState<AdminFeature | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminFeature | null>(null);
-  const [selectedProjectTypeFilter, setSelectedProjectTypeFilter] =
-    useState<string>("ALL");
+  const selectedProjectTypeFilter = getParam("projectType", "ALL");
 
   const filteredItems = useMemo(() => {
     if (selectedProjectTypeFilter === "ALL") return items;
@@ -303,7 +304,7 @@ export function FeaturesTab({
             </div>
             <select
               value={selectedProjectTypeFilter}
-              onChange={(e) => setSelectedProjectTypeFilter(e.target.value)}
+              onChange={(e) => setParam("projectType", e.target.value)}
               className="h-8 rounded-md border border-input bg-background px-2.5 py-0.5 text-xs text-foreground shadow-xs"
             >
               <option value="ALL">Semua ({items.length})</option>

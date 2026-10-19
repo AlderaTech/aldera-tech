@@ -1,6 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, BookOpenText, CalendarDays, Clock3, Pin } from "lucide-react";
+import {
+  ArrowUpRight,
+  BookOpenText,
+  CalendarDays,
+  Clock3,
+  Pin,
+} from "lucide-react";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 import { formatDate, readingTime } from "@/lib/utils";
 import type { BlogListItem } from "../_data/blog-list";
@@ -15,7 +21,7 @@ export function BlogCard({ post }: { post: BlogListItem }) {
         <div className={styles.cardMedia}>
           {post.isPinned && (
             <span
-              className="absolute top-4 right-4 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-600 text-white text-xs font-semibold shadow-md backdrop-blur-sm"
+              className="absolute top-4 right-4 z-10 inline-flex items-center gap-1 rounded-full bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white shadow-md backdrop-blur-sm"
               aria-label="Disematkan"
             >
               <Pin className="size-3" aria-hidden="true" />

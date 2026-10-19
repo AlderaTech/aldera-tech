@@ -16,17 +16,71 @@ import { ADMIN_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
 import { proposalStatusMeta } from "@/lib/status-meta";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { ProposalStatus, type Prisma } from "@prisma/client";
+import { SearchFilterBar } from "@/components/shared/search-filter-bar";
+import { DataPagination } from "@/components/shared/data-pagination";
+import { ParamFilterSelect } from "@/components/shared/param-filter-select";
 
-export default async function AdminProposalsPage() {
-  const proposals = await safeDb(
+const proposalStatusOptions = [
+  { label: "Semua Status", value: "ALL" },
+  { label: "Draft", value: "DRAFT" },
+  { label: "Terkirim", value: "SENT" },
+  { label: "Dilihat", value: "VIEWED" },
+  { label: "Ditandatangani", value: "SIGNED" },
+  { label: "Ditolak", value: "REJECTED" },
+  { label: "Dikonversi", value: "CONVERTED" },
+  { label: "Kedaluwarsa", value: "EXPIRED" },
+];
+
+export interface AdminProposalsPageProps {
+  searchParams: Promise<{
+    q?: string;
+    status?: string;
+    page?: string;
+  }>;
+}
+
+export default async function AdminProposalsPage({
+  searchParams,
+}: AdminProposalsPageProps) {
+  const sp = await searchParams;
+  const page = Math.max(1, Number(sp?.page) || 1);
+  const PAGE_SIZE = 10;
+  const q = sp?.q?.trim();
+  const rawStatus = sp?.status?.trim()?.toUpperCase();
+
+  const where: Prisma.ProposalWhereInput = {};
+  if (
+    rawStatus &&
+    rawStatus !== "ALL" &&
+    Object.values(ProposalStatus).includes(rawStatus as ProposalStatus)
+  ) {
+    where.status = rawStatus as ProposalStatus;
+  }
+
+  if (q) {
+    where.OR = [
+      { title: { contains: q, mode: "insensitive" } },
+      { number: { contains: q, mode: "insensitive" } },
+      { clientName: { contains: q, mode: "insensitive" } },
+    ];
+  }
+
+  const [proposals, totalCount] = await safeDb(
     async () =>
-      await prisma.proposal.findMany({
-        orderBy: { createdAt: "desc" },
-        include: {
-          _count: { select: { items: true } },
-        },
-      }),
-    []
+      await Promise.all([
+        prisma.proposal.findMany({
+          where,
+          orderBy: { createdAt: "desc" },
+          skip: (page - 1) * PAGE_SIZE,
+          take: PAGE_SIZE,
+          include: {
+            _count: { select: { items: true } },
+          },
+        }),
+        prisma.proposal.count({ where }),
+      ]),
+    [[], 0]
   );
 
   return (
@@ -49,6 +103,17 @@ export default async function AdminProposalsPage() {
         </Button>
       </div>
 
+      <SearchFilterBar
+        placeholder="Cari nomor proposal, judul, atau client..."
+        searchParamKey="q"
+      >
+        <ParamFilterSelect
+          paramKey="status"
+          options={proposalStatusOptions}
+          placeholder="Filter status..."
+        />
+      </SearchFilterBar>
+
       <Card className="overflow-hidden p-0">
         <Table>
           <TableHeader>
@@ -68,8 +133,8 @@ export default async function AdminProposalsPage() {
                   colSpan={6}
                   className="py-10 text-center text-muted-foreground"
                 >
-                  Belum ada proposal. Buat yang pertama untuk mulai sales
-                  pipeline.
+                  Belum ada proposal atau tidak ada proposal yang sesuai
+                  kriteria filter.
                 </TableCell>
               </TableRow>
             ) : (
@@ -106,6 +171,12 @@ export default async function AdminProposalsPage() {
             )}
           </TableBody>
         </Table>
+
+        <DataPagination
+          currentPage={page}
+          totalItems={totalCount}
+          pageSize={PAGE_SIZE}
+        />
       </Card>
     </div>
   );

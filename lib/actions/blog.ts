@@ -268,7 +268,12 @@ export async function autoSaveDraftAction(id: string, content: string) {
 export async function createBlogCommentAction(
   postId: string,
   content: string
-): Promise<{ ok: boolean; commentId?: string; message?: string; error?: string }> {
+): Promise<{
+  ok: boolean;
+  commentId?: string;
+  message?: string;
+  error?: string;
+}> {
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error("Unauthorized (401)");
@@ -340,7 +345,12 @@ export async function deleteBlogCommentAction(
   if (!commentFound) {
     try {
       const raw = await prisma.$queryRaw<
-        Array<{ id: string; authorId: string; postId: string; slug: string | null }>
+        Array<{
+          id: string;
+          authorId: string;
+          postId: string;
+          slug: string | null;
+        }>
       >`
         SELECT c.id, c."authorId", c."postId", p.slug
         FROM "BlogComment" c
@@ -372,7 +382,9 @@ export async function deleteBlogCommentAction(
     throw new Error("Forbidden (403)");
   }
 
-  await prisma.blogComment.deleteMany({ where: { id: commentId } }).catch(() => {});
+  await prisma.blogComment
+    .deleteMany({ where: { id: commentId } })
+    .catch(() => {});
   try {
     await prisma.$executeRaw`DELETE FROM "BlogComment" WHERE id = ${commentId}`;
   } catch {}
@@ -388,7 +400,11 @@ export async function deleteBlogCommentAction(
 export async function toggleBlogReactionAction(
   postId: string,
   type: "LIKE" | "DISLIKE"
-): Promise<{ ok: boolean; action: "created" | "updated" | "removed"; type: "LIKE" | "DISLIKE" | null }> {
+): Promise<{
+  ok: boolean;
+  action: "created" | "updated" | "removed";
+  type: "LIKE" | "DISLIKE" | null;
+}> {
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error("Unauthorized (401)");
@@ -412,11 +428,14 @@ export async function toggleBlogReactionAction(
     })
     .catch(() => null);
 
-  let existingType: "LIKE" | "DISLIKE" | null = (existing?.type as "LIKE" | "DISLIKE") ?? null;
+  let existingType: "LIKE" | "DISLIKE" | null =
+    (existing?.type as "LIKE" | "DISLIKE") ?? null;
 
   if (!existingType) {
     try {
-      const raw = await prisma.$queryRaw<Array<{ id: string; type: "LIKE" | "DISLIKE" }>>`
+      const raw = await prisma.$queryRaw<
+        Array<{ id: string; type: "LIKE" | "DISLIKE" }>
+      >`
         SELECT id, type::text as type FROM "BlogReaction" WHERE "postId" = ${actualPostId} AND "userId" = ${session.user.id}
       `;
       if (raw.length > 0) {
@@ -535,4 +554,3 @@ export async function togglePinBlogPostAction(
 export const createCommentAction = createBlogCommentAction;
 export const deleteCommentAction = deleteBlogCommentAction;
 export const toggleReactionAction = toggleBlogReactionAction;
-

@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   FolderKanban,
   Sparkles,
@@ -9,6 +8,7 @@ import {
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { useUrlState } from "@/lib/hooks/use-url-state";
 import { ProjectTypesTab } from "./project-types-tab";
 import { FeaturesTab } from "./features-tab";
 import { AddOnsTab } from "./add-ons-tab";
@@ -22,6 +22,14 @@ import type {
 
 export type { AdminProjectType, AdminFeature, AdminAddOn, AdminConfig };
 
+const ALLOWED_CALCULATOR_TABS = [
+  "types",
+  "features",
+  "addons",
+  "config",
+] as const;
+type CalculatorTab = (typeof ALLOWED_CALCULATOR_TABS)[number];
+
 type Props = {
   data: {
     projectTypes: AdminProjectType[];
@@ -33,16 +41,14 @@ type Props = {
 };
 
 export function CalculatorAdmin({ data, initialTab = "types" }: Props) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const currentTab = searchParams.get("tab") || initialTab;
+  const { getParam, setParam } = useUrlState();
+  const tabParam = getParam("tab", initialTab);
+  const currentTab = ALLOWED_CALCULATOR_TABS.includes(tabParam as CalculatorTab)
+    ? tabParam
+    : initialTab;
 
   function handleTabChange(value: string) {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("tab", value);
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    setParam("tab", value);
   }
 
   return (

@@ -26,7 +26,14 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useUrlState } from "@/lib/hooks/use-url-state";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -54,6 +61,9 @@ import {
   type PaymentMethodItem,
 } from "@/lib/actions/telegram-bot";
 
+const ALLOWED_BOT_TABS = ["bot-cms", "payment-methods"] as const;
+type TelegramBotTab = (typeof ALLOWED_BOT_TABS)[number];
+
 interface TelegramBotAdminClientViewProps {
   initialConfig: {
     id: string;
@@ -73,20 +83,38 @@ export function TelegramBotAdminClientView({
   initialPaymentMethods,
 }: TelegramBotAdminClientViewProps) {
   const router = useRouter();
+  const { getParam, setParam } = useUrlState();
+  const tabParam = getParam("tab", "bot-cms");
+  const currentTab = ALLOWED_BOT_TABS.includes(tabParam as TelegramBotTab)
+    ? tabParam
+    : "bot-cms";
 
   // Tab 1: Bot CMS State
-  const [ticketTemplate, setTicketTemplate] = React.useState(initialConfig.ticketTemplate);
-  const [importantNotes, setImportantNotes] = React.useState(initialConfig.importantNotes);
-  const [nextStepsNotes, setNextStepsNotes] = React.useState(initialConfig.nextStepsNotes);
-  const [adminUsername, setAdminUsername] = React.useState(initialConfig.adminTelegramUsername);
-  const [topupAmounts, setTopupAmounts] = React.useState<number[]>(initialConfig.topupAmounts);
+  const [ticketTemplate, setTicketTemplate] = React.useState(
+    initialConfig.ticketTemplate
+  );
+  const [importantNotes, setImportantNotes] = React.useState(
+    initialConfig.importantNotes
+  );
+  const [nextStepsNotes, setNextStepsNotes] = React.useState(
+    initialConfig.nextStepsNotes
+  );
+  const [adminUsername, setAdminUsername] = React.useState(
+    initialConfig.adminTelegramUsername
+  );
+  const [topupAmounts, setTopupAmounts] = React.useState<number[]>(
+    initialConfig.topupAmounts
+  );
   const [newAmountInput, setNewAmountInput] = React.useState("");
   const [isSavingConfig, setIsSavingConfig] = React.useState(false);
 
   // Tab 2: Payment Methods State
-  const [paymentMethods, setPaymentMethods] = React.useState<PaymentMethodItem[]>(initialPaymentMethods);
+  const [paymentMethods, setPaymentMethods] = React.useState<
+    PaymentMethodItem[]
+  >(initialPaymentMethods);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [editingItem, setEditingItem] = React.useState<PaymentMethodItem | null>(null);
+  const [editingItem, setEditingItem] =
+    React.useState<PaymentMethodItem | null>(null);
   const [isSavingPayment, setIsSavingPayment] = React.useState(false);
 
   // Modal Form State
@@ -144,7 +172,10 @@ export function TelegramBotAdminClientView({
         toast.error("Gagal menyimpan konfigurasi bot.");
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Terjadi kesalahan saat menyimpan.";
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Terjadi kesalahan saat menyimpan.";
       toast.error(msg);
     } finally {
       setIsSavingConfig(false);
@@ -252,13 +283,18 @@ export function TelegramBotAdminClientView({
             displayOrder: Number(formDisplayOrder) || 0,
             isActive: formIsActive,
           };
-          setPaymentMethods((prev) => [...prev, newItem].sort((a, b) => a.displayOrder - b.displayOrder));
+          setPaymentMethods((prev) =>
+            [...prev, newItem].sort((a, b) => a.displayOrder - b.displayOrder)
+          );
           setIsModalOpen(false);
           router.refresh();
         }
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menyimpan metode pembayaran.";
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Gagal menyimpan metode pembayaran.";
       toast.error(msg);
     } finally {
       setIsSavingPayment(false);
@@ -270,13 +306,17 @@ export function TelegramBotAdminClientView({
     const nextStatus = !currentStatus;
     // Optimistic UI update
     setPaymentMethods((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, isActive: nextStatus } : item))
+      prev.map((item) =>
+        item.id === id ? { ...item, isActive: nextStatus } : item
+      )
     );
 
     try {
       const res = await togglePaymentMethodAction(id, nextStatus);
       if (res.ok) {
-        toast.success(`Metode pembayaran ${nextStatus ? "diaktifkan" : "dinonaktifkan"}.`);
+        toast.success(
+          `Metode pembayaran ${nextStatus ? "diaktifkan" : "dinonaktifkan"}.`
+        );
         router.refresh();
       } else {
         throw new Error("Gagal mengubah status.");
@@ -284,9 +324,12 @@ export function TelegramBotAdminClientView({
     } catch (err: unknown) {
       // Revert optimistic update
       setPaymentMethods((prev) =>
-        prev.map((item) => (item.id === id ? { ...item, isActive: currentStatus } : item))
+        prev.map((item) =>
+          item.id === id ? { ...item, isActive: currentStatus } : item
+        )
       );
-      const msg = err instanceof Error ? err.message : "Gagal memperbarui status.";
+      const msg =
+        err instanceof Error ? err.message : "Gagal memperbarui status.";
       toast.error(msg);
     }
   };
@@ -303,7 +346,10 @@ export function TelegramBotAdminClientView({
         router.refresh();
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menghapus metode pembayaran.";
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Gagal menghapus metode pembayaran.";
       toast.error(msg);
     }
   };
@@ -319,18 +365,29 @@ export function TelegramBotAdminClientView({
           </h1>
         </div>
         <p className="mt-1 text-sm text-slate-500">
-          Kelola markup teks bot Telegram, tautan konfirmasi admin, tombol nominal top-up, serta metode pembayaran dinamis.
+          Kelola markup teks bot Telegram, tautan konfirmasi admin, tombol
+          nominal top-up, serta metode pembayaran dinamis.
         </p>
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="bot-cms" className="space-y-6">
+      <Tabs
+        value={currentTab}
+        onValueChange={(val) => setParam("tab", val)}
+        className="space-y-6"
+      >
         <TabsList className="bg-slate-200/60 p-1">
-          <TabsTrigger value="bot-cms" className="flex items-center gap-2 text-sm">
+          <TabsTrigger
+            value="bot-cms"
+            className="flex items-center gap-2 text-sm"
+          >
             <Bot className="size-4" />
             <span>Template Pesan Bot</span>
           </TabsTrigger>
-          <TabsTrigger value="payment-methods" className="flex items-center gap-2 text-sm">
+          <TabsTrigger
+            value="payment-methods"
+            className="flex items-center gap-2 text-sm"
+          >
             <CreditCard className="size-4" />
             <span>Metode Pembayaran ({paymentMethods.length})</span>
           </TabsTrigger>
@@ -349,7 +406,8 @@ export function TelegramBotAdminClientView({
                   Username Kontak Admin Telegram
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Target deep link tombol &quot;💬 Konfirmasi ke Admin&quot; pada tiket top-up pengguna.
+                  Target deep link tombol &quot;💬 Konfirmasi ke Admin&quot;
+                  pada tiket top-up pengguna.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -368,7 +426,12 @@ export function TelegramBotAdminClientView({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => window.open(`https://t.me/${adminUsername.replace(/^@/, "")}`, "_blank")}
+                    onClick={() =>
+                      window.open(
+                        `https://t.me/${adminUsername.replace(/^@/, "")}`,
+                        "_blank"
+                      )
+                    }
                     disabled={!adminUsername.trim()}
                     className="shrink-0 gap-1.5 text-xs"
                   >
@@ -377,7 +440,10 @@ export function TelegramBotAdminClientView({
                   </Button>
                 </div>
                 <p className="text-[11px] text-slate-500">
-                  Format tautan: <code className="text-blue-600">https://t.me/{adminUsername.replace(/^@/, "") || "username"}</code>
+                  Format tautan:{" "}
+                  <code className="text-blue-600">
+                    https://t.me/{adminUsername.replace(/^@/, "") || "username"}
+                  </code>
                 </p>
               </CardContent>
             </Card>
@@ -399,13 +465,13 @@ export function TelegramBotAdminClientView({
                     <Badge
                       key={amt}
                       variant="secondary"
-                      className="gap-1.5 py-1 pl-2.5 pr-1.5 text-xs font-semibold text-slate-800 bg-slate-100 hover:bg-slate-200 transition"
+                      className="gap-1.5 bg-slate-100 py-1 pr-1.5 pl-2.5 text-xs font-semibold text-slate-800 transition hover:bg-slate-200"
                     >
                       <span>Rp {amt.toLocaleString("id-ID")}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveAmount(amt)}
-                        className="rounded-full p-0.5 text-slate-400 hover:bg-rose-100 hover:text-rose-600 transition"
+                        className="rounded-full p-0.5 text-slate-400 transition hover:bg-rose-100 hover:text-rose-600"
                         title="Hapus nominal"
                       >
                         ×
@@ -425,10 +491,15 @@ export function TelegramBotAdminClientView({
                       value={newAmountInput}
                       onChange={(e) => setNewAmountInput(e.target.value)}
                       placeholder="Contoh: 150000"
-                      className="pl-8 text-xs font-mono"
+                      className="pl-8 font-mono text-xs"
                     />
                   </div>
-                  <Button type="submit" size="sm" variant="secondary" className="gap-1 text-xs">
+                  <Button
+                    type="submit"
+                    size="sm"
+                    variant="secondary"
+                    className="gap-1 text-xs"
+                  >
                     <Plus className="size-3.5" />
                     Tambah
                   </Button>
@@ -440,12 +511,13 @@ export function TelegramBotAdminClientView({
           {/* Ticket Template Rich Editor */}
           <Card className="border-slate-200 bg-white shadow-xs">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold text-slate-800 flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-800">
                 <Hash className="size-4 text-blue-600" />
                 Template Kartu Tiket Top-Up
               </CardTitle>
               <CardDescription className="text-xs">
-                Format pesan utama saat tiket top-up baru dibuat oleh pengguna di Telegram.
+                Format pesan utama saat tiket top-up baru dibuat oleh pengguna
+                di Telegram.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -462,12 +534,13 @@ export function TelegramBotAdminClientView({
           {/* Important Notes Rich Editor */}
           <Card className="border-slate-200 bg-white shadow-xs">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold text-slate-800 flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-800">
                 <HelpCircle className="size-4 text-amber-500" />
                 Catatan Peringatan (&quot;⚠️ PENTING&quot;)
               </CardTitle>
               <CardDescription className="text-xs">
-                Peringatan mengenai transfer sesuai 3 digit kode unik agar verifikasi manual berjalan lancar.
+                Peringatan mengenai transfer sesuai 3 digit kode unik agar
+                verifikasi manual berjalan lancar.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -484,12 +557,13 @@ export function TelegramBotAdminClientView({
           {/* Next Steps Notes Rich Editor */}
           <Card className="border-slate-200 bg-white shadow-xs">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold text-slate-800 flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-800">
                 <Check className="size-4 text-emerald-600" />
                 Instruksi Selanjutnya (&quot;📸 LANGKAH SELANJUTNYA&quot;)
               </CardTitle>
               <CardDescription className="text-xs">
-                Panduan untuk pengguna mengirimkan foto bukti transfer (struk pembayaran) langsung ke bot.
+                Panduan untuk pengguna mengirimkan foto bukti transfer (struk
+                pembayaran) langsung ke bot.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -508,7 +582,7 @@ export function TelegramBotAdminClientView({
             <Button
               onClick={handleSaveConfig}
               disabled={isSavingConfig}
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
+              className="gap-2 bg-blue-600 text-white shadow-sm hover:bg-blue-700"
             >
               {isSavingConfig ? (
                 <>
@@ -536,13 +610,14 @@ export function TelegramBotAdminClientView({
                   Daftar Metode Pembayaran Aktif
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Rekening bank dan QRIS yang disajikan secara dinamis kepada pengguna saat top-up.
+                  Rekening bank dan QRIS yang disajikan secara dinamis kepada
+                  pengguna saat top-up.
                 </CardDescription>
               </div>
               <Button
                 onClick={handleOpenAddModal}
                 size="sm"
-                className="gap-1.5 bg-blue-600 hover:bg-blue-700 text-white"
+                className="gap-1.5 bg-blue-600 text-white hover:bg-blue-700"
               >
                 <Plus className="size-4" />
                 Tambah Rekening / QRIS
@@ -556,7 +631,8 @@ export function TelegramBotAdminClientView({
                     Belum ada metode pembayaran yang terdaftar
                   </p>
                   <p className="text-xs text-slate-500">
-                    Tambahkan rekening Bank atau QRIS agar pengguna dapat melakukan top-up saldo.
+                    Tambahkan rekening Bank atau QRIS agar pengguna dapat
+                    melakukan top-up saldo.
                   </p>
                   <Button
                     onClick={handleOpenAddModal}
@@ -577,28 +653,46 @@ export function TelegramBotAdminClientView({
                         <TableHead>Nama / Provider</TableHead>
                         <TableHead>No. Rekening / NMID</TableHead>
                         <TableHead>Atas Nama</TableHead>
-                        <TableHead className="w-[80px] text-center">Urutan</TableHead>
-                        <TableHead className="w-[110px] text-center">Status</TableHead>
-                        <TableHead className="w-[120px] text-right">Aksi</TableHead>
+                        <TableHead className="w-[80px] text-center">
+                          Urutan
+                        </TableHead>
+                        <TableHead className="w-[110px] text-center">
+                          Status
+                        </TableHead>
+                        <TableHead className="w-[120px] text-right">
+                          Aksi
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {paymentMethods.map((item) => (
-                        <TableRow key={item.id} className="hover:bg-slate-50/70">
+                        <TableRow
+                          key={item.id}
+                          className="hover:bg-slate-50/70"
+                        >
                           {/* Type */}
                           <TableCell>
                             {item.type === "QRIS" ? (
-                              <Badge variant="outline" className="gap-1 border-purple-200 bg-purple-50 text-purple-700">
+                              <Badge
+                                variant="outline"
+                                className="gap-1 border-purple-200 bg-purple-50 text-purple-700"
+                              >
                                 <QrCode className="size-3" />
                                 QRIS
                               </Badge>
                             ) : item.type === "EWALLET" ? (
-                              <Badge variant="outline" className="gap-1 border-teal-200 bg-teal-50 text-teal-700">
+                              <Badge
+                                variant="outline"
+                                className="gap-1 border-teal-200 bg-teal-50 text-teal-700"
+                              >
                                 <Wallet className="size-3" />
                                 e-Wallet
                               </Badge>
                             ) : (
-                              <Badge variant="outline" className="gap-1 border-blue-200 bg-blue-50 text-blue-700">
+                              <Badge
+                                variant="outline"
+                                className="gap-1 border-blue-200 bg-blue-50 text-blue-700"
+                              >
                                 <Building className="size-3" />
                                 Bank
                               </Badge>
@@ -617,7 +711,9 @@ export function TelegramBotAdminClientView({
                                 {item.accountNumber}
                               </code>
                             ) : (
-                              <span className="text-slate-400 italic">QR Scan Only</span>
+                              <span className="text-slate-400 italic">
+                                QR Scan Only
+                              </span>
                             )}
                           </TableCell>
 
@@ -636,7 +732,9 @@ export function TelegramBotAdminClientView({
                             <div className="flex items-center justify-center gap-1.5">
                               <Switch
                                 checked={item.isActive}
-                                onCheckedChange={() => handleToggleActive(item.id, item.isActive)}
+                                onCheckedChange={() =>
+                                  handleToggleActive(item.id, item.isActive)
+                                }
                                 aria-label="Toggle active status"
                               />
                               <span className="text-[11px] text-slate-500">
@@ -660,7 +758,9 @@ export function TelegramBotAdminClientView({
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => handleDeletePayment(item.id, item.name)}
+                                onClick={() =>
+                                  handleDeletePayment(item.id, item.name)
+                                }
                                 className="size-8 text-rose-500 hover:bg-rose-50 hover:text-rose-700"
                                 title="Hapus"
                               >
@@ -686,10 +786,13 @@ export function TelegramBotAdminClientView({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {editingItem ? "Edit Metode Pembayaran" : "Tambah Metode Pembayaran"}
+              {editingItem
+                ? "Edit Metode Pembayaran"
+                : "Tambah Metode Pembayaran"}
             </DialogTitle>
             <DialogDescription className="text-xs">
-              Konfigurasikan detail rekening atau QRIS yang akan ditampilkan kepada pengguna saat top-up.
+              Konfigurasikan detail rekening atau QRIS yang akan ditampilkan
+              kepada pengguna saat top-up.
             </DialogDescription>
           </DialogHeader>
 
@@ -699,7 +802,11 @@ export function TelegramBotAdminClientView({
               <Label className="text-xs font-semibold">Tipe Pembayaran</Label>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { value: "BANK_TRANSFER", label: "Bank Transfer", icon: Building },
+                  {
+                    value: "BANK_TRANSFER",
+                    label: "Bank Transfer",
+                    icon: Building,
+                  },
                   { value: "QRIS", label: "QRIS Statis", icon: QrCode },
                   { value: "EWALLET", label: "E-Wallet", icon: Wallet },
                 ].map((opt) => {
@@ -740,7 +847,10 @@ export function TelegramBotAdminClientView({
 
             {/* Nomor Rekening / NMID */}
             <div className="space-y-1.5">
-              <Label htmlFor="form-account-no" className="text-xs font-semibold">
+              <Label
+                htmlFor="form-account-no"
+                className="text-xs font-semibold"
+              >
                 Nomor Rekening / NMID
               </Label>
               <Input
@@ -754,7 +864,10 @@ export function TelegramBotAdminClientView({
 
             {/* Atas Nama */}
             <div className="space-y-1.5">
-              <Label htmlFor="form-account-name" className="text-xs font-semibold">
+              <Label
+                htmlFor="form-account-name"
+                className="text-xs font-semibold"
+              >
                 Atas Nama Pemilik Rekening
               </Label>
               <Input
@@ -776,13 +889,16 @@ export function TelegramBotAdminClientView({
                 value={formQrisImageUrl}
                 onChange={(e) => setFormQrisImageUrl(e.target.value)}
                 placeholder="https://assets.aldera.tech/qris/aldera-static.png"
-                className="text-xs font-mono"
+                className="font-mono text-xs"
               />
             </div>
 
             {/* Petunjuk Tambahan */}
             <div className="space-y-1.5">
-              <Label htmlFor="form-instructions" className="text-xs font-semibold">
+              <Label
+                htmlFor="form-instructions"
+                className="text-xs font-semibold"
+              >
                 Petunjuk Transfer (Opsional)
               </Label>
               <Textarea
@@ -798,14 +914,19 @@ export function TelegramBotAdminClientView({
             {/* Urutan & Status */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="form-display-order" className="text-xs font-semibold">
+                <Label
+                  htmlFor="form-display-order"
+                  className="text-xs font-semibold"
+                >
                   Urutan Tampilan
                 </Label>
                 <Input
                   id="form-display-order"
                   type="number"
                   value={formDisplayOrder}
-                  onChange={(e) => setFormDisplayOrder(parseInt(e.target.value, 10) || 0)}
+                  onChange={(e) =>
+                    setFormDisplayOrder(parseInt(e.target.value, 10) || 0)
+                  }
                   className="font-mono text-xs"
                 />
               </div>
@@ -817,7 +938,10 @@ export function TelegramBotAdminClientView({
                     checked={formIsActive}
                     onCheckedChange={setFormIsActive}
                   />
-                  <Label htmlFor="form-is-active" className="text-xs font-medium cursor-pointer">
+                  <Label
+                    htmlFor="form-is-active"
+                    className="cursor-pointer text-xs font-medium"
+                  >
                     Aktifkan Sekarang
                   </Label>
                 </div>
@@ -838,7 +962,7 @@ export function TelegramBotAdminClientView({
                 type="submit"
                 size="sm"
                 disabled={isSavingPayment}
-                className="gap-1.5 bg-blue-600 hover:bg-blue-700 text-white"
+                className="gap-1.5 bg-blue-600 text-white hover:bg-blue-700"
               >
                 {isSavingPayment ? (
                   <>

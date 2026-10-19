@@ -17,13 +17,13 @@ Aldera Tech implements an isolated multi-stack environment operating side-by-sid
 - **Production Stack (`main`)**:
   - Web Application: `https://aldera.tech` (Proxy to container `aldera-tech:3000`, directory `/opt/docker-stack/applications/aldera-tech`)
   - Database: `aldera_tech` / `solvo_tech` (PostgreSQL)
-  - Telegram Relay Bot: `@aldera_tech_bot` (Token: `[REDACTED_TELEGRAM_BOT_TOKEN]`, directory `/opt/docker-stack/applications/aldera-router`, DB `aldera_router`)
+  - Telegram Relay Bot: `@aldera_tech_bot` (Token: `[REDACTED_IN_VAULT]`, directory `/opt/docker-stack/applications/aldera-router`, DB `aldera_router`)
   - CI/CD Deployment: Push to `main` builds `:latest` tag and triggers production deploy.
 
 - **Staging Stack (`staging`)**:
   - Web Application: `https://staging.aldera.tech` (Proxy to container `aldera-tech-staging:3000`, directory `/opt/docker-stack/applications/aldera-tech-staging`)
   - Database: `aldera_tech_staging` (PostgreSQL, isolated)
-  - Telegram Relay Bot: `@aldera_tech_staging_bot` (Token: `[REDACTED_TELEGRAM_BOT_TOKEN]`, directory `/opt/docker-stack/applications/aldera-router-staging`, DB `aldera_router_staging`)
+  - Telegram Relay Bot: `@aldera_tech_staging_bot` (Token: `[REDACTED_IN_VAULT]`, directory `/opt/docker-stack/applications/aldera-router-staging`, DB `aldera_router_staging`)
   - CI/CD Deployment: Push to `staging` builds `:staging` tag and triggers staging deploy.
 
 - **Git Branching Hierarchy**:

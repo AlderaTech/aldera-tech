@@ -6,18 +6,70 @@ import { prisma } from "@/lib/prisma";
 import { ADMIN_ROUTES, API_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
 import { InvoiceTable } from "./_components/invoice-table";
+import { InvoiceStatus, type Prisma } from "@prisma/client";
+import { SearchFilterBar } from "@/components/shared/search-filter-bar";
+import { ParamFilterSelect } from "@/components/shared/param-filter-select";
 
-export default async function AdminInvoicesPage() {
-  const raw = await safeDb(
+const invoiceStatusOptions = [
+  { label: "Semua Status", value: "ALL" },
+  { label: "Draft", value: "DRAFT" },
+  { label: "Terkirim", value: "SENT" },
+  { label: "Menunggu Verifikasi", value: "PENDING_VERIFICATION" },
+  { label: "Lunas", value: "PAID" },
+  { label: "Overdue", value: "OVERDUE" },
+  { label: "Dibatalkan", value: "CANCELLED" },
+];
+
+export interface AdminInvoicesPageProps {
+  searchParams: Promise<{
+    q?: string;
+    status?: string;
+    page?: string;
+  }>;
+}
+
+export default async function AdminInvoicesPage({
+  searchParams,
+}: AdminInvoicesPageProps) {
+  const sp = await searchParams;
+  const page = Math.max(1, Number(sp?.page) || 1);
+  const PAGE_SIZE = 10;
+  const q = sp?.q?.trim();
+  const rawStatus = sp?.status?.trim()?.toUpperCase();
+
+  const where: Prisma.InvoiceWhereInput = {};
+  if (
+    rawStatus &&
+    rawStatus !== "ALL" &&
+    Object.values(InvoiceStatus).includes(rawStatus as InvoiceStatus)
+  ) {
+    where.status = rawStatus as InvoiceStatus;
+  }
+
+  if (q) {
+    where.OR = [
+      { number: { contains: q, mode: "insensitive" } },
+      { client: { name: { contains: q, mode: "insensitive" } } },
+      { project: { title: { contains: q, mode: "insensitive" } } },
+    ];
+  }
+
+  const [raw, totalCount] = await safeDb(
     async () =>
-      await prisma.invoice.findMany({
-        orderBy: { issueDate: "desc" },
-        include: {
-          client: { select: { name: true } },
-          project: { select: { title: true } },
-        },
-      }),
-    []
+      await Promise.all([
+        prisma.invoice.findMany({
+          where,
+          orderBy: { issueDate: "desc" },
+          skip: (page - 1) * PAGE_SIZE,
+          take: PAGE_SIZE,
+          include: {
+            client: { select: { name: true } },
+            project: { select: { title: true } },
+          },
+        }),
+        prisma.invoice.count({ where }),
+      ]),
+    [[], 0]
   );
 
   // Decimal is not JSON-serializable directly, convert to string for client
@@ -57,8 +109,24 @@ export default async function AdminInvoicesPage() {
         </div>
       </div>
 
+      <SearchFilterBar
+        placeholder="Cari nomor invoice, client, atau proyek..."
+        searchParamKey="q"
+      >
+        <ParamFilterSelect
+          paramKey="status"
+          options={invoiceStatusOptions}
+          placeholder="Filter status..."
+        />
+      </SearchFilterBar>
+
       <Card className="overflow-hidden p-0">
-        <InvoiceTable invoices={invoices} />
+        <InvoiceTable
+          invoices={invoices}
+          totalItems={totalCount}
+          currentPage={page}
+          pageSize={PAGE_SIZE}
+        />
       </Card>
     </div>
   );

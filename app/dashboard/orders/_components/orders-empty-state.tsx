@@ -16,6 +16,8 @@ export function OrdersEmptyState() {
       <Image
         src={mascot}
         alt=""
+        width={128}
+        height={128}
         aria-hidden="true"
         className={commonStyles.mascot}
         sizes="(min-width: 640px) 128px, 96px"
