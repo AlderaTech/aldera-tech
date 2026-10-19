@@ -1,0 +1,232 @@
+.page {
+  max-width: 80rem;
+}
+
+.headerMark {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--overview-line);
+  border-radius: 15px;
+  background: var(--overview-paper);
+  color: var(--overview-blue);
+}
+
+.grid {
+  display: grid;
+  min-width: 0;
+  align-items: stretch;
+  gap: 1.25rem;
+}
+
+.panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--overview-line);
+  border-radius: 22px;
+  background: var(--overview-paper);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--overview-ink) 3%, transparent);
+}
+
+.panelHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--overview-line);
+}
+
+.icon,
+.mailIcon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--overview-blue) 10%, transparent);
+  border-radius: 14px;
+  background: var(--overview-sky);
+  color: var(--overview-blue);
+}
+
+.panelHeading {
+  min-width: 0;
+  flex: 1;
+}
+
+.panel h2 {
+  color: var(--overview-ink);
+  font-size: 0.95rem;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+}
+
+.panelHeading p {
+  margin-top: 0.3rem;
+  color: var(--overview-muted);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.status {
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 999px;
+  background: var(--overview-canvas);
+  color: var(--overview-muted);
+  font-size: 0.65rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.notificationBody {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1.75rem 1.5rem;
+  background: linear-gradient(
+    125deg,
+    var(--overview-paper) 45%,
+    color-mix(in srgb, var(--overview-sky) 65%, var(--overview-paper))
+  );
+}
+
+.notificationCopy {
+  min-width: 0;
+  max-width: 24rem;
+}
+
+.mailIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: var(--overview-paper);
+}
+
+.notificationCopy h3 {
+  margin-top: 0.9rem;
+  color: var(--overview-ink);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.notificationCopy p,
+.profileDescription {
+  margin-top: 0.5rem;
+  color: var(--overview-muted);
+  font-size: 0.8rem;
+  line-height: 1.75;
+}
+
+.mascot {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.mascot img {
+  filter: drop-shadow(
+    0 8px 8px color-mix(in srgb, var(--overview-ink) 10%, transparent)
+  );
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--overview-line);
+  color: var(--overview-muted);
+  font-size: 0.72rem;
+  line-height: 1.6;
+}
+
+.notice svg {
+  margin-top: 0.1rem;
+}
+
+.profilePanel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.5rem;
+  background:
+    radial-gradient(ellipse at 100% 0%, var(--overview-cyan), transparent 65%),
+    linear-gradient(150deg, var(--overview-paper), var(--overview-sky));
+}
+
+.profilePanel .icon {
+  background: var(--overview-paper);
+}
+
+.eyebrow {
+  margin-top: 1.25rem;
+  color: var(--overview-muted);
+  font-size: 0.61rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.profilePanel h2 {
+  margin-top: 0.45rem;
+  font-size: 1.2rem;
+  line-height: 1.4;
+  font-weight: 800;
+}
+
+.profileDescription {
+  margin-bottom: 1.5rem;
+}
+
+.page .profileLink {
+  margin-top: auto;
+}
+
+.page .profileLink:focus-visible {
+  outline: 2px solid var(--overview-blue);
+  outline-offset: 4px;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 639px) {
+  .headerMark,
+  .mascot {
+    display: none;
+  }
+
+  .panelHeader,
+  .profilePanel,
+  .notificationBody {
+    padding: 1.25rem;
+  }
+
+  .status {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .panelHeader {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page .profileLink {
+    transition: none;
+  }
+}
