@@ -149,7 +149,8 @@ export function BlogComments({
                 Masuk untuk Berdiskusi
               </p>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                Tulis tanggapan dan bagikan pemikiran Anda dengan komunitas Aldera Tech.
+                Tulis tanggapan dan bagikan pemikiran Anda dengan komunitas
+                Aldera Tech.
               </p>
             </div>
           </div>
@@ -166,7 +167,8 @@ export function BlogComments({
       <div className="space-y-4">
         {comments.length === 0 ? (
           <div className="rounded-xl border border-zinc-200/60 bg-zinc-50/40 p-8 text-center text-xs text-zinc-500 dark:border-zinc-800/60 dark:bg-zinc-900/30 dark:text-zinc-400">
-            Belum ada komentar untuk artikel ini. Jadilah yang pertama berbagi pendapat!
+            Belum ada komentar untuk artikel ini. Jadilah yang pertama berbagi
+            pendapat!
           </div>
         ) : (
           comments.map((comment) => {
@@ -204,14 +206,14 @@ export function BlogComments({
                       disabled={isPending}
                       onClick={() => handleDelete(comment.id)}
                       aria-label="Hapus komentar"
-                      className="opacity-70 transition hover:opacity-100 text-zinc-400 hover:text-rose-600 dark:text-zinc-500 dark:hover:text-rose-400 p-1"
+                      className="p-1 text-zinc-400 opacity-70 transition hover:text-rose-600 hover:opacity-100 dark:text-zinc-500 dark:hover:text-rose-400"
                     >
                       <Trash2 className="size-3.5" />
                     </button>
                   )}
                 </div>
 
-                <p className="mt-2 text-xs leading-relaxed text-zinc-700 sm:text-sm dark:text-zinc-300 whitespace-pre-wrap">
+                <p className="mt-2 text-xs leading-relaxed whitespace-pre-wrap text-zinc-700 sm:text-sm dark:text-zinc-300">
                   {comment.content}
                 </p>
               </div>

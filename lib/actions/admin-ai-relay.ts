@@ -679,7 +679,10 @@ export async function approveTopupRequest(
       });
     }
   } catch (tgErr) {
-    console.warn(`[approveTopupRequest] Failed to dispatch Telegram notification for ticket #${requestId}:`, tgErr);
+    console.warn(
+      `[approveTopupRequest] Failed to dispatch Telegram notification for ticket #${requestId}:`,
+      tgErr
+    );
   }
 
   try {
@@ -710,9 +713,10 @@ export async function rejectTopupRequest(
       user_id: string | number;
       amount: string | number;
       status: string;
-    }>("SELECT id, user_id, amount, status FROM topup_requests WHERE id = $1 FOR UPDATE;", [
-      requestId,
-    ]);
+    }>(
+      "SELECT id, user_id, amount, status FROM topup_requests WHERE id = $1 FOR UPDATE;",
+      [requestId]
+    );
 
     if (ticketRes.rows.length === 0) {
       throw new Error(`Tiket top-up #${requestId} tidak ditemukan.`);
@@ -739,7 +743,9 @@ export async function rejectTopupRequest(
   // Real-time Telegram notification to user (non-blocking)
   if (ticketInfo) {
     try {
-      const userRes = await queryRouter<{ telegram_id: string | number | null }>(
+      const userRes = await queryRouter<{
+        telegram_id: string | number | null;
+      }>(
         "SELECT u.telegram_id FROM topup_requests tr JOIN users u ON tr.user_id = u.id WHERE tr.id = $1 LIMIT 1;",
         [requestId]
       );
@@ -754,7 +760,10 @@ export async function rejectTopupRequest(
         });
       }
     } catch (tgErr) {
-      console.warn(`[rejectTopupRequest] Failed to dispatch Telegram notification for ticket #${requestId}:`, tgErr);
+      console.warn(
+        `[rejectTopupRequest] Failed to dispatch Telegram notification for ticket #${requestId}:`,
+        tgErr
+      );
     }
   }
 

@@ -25,8 +25,9 @@ import {
 import { BlogRowActions } from "./blog-row-actions";
 import { formatDate } from "@/lib/utils";
 import { ADMIN_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
+import { DataPagination } from "@/components/shared/data-pagination";
 
-type BlogRow = {
+export type BlogRow = {
   id: string;
   slug: string;
   title: string;
@@ -37,7 +38,19 @@ type BlogRow = {
   author: { name: string } | null;
 };
 
-export function BlogTable({ posts }: { posts: BlogRow[] }) {
+export interface BlogTableProps {
+  posts: BlogRow[];
+  totalItems?: number;
+  currentPage?: number;
+  pageSize?: number;
+}
+
+export function BlogTable({
+  posts,
+  totalItems,
+  currentPage = 1,
+  pageSize = 10,
+}: BlogTableProps) {
   const router = useRouter();
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
 
@@ -188,6 +201,14 @@ export function BlogTable({ posts }: { posts: BlogRow[] }) {
           )}
         </TableBody>
       </Table>
+
+      {typeof totalItems === "number" && (
+        <DataPagination
+          currentPage={currentPage}
+          totalItems={totalItems}
+          pageSize={pageSize}
+        />
+      )}
     </div>
   );
 }

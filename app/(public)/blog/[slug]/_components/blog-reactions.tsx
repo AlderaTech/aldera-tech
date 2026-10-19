@@ -98,7 +98,8 @@ export function BlogReactions({
             Apakah artikel ini bermanfaat?
           </h3>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Berikan reaksi Anda untuk membantu kami menyajikan konten yang lebih baik.
+            Berikan reaksi Anda untuk membantu kami menyajikan konten yang lebih
+            baik.
           </p>
         </div>
 
@@ -109,7 +110,7 @@ export function BlogReactions({
             onClick={() => handleToggle("LIKE")}
             aria-label={`Suka artikel (${likes})`}
             className={cn(
-              "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition-all duration-200 cursor-pointer",
+              "inline-flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition-all duration-200",
               userReaction === "LIKE"
                 ? "border-blue-600 bg-blue-50 text-blue-700 shadow-xs dark:bg-blue-950/50 dark:text-blue-300"
                 : "border-zinc-200 bg-white text-zinc-700 hover:border-blue-400 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
@@ -118,7 +119,8 @@ export function BlogReactions({
             <ThumbsUp
               className={cn(
                 "size-4 transition-transform duration-200",
-                userReaction === "LIKE" && "scale-110 fill-blue-600 dark:fill-blue-400"
+                userReaction === "LIKE" &&
+                  "scale-110 fill-blue-600 dark:fill-blue-400"
               )}
             />
             <span>Suka</span>
@@ -140,7 +142,7 @@ export function BlogReactions({
             onClick={() => handleToggle("DISLIKE")}
             aria-label={`Tidak suka artikel (${dislikes})`}
             className={cn(
-              "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition-all duration-200 cursor-pointer",
+              "inline-flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition-all duration-200",
               userReaction === "DISLIKE"
                 ? "border-rose-500 bg-rose-50 text-rose-700 shadow-xs dark:bg-rose-950/50 dark:text-rose-300"
                 : "border-zinc-200 bg-white text-zinc-700 hover:border-rose-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
@@ -149,7 +151,8 @@ export function BlogReactions({
             <ThumbsDown
               className={cn(
                 "size-4 transition-transform duration-200",
-                userReaction === "DISLIKE" && "scale-110 fill-rose-500 dark:fill-rose-400"
+                userReaction === "DISLIKE" &&
+                  "scale-110 fill-rose-500 dark:fill-rose-400"
               )}
             />
             <span>Kurang Bermanfaat</span>

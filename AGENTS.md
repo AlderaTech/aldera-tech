@@ -120,6 +120,7 @@ Setiap kali menyelesaikan task, berikan ringkasan terstruktur yang memuat:
 ## 11. Arsitektur Dual-Bot & Multi-Stack Staging Topology
 
 Aldera Tech beroperasi dalam topologi multi-stack yang memisahkan lingkungan Staging dan Produksi secara berdampingan pada VPS `45.66.153.149`:
+
 - **Lingkungan Staging (`staging`)**:
   - Web App: `https://staging.aldera.tech` (direktori server `/opt/docker-stack/applications/aldera-tech-staging`, database `aldera_tech_staging`).
   - Telegram Bot: `@aldera_tech_staging_bot` (Token: `[REDACTED_IN_VAULT]`, direktori server `/opt/docker-stack/applications/aldera-router-staging`, database `aldera_router_staging`).
@@ -127,4 +128,3 @@ Aldera Tech beroperasi dalam topologi multi-stack yang memisahkan lingkungan Sta
   - Web App: `https://aldera.tech` (direktori server `/opt/docker-stack/applications/aldera-tech`, database `aldera_tech` / `solvo_tech`).
   - Telegram Bot: `@aldera_tech_bot` (Token: `[REDACTED_IN_VAULT]`, direktori server `/opt/docker-stack/applications/aldera-router`, database `aldera_router`).
 - **CI/CD Triggers**: Push ke `staging` memicu build image `:staging` dan auto-deploy ke direktori staging di VPS. Push ke `main` memicu build image `:latest` dan auto-deploy ke direktori produksi di VPS. Detail teknis lengkap terdapat di [`ai-agent-docs/deployment.md`](ai-agent-docs/deployment.md).
-

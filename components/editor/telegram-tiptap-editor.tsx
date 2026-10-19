@@ -72,12 +72,36 @@ export interface TelegramTipTapEditorProps {
 }
 
 const DEFAULT_VARIABLES = [
-  { label: "ID Tiket", value: "{ticket_id}", description: "Nomor unik tiket (e.g. 1042)" },
-  { label: "Nominal", value: "{amount}", description: "Jumlah topup (e.g. 100.000)" },
-  { label: "Kode Unik", value: "{unique_code}", description: "3 digit verifikasi (e.g. 452)" },
-  { label: "Total Transfer", value: "{total_transfer}", description: "Nominal + kode (e.g. 100.452)" },
-  { label: "Metode Pembayaran", value: "{payment_methods}", description: "Daftar rekening bank / QRIS" },
-  { label: "Username Admin", value: "{admin_username}", description: "Username admin telegram (e.g. aldera_admin)" },
+  {
+    label: "ID Tiket",
+    value: "{ticket_id}",
+    description: "Nomor unik tiket (e.g. 1042)",
+  },
+  {
+    label: "Nominal",
+    value: "{amount}",
+    description: "Jumlah topup (e.g. 100.000)",
+  },
+  {
+    label: "Kode Unik",
+    value: "{unique_code}",
+    description: "3 digit verifikasi (e.g. 452)",
+  },
+  {
+    label: "Total Transfer",
+    value: "{total_transfer}",
+    description: "Nominal + kode (e.g. 100.452)",
+  },
+  {
+    label: "Metode Pembayaran",
+    value: "{payment_methods}",
+    description: "Daftar rekening bank / QRIS",
+  },
+  {
+    label: "Username Admin",
+    value: "{admin_username}",
+    description: "Username admin telegram (e.g. aldera_admin)",
+  },
 ];
 
 export function TelegramTipTapEditor({
@@ -132,7 +156,10 @@ export function TelegramTipTapEditor({
   const setLink = React.useCallback(() => {
     if (!editor) return;
     const previousUrl = editor.getAttributes("link").href as string | undefined;
-    const url = window.prompt("Masukkan URL (http://, https://, atau tg://):", previousUrl ?? "https://");
+    const url = window.prompt(
+      "Masukkan URL (http://, https://, atau tg://):",
+      previousUrl ?? "https://"
+    );
     if (url === null) return;
     if (url === "") {
       editor.chain().focus().extendMarkRange("link").unsetLink().run();
@@ -181,7 +208,12 @@ export function TelegramTipTapEditor({
 
   if (!editor) {
     return (
-      <div className={cn("min-h-[220px] rounded-lg border border-slate-200 bg-white", className)}>
+      <div
+        className={cn(
+          "min-h-[220px] rounded-lg border border-slate-200 bg-white",
+          className
+        )}
+      >
         <div className="h-9 animate-pulse border-b border-slate-100 bg-slate-50" />
       </div>
     );
@@ -204,10 +236,10 @@ export function TelegramTipTapEditor({
                 type="button"
                 onClick={() => insertVariable(v.value)}
                 title={v.description || v.value}
-                className="group inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50/70 px-2 py-0.5 text-xs font-mono font-medium text-blue-700 transition hover:border-blue-300 hover:bg-blue-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="group inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50/70 px-2 py-0.5 font-mono text-xs font-medium text-blue-700 transition hover:border-blue-300 hover:bg-blue-100 focus:ring-1 focus:ring-blue-500 focus:outline-none"
               >
                 <span>{v.value}</span>
-                <span className="text-[10px] text-blue-500 font-sans group-hover:text-blue-700">
+                <span className="font-sans text-[10px] text-blue-500 group-hover:text-blue-700">
                   ({v.label})
                 </span>
               </button>
@@ -217,7 +249,7 @@ export function TelegramTipTapEditor({
       )}
 
       {/* Editor Box */}
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xs focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all">
+      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xs transition-all focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
         {/* Toolbar */}
         <div className="flex flex-wrap items-center gap-0.5 border-b border-slate-200 bg-slate-50/80 p-1.5">
           <ToolbarButton
@@ -287,7 +319,7 @@ export function TelegramTipTapEditor({
           <div className="ml-auto flex items-center gap-2 pr-1">
             <span
               className={cn(
-                "text-[11px] font-mono",
+                "font-mono text-[11px]",
                 isCharOver
                   ? "font-semibold text-rose-600"
                   : isCharWarning
@@ -318,14 +350,17 @@ export function TelegramTipTapEditor({
             <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
               <Send className="size-3.5 text-sky-500" />
               <span>{previewTitle}</span>
-              <Badge variant="outline" className="border-sky-300 bg-sky-50 text-[10px] text-sky-700">
+              <Badge
+                variant="outline"
+                className="border-sky-300 bg-sky-50 text-[10px] text-sky-700"
+              >
                 Live Telegram Bubble
               </Badge>
             </div>
             <button
               type="button"
               onClick={handleCopyRaw}
-              className="inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-slate-800 transition"
+              className="inline-flex items-center gap-1 text-[11px] text-slate-500 transition hover:text-slate-800"
             >
               {copied ? (
                 <>
@@ -345,9 +380,11 @@ export function TelegramTipTapEditor({
           <div className="relative overflow-hidden rounded-md bg-[#748999] p-3 text-slate-900 shadow-inner">
             <div className="max-w-[85%] rounded-lg bg-white px-3 py-2 text-xs leading-relaxed shadow-sm">
               <div
-                className="whitespace-pre-wrap font-sans text-slate-800 break-words"
+                className="font-sans break-words whitespace-pre-wrap text-slate-800"
                 dangerouslySetInnerHTML={{
-                  __html: simulatedPreviewHtml || "<span class='text-slate-400 italic'>Pesan kosong...</span>",
+                  __html:
+                    simulatedPreviewHtml ||
+                    "<span class='text-slate-400 italic'>Pesan kosong...</span>",
                 }}
               />
               <div className="mt-1 flex items-center justify-end text-[10px] text-slate-400">

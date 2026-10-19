@@ -15,22 +15,72 @@ import { safeDb } from "@/lib/safe-db";
 import { formatDate } from "@/lib/utils";
 import { hasPermission, PERMISSIONS, ROLE_LABELS } from "@/lib/permissions";
 import { ADMIN_ROUTES, AUTH_ROUTES } from "@/lib/routes";
+import { SearchFilterBar } from "@/components/shared/search-filter-bar";
+import { DataPagination } from "@/components/shared/data-pagination";
+import { ParamFilterSelect } from "@/components/shared/param-filter-select";
+import type { Prisma } from "@prisma/client";
 
-export default async function AuditLogPage() {
+const auditActionOptions = [
+  { label: "Semua Aksi", value: "ALL" },
+  { label: "Create", value: "CREATE" },
+  { label: "Update", value: "UPDATE" },
+  { label: "Delete", value: "DELETE" },
+  { label: "Login", value: "LOGIN" },
+  { label: "Status", value: "STATUS" },
+];
+
+export interface AdminAuditPageProps {
+  searchParams: Promise<{
+    q?: string;
+    action?: string;
+    page?: string;
+  }>;
+}
+
+export default async function AuditLogPage({
+  searchParams,
+}: AdminAuditPageProps) {
   const session = await auth();
   if (!session?.user) redirect(AUTH_ROUTES.login);
   if (!hasPermission(session.user.role, PERMISSIONS.AUDIT_VIEW)) {
     redirect(ADMIN_ROUTES.home);
   }
 
-  const logs = await safeDb(
+  const sp = await searchParams;
+  const page = Math.max(1, Number(sp?.page) || 1);
+  const PAGE_SIZE = 20;
+  const q = sp?.q?.trim();
+  const rawAction = sp?.action?.trim();
+
+  const where: Prisma.AuditLogWhereInput = {};
+  if (rawAction && rawAction !== "ALL") {
+    where.action = { contains: rawAction, mode: "insensitive" };
+  }
+
+  if (q) {
+    where.OR = [
+      { action: { contains: q, mode: "insensitive" } },
+      { entityType: { contains: q, mode: "insensitive" } },
+      { user: { name: { contains: q, mode: "insensitive" } } },
+      { user: { email: { contains: q, mode: "insensitive" } } },
+    ];
+  }
+
+  const [logs, totalCount] = await safeDb(
     async () =>
-      await prisma.auditLog.findMany({
-        orderBy: { createdAt: "desc" },
-        take: 200,
-        include: { user: { select: { name: true, email: true, roles: true } } },
-      }),
-    []
+      await Promise.all([
+        prisma.auditLog.findMany({
+          where,
+          orderBy: { createdAt: "desc" },
+          skip: (page - 1) * PAGE_SIZE,
+          take: PAGE_SIZE,
+          include: {
+            user: { select: { name: true, email: true, roles: true } },
+          },
+        }),
+        prisma.auditLog.count({ where }),
+      ]),
+    [[], 0]
   );
 
   return (
@@ -38,9 +88,20 @@ export default async function AuditLogPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Audit Log</h1>
         <p className="text-muted-foreground">
-          200 audit entries terakhir. Untuk transparansi perubahan di sistem.
+          Log pencatatan aktivitas untuk transparansi perubahan di sistem.
         </p>
       </div>
+
+      <SearchFilterBar
+        placeholder="Cari user, email, aksi, atau entitas..."
+        searchParamKey="q"
+      >
+        <ParamFilterSelect
+          paramKey="action"
+          options={auditActionOptions}
+          placeholder="Filter aksi..."
+        />
+      </SearchFilterBar>
 
       <Card className="overflow-hidden p-0">
         <Table>
@@ -60,7 +121,8 @@ export default async function AuditLogPage() {
                   colSpan={5}
                   className="py-10 text-center text-muted-foreground"
                 >
-                  Belum ada audit log.
+                  Belum ada audit log atau tidak ada log yang sesuai kriteria
+                  filter.
                 </TableCell>
               </TableRow>
             ) : (
@@ -100,6 +162,12 @@ export default async function AuditLogPage() {
             )}
           </TableBody>
         </Table>
+
+        <DataPagination
+          currentPage={page}
+          totalItems={totalCount}
+          pageSize={PAGE_SIZE}
+        />
       </Card>
     </div>
   );

@@ -9,11 +9,22 @@ export const metadata: Metadata = {
   description: "Pantau invoice dan pembayaran proyek Anda di Aldera Tech.",
 };
 
-export default function UserInvoicesPage() {
+export interface UserInvoicesPageProps {
+  searchParams?: Promise<{
+    status?: string;
+    page?: string;
+  }>;
+}
+
+export default async function UserInvoicesPage({
+  searchParams,
+}: UserInvoicesPageProps = {}) {
+  const resolvedParams = searchParams ? await searchParams : undefined;
+
   return (
     <InvoicesFrame>
       <Suspense fallback={<InvoicesSkeleton />}>
-        <InvoicesContent />
+        <InvoicesContent searchParams={resolvedParams} />
       </Suspense>
     </InvoicesFrame>
   );

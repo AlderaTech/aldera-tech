@@ -13,7 +13,9 @@ mock.module("@/lib/actions/payment", () => ({
   createInvoicePaymentSnapAction: mock(),
 }));
 mock.module("next/navigation", () => ({
-  useRouter: () => ({ refresh: mock() }),
+  useRouter: () => ({ refresh: mock(), replace: mock(), push: mock() }),
+  usePathname: () => "/dashboard/invoices",
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 const { ClientInvoicesTable } = await import("./client-invoices-table");

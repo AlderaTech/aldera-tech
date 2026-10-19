@@ -79,6 +79,11 @@ DASHBOARD_ROUTES.invoices; // "/dashboard/invoices"
 DASHBOARD_ROUTES.profile; // "/dashboard/profile"
 DASHBOARD_ROUTES.settings; // "/dashboard/settings"
 DASHBOARD_ROUTES.projectDetail(id); // "/dashboard/projects/{id}"
+DASHBOARD_ROUTES.projectDetailTab(id, tab); // "/dashboard/projects/{id}?tab={tab}"
+DASHBOARD_ROUTES.projectsWithParams({ q, status, page }); // "/dashboard/projects?..."
+DASHBOARD_ROUTES.invoicesWithParams({ status, page }); // "/dashboard/invoices?..."
+DASHBOARD_ROUTES.ordersWithParams({ status, page }); // "/dashboard/orders?..."
+DASHBOARD_ROUTES.aiRelayTab(tab); // "/dashboard/ai-relay?tab={tab}"
 ```
 
 ### D. `ADMIN_ROUTES`
@@ -113,11 +118,25 @@ ADMIN_ROUTES.testimonials; // "/admin/testimonials"
 ADMIN_ROUTES.timesheet; // "/admin/timesheet"
 ADMIN_ROUTES.users; // "/admin/users"
 
-// Builder rute detail/edit
+// Builder rute detail/edit & Tab Navigation
 ADMIN_ROUTES.blogEdit(id); // "/admin/blog/{id}/edit"
 ADMIN_ROUTES.invoiceDetail(id); // "/admin/invoices/{id}"
 ADMIN_ROUTES.projectDetail(id); // "/admin/projects/{id}"
+ADMIN_ROUTES.projectDetailTab(id, tab); // "/admin/projects/{id}?tab={tab}"
 ADMIN_ROUTES.proposalDetail(id); // "/admin/proposals/{id}"
+ADMIN_ROUTES.settingsTab(tab); // "/admin/settings?tab={tab}"
+ADMIN_ROUTES.telegramBotTab(tab); // "/admin/telegram-bot?tab={tab}"
+ADMIN_ROUTES.aiRelayTab(tab); // "/admin/ai-relay?tab={tab}"
+ADMIN_ROUTES.calculatorTab(tab); // "/admin/calculator?tab={tab}"
+
+// Builder rute berparameter pencarian, filter, dan paginasi
+ADMIN_ROUTES.projectsWithParams({ q, status, page, sort }); // "/admin/projects?q=...&status=...&page=..."
+ADMIN_ROUTES.invoicesWithParams({ q, status, page }); // "/admin/invoices?q=...&status=...&page=..."
+ADMIN_ROUTES.ordersWithParams({ q, status, page }); // "/admin/orders?q=...&status=...&page=..."
+ADMIN_ROUTES.proposalsWithParams({ q, status, page }); // "/admin/proposals?q=...&status=...&page=..."
+ADMIN_ROUTES.blogWithParams({ q, status, page }); // "/admin/blog?q=...&status=...&page=..."
+ADMIN_ROUTES.filesWithParams({ q, type, page }); // "/admin/files?q=...&type=...&page=..."
+ADMIN_ROUTES.auditWithParams({ q, action, page }); // "/admin/audit?q=...&action=...&page=..."
 ```
 
 ### E. `PROPOSAL_ROUTES`

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import {
   AlertCircle,
   AlertTriangle,
@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useUrlState } from "@/lib/hooks/use-url-state";
 import {
   Card,
   CardContent,
@@ -71,6 +72,9 @@ import {
 } from "@/lib/actions/admin-ai-relay";
 import type { LedgerInvariantResult } from "@/lib/router-db";
 
+const ALLOWED_TABS = ["overview", "pricing", "sync", "topup", "audit"] as const;
+type AiRelayTab = (typeof ALLOWED_TABS)[number];
+
 export interface AdminClientViewProps {
   initialPricing: ModelPricingItem[];
   initialMetrics: FinancialMetricsSummary;
@@ -84,7 +88,13 @@ export function AiRelayAdminClientView({
   initialPendingTopups,
   initialAuditResults,
 }: AdminClientViewProps) {
-  const [activeTab, setActiveTab] = useState<string>("overview");
+  const { getParam, setParam } = useUrlState();
+  const tabParam = getParam("tab", "overview");
+  const activeTab = ALLOWED_TABS.includes(tabParam as AiRelayTab)
+    ? tabParam
+    : "overview";
+  const setActiveTab = (tab: string) => setParam("tab", tab);
+
   const [isPending, startTransition] = useTransition();
 
   // Financial Metrics State
@@ -94,7 +104,26 @@ export function AiRelayAdminClientView({
   // Model Pricing State (F14)
   const [pricingList, setPricingList] =
     useState<ModelPricingItem[]>(initialPricing);
-  const [modelSearch, setModelSearch] = useState<string>("");
+  const queryParam = getParam("q", "");
+  const [modelSearch, setModelSearch] = useState<string>(queryParam);
+  const [prevQueryParam, setPrevQueryParam] = useState<string>(queryParam);
+
+  // Sync external changes in query param (e.g. back/forward navigation)
+  if (prevQueryParam !== queryParam) {
+    setPrevQueryParam(queryParam);
+    setModelSearch(queryParam);
+  }
+
+  // Debounce sync to URL query parameter ?q=
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (modelSearch !== queryParam) {
+        setParam("q", modelSearch);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [modelSearch, queryParam, setParam]);
+
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [editingModel, setEditingModel] = useState<ModelPricingItem | null>(
     null

@@ -18,6 +18,7 @@ import {
   type UsageAnalyticsSummary,
   type UsageLogRecord,
 } from "@/lib/actions/ai-relay";
+import { useUrlState } from "@/lib/hooks/use-url-state";
 import { useRelayWorkspace } from "./_hooks/use-relay-workspace";
 import { RelayHeader } from "./_components/relay-header";
 import { RelayTabs } from "./_components/relay-tabs";
@@ -44,6 +45,7 @@ function AiRelayClientViewInner({
   catalog,
   healthMetrics,
 }: ClientViewProps) {
+  const { isPending } = useUrlState();
   const {
     activeTab,
     setActiveTab,
@@ -55,7 +57,11 @@ function AiRelayClientViewInner({
   } = useRelayWorkspace(initialBalance, catalog);
 
   return (
-    <div className={styles.workspace} data-ai-relay-workspace>
+    <div
+      className={styles.workspace}
+      data-ai-relay-workspace
+      aria-busy={isPending}
+    >
       <RelayHeader
         balance={currentBalance}
         onTopup={() => setActiveTab("billing")}
