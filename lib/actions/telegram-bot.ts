@@ -11,9 +11,12 @@ import { convertTipTapToTelegramHtml } from "@/lib/telegram-html";
 // Default template configuration
 const DEFAULT_BOT_CONFIG = {
   id: "default",
-  ticketTemplate: "💳 <b>TIKET TOP-UP #{ticket_id}</b>\n\nNominal: <b>Rp {total_transfer}</b>",
-  importantNotes: "⚠️ <b>PENTING:</b> Mohon transfer TEPAT sejumlah <code>Rp {total_transfer}</code> (hingga 3 digit terakhir) agar verifikasi manual berjalan lancar.",
-  nextStepsNotes: "📸 <b>LANGKAH SELANJUTNYA:</b> Setelah transfer, silakan kirimkan foto bukti transfer ke bot ini.",
+  ticketTemplate:
+    "💳 <b>TIKET TOP-UP #{ticket_id}</b>\n\nNominal: <b>Rp {total_transfer}</b>",
+  importantNotes:
+    "⚠️ <b>PENTING:</b> Mohon transfer TEPAT sejumlah <code>Rp {total_transfer}</code> (hingga 3 digit terakhir) agar verifikasi manual berjalan lancar.",
+  nextStepsNotes:
+    "📸 <b>LANGKAH SELANJUTNYA:</b> Setelah transfer, silakan kirimkan foto bukti transfer ke bot ini.",
   topupAmounts: [25000, 50000, 100000, 250000, 500000],
   adminTelegramUsername: "aldera_admin",
   welcomeText: null as string | null,
@@ -73,7 +76,9 @@ export interface UpdatePaymentMethodInput {
 async function requireAdminAuth() {
   const session = await auth();
   if (!session?.user?.id) {
-    throw new Error("Unauthorized (401): Sesi tidak valid atau telah berakhir.");
+    throw new Error(
+      "Unauthorized (401): Sesi tidak valid atau telah berakhir."
+    );
   }
 
   const roles =
@@ -161,7 +166,9 @@ export async function getTelegramBotConfigAction() {
 /**
  * Updates Telegram Bot CMS configuration in Prisma and synchronizes to aldera_router.
  */
-export async function updateTelegramBotConfigAction(data: UpdateTelegramBotConfigInput) {
+export async function updateTelegramBotConfigAction(
+  data: UpdateTelegramBotConfigInput
+) {
   await requireAdminAuth();
 
   const current = await getTelegramBotConfigAction();
@@ -184,12 +191,16 @@ export async function updateTelegramBotConfigAction(data: UpdateTelegramBotConfi
   let finalTopupAmounts: number[] = current.topupAmounts;
   if (data.topupAmounts !== undefined) {
     if (Array.isArray(data.topupAmounts)) {
-      finalTopupAmounts = data.topupAmounts.map(Number).filter((n) => !isNaN(n) && n > 0);
+      finalTopupAmounts = data.topupAmounts
+        .map(Number)
+        .filter((n) => !isNaN(n) && n > 0);
     } else if (typeof data.topupAmounts === "string") {
       try {
         const parsed = JSON.parse(data.topupAmounts);
         if (Array.isArray(parsed)) {
-          finalTopupAmounts = parsed.map(Number).filter((n) => !isNaN(n) && n > 0);
+          finalTopupAmounts = parsed
+            .map(Number)
+            .filter((n) => !isNaN(n) && n > 0);
         }
       } catch {
         // ignore parse error
@@ -218,12 +229,24 @@ export async function updateTelegramBotConfigAction(data: UpdateTelegramBotConfi
         helpText: data.helpText ?? current.helpText,
       },
       update: {
-        ...(data.ticketTemplate !== undefined ? { ticketTemplate: finalTicketTemplate } : {}),
-        ...(data.importantNotes !== undefined ? { importantNotes: finalImportantNotes } : {}),
-        ...(data.nextStepsNotes !== undefined ? { nextStepsNotes: finalNextStepsNotes } : {}),
-        ...(data.topupAmounts !== undefined ? { topupAmounts: finalTopupAmounts } : {}),
-        ...(data.adminTelegramUsername !== undefined ? { adminTelegramUsername: finalAdminUsername } : {}),
-        ...(data.welcomeText !== undefined ? { welcomeText: data.welcomeText } : {}),
+        ...(data.ticketTemplate !== undefined
+          ? { ticketTemplate: finalTicketTemplate }
+          : {}),
+        ...(data.importantNotes !== undefined
+          ? { importantNotes: finalImportantNotes }
+          : {}),
+        ...(data.nextStepsNotes !== undefined
+          ? { nextStepsNotes: finalNextStepsNotes }
+          : {}),
+        ...(data.topupAmounts !== undefined
+          ? { topupAmounts: finalTopupAmounts }
+          : {}),
+        ...(data.adminTelegramUsername !== undefined
+          ? { adminTelegramUsername: finalAdminUsername }
+          : {}),
+        ...(data.welcomeText !== undefined
+          ? { welcomeText: data.welcomeText }
+          : {}),
         ...(data.helpText !== undefined ? { helpText: data.helpText } : {}),
       },
     });
@@ -337,14 +360,17 @@ export async function getPaymentMethodsAction(): Promise<PaymentMethodItem[]> {
 /**
  * Creates a new payment method in Prisma and aldera_router.
  */
-export async function createPaymentMethodAction(data: CreatePaymentMethodInput) {
+export async function createPaymentMethodAction(
+  data: CreatePaymentMethodInput
+) {
   await requireAdminAuth();
 
   if (!data.name || !data.name.trim()) {
     throw new Error("Nama metode pembayaran wajib diisi.");
   }
 
-  const id = data.id || `pm_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+  const id =
+    data.id || `pm_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
   const type = data.type || "BANK_TRANSFER";
   const name = data.name.trim();
   const accountNumber = data.accountNumber?.trim() ?? "";
@@ -388,7 +414,17 @@ export async function createPaymentMethodAction(data: CreatePaymentMethodInput) 
        is_active = EXCLUDED.is_active,
        display_order = EXCLUDED.display_order,
        updated_at = NOW();`,
-    [id, type, name, accountNumber, accountName, qrisImageUrl, instructions, isActive, displayOrder]
+    [
+      id,
+      type,
+      name,
+      accountNumber,
+      accountName,
+      qrisImageUrl,
+      instructions,
+      isActive,
+      displayOrder,
+    ]
   );
 
   try {
@@ -403,7 +439,10 @@ export async function createPaymentMethodAction(data: CreatePaymentMethodInput) 
 /**
  * Updates an existing payment method in Prisma and aldera_router.
  */
-export async function updatePaymentMethodAction(id: string, data: UpdatePaymentMethodInput) {
+export async function updatePaymentMethodAction(
+  id: string,
+  data: UpdatePaymentMethodInput
+) {
   await requireAdminAuth();
 
   // 1. Prisma update
@@ -413,12 +452,22 @@ export async function updatePaymentMethodAction(id: string, data: UpdatePaymentM
       data: {
         ...(data.type !== undefined ? { type: data.type } : {}),
         ...(data.name !== undefined ? { name: data.name } : {}),
-        ...(data.accountNumber !== undefined ? { accountNumber: data.accountNumber } : {}),
-        ...(data.accountName !== undefined ? { accountName: data.accountName } : {}),
-        ...(data.qrisImageUrl !== undefined ? { qrisImageUrl: data.qrisImageUrl } : {}),
-        ...(data.instructions !== undefined ? { instructions: data.instructions } : {}),
+        ...(data.accountNumber !== undefined
+          ? { accountNumber: data.accountNumber }
+          : {}),
+        ...(data.accountName !== undefined
+          ? { accountName: data.accountName }
+          : {}),
+        ...(data.qrisImageUrl !== undefined
+          ? { qrisImageUrl: data.qrisImageUrl }
+          : {}),
+        ...(data.instructions !== undefined
+          ? { instructions: data.instructions }
+          : {}),
         ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
-        ...(data.displayOrder !== undefined ? { displayOrder: data.displayOrder } : {}),
+        ...(data.displayOrder !== undefined
+          ? { displayOrder: data.displayOrder }
+          : {}),
       },
     });
   } catch (err: unknown) {

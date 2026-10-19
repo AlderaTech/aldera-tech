@@ -4,7 +4,6 @@ import * as React from "react";
 import Image from "next/image";
 import {
   Star,
-  Search,
   Pencil,
   Trash2,
   Eye,
@@ -21,11 +20,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toggleTestimonialPublishAction } from "@/lib/actions/testimonial";
 import type { TestimonialItem } from "../_utils/testimonial-types";
+import { useUrlState } from "@/lib/hooks/use-url-state";
+import { SearchFilterBar } from "@/components/shared/search-filter-bar";
+import { DataPagination } from "@/components/shared/data-pagination";
 
 export function TestimonialTable({
   items,
@@ -38,10 +39,12 @@ export function TestimonialTable({
   onDelete: (item: TestimonialItem) => void;
   onRefresh: () => void;
 }) {
-  const [search, setSearch] = React.useState("");
-  const [statusFilter, setStatusFilter] = React.useState<
-    "all" | "published" | "draft"
-  >("all");
+  const { getParam, setParam } = useUrlState();
+  const search = getParam("q", "");
+  const statusFilter = getParam("status", "all").toLowerCase();
+  const currentPage = Math.max(1, Number(getParam("page", "1")) || 1);
+  const PAGE_SIZE = 10;
+
   const [pendingToggleId, setPendingToggleId] = React.useState<string | null>(
     null
   );
@@ -49,6 +52,7 @@ export function TestimonialTable({
   const filtered = React.useMemo(() => {
     return items.filter((it) => {
       const matchSearch =
+        !search ||
         it.clientName.toLowerCase().includes(search.toLowerCase()) ||
         (it.clientRole &&
           it.clientRole.toLowerCase().includes(search.toLowerCase())) ||
@@ -62,6 +66,12 @@ export function TestimonialTable({
       return matchSearch && matchStatus;
     });
   }, [items, search, statusFilter]);
+
+  const totalItems = filtered.length;
+  const paginatedItems = React.useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filtered.slice(start, start + PAGE_SIZE);
+  }, [filtered, currentPage]);
 
   const handleTogglePublish = async (item: TestimonialItem) => {
     setPendingToggleId(item.id);
@@ -85,42 +95,43 @@ export function TestimonialTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Cari nama klien, ulasan, atau proyek..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="h-9 pl-9 text-sm"
-          />
-        </div>
-        <div className="flex items-center gap-1.5">
-          <Button
-            size="sm"
-            variant={statusFilter === "all" ? "default" : "outline"}
-            onClick={() => setStatusFilter("all")}
-            className="h-8 text-xs"
-          >
-            Semua ({items.length})
-          </Button>
-          <Button
-            size="sm"
-            variant={statusFilter === "published" ? "default" : "outline"}
-            onClick={() => setStatusFilter("published")}
-            className="h-8 text-xs"
-          >
-            Published ({items.filter((i) => i.published).length})
-          </Button>
-          <Button
-            size="sm"
-            variant={statusFilter === "draft" ? "default" : "outline"}
-            onClick={() => setStatusFilter("draft")}
-            className="h-8 text-xs"
-          >
-            Menunggu Kurasi ({items.filter((i) => !i.published).length})
-          </Button>
-        </div>
+      <div className="p-4">
+        <SearchFilterBar
+          placeholder="Cari nama klien, ulasan, atau proyek..."
+          searchParamKey="q"
+        >
+          <div className="flex items-center gap-1.5">
+            <Button
+              type="button"
+              size="sm"
+              variant={statusFilter === "all" ? "default" : "outline"}
+              onClick={() => setParam("status", null, { resetPage: true })}
+              className="h-8 text-xs"
+            >
+              Semua ({items.length})
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant={statusFilter === "published" ? "default" : "outline"}
+              onClick={() =>
+                setParam("status", "published", { resetPage: true })
+              }
+              className="h-8 text-xs"
+            >
+              Published ({items.filter((i) => i.published).length})
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant={statusFilter === "draft" ? "default" : "outline"}
+              onClick={() => setParam("status", "draft", { resetPage: true })}
+              className="h-8 text-xs"
+            >
+              Menunggu Kurasi ({items.filter((i) => !i.published).length})
+            </Button>
+          </div>
+        </SearchFilterBar>
       </div>
 
       <Table>
@@ -137,7 +148,7 @@ export function TestimonialTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filtered.length === 0 ? (
+          {paginatedItems.length === 0 ? (
             <TableRow>
               <TableCell
                 colSpan={6}
@@ -148,7 +159,7 @@ export function TestimonialTable({
               </TableCell>
             </TableRow>
           ) : (
-            filtered.map((item) => (
+            paginatedItems.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
@@ -255,6 +266,12 @@ export function TestimonialTable({
           )}
         </TableBody>
       </Table>
+
+      <DataPagination
+        currentPage={currentPage}
+        totalItems={totalItems}
+        pageSize={PAGE_SIZE}
+      />
     </div>
   );
 }

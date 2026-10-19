@@ -57,7 +57,40 @@ export const DASHBOARD_ROUTES = {
   profile: "/dashboard/profile",
   settings: "/dashboard/settings",
   projectDetail: (id: string) => `/dashboard/projects/${id}`,
+  projectDetailTab: (id: string, tab: string) =>
+    `/dashboard/projects/${id}?tab=${encodeURIComponent(tab)}`,
+  projectsWithParams: (params: {
+    q?: string;
+    status?: string;
+    page?: number;
+  }) => {
+    const sp = new URLSearchParams();
+    if (params.q) sp.set("q", params.q);
+    if (params.status && params.status !== "ALL")
+      sp.set("status", params.status);
+    if (params.page && params.page > 1) sp.set("page", String(params.page));
+    const qs = sp.toString();
+    return qs ? `/dashboard/projects?${qs}` : "/dashboard/projects";
+  },
+  invoicesWithParams: (params: { status?: string; page?: number }) => {
+    const sp = new URLSearchParams();
+    if (params.status && params.status !== "ALL")
+      sp.set("status", params.status);
+    if (params.page && params.page > 1) sp.set("page", String(params.page));
+    const qs = sp.toString();
+    return qs ? `/dashboard/invoices?${qs}` : "/dashboard/invoices";
+  },
+  ordersWithParams: (params: { status?: string; page?: number }) => {
+    const sp = new URLSearchParams();
+    if (params.status && params.status !== "ALL")
+      sp.set("status", params.status);
+    if (params.page && params.page > 1) sp.set("page", String(params.page));
+    const qs = sp.toString();
+    return qs ? `/dashboard/orders?${qs}` : "/dashboard/orders";
+  },
   aiRelay: "/dashboard/ai-relay",
+  aiRelayTab: (tab: string) =>
+    `/dashboard/ai-relay?tab=${encodeURIComponent(tab)}`,
 } as const;
 
 export const PROPOSAL_ROUTES = {
@@ -93,9 +126,125 @@ export const ADMIN_ROUTES = {
   blogEdit: (id: string) => `/admin/blog/${id}/edit`,
   invoiceDetail: (id: string) => `/admin/invoices/${id}`,
   projectDetail: (id: string) => `/admin/projects/${id}`,
+  projectDetailTab: (id: string, tab: string) =>
+    `/admin/projects/${id}?tab=${encodeURIComponent(tab)}`,
   proposalDetail: (id: string) => `/admin/proposals/${id}`,
+  settingsTab: (tab: string) =>
+    `/admin/settings?tab=${encodeURIComponent(tab)}`,
+  telegramBotTab: (tab: string) =>
+    `/admin/telegram-bot?tab=${encodeURIComponent(tab)}`,
   aiRelay: "/admin/ai-relay",
+  aiRelayTab: (tab: string) => `/admin/ai-relay?tab=${encodeURIComponent(tab)}`,
   telegramBot: "/admin/telegram-bot",
+  calculatorTab: (tab: string) =>
+    `/admin/calculator?tab=${encodeURIComponent(tab)}`,
+  projectsWithParams: (params: {
+    q?: string;
+    status?: string;
+    page?: number;
+    sort?: string;
+  }) => {
+    const sp = new URLSearchParams();
+    if (params.q) sp.set("q", params.q);
+    if (params.status && params.status !== "ALL")
+      sp.set("status", params.status);
+    if (params.page && params.page > 1) sp.set("page", String(params.page));
+    if (params.sort) sp.set("sort", params.sort);
+    const qs = sp.toString();
+    return qs ? `/admin/projects?${qs}` : "/admin/projects";
+  },
+  invoicesWithParams: (params: {
+    q?: string;
+    status?: string;
+    page?: number;
+  }) => {
+    const sp = new URLSearchParams();
+    if (params.q) sp.set("q", params.q);
+    if (params.status && params.status !== "ALL")
+      sp.set("status", params.status);
+    if (params.page && params.page > 1) sp.set("page", String(params.page));
+    const qs = sp.toString();
+    return qs ? `/admin/invoices?${qs}` : "/admin/invoices";
+  },
+  ordersWithParams: (params: {
+    q?: string;
+    status?: string;
+    page?: number;
+  }) => {
+    const sp = new URLSearchParams();
+    if (params.q) sp.set("q", params.q);
+    if (params.status && params.status !== "ALL")
+      sp.set("status", params.status);
+    if (params.page && params.page > 1) sp.set("page", String(params.page));
+    const qs = sp.toString();
+    return qs ? `/admin/orders?${qs}` : "/admin/orders";
+  },
+  proposalsWithParams: (params: {
+    q?: string;
+    status?: string;
+    page?: number;
+  }) => {
+    const sp = new URLSearchParams();
+    if (params.q) sp.set("q", params.q);
+    if (params.status && params.status !== "ALL")
+      sp.set("status", params.status);
+    if (params.page && params.page > 1) sp.set("page", String(params.page));
+    const qs = sp.toString();
+    return qs ? `/admin/proposals?${qs}` : "/admin/proposals";
+  },
+  blogWithParams: (params: { q?: string; status?: string; page?: number }) => {
+    const sp = new URLSearchParams();
+    if (params.q) sp.set("q", params.q);
+    if (params.status && params.status !== "ALL")
+      sp.set("status", params.status);
+    if (params.page && params.page > 1) sp.set("page", String(params.page));
+    const qs = sp.toString();
+    return qs ? `/admin/blog?${qs}` : "/admin/blog";
+  },
+  filesWithParams: (params: { q?: string; type?: string; page?: number }) => {
+    const sp = new URLSearchParams();
+    if (params.q) sp.set("q", params.q);
+    if (params.type && params.type !== "ALL" && params.type !== "all")
+      sp.set("type", params.type);
+    if (params.page && params.page > 1) sp.set("page", String(params.page));
+    const qs = sp.toString();
+    return qs ? `/admin/files?${qs}` : "/admin/files";
+  },
+  auditWithParams: (params: { q?: string; action?: string; page?: number }) => {
+    const sp = new URLSearchParams();
+    if (params.q) sp.set("q", params.q);
+    if (params.action && params.action !== "ALL")
+      sp.set("action", params.action);
+    if (params.page && params.page > 1) sp.set("page", String(params.page));
+    const qs = sp.toString();
+    return qs ? `/admin/audit?${qs}` : "/admin/audit";
+  },
+  testimonialsWithParams: (params: {
+    q?: string;
+    status?: string;
+    page?: number;
+  }) => {
+    const sp = new URLSearchParams();
+    if (params.q) sp.set("q", params.q);
+    if (params.status && params.status !== "ALL" && params.status !== "all")
+      sp.set("status", params.status);
+    if (params.page && params.page > 1) sp.set("page", String(params.page));
+    const qs = sp.toString();
+    return qs ? `/admin/testimonials?${qs}` : "/admin/testimonials";
+  },
+  portfolioWithParams: (params: {
+    q?: string;
+    status?: string;
+    page?: number;
+  }) => {
+    const sp = new URLSearchParams();
+    if (params.q) sp.set("q", params.q);
+    if (params.status && params.status !== "ALL" && params.status !== "all")
+      sp.set("status", params.status);
+    if (params.page && params.page > 1) sp.set("page", String(params.page));
+    const qs = sp.toString();
+    return qs ? `/admin/portfolio?${qs}` : "/admin/portfolio";
+  },
 } as const;
 
 export const API_ROUTES = {

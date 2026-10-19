@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import type { ModelCatalogItem } from "@/lib/ai-relay-utils";
 import { useRelayShowcase } from "./_hooks/use-relay-showcase";
 import { RelayHero } from "./_components/relay-hero";
@@ -9,7 +10,7 @@ import { RelaySimulator } from "./_components/relay-simulator";
 import { RelayCta } from "./_components/relay-cta";
 import styles from "./_components/relay.module.css";
 
-export function AiRelayPublicClientView({
+function AiRelayPublicContent({
   initialCatalog,
 }: {
   initialCatalog: ModelCatalogItem[];
@@ -23,5 +24,15 @@ export function AiRelayPublicClientView({
       <RelaySimulator models={initialCatalog} state={state} />
       <RelayCta />
     </div>
+  );
+}
+
+export function AiRelayPublicClientView(props: {
+  initialCatalog: ModelCatalogItem[];
+}) {
+  return (
+    <Suspense fallback={null}>
+      <AiRelayPublicContent {...props} />
+    </Suspense>
   );
 }

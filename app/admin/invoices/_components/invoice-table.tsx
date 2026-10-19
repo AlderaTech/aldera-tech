@@ -25,9 +25,10 @@ import {
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { invoiceStatusMeta } from "@/lib/status-meta";
 import { ADMIN_ROUTES } from "@/lib/routes";
+import { DataPagination } from "@/components/shared/data-pagination";
 import type { InvoiceStatus } from "@prisma/client";
 
-type InvoiceRow = {
+export type InvoiceRow = {
   id: string;
   number: string;
   status: InvoiceStatus;
@@ -37,7 +38,19 @@ type InvoiceRow = {
   project: { title: string } | null;
 };
 
-export function InvoiceTable({ invoices }: { invoices: InvoiceRow[] }) {
+export interface InvoiceTableProps {
+  invoices: InvoiceRow[];
+  totalItems?: number;
+  currentPage?: number;
+  pageSize?: number;
+}
+
+export function InvoiceTable({
+  invoices,
+  totalItems,
+  currentPage = 1,
+  pageSize = 10,
+}: InvoiceTableProps) {
   const router = useRouter();
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
 
@@ -181,6 +194,14 @@ export function InvoiceTable({ invoices }: { invoices: InvoiceRow[] }) {
           )}
         </TableBody>
       </Table>
+
+      {typeof totalItems === "number" && (
+        <DataPagination
+          currentPage={currentPage}
+          totalItems={totalItems}
+          pageSize={pageSize}
+        />
+      )}
     </div>
   );
 }

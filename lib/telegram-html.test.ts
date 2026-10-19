@@ -22,7 +22,8 @@ describe("lib/telegram-html.ts unit test suite", () => {
     });
 
     it("converts all heading levels h1-h6 correctly", () => {
-      const input = "<h1>H1</h1><h2>H2</h2><h3>H3</h3><h4>H4</h4><h5>H5</h5><h6>H6</h6>";
+      const input =
+        "<h1>H1</h1><h2>H2</h2><h3>H3</h3><h4>H4</h4><h5>H5</h5><h6>H6</h6>";
       const output = convertTipTapToTelegramHtml(input);
       expect(output).toBe("H1\n\nH2\n\nH3\n\nH4\n\nH5\n\nH6");
     });
@@ -40,21 +41,30 @@ describe("lib/telegram-html.ts unit test suite", () => {
     });
 
     it("preserves blockquote tags and appends newline after closing blockquote", () => {
-      const input = "<blockquote>Important note</blockquote><p>Following paragraph</p>";
+      const input =
+        "<blockquote>Important note</blockquote><p>Following paragraph</p>";
       const output = convertTipTapToTelegramHtml(input);
-      expect(output).toBe("<blockquote>Important note</blockquote>\nFollowing paragraph");
+      expect(output).toBe(
+        "<blockquote>Important note</blockquote>\nFollowing paragraph"
+      );
     });
 
     it("preserves expandable attribute on blockquotes", () => {
-      const input = "<blockquote expandable>Collapsible text inside</blockquote><p>Next text</p>";
+      const input =
+        "<blockquote expandable>Collapsible text inside</blockquote><p>Next text</p>";
       const output = convertTipTapToTelegramHtml(input);
-      expect(output).toBe("<blockquote expandable>Collapsible text inside</blockquote>\nNext text");
+      expect(output).toBe(
+        "<blockquote expandable>Collapsible text inside</blockquote>\nNext text"
+      );
     });
 
     it("removes trailing paragraph break before closing blockquote", () => {
-      const input = "<blockquote><p>Quote text line</p></blockquote><p>After quote</p>";
+      const input =
+        "<blockquote><p>Quote text line</p></blockquote><p>After quote</p>";
       const output = convertTipTapToTelegramHtml(input);
-      expect(output).toBe("<blockquote>Quote text line</blockquote>\nAfter quote");
+      expect(output).toBe(
+        "<blockquote>Quote text line</blockquote>\nAfter quote"
+      );
     });
 
     it("converts horizontal rule <hr> to double newline", () => {
@@ -88,7 +98,8 @@ describe("lib/telegram-html.ts unit test suite", () => {
     });
 
     it("converts table rows and cells into line-separated tabular text", () => {
-      const input = "<table><tr><td>Col 1</td><td>Col 2</td></tr><tr><td>Col 3</td><td>Col 4</td></tr></table>";
+      const input =
+        "<table><tr><td>Col 1</td><td>Col 2</td></tr><tr><td>Col 3</td><td>Col 4</td></tr></table>";
       const output = convertTipTapToTelegramHtml(input);
       expect(output).toBe("Col 1 Col 2\nCol 3 Col 4");
     });
@@ -120,7 +131,8 @@ describe("lib/telegram-html.ts unit test suite", () => {
     });
 
     it("converts <strike>, <del>, and <s> tags to Telegram <s>", () => {
-      const input = "<strike>Strikethrough 1</strike>, <del>Del 2</del>, <s>S 3</s>";
+      const input =
+        "<strike>Strikethrough 1</strike>, <del>Del 2</del>, <s>S 3</s>";
       const output = convertTipTapToTelegramHtml(input);
       expect(output).toBe("<s>Strikethrough 1</s>, <s>Del 2</s>, <s>S 3</s>");
     });
@@ -144,7 +156,7 @@ describe("lib/telegram-html.ts unit test suite", () => {
     });
 
     it("converts <span class='tg-spoiler'> into <tg-spoiler>", () => {
-      const input = "<p>The secret is <span class=\"tg-spoiler\">42</span></p>";
+      const input = '<p>The secret is <span class="tg-spoiler">42</span></p>';
       const output = convertTipTapToTelegramHtml(input);
       expect(output).toBe("The secret is <tg-spoiler>42</tg-spoiler>");
     });
@@ -172,19 +184,24 @@ describe("lib/telegram-html.ts unit test suite", () => {
     });
 
     it("completely removes <iframe>, <object>, <embed>, <noscript>", () => {
-      const input = "<iframe src='evil.com'></iframe><object data='x'></object><embed src='y'></embed><noscript>Z</noscript><p>Safe</p>";
+      const input =
+        "<iframe src='evil.com'></iframe><object data='x'></object><embed src='y'></embed><noscript>Z</noscript><p>Safe</p>";
       const output = convertTipTapToTelegramHtml(input);
       expect(output).toBe("Safe");
     });
 
     it("allows valid https://, http://, and tg:// link protocols", () => {
-      const input = '<p><a href="https://example.com">HTTPS</a>, <a href="http://example.com">HTTP</a>, <a href="tg://resolve?domain=aldera">TG</a></p>';
+      const input =
+        '<p><a href="https://example.com">HTTPS</a>, <a href="http://example.com">HTTP</a>, <a href="tg://resolve?domain=aldera">TG</a></p>';
       const output = convertTipTapToTelegramHtml(input);
-      expect(output).toBe('<a href="https://example.com">HTTPS</a>, <a href="http://example.com">HTTP</a>, <a href="tg://resolve?domain=aldera">TG</a>');
+      expect(output).toBe(
+        '<a href="https://example.com">HTTPS</a>, <a href="http://example.com">HTTP</a>, <a href="tg://resolve?domain=aldera">TG</a>'
+      );
     });
 
     it("strips dangerous javascript: and data: URI links while preserving text", () => {
-      const input = '<p><a href="javascript:alert(1)">Click me</a> and <a href="data:text/html,...">Data URI</a></p>';
+      const input =
+        '<p><a href="javascript:alert(1)">Click me</a> and <a href="data:text/html,...">Data URI</a></p>';
       const output = convertTipTapToTelegramHtml(input);
       expect(output).toBe("Click me and Data URI");
       expect(output).not.toContain("javascript:");
@@ -192,7 +209,8 @@ describe("lib/telegram-html.ts unit test suite", () => {
     });
 
     it("strips relative and ftp: links while preserving inner text", () => {
-      const input = '<p><a href="/admin/config">Relative Link</a> and <a href="ftp://files.com">FTP</a></p>';
+      const input =
+        '<p><a href="/admin/config">Relative Link</a> and <a href="ftp://files.com">FTP</a></p>';
       const output = convertTipTapToTelegramHtml(input);
       expect(output).toBe("Relative Link and FTP");
       expect(output).not.toContain("href=");
@@ -214,7 +232,9 @@ describe("lib/telegram-html.ts unit test suite", () => {
 
     it("tiptapToTelegramHtml alias functions identically to convertTipTapToTelegramHtml", () => {
       const input = "<h1>Title</h1><p>Content</p>";
-      expect(tiptapToTelegramHtml(input)).toBe(convertTipTapToTelegramHtml(input));
+      expect(tiptapToTelegramHtml(input)).toBe(
+        convertTipTapToTelegramHtml(input)
+      );
     });
   });
 

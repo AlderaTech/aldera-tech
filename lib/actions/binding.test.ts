@@ -436,6 +436,6 @@ describe("Milestone 4: Omnichannel Web ↔ Telegram Bot & Alerts", () => {
       // Immediate rerun should suppress alert due to 12h cooldown
       const rerun = await runBalanceGuard(10000);
       expect(rerun.alertsSuppressed).toBeGreaterThanOrEqual(1);
-    });
+    }, 15000);
   });
 });

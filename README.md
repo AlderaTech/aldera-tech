@@ -51,11 +51,13 @@ npm run db:migrate  # create a migration
 ## Git Branching Model & CI/CD Workflow
 
 Repositori ini menerapkan model percabangan 3-tingkat:
+
 - **`main`**: Protected Production branch. Otomatisasi CI/CD membangun image `:latest` dan men-deploy ke VPS production (`/opt/docker-stack/applications/aldera-tech` & `https://aldera.tech`).
 - **`staging`**: Integration branch. Otomatisasi CI/CD membangun image `:staging` dan men-deploy ke VPS staging (`/opt/docker-stack/applications/aldera-tech-staging` & `https://staging.aldera.tech`).
 - **`feat/*`, `fix/*`**: Branch tugas kerja.
 
 **Aturan Kerja Wajib**:
+
 1. Seluruh pengerjaan wajib dicabangkan dari `origin/staging`:
    ```bash
    git fetch origin

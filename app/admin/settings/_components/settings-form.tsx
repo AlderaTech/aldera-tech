@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { Building2, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useUrlState } from "@/lib/hooks/use-url-state";
 import {
   updateSiteSettingsAction,
   type SettingsActionState,
@@ -13,9 +14,18 @@ import type { PublicSiteSettings } from "@/lib/public-settings";
 import { ProfileSettingsTab } from "./profile-settings-tab";
 import { ContactSettingsTab } from "./contact-settings-tab";
 
+const ALLOWED_TABS = ["profile", "contact"] as const;
+type SettingsTab = (typeof ALLOWED_TABS)[number];
+
 const initialState: SettingsActionState = { ok: false };
 
 export function SettingsForm({ settings }: { settings: PublicSiteSettings }) {
+  const { getParam, setParam } = useUrlState();
+  const tabParam = getParam("tab", "profile");
+  const currentTab = ALLOWED_TABS.includes(tabParam as SettingsTab)
+    ? tabParam
+    : "profile";
+
   const [siteState, siteAction, sitePending] = useActionState(
     updateSiteSettingsAction,
     initialState
@@ -29,7 +39,11 @@ export function SettingsForm({ settings }: { settings: PublicSiteSettings }) {
   }, [siteState]);
 
   return (
-    <Tabs defaultValue="profile" className="gap-0">
+    <Tabs
+      value={currentTab}
+      onValueChange={(val) => setParam("tab", val)}
+      className="gap-0"
+    >
       <div className="border-b border-slate-200 bg-slate-50/80 px-4 py-3 sm:px-5">
         <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto bg-white p-1 shadow-sm sm:w-max">
           <TabsTrigger value="profile" className="gap-2">

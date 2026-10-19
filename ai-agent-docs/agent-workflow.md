@@ -8,23 +8,23 @@ Dokumen ini merupakan panduan operasional standar (_Standard Operating Procedure
 
 Tabel berikut menentukan perintah apa saja yang boleh dijalankan otomatis oleh AI Agent dan perintah apa yang memerlukan konfirmasi eksplisit dari pengguna:
 
-| Kategori Perintah        | Contoh Perintah                                       | Boleh Dijalankan Otomatis? | Keterangan & Aturan                                                                                   |
-| :----------------------- | :---------------------------------------------------- | :------------------------: | :---------------------------------------------------------------------------------------------------- |
-| **Branching**            | `git checkout -b feat/... origin/staging`             |         ✅ **YA**          | **Wajib membuat branch baru dari `origin/staging`**. Dilarang bekerja/commit langsung di `staging` atau `main`. |
-| **Pencarian Test**       | `find . -name "*.test.*"`, `grep ...`                 |         ✅ **YA**          | **Wajib dijalankan** untuk memetakan file pengujian yang menguji modul yang diubah.                   |
-| **Modul Test Execution** | `bun test <file.test.ts>`, `bun test <file.test.tsx>` |         ✅ **YA**          | **Wajib dijalankan** untuk memverifikasi file test unit / UI yang diperbarui/dibuat.                  |
-| **Full Test Suite**      | `bun test`                                            |         ✅ **YA**          | **Wajib dijalankan** sebelum menyelesaikan task untuk menjamin 0 regresi di seluruh sistem.           |
-| **Typecheck**            | `bunx tsc --noEmit`                                   |         ✅ **YA**          | Wajib dijalankan untuk memastikan tidak ada error kompilasi/tipe.                                     |
-| **Next.js Typegen**      | `bunx next typegen`                                   |         ✅ **YA**          | Jalankan sebelum typecheck pada Next.js 16 untuk menghasilkan deklarasi gambar dan tipe rute.         |
-| **Linter**               | `bun run lint`, `eslint .`                            |         ✅ **YA**          | Diizinkan untuk memastikan kepatuhan standar kode.                                                    |
-| **Formatter**            | `bun run format`, `prettier --write ...`              |         ✅ **YA**          | **Wajib dijalankan** setelah selesai mengedit kode untuk merapikan kode & mengurutkan class Tailwind. |
-| **Pemeriksaan Status**   | `git status`, `git diff`                              |         ✅ **YA**          | Wajib dijalankan sebelum menyelesaikan turn/task.                                                     |
-| **Generasi Skema**       | `bun run db:generate`                                 |         ✅ **YA**          | Dijalankan saat ada perubahan pada `prisma/schema.prisma`.                                            |
-| **Pembersihan File**     | `rm ...`, file deletion                               |         ✅ **YA**          | Wajib untuk membersihkan dead code / scratch files terkait task.                                      |
-| **Production Build**     | `bun run build`, `next build`                         |        ❌ **TIDAK**        | Jalankan jika diminta pengguna atau sebagai gerbang verifikasi rilis final.                           |
-| **Git Commit ke `main`/`staging`** | `git commit` di branch `main` atau `staging`|      🚫 **DILARANG**       | **DILARANG KERAS**. Seluruh commit wajib berada di feature/fix branch.                                |
-| **Git Commit di Branch** | `git commit -m "..."` di feature branch              |         ✅ **YA**          | Dilakukan pada branch kerja dengan pesan Conventional Commits.                                        |
-| **PR & Squash Merge**    | Buat PR & Squash and Merge ke `staging`               |         ✅ **YA**          | Alur wajib penggabungan perubahan ke branch `staging`. Promosi ke `main` via release PR teruji.       |
+| Kategori Perintah                  | Contoh Perintah                                       | Boleh Dijalankan Otomatis? | Keterangan & Aturan                                                                                             |
+| :--------------------------------- | :---------------------------------------------------- | :------------------------: | :-------------------------------------------------------------------------------------------------------------- |
+| **Branching**                      | `git checkout -b feat/... origin/staging`             |         ✅ **YA**          | **Wajib membuat branch baru dari `origin/staging`**. Dilarang bekerja/commit langsung di `staging` atau `main`. |
+| **Pencarian Test**                 | `find . -name "*.test.*"`, `grep ...`                 |         ✅ **YA**          | **Wajib dijalankan** untuk memetakan file pengujian yang menguji modul yang diubah.                             |
+| **Modul Test Execution**           | `bun test <file.test.ts>`, `bun test <file.test.tsx>` |         ✅ **YA**          | **Wajib dijalankan** untuk memverifikasi file test unit / UI yang diperbarui/dibuat.                            |
+| **Full Test Suite**                | `bun test`                                            |         ✅ **YA**          | **Wajib dijalankan** sebelum menyelesaikan task untuk menjamin 0 regresi di seluruh sistem.                     |
+| **Typecheck**                      | `bunx tsc --noEmit`                                   |         ✅ **YA**          | Wajib dijalankan untuk memastikan tidak ada error kompilasi/tipe.                                               |
+| **Next.js Typegen**                | `bunx next typegen`                                   |         ✅ **YA**          | Jalankan sebelum typecheck pada Next.js 16 untuk menghasilkan deklarasi gambar dan tipe rute.                   |
+| **Linter**                         | `bun run lint`, `eslint .`                            |         ✅ **YA**          | Diizinkan untuk memastikan kepatuhan standar kode.                                                              |
+| **Formatter**                      | `bun run format`, `prettier --write ...`              |         ✅ **YA**          | **Wajib dijalankan** setelah selesai mengedit kode untuk merapikan kode & mengurutkan class Tailwind.           |
+| **Pemeriksaan Status**             | `git status`, `git diff`                              |         ✅ **YA**          | Wajib dijalankan sebelum menyelesaikan turn/task.                                                               |
+| **Generasi Skema**                 | `bun run db:generate`                                 |         ✅ **YA**          | Dijalankan saat ada perubahan pada `prisma/schema.prisma`.                                                      |
+| **Pembersihan File**               | `rm ...`, file deletion                               |         ✅ **YA**          | Wajib untuk membersihkan dead code / scratch files terkait task.                                                |
+| **Production Build**               | `bun run build`, `next build`                         |        ❌ **TIDAK**        | Jalankan jika diminta pengguna atau sebagai gerbang verifikasi rilis final.                                     |
+| **Git Commit ke `main`/`staging`** | `git commit` di branch `main` atau `staging`          |      🚫 **DILARANG**       | **DILARANG KERAS**. Seluruh commit wajib berada di feature/fix branch.                                          |
+| **Git Commit di Branch**           | `git commit -m "..."` di feature branch               |         ✅ **YA**          | Dilakukan pada branch kerja dengan pesan Conventional Commits.                                                  |
+| **PR & Squash Merge**              | Buat PR & Squash and Merge ke `staging`               |         ✅ **YA**          | Alur wajib penggabungan perubahan ke branch `staging`. Promosi ke `main` via release PR teruji.                 |
 
 ---
 

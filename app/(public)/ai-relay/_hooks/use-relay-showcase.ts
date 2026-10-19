@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useUrlState } from "@/lib/hooks/use-url-state";
 import {
   calculateMonthlyCost,
   filterModelCatalog,
@@ -12,10 +13,83 @@ import {
 } from "@/lib/ai-relay-utils";
 import { RELAY_BASE_URL } from "../_data/relay-content";
 
+export const VALID_RELAY_CATEGORIES: readonly ModelCategory[] = [
+  "All",
+  "Coding",
+  "Reasoning",
+  "Vision",
+  "Fast",
+  "Budget",
+];
+
+export const VALID_IDE_TARGETS: readonly IdeTarget[] = [
+  "cursor",
+  "cline",
+  "roo",
+  "continue",
+  "openwebui",
+];
+
+function parseCategory(raw?: string | null): ModelCategory {
+  if (!raw) return "All";
+  const match = VALID_RELAY_CATEGORIES.find(
+    (c) => c.toLowerCase() === raw.toLowerCase()
+  );
+  return match ?? "All";
+}
+
+function parseIde(raw?: string | null): IdeTarget {
+  if (!raw) return "cursor";
+  const match = VALID_IDE_TARGETS.find(
+    (i) => i.toLowerCase() === raw.toLowerCase()
+  );
+  return match ?? "cursor";
+}
+
 export function useRelayShowcase(initialCatalog: ModelCatalogItem[]) {
-  const [selectedCategory, setSelectedCategory] =
-    useState<ModelCategory>("All");
-  const [searchQuery, setSearchQuery] = useState("");
+  const { getParam, setParam } = useUrlState();
+
+  const categoryParam = getParam("category", "All");
+  const qParam = getParam("q", "");
+  const ideParam = getParam("ide", "cursor");
+
+  const selectedCategory = parseCategory(categoryParam);
+  const selectedIde = parseIde(ideParam);
+
+  const [searchQuery, setSearchQuery] = useState<string>(qParam);
+  const [prevQParam, setPrevQParam] = useState<string>(qParam);
+
+  // Sync external changes to q parameter without calling setState inside an effect
+  if (qParam !== prevQParam) {
+    setPrevQParam(qParam);
+    setSearchQuery(qParam);
+  }
+
+  const setSelectedCategory = useCallback(
+    (category: ModelCategory) => {
+      setParam("category", category === "All" ? null : category);
+    },
+    [setParam]
+  );
+
+  const setSelectedIde = useCallback(
+    (ide: IdeTarget) => {
+      setParam("ide", ide);
+    },
+    [setParam]
+  );
+
+  // Debounce search query update to URL
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery !== qParam) {
+        setParam("q", searchQuery || null);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, qParam, setParam]);
+
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const activeModels = filterModelCatalog(initialCatalog, {
     category: selectedCategory,
@@ -23,7 +97,6 @@ export function useRelayShowcase(initialCatalog: ModelCatalogItem[]) {
     activeOnly: true,
   });
 
-  const [selectedIde, setSelectedIde] = useState<IdeTarget>("cursor");
   const [quickstartModelId, setQuickstartModelId] = useState(
     initialCatalog.find((m) => m.isActive)?.id || "claude-3-5-sonnet-20241022"
   );

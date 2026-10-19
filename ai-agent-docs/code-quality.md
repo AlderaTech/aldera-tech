@@ -343,8 +343,12 @@ Seluruh state interaktif yang mengubah filter, kata kunci pencarian, urutan data
   - Filter: `?category=`, `?status=`, `?role=`.
   - Paging: `?page=`, `?limit=`. Setiap filter/search berubah, reset `page=1`.
   - Tab Aktif: `?tab=billing`, `?tab=overview`.
-- Di Client Component, sinkronkan via `useSearchParams()` dan `router.replace(url, { scroll: false })`.
-- Di Server Component (`page.tsx`), baca data langsung dari prop `searchParams`.
+- Di Client Component, gunakan hook terpusat `useUrlState()` dari `@/lib/hooks/use-url-state` yang secara otomatis mengelola `router.replace(url, { scroll: false })` via React 19 `useTransition()`.
+- Untuk UI tabel dan filter, gunakan komponen reusable:
+  - `@/components/shared/data-pagination`: Paginasi terstandarisasi dengan sinkronisasi otomatis `?page=`.
+  - `@/components/shared/search-filter-bar`: Input pencarian debounced 300ms dengan sinkronisasi otomatis `?q=`.
+  - `@/components/shared/param-filter-select` / `@/components/shared/param-filter-pills`: Selector filter dropdown dan pills.
+- Di Server Component (`page.tsx`), baca data langsung dari prop `searchParams` dan terapkan filter pada query Prisma (`where`, `skip`, `take`, `orderBy`).
 
 ---
 

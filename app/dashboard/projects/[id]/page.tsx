@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { MessagesTab } from "@/components/dashboard/messages-tab";
 import { ProjectTaskBoard } from "@/components/dashboard/project-task-board";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { DASHBOARD_ROUTES } from "@/lib/routes";
@@ -14,13 +14,19 @@ import { ProjectHeader } from "./_components/project-header";
 import { ProjectInvoicesTab } from "./_components/project-invoices-tab";
 import { ProjectTimelineTab } from "./_components/project-timeline-tab";
 import { ProjectReviewPrompt } from "./_components/project-review-prompt";
+import { ProjectTabs } from "./_components/project-tabs";
 
 type PageProps = {
   params: Promise<{ id: string }>;
+  searchParams?: Promise<{ tab?: string }>;
 };
 
-export default async function UserProjectDetail({ params }: PageProps) {
+export default async function UserProjectDetail({
+  params,
+  searchParams,
+}: PageProps) {
   const { id } = await params;
+  const resolvedParams = searchParams ? await searchParams : undefined;
   const session = await auth();
   const userId = session!.user.id;
   const isAdmin = session!.user.role === "ADMIN";
@@ -83,7 +89,7 @@ export default async function UserProjectDetail({ params }: PageProps) {
         />
       )}
 
-      <Tabs defaultValue="timeline">
+      <ProjectTabs initialTab={resolvedParams?.tab}>
         <TabsList className="w-full justify-start overflow-x-auto">
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
           <TabsTrigger value="tasks">
@@ -138,7 +144,7 @@ export default async function UserProjectDetail({ params }: PageProps) {
         <TabsContent value="invoices" className="mt-6">
           <ProjectInvoicesTab invoices={project.invoices} />
         </TabsContent>
-      </Tabs>
+      </ProjectTabs>
     </div>
   );
 }

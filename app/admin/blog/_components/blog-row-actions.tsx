@@ -59,7 +59,9 @@ export function BlogRowActions({
                   router.refresh();
                 } catch (err: unknown) {
                   toast.error(
-                    err instanceof Error ? err.message : "Gagal mengubah status pin"
+                    err instanceof Error
+                      ? err.message
+                      : "Gagal mengubah status pin"
                   );
                 }
               })

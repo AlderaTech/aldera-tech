@@ -20,7 +20,9 @@ export interface TelegramLengthValidation {
   remaining: number;
 }
 
-export function validateTelegramHtmlLength(html: string | null | undefined): TelegramLengthValidation {
+export function validateTelegramHtmlLength(
+  html: string | null | undefined
+): TelegramLengthValidation {
   const length = html && typeof html === "string" ? html.length : 0;
   return {
     length,
@@ -30,7 +32,9 @@ export function validateTelegramHtmlLength(html: string | null | undefined): Tel
   };
 }
 
-export function convertTipTapToTelegramHtml(htmlContent: string | null | undefined): string {
+export function convertTipTapToTelegramHtml(
+  htmlContent: string | null | undefined
+): string {
   if (!htmlContent || typeof htmlContent !== "string") {
     return "";
   }
@@ -43,21 +47,48 @@ export function convertTipTapToTelegramHtml(htmlContent: string | null | undefin
   let clean = htmlContent;
 
   // 1. Completely strip dangerous tags and their contents
-  clean = clean.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
+  clean = clean.replace(
+    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+    ""
+  );
   clean = clean.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "");
-  clean = clean.replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "");
-  clean = clean.replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "");
+  clean = clean.replace(
+    /<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi,
+    ""
+  );
+  clean = clean.replace(
+    /<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi,
+    ""
+  );
   clean = clean.replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, "");
-  clean = clean.replace(/<noscript\b[^<]*(?:(?!<\/noscript>)<[^<]*)*<\/noscript>/gi, "");
+  clean = clean.replace(
+    /<noscript\b[^<]*(?:(?!<\/noscript>)<[^<]*)*<\/noscript>/gi,
+    ""
+  );
 
   // 2. Normalize semantic formatting tags to Telegram-supported tags
-  clean = clean.replace(/<\/?strong\b[^>]*>/gi, (match) => (match.startsWith("</") ? "</b>" : "<b>"));
-  clean = clean.replace(/<\/?b\b[^>]*>/gi, (match) => (match.startsWith("</") ? "</b>" : "<b>"));
-  clean = clean.replace(/<\/?em\b[^>]*>/gi, (match) => (match.startsWith("</") ? "</i>" : "<i>"));
-  clean = clean.replace(/<\/?i\b[^>]*>/gi, (match) => (match.startsWith("</") ? "</i>" : "<i>"));
-  clean = clean.replace(/<\/?(?:strike|del|s)\b[^>]*>/gi, (match) => (match.startsWith("</") ? "</s>" : "<s>"));
-  clean = clean.replace(/<\/?(?:ins|u)\b[^>]*>/gi, (match) => (match.startsWith("</") ? "</u>" : "<u>"));
-  clean = clean.replace(/<span\s+class=["']tg-spoiler["']>([\s\S]*?)<\/span>/gi, "<tg-spoiler>$1</tg-spoiler>");
+  clean = clean.replace(/<\/?strong\b[^>]*>/gi, (match) =>
+    match.startsWith("</") ? "</b>" : "<b>"
+  );
+  clean = clean.replace(/<\/?b\b[^>]*>/gi, (match) =>
+    match.startsWith("</") ? "</b>" : "<b>"
+  );
+  clean = clean.replace(/<\/?em\b[^>]*>/gi, (match) =>
+    match.startsWith("</") ? "</i>" : "<i>"
+  );
+  clean = clean.replace(/<\/?i\b[^>]*>/gi, (match) =>
+    match.startsWith("</") ? "</i>" : "<i>"
+  );
+  clean = clean.replace(/<\/?(?:strike|del|s)\b[^>]*>/gi, (match) =>
+    match.startsWith("</") ? "</s>" : "<s>"
+  );
+  clean = clean.replace(/<\/?(?:ins|u)\b[^>]*>/gi, (match) =>
+    match.startsWith("</") ? "</u>" : "<u>"
+  );
+  clean = clean.replace(
+    /<span\s+class=["']tg-spoiler["']>([\s\S]*?)<\/span>/gi,
+    "<tg-spoiler>$1</tg-spoiler>"
+  );
 
   // 3. Handle paragraph and block break conversions
   clean = clean.replace(/<br\s*\/?>/gi, "\n");
@@ -75,13 +106,16 @@ export function convertTipTapToTelegramHtml(htmlContent: string | null | undefin
   clean = clean.replace(/<\/blockquote>\s*/gi, "</blockquote>\n");
 
   // 4. Sanitize <a> links with protocol validation (http, https, tg)
-  clean = clean.replace(/<a\s+[^>]*href=["']([^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi, (_, href, text) => {
-    const cleanHref = href ? href.trim() : "";
-    if (/^(https?:\/\/|tg:\/\/)/i.test(cleanHref)) {
-      return `<a href="${cleanHref}">${text}</a>`;
+  clean = clean.replace(
+    /<a\s+[^>]*href=["']([^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi,
+    (_, href, text) => {
+      const cleanHref = href ? href.trim() : "";
+      if (/^(https?:\/\/|tg:\/\/)/i.test(cleanHref)) {
+        return `<a href="${cleanHref}">${text}</a>`;
+      }
+      return text;
     }
-    return text;
-  });
+  );
 
   // 5. Whitelist allowed Telegram tags; strip all other tags while preserving inner text
   // Allowed: <b>, <i>, <u>, <s>, <code>, <pre>, <blockquote>, <tg-spoiler>, and sanitized <a href="...">
@@ -90,7 +124,9 @@ export function convertTipTapToTelegramHtml(htmlContent: string | null | undefin
       return tag.toLowerCase();
     }
     if (/^<blockquote\b/i.test(tag)) {
-      return /expandable/i.test(tag) ? "<blockquote expandable>" : "<blockquote>";
+      return /expandable/i.test(tag)
+        ? "<blockquote expandable>"
+        : "<blockquote>";
     }
     if (/^<\/blockquote>$/i.test(tag)) {
       return "</blockquote>";
