@@ -69,12 +69,14 @@
   background: transparent;
   color: inherit;
 }
-.sidebar a[aria-current="page"] {
+.sidebar a[aria-current="page"],
+.sidebar > div:last-child a[aria-current="page"] {
   background: var(--overview-blue);
   color: var(--overview-paper);
   box-shadow: 0 6px 16px rgb(36 95 229 / 16%);
 }
-.sidebar a[aria-current="page"] > span:first-child {
+.sidebar a[aria-current="page"] > span:first-child,
+.sidebar > div:last-child a[aria-current="page"] > span:first-child {
   background: rgb(255 255 255 / 12%);
 }
 .sidebar nav a:hover:not([aria-current]),

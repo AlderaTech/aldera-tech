@@ -23,6 +23,8 @@ Direktori ini dipisahkan dari [`ai-agent-docs/`](../ai-agent-docs/README.md) aga
 | [**`contact-ui.md`**](contact-ui.md)                           | Konsep visual hero dan penempatan maskot halaman Kontak (`/contact`).            |
 | [**`dashboard-ai-relay-ui.md`**](dashboard-ai-relay-ui.md)     | Implementasi visual dashboard AI Gateway / Relay (`/dashboard/ai-relay`).        |
 | [**`dashboard-invoices-ui.md`**](dashboard-invoices-ui.md)     | Daftar invoice, ringkasan tagihan, dialog pembayaran, dan kondisi halaman.       |
+| [**`dashboard-settings-ui.md`**](dashboard-settings-ui.md)     | Pengaturan informasional, ketersediaan notifikasi, dan akses Profil.             |
+| [**`dashboard-profile-ui.md`**](dashboard-profile-ui.md)       | Identitas akun, formulir profil, serta status loading dan penyimpanan.           |
 | [**`register-ui.md`**](register-ui.md)                         | Layout dan formulir pendaftaran akun dengan maskot baru (`/register`).           |
 | [**`forgot-password-ui.md`**](forgot-password-ui.md)           | Layout dan status formulir pemulihan akses (`/forgot-password`).                 |
 | [**`dashboard-overview-ui.md`**](dashboard-overview-ui.md)     | Ringkasan pengguna, statistik, onboarding, dan chrome dashboard.                 |

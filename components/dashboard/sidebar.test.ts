@@ -1,8 +1,24 @@
 import { describe, expect, it } from "bun:test";
 import { isNavItemActive } from "@/components/dashboard/sidebar";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
+import { clientNavConfig } from "@/lib/dashboard-nav";
 
 describe("Sidebar Navigation Active State (isNavItemActive)", () => {
+  it("menandai Pengaturan aktif tanpa mengaktifkan menu dashboard lain", () => {
+    const hrefs = [
+      ...clientNavConfig.groups.flatMap((group) =>
+        group.items.map((item) => item.href)
+      ),
+      clientNavConfig.footerItem!.href,
+    ];
+    expect(clientNavConfig.footerItem?.href).toBe(DASHBOARD_ROUTES.settings);
+    expect(clientNavConfig.footerItem?.label).toBe("Pengaturan");
+    expect(
+      hrefs.filter((href) =>
+        isNavItemActive(DASHBOARD_ROUTES.settings, href, hrefs)
+      )
+    ).toEqual([DASHBOARD_ROUTES.settings]);
+  });
   const allHrefs = [
     ADMIN_ROUTES.home,
     ADMIN_ROUTES.projects,

@@ -1,28 +1,12 @@
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import type { Metadata } from "next";
+import { SettingsOverview } from "./_components/settings-overview";
+
+export const metadata: Metadata = {
+  title: "Pengaturan",
+  description:
+    "Kelola informasi akun dan lihat ketersediaan pengaturan dashboard Aldera Tech.",
+};
 
 export default function SettingsPage() {
-  return (
-    <div className="max-w-2xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Pengaturan</h1>
-        <p className="text-muted-foreground">
-          Sesuaikan preferensi dashboard Anda.
-        </p>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Notifikasi</CardTitle>
-          <CardDescription>
-            Pengaturan notifikasi email akan hadir sebentar lagi.
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    </div>
-  );
+  return <SettingsOverview />;
 }
