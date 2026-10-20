@@ -554,7 +554,7 @@ export function AiRelayAdminClientView({
           >
             <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
             Sinkronisasi 9router
-            {syncResult?.diff?.newModels?.length ? (
+            {syncResult?.success && syncResult?.diff?.newModels?.length ? (
               <span className="py-0.2 ml-1.5 rounded-full bg-rose-500 px-1.5 text-[10px] font-bold text-white">
                 {syncResult.diff.newModels.length} baru
               </span>
@@ -983,7 +983,40 @@ export function AiRelayAdminClientView({
                 )}
               </div>
 
-              {syncResult && (
+              {syncResult && !syncResult.success && (
+                <div className="rounded-lg border border-rose-200 bg-rose-50/70 p-4 text-xs text-rose-800">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-start gap-2.5">
+                      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
+                      <div className="space-y-1">
+                        <p className="font-semibold text-rose-900">
+                          Sinkronisasi Upstream 9router Gagal
+                        </p>
+                        <p className="text-rose-700">
+                          {syncResult.error || "Gagal terhubung ke upstream 9router."}
+                        </p>
+                        <p className="text-[11px] text-rose-600/90">
+                          Katalog model lokal tetap aktif dan dapat dikelola. Pastikan upstream 9router dapat diakses dan konfigurasi environment telah sesuai.
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={handleSync9router}
+                      disabled={isSyncing}
+                      size="sm"
+                      variant="outline"
+                      className="border-rose-300 bg-white text-xs text-rose-700 shadow-2xs hover:bg-rose-50 hover:text-rose-800 shrink-0 self-start sm:self-center"
+                    >
+                      <RefreshCw
+                        className={`mr-1.5 h-3.5 w-3.5 ${isSyncing ? "animate-spin" : ""}`}
+                      />
+                      {isSyncing ? "Mencoba Ulang..." : "Coba Lagi"}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {syncResult && syncResult.success && (
                 <div className="space-y-4 pt-2">
                   <div>
                     <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold tracking-wider text-slate-900 uppercase">

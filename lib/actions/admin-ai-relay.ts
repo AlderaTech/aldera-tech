@@ -367,25 +367,73 @@ export async function syncModelsFromUpstream(options?: {
     process.env.NINE_ROUTER_BASE_URL || "http://localhost:20128";
   const upstreamUrl = `${rawBaseUrl.replace(/\/+$/, "")}/v1/models`;
 
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3500);
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+  };
+  const apiKey = process.env.NINE_ROUTER_API_KEY?.trim();
+  if (apiKey) {
+    headers["Authorization"] = `Bearer ${apiKey}`;
+  }
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+  try {
     const res = await fetch(upstreamUrl, {
       method: "GET",
-      headers: {
-        Accept: "application/json",
-      },
+      headers,
       signal: controller.signal,
     });
-    clearTimeout(timeoutId);
 
     if (!res.ok) {
-      throw new Error(`Upstream returned HTTP ${res.status} ${res.statusText}`);
+      return {
+        success: false,
+        upstreamUrl,
+        error: `Upstream mengembalikan status ${res.status}: ${res.statusText}`,
+        diff: {
+          newModels: [],
+          syncedModels: [],
+          missingUpstreamModels: localModelIds,
+        },
+      };
     }
 
-    const data = (await res.json()) as { data?: NineRouterModelItem[] };
-    const upstreamModels = data.data || [];
+    let data: unknown;
+    try {
+      data = await res.json();
+    } catch (err) {
+      if (controller.signal.aborted || (err as Error)?.name === "AbortError") {
+        throw err;
+      }
+      return {
+        success: false,
+        upstreamUrl,
+        error:
+          "Payload upstream 9router tidak valid atau bukan format list model OpenAI",
+        diff: {
+          newModels: [],
+          syncedModels: [],
+          missingUpstreamModels: localModelIds,
+        },
+      };
+    }
+
+    const dataObj = data as { data?: unknown };
+    if (!dataObj || !Array.isArray(dataObj.data)) {
+      return {
+        success: false,
+        upstreamUrl,
+        error:
+          "Payload upstream 9router tidak valid atau bukan format list model OpenAI",
+        diff: {
+          newModels: [],
+          syncedModels: [],
+          missingUpstreamModels: localModelIds,
+        },
+      };
+    }
+
+    const upstreamModels = dataObj.data as NineRouterModelItem[];
     const diff = diffModelsWithUpstream(upstreamModels, localModelIds);
 
     return {
@@ -408,6 +456,8 @@ export async function syncModelsFromUpstream(options?: {
         missingUpstreamModels: localModelIds,
       },
     };
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -436,6 +486,12 @@ export async function activateNewModelFromUpstream(
       "UPDATE model_pricing SET is_active = true, updated_at = NOW() WHERE id = $1;",
       [existingId]
     );
+    try {
+      revalidatePath("/admin/ai-relay");
+      revalidatePath("/dashboard/ai-relay");
+    } catch {
+      // ignore revalidatePath when called in tests
+    }
     return { success: true, id: existingId };
   }
 
