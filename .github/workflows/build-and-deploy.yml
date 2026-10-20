@@ -117,7 +117,7 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE aldera_router;"
 
           # Initialize aldera_tech schema via Prisma
-          bunx prisma db push --skip-generate
+          bunx prisma db push --accept-data-loss
 
           # Initialize aldera_router schema, migrations & seed
           ROUTER_DIR=".server-infra/roles/applications/aldera-router-setup/files"
