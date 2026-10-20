@@ -14,6 +14,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { verifyCronSecret } from "@/lib/cron";
 import { runBalanceGuard } from "@/lib/balance-guard";
+import { withCronLock } from "@/lib/cron-lock";
 
 export const runtime = "nodejs";
 
@@ -26,22 +27,35 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  try {
-    const summary = await runBalanceGuard();
-    return NextResponse.json({
-      success: true,
-      ...summary,
-    });
-  } catch (error) {
-    console.error("[Cron: balance-guard] Execution failed:", error);
+  const lockRes = await withCronLock("balance-guard", async () => {
+    return await runBalanceGuard();
+  });
+
+  if (!lockRes.executed) {
+    return NextResponse.json(
+      {
+        skipped: true,
+        reason: lockRes.reason ?? "Job already running",
+      },
+      { status: 200 }
+    );
+  }
+
+  if (lockRes.error) {
+    console.error("[Cron: balance-guard] Execution failed:", lockRes.error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal error",
+        error: lockRes.error.message,
       },
       { status: 500 }
     );
   }
+
+  return NextResponse.json({
+    success: true,
+    ...lockRes.result,
+  });
 }
 
 export async function POST(req: NextRequest) {

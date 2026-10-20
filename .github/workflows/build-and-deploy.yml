@@ -45,9 +45,106 @@ jobs:
       - name: Type check
         run: bunx tsc --noEmit
 
+      - name: Checkout Server Infrastructure for Config Templates
+        uses: actions/checkout@v4
+        with:
+          repository: Alfian57/server-infrastructure
+          path: .server-infra
+
+      - name: Pre-Flight Config Drift & Secret Leak Scan
+        run: bun run scripts/scan-config-drift.ts --example .env.example --template .server-infra/roles/applications/portfolio-apps/templates/aldera.env.j2
+
+  test:
+    name: Run Unit & Integration Tests
+    needs: validate
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: aldera_tech
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/aldera_tech?schema=public"
+      ROUTER_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/aldera_router"
+      AUTH_SECRET: "ci-test-auth-secret-minimum-32-chars-long-123456"
+      NEXTAUTH_URL: "http://localhost:3000"
+      NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+      CRON_SECRET: "ci-test-cron-secret-12345"
+      SEED_ADMIN_EMAIL: "admin@aldera.tech"
+      SEED_ADMIN_PASSWORD: "password"
+      WHATSAPP_API_URL: "https://api.fonnte.com/send"
+      WHATSAPP_API_KEY: "test-ci-key"
+      SHARP_IGNORE_GLOBAL_LIBVIPS: "1"
+      MIDTRANS_SERVER_KEY: "SB-Mid-server-ci-test-key"
+      MIDTRANS_CLIENT_KEY: "SB-Mid-client-ci-test-key"
+      MIDTRANS_IS_PRODUCTION: "false"
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: "1x00000000000000000000AA"
+      TURNSTILE_SECRET_KEY: "1x0000000000000000000000000000000AA"
+      NINE_ROUTER_BASE_URL: "http://localhost:20128"
+      NINE_ROUTER_API_KEY: ""
+
+    steps:
+      - name: Checkout Aldera Tech
+        uses: actions/checkout@v4
+
+      - name: Checkout Router Schema
+        uses: actions/checkout@v4
+        with:
+          repository: AlderaTech/router-billing-proxy
+          path: .router-repo
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Setup PostgreSQL Test Databases
+        run: |
+          # Create secondary router database
+          PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE aldera_router;"
+
+          # Initialize aldera_tech schema via Prisma
+          bunx prisma db push --skip-generate
+
+          # Initialize aldera_router schema & functions
+          if [ -d ".router-repo/database" ]; then
+            PGPASSWORD=postgres psql -h localhost -U postgres -d aldera_router -f .router-repo/database/init.sql
+            for f in .router-repo/database/migrations/*.sql; do
+              [ -e "$f" ] && PGPASSWORD=postgres psql -h localhost -U postgres -d aldera_router -f "$f" || true
+            done
+          fi
+
+          # Ensure user_alert_cooldowns table exists in aldera_router
+          PGPASSWORD=postgres psql -h localhost -U postgres -d aldera_router -c "
+            CREATE TABLE IF NOT EXISTS user_alert_cooldowns (
+              id BIGSERIAL PRIMARY KEY,
+              user_id BIGINT NOT NULL,
+              last_low_balance_alert_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              alert_count INT NOT NULL DEFAULT 1,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+              CONSTRAINT fk_cooldown_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            );
+          "
+
+      - name: Run Test Suite
+        run: bun test
+
   docker:
     name: Build and Publish Docker Image
-    needs: validate
+    needs: [validate, test]
     runs-on: ubuntu-latest
 
     steps:

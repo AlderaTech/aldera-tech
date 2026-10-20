@@ -27,6 +27,9 @@ services:
       - XENDIT_CALLBACK_TOKEN=${XENDIT_CALLBACK_TOKEN}
       - NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
       - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
+      - ROUTER_DATABASE_URL=${ROUTER_DATABASE_URL:-postgresql://aldera:alderasecret@db:5432/aldera_router}
+      - NINE_ROUTER_BASE_URL=${NINE_ROUTER_BASE_URL:-http://localhost:20128}
+      - NINE_ROUTER_API_KEY=${NINE_ROUTER_API_KEY:-}
     volumes:
       - uploads_data:/app/public/uploads
     depends_on:

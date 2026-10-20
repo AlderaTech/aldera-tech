@@ -100,7 +100,7 @@ export async function POST(request: Request) {
           { number: invoiceLookupTarget },
         ],
       },
-      include: { client: true },
+      include: { client: true, items: true },
     });
 
     if (!invoice) {
@@ -123,91 +123,234 @@ export async function POST(request: Request) {
       fraudStatus
     );
 
+    // If invoice is already marked PAID and this is not a refund, return HTTP 200 immediately
+    if (invoice.status === "PAID" && paymentState !== "REFUNDED") {
+      return NextResponse.json(
+        { message: "Already processed" },
+        { status: 200 }
+      );
+    }
+
     if (paymentState === "SUCCESS") {
-      await prisma.$transaction(async (tx) => {
-        // Tandai invoice lunas
-        await tx.invoice.update({
-          where: { id: invoice.id },
-          data: {
-            status: "PAID",
-            paidAt: new Date(),
-            paymentMethod: "GATEWAY_MIDTRANS",
-          },
-        });
+      let alreadyProcessed = false;
+      let shouldNotify = false;
 
-        // Rekonsiliasi record payment (update existing PENDING jika ada)
-        const existingPayment = await tx.payment.findFirst({
-          where: {
-            OR: [
-              { transactionId },
-              { invoiceId: invoice.id, status: "PENDING" },
-            ],
-          },
-          orderBy: { createdAt: "desc" },
-        });
+      try {
+        await prisma.$transaction(async (tx) => {
+          // 1. Acquire row-level lock on the Invoice to serialize concurrent webhook requests
+          const lockedInvoices = await tx.$queryRaw<
+            Array<{ id: string; status: string }>
+          >`SELECT "id", "status" FROM "Invoice" WHERE "id" = ${invoice.id} FOR UPDATE`;
 
-        if (existingPayment) {
-          await tx.payment.update({
-            where: { id: existingPayment.id },
-            data: {
-              transactionId,
-              status: "SUCCESS",
-              paymentType,
-              gatewayResponse: body as unknown as Prisma.InputJsonValue,
+          const currentStatus = lockedInvoices[0]?.status ?? invoice.status;
+          if (currentStatus === "PAID") {
+            alreadyProcessed = true;
+            return;
+          }
+
+          // 2. Atomically update invoice status to PAID
+          const updatedCount = await tx.invoice.updateMany({
+            where: {
+              id: invoice.id,
+              status: { not: "PAID" },
             },
-          });
-        } else {
-          await tx.payment.create({
             data: {
-              invoiceId: invoice.id,
-              amount: invoice.total,
-              currency: invoice.currency,
-              status: "SUCCESS",
+              status: "PAID",
+              paidAt: new Date(),
               paymentMethod: "GATEWAY_MIDTRANS",
-              gateway: "midtrans",
-              transactionId,
-              paymentType,
-              gatewayResponse: body as unknown as Prisma.InputJsonValue,
             },
           });
-        }
 
-        // Catat activity log proyek jika tagihan tertaut pada suatu proyek
-        if (invoice.projectId) {
-          await tx.activityLog.create({
-            data: {
-              projectId: invoice.projectId,
-              userId: invoice.clientId,
-              action: "INVOICE_PAID",
-              description: `Invoice ${invoice.number} senilai ${formatCurrency(
-                Number(invoice.total)
-              )} telah lunas via Midtrans (${paymentType}).`,
-              metadata: {
+          if (updatedCount.count === 0) {
+            alreadyProcessed = true;
+            return;
+          }
+
+          // 3. Reconcile Payment record (update existing PENDING jika ada, atau buat baru)
+          const existingPayment = await tx.payment.findFirst({
+            where: {
+              OR: [
+                { transactionId },
+                { invoiceId: invoice.id, status: "PENDING" },
+              ],
+            },
+            orderBy: { createdAt: "desc" },
+          });
+
+          if (existingPayment) {
+            await tx.payment.update({
+              where: { id: existingPayment.id },
+              data: {
+                transactionId,
+                status: "SUCCESS",
+                paymentType,
+                gatewayResponse: body as unknown as Prisma.InputJsonValue,
+              },
+            });
+          } else {
+            await tx.payment.create({
+              data: {
                 invoiceId: invoice.id,
-                invoiceNumber: invoice.number,
+                amount: invoice.total,
+                currency: invoice.currency,
+                status: "SUCCESS",
+                paymentMethod: "GATEWAY_MIDTRANS",
                 gateway: "midtrans",
                 transactionId,
                 paymentType,
-                amount: Number(invoice.total),
+                gatewayResponse: body as unknown as Prisma.InputJsonValue,
               },
-            },
-          });
+            });
+          }
+
+          // 4. Catat activity log proyek jika tagihan tertaut pada suatu proyek
+          if (invoice.projectId) {
+            await tx.activityLog.create({
+              data: {
+                projectId: invoice.projectId,
+                userId: invoice.clientId,
+                action: "INVOICE_PAID",
+                description: `Invoice ${invoice.number} senilai ${formatCurrency(
+                  Number(invoice.total)
+                )} telah lunas via Midtrans (${paymentType}).`,
+                metadata: {
+                  invoiceId: invoice.id,
+                  invoiceNumber: invoice.number,
+                  gateway: "midtrans",
+                  transactionId,
+                  paymentType,
+                  amount: Number(invoice.total),
+                },
+              },
+            });
+          }
+
+          // 5. Synchronize AI Relay user balance and ledger if this invoice is an AI Relay top-up
+          const isTopup =
+            invoice.notes?.toLowerCase().includes("topup") ||
+            invoice.notes?.toLowerCase().includes("top-up") ||
+            orderId.toLowerCase().includes("topup") ||
+            invoice.items?.some(
+              (it) =>
+                it.description.toLowerCase().includes("topup") ||
+                it.description.toLowerCase().includes("top-up") ||
+                it.description.toLowerCase().includes("saldo")
+            );
+
+          if (isTopup) {
+            const { transactionRouter } = await import("@/lib/router-db");
+            await transactionRouter(async (rClient) => {
+              const userRes = await rClient.query<{
+                id: string | number;
+                balance: string | number;
+              }>(
+                "SELECT id, balance FROM users WHERE web_user_id = $1 FOR UPDATE;",
+                [invoice.clientId]
+              );
+
+              let routerUser = userRes.rows[0];
+              if (!routerUser) {
+                const clientUser = invoice.client;
+                const username =
+                  clientUser?.email || `user_${invoice.clientId.slice(0, 8)}`;
+                const fullName = clientUser?.name || "AI Relay Client";
+                const insertRes = await rClient.query<{
+                  id: string | number;
+                  balance: string | number;
+                }>(
+                  `INSERT INTO users (web_user_id, full_name, username, balance, is_active)
+                   VALUES ($1, $2, $3, 0.0000, true)
+                   ON CONFLICT (web_user_id) DO UPDATE SET updated_at = NOW()
+                   RETURNING id, balance;`,
+                  [invoice.clientId, fullName, username]
+                );
+                routerUser = insertRes.rows[0];
+              }
+
+              if (!routerUser) {
+                throw new Error(
+                  `[Webhook] Failed to resolve or create router user for web_user_id: ${invoice.clientId}`
+                );
+              }
+
+              const currentBalance = Number(routerUser.balance);
+              const topupCredit = Number(invoice.total);
+              const newBalance = Number(
+                (currentBalance + topupCredit).toFixed(4)
+              );
+
+              await rClient.query(
+                "UPDATE users SET balance = $1, updated_at = NOW() WHERE id = $2;",
+                [newBalance, routerUser.id]
+              );
+
+              await rClient.query(
+                `INSERT INTO balance_transactions (
+                   user_id, amount, transaction_type, reference_id, balance_before, balance_after, notes, created_at
+                 ) VALUES ($1, $2, 'topup', $3, $4, $5, $6, NOW());`,
+                [
+                  routerUser.id,
+                  topupCredit,
+                  transactionId,
+                  currentBalance,
+                  newBalance,
+                  `Midtrans automated topup for Invoice ${invoice.number}`,
+                ]
+              );
+
+              // Reset user_alert_cooldowns within the same atomic transaction
+              const cooldownCheck = await rClient.query(
+                "SELECT 1 FROM information_schema.tables WHERE table_name = 'user_alert_cooldowns' LIMIT 1;"
+              );
+              if (cooldownCheck.rows.length > 0) {
+                await rClient.query(
+                  "DELETE FROM user_alert_cooldowns WHERE user_id = $1;",
+                  [routerUser.id]
+                );
+              }
+            });
+          }
+
+          shouldNotify = true;
+        });
+      } catch (txError: unknown) {
+        // Handle concurrent Prisma unique constraint violation (code: P2002) on transactionId
+        if (
+          typeof txError === "object" &&
+          txError !== null &&
+          "code" in txError &&
+          (txError as { code: string }).code === "P2002"
+        ) {
+          return NextResponse.json(
+            { message: "Already processed" },
+            { status: 200 }
+          );
         }
-      });
+        throw txError;
+      }
+
+      if (alreadyProcessed) {
+        return NextResponse.json(
+          { message: "Already processed" },
+          { status: 200 }
+        );
+      }
 
       // Deduplicated notification: exactly one WhatsApp message dispatched via notify()
-      const tpl = waTemplates.invoicePaid(
-        invoice.number,
-        formatCurrency(Number(invoice.total))
-      );
-      await notify({
-        userId: invoice.clientId,
-        type: "INVOICE_SENT",
-        title: tpl.title,
-        message: tpl.message,
-      }).catch((err) => {
-        console.error("Gagal mengirim notifikasi invoice paid:", err);
-      });
+      if (shouldNotify) {
+        const tpl = waTemplates.invoicePaid(
+          invoice.number,
+          formatCurrency(Number(invoice.total))
+        );
+        await notify({
+          userId: invoice.clientId,
+          type: "INVOICE_SENT",
+          title: tpl.title,
+          message: tpl.message,
+        }).catch((err) => {
+          console.error("Gagal mengirim notifikasi invoice paid:", err);
+        });
+      }
 
       // Revalidasi cache halaman terkait
       revalidatePath(ADMIN_ROUTES.invoices);
