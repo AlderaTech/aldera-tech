@@ -99,11 +99,11 @@ jobs:
       - name: Checkout Aldera Tech
         uses: actions/checkout@v4
 
-      - name: Checkout Router Schema
+      - name: Checkout Server Infrastructure for Router Schema
         uses: actions/checkout@v4
         with:
-          repository: AlderaTech/router-billing-proxy
-          path: .router-repo
+          repository: Alfian57/server-infrastructure
+          path: .server-infra
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -119,11 +119,15 @@ jobs:
           # Initialize aldera_tech schema via Prisma
           bunx prisma db push --skip-generate
 
-          # Initialize aldera_router schema & functions
-          if [ -d ".router-repo/database" ]; then
-            PGPASSWORD=postgres psql -h localhost -U postgres -d aldera_router -f .router-repo/database/init.sql
-            for f in .router-repo/database/migrations/*.sql; do
+          # Initialize aldera_router schema, migrations & seed
+          ROUTER_DIR=".server-infra/roles/applications/aldera-router-setup/files"
+          if [ -d "$ROUTER_DIR" ]; then
+            PGPASSWORD=postgres psql -h localhost -U postgres -d aldera_router -f "$ROUTER_DIR/init.sql"
+            for f in "$ROUTER_DIR"/migrations/*.sql; do
               [ -e "$f" ] && PGPASSWORD=postgres psql -h localhost -U postgres -d aldera_router -f "$f" || true
+            done
+            for s in "$ROUTER_DIR"/seeds/*.sql; do
+              [ -e "$s" ] && PGPASSWORD=postgres psql -h localhost -U postgres -d aldera_router -f "$s" || true
             done
           fi
 
