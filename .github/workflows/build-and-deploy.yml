@@ -135,7 +135,7 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -U postgres -d aldera_router -c "
             CREATE TABLE IF NOT EXISTS user_alert_cooldowns (
               id BIGSERIAL PRIMARY KEY,
-              user_id BIGINT NOT NULL,
+              user_id BIGINT NOT NULL UNIQUE,
               last_low_balance_alert_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
               alert_count INT NOT NULL DEFAULT 1,
               created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
