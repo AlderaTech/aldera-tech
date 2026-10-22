@@ -1,0 +1,92 @@
+/* Decorative layer shared by dashboard empty states. */
+.decoration {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.decoration::before {
+  position: absolute;
+  top: -9.5rem;
+  left: -7.5rem;
+  width: 23rem;
+  height: 23rem;
+  border: 1px solid color-mix(in srgb, var(--overview-blue) 16%, transparent);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    color-mix(in srgb, var(--overview-sky) 66%, transparent),
+    transparent 70%
+  );
+  box-shadow:
+    0 0 0 2rem color-mix(in srgb, var(--overview-blue) 3%, transparent),
+    0 0 0 4rem color-mix(in srgb, var(--overview-blue) 2%, transparent);
+  content: "";
+}
+.decoration::after {
+  position: absolute;
+  right: -1rem;
+  bottom: -1rem;
+  width: 14rem;
+  height: 9rem;
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--overview-blue) 26%, transparent) 1px,
+    transparent 1.3px
+  );
+  background-size: 14px 14px;
+  mask-image: radial-gradient(
+    ellipse at bottom right,
+    black 15%,
+    transparent 72%
+  );
+  content: "";
+}
+.circuit {
+  position: absolute;
+  top: 0.5rem;
+  right: 0;
+  width: min(30%, 16rem);
+  height: auto;
+  color: var(--overview-blue);
+}
+.traces {
+  stroke: currentColor;
+  stroke-opacity: 0.19;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.traces circle {
+  fill: var(--overview-paper);
+}
+.codePanel {
+  fill: var(--overview-sky);
+  fill-opacity: 0.65;
+  stroke: currentColor;
+  stroke-opacity: 0.12;
+}
+.codeMark {
+  stroke: currentColor;
+  stroke-opacity: 0.42;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (max-width: 639px) {
+  .decoration::before {
+    top: -6rem;
+    left: -6.5rem;
+    width: 13rem;
+    height: 13rem;
+  }
+  .decoration::after {
+    width: 7rem;
+    height: 6rem;
+  }
+  .circuit {
+    width: 29%;
+  }
+}

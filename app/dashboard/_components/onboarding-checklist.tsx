@@ -1,20 +1,8 @@
-import Link from "next/link";
-import { Check, ArrowRight, Layers } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
-import { cn } from "@/lib/utils";
-import styles from "./overview.module.css";
-import onboardingStyles from "./overview-onboarding.module.css";
-
-type Step = {
-  id: string;
-  title: string;
-  description: string;
-  done: boolean;
-  cta: { label: string; href: string };
-};
+import { OnboardingCard, type OnboardingStep } from "./onboarding-card";
 
 export async function OnboardingChecklist() {
   const session = await auth();
@@ -44,7 +32,7 @@ export async function OnboardingChecklist() {
 
   const profileComplete = !!data.user?.phone;
 
-  const steps: Step[] = [
+  const steps: OnboardingStep[] = [
     {
       id: "profile",
       title: "Lengkapi profil",
@@ -84,63 +72,11 @@ export async function OnboardingChecklist() {
   const percent = Math.round((completed / total) * 100);
 
   return (
-    <section className={styles.panel} aria-labelledby="onboarding-heading">
-      <div className={styles.panelHeader}>
-        <div>
-          <p className={styles.eyebrow}>
-            <Layers aria-hidden="true" /> Mulai di sini
-          </p>
-          <h2 id="onboarding-heading" className={styles.sectionTitle}>
-            Checklist Onboarding
-          </h2>
-        </div>
-        <span className={onboardingStyles.percent}>{percent}%</span>
-      </div>
-      <p className={onboardingStyles.summary}>
-        Selesaikan{" "}
-        <strong>
-          {completed} dari {total} langkah
-        </strong>{" "}
-        untuk memaksimalkan pengalaman Anda.
-      </p>
-      <progress
-        className={styles.progress}
-        value={percent}
-        max={100}
-        aria-label="Progres onboarding"
-      >
-        {percent}%
-      </progress>
-      <ul className={onboardingStyles.steps}>
-        {steps.map((step, index) => (
-          <li
-            key={step.id}
-            className={cn(
-              onboardingStyles.step,
-              step.done && onboardingStyles.done
-            )}
-          >
-            <span className={onboardingStyles.stepIcon} aria-hidden="true">
-              {step.done ? <Check /> : String(index + 1).padStart(2, "0")}
-            </span>
-            <div className={onboardingStyles.stepCopy}>
-              <h3>
-                {step.title}
-                <span className="sr-only">
-                  {step.done ? ": selesai" : ": belum selesai"}
-                </span>
-              </h3>
-              <p>{step.description}</p>
-              {!step.done && (
-                <Link href={step.cta.href} className={styles.textLink}>
-                  {step.cta.label}
-                  <ArrowRight aria-hidden="true" />
-                </Link>
-              )}
-            </div>
-          </li>
-        ))}
-      </ul>
-    </section>
+    <OnboardingCard
+      steps={steps}
+      completed={completed}
+      total={total}
+      percent={percent}
+    />
   );
 }

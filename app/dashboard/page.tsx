@@ -6,7 +6,14 @@ import { OverviewWelcome } from "./_components/overview-welcome";
 import { OverviewStats } from "./_components/overview-stats";
 import { OverviewProjects } from "./_components/overview-projects";
 import { OverviewActivity } from "./_components/overview-activity";
-import styles from "./_components/overview.module.css";
+import { OverviewLayout } from "./_components/overview-layout";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Ringkasan",
+  description:
+    "Ringkasan proyek, invoice, onboarding, dan aktivitas akun Aldera Tech Anda.",
+};
 
 export default async function DashboardHome() {
   const session = await auth();
@@ -66,18 +73,19 @@ export default async function DashboardHome() {
   );
 
   return (
-    <div className={styles.columns}>
-      <div className={styles.mainColumn}>
-        <OverviewWelcome user={session!.user} />
+    <OverviewLayout
+      welcome={<OverviewWelcome user={session!.user} />}
+      stats={
         <OverviewStats
           active={stats.active}
           pending={stats.pending}
           spent={stats.spent}
         />
-        <OnboardingChecklist />
-        <OverviewProjects projects={stats.projects} />
-      </div>
-      <OverviewActivity recent={recent} />
-    </div>
+      }
+      projects={<OverviewProjects projects={stats.projects} />}
+      onboarding={<OnboardingChecklist />}
+      activity={<OverviewActivity recent={recent} />}
+      empty={stats.projects.length === 0 && recent.length === 0}
+    />
   );
 }
