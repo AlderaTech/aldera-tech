@@ -39,7 +39,9 @@ export function OverviewWelcome({ user }: { user: Session["user"] }) {
         alt=""
         aria-hidden="true"
         className={styles.mascot}
-        sizes="(min-width: 640px) 104px, 1px"
+        width={80}
+        height={96}
+        sizes="(min-width: 640px) 80px, 1px"
         quality={90}
       />
     </section>

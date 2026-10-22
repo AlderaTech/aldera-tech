@@ -46,11 +46,13 @@ export function OverviewProjects({
           <span className={styles.emptyIcon}>
             <FolderKanban aria-hidden="true" />
           </span>
-          <h3>Belum ada proyek aktif.</h3>
-          <p>Mulai dari kebutuhan Anda dan hitung estimasi proyek pertama.</p>
-          <Link href={PUBLIC_ROUTES.calculator} className={styles.textLink}>
-            Hitung Estimasi <ArrowUpRight aria-hidden="true" />
-          </Link>
+          <div className={styles.emptyCopy}>
+            <h3>Belum ada proyek aktif.</h3>
+            <p>Mulai dari kebutuhan Anda dan hitung estimasi proyek pertama.</p>
+            <Link href={PUBLIC_ROUTES.calculator} className={styles.textLink}>
+              Hitung Estimasi <ArrowUpRight aria-hidden="true" />
+            </Link>
+          </div>
         </div>
       ) : (
         <div className={projectStyles.list}>
