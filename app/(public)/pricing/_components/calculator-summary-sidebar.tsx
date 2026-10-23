@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { cn, formatCurrency } from "@/lib/utils";
+import mascot from "@/public/images/services/aldera-cat-services.webp";
 import styles from "./pricing-calculator.module.css";
 import dashboardStyles from "./calculator-dashboard.module.css";
-import { Calculator, ListChecks } from "lucide-react";
+import { Calculator } from "lucide-react";
 import type {
   ProjectType,
   Feature,
@@ -167,7 +169,15 @@ export function CalculatorSummarySidebar({
           </div>
         ) : dashboard ? (
           <div className={dashboardStyles.summaryEmpty}>
-            <ListChecks aria-hidden="true" />
+            <div className={dashboardStyles.summaryMascot} aria-hidden="true">
+              <Image
+                src={mascot}
+                alt=""
+                fill
+                sizes="120px"
+                className="object-contain"
+              />
+            </div>
             {emptyMessage}
           </div>
         ) : (

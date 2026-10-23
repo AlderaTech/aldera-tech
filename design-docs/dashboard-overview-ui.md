@@ -8,6 +8,8 @@ Ringkasan memakai latar abu-abu kebiruan yang rata, panel putih solid, border ya
 
 ## Susunan halaman
 
+Corak Ringkasan dibatasi oleh kelas `scope` pada `OverviewLayout` dan `overview-patterns.module.css`. Kartu sambutan memakai orbit/sirkuit dari `EmptyStatePattern` melalui varian kelas lokal, dengan aksen dikumpulkan di sisi kanan. Kartu statistik memiliki lingkaran dan titik kecil, sementara sudut panel onboarding, proyek, serta aktivitas memiliki garis diagonal yang memudar. Permukaan kartu tetap putih dengan border yang jelas. Seluruh dekorasi berada di belakang isi, tidak menghalangi pointer atau urutan fokus, dan statis; ukuran/opacity dikurangi pada HP. Gaya default corak empty state Projects/Orders mengikuti komponen bersama yang sama.
+
 - Sambutan dan statistik memenuhi lebar konten sebelum area dua kolom. Sambutan berisi avatar/fallback inisial, nama dan email sesi, deskripsi, serta tautan profil. Maskot dekoratif memakai [aset Register](../public/images/auth/aldera-cat-register.webp), static import, `next/image`, kualitas 90, dan ukuran 80×96px; tersembunyi pada HP.
 - Statistik Proyek Aktif, Invoice Pending, dan Total Dibayarkan berada dalam tiga kartu putih sejajar. Ikon kecil memiliki latar pastel; angka dan label berada di sebelahnya. Di bawah 640px kartu disusun vertikal. Format rupiah, animasi counter, nilai nol, serta reduced motion mengikuti mekanisme asli.
 - Checklist Onboarding memenuhi lebar konten setelah statistik. Pada panel berlebar minimal 720px, pie chart berbentuk donat berada di kiri dan empat langkah di kanan. Chart hanya menggambarkan jumlah langkah selesai/belum selesai dan persentase yang diterima dari `OnboardingChecklist`; tidak ada query, statistik, atau perhitungan bisnis baru. Legenda menampilkan jumlah kedua kategori dan progress native tersembunyi secara visual tetap tersedia bagi pembaca layar. Pada panel lebih sempit, chart/legenda berada di atas daftar.
@@ -37,6 +39,8 @@ Onboarding tetap menjalankan query profil, jumlah proyek, pesan pengguna pada pr
 
 Semua path komponen berikut relatif terhadap `app/dashboard/_components/`.
 
+Corak memakai `overview-patterns.module.css`, `empty-state-pattern.tsx`, dan `empty-state-pattern.module.css`. Test varian lokal dan scope berada pada `overview-welcome.test.tsx`, `overview-layout.test.tsx`, serta `empty-state-pattern.test.tsx`.
+
 | Tanggung jawab                                   | Berkas                                                                                                                                                                                                                                                     |
 | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Query asli dan komposisi halaman                 | `../page.tsx`                                                                                                                                                                                                                                              |
@@ -50,7 +54,7 @@ Semua path komponen berikut relatif terhadap `app/dashboard/_components/`.
 
 ## Pemeriksaan
 
-- Test terarah mencakup rendering dan metadata, query/limit 3 proyek serta 6 log, statistik nol/non-nol, data gagal dengan fallback `safeDb` asli, seluruh langkah/CTA onboarding, penanda langkah berikutnya, syarat telepon, pembulatan progres, kondisi selesai, urutan slot, identitas panjang, dan batas scope Ringkasan. Chart diuji untuk 0%, 25%, 100%, jumlah langkah nol, nilai legenda, dan progress aksesibel. Seluruh 25 test Ringkasan lulus; bersama regresi Profil, Pengaturan, Invoice, dan navigasi, 62 test lulus tanpa kegagalan.
+- Test terarah mencakup rendering dan metadata, query/limit 3 proyek serta 6 log, statistik nol/non-nol, data gagal dengan fallback `safeDb` asli, seluruh langkah/CTA onboarding, penanda langkah berikutnya, syarat telepon, pembulatan progres, kondisi selesai, urutan slot, identitas panjang, dan batas scope Ringkasan. Chart diuji untuk 0%, 25%, 100%, jumlah langkah nol, nilai legenda, dan progress aksesibel. Seluruh 27 test Ringkasan lulus; bersama regresi Proyek, Pesanan, Profil, Pengaturan, Invoice, corak bersama, dan navigasi, 90 test lulus tanpa kegagalan.
 - Perbandingan sumber memastikan query Ringkasan, query onboarding, langkah, persentase, dan kondisi selesai tidak berubah. Server action, API, skema database, routing, dan stylesheet global tidak dimodifikasi.
 - Browser terisolasi memeriksa halaman kosong pada sesi mock lokal. Fixture hanya pada server preview pengujian sementara mengisi DOM Ringkasan dengan komponen presentasi asli dan CSS hasil kompilasi Next.js. Tidak ada fixture yang menggantikan sumber data aplikasi atau disimpan ke database.
 - Skenario kosong, tiga proyek/enam aktivitas, identitas/deskripsi panjang, serta onboarding yang tidak tersedia diperiksa pada 320, 390, 768, 1024, 1280, dan 1440px tanpa overflow horizontal. Proporsi desktop dengan data terukur 2:1; tablet/HP satu kolom. Seluruh empat langkah tetap tampil saat onboarding belum tuntas.

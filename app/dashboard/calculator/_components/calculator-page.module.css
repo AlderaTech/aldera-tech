@@ -1,4 +1,14 @@
 .page {
+  --overview-line: color-mix(
+    in srgb,
+    var(--overview-ink) 18%,
+    var(--overview-paper)
+  );
+  --overview-muted: color-mix(
+    in srgb,
+    var(--overview-ink) 72%,
+    var(--overview-paper)
+  );
   display: grid;
   gap: 1.5rem;
   min-width: 0;
