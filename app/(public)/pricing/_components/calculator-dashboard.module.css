@@ -24,6 +24,14 @@
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 1.75rem;
+  background: color-mix(
+    in srgb,
+    var(--overview-line) 35%,
+    var(--overview-canvas)
+  );
 }
 .configuration {
   min-width: 0;
@@ -31,7 +39,7 @@
   border: 1px solid var(--overview-line);
   border-radius: 1.5rem;
   background: var(--overview-paper);
-  box-shadow: 0 8px 30px color-mix(in srgb, var(--overview-ink) 3%, transparent);
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--overview-ink) 6%, transparent);
 }
 .configuration > * {
   margin-block: 0;
@@ -174,7 +182,8 @@
   border-radius: 0.75rem;
   background: var(--overview-paper);
   font-size: 0.8125rem;
-  box-shadow: none;
+  box-shadow: inset 0 1px 2px
+    color-mix(in srgb, var(--overview-ink) 3%, transparent);
 }
 .dashboard textarea {
   min-height: 7rem;
@@ -190,8 +199,8 @@
   padding: 1.1rem;
   border: 1px solid var(--overview-line);
   border-radius: 1rem;
-  background: var(--overview-paper);
-  box-shadow: none;
+  background: var(--overview-canvas);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--overview-ink) 3%, transparent);
   transition:
     border-color 0.2s,
     background 0.2s,
@@ -283,7 +292,9 @@
 }
 .dashboard label:has([role="checkbox"]) {
   padding: 1rem;
+  border-color: var(--overview-line);
   border-radius: 0.9rem;
+  background: var(--overview-canvas);
 }
 .dashboard label:has([role="checkbox"][data-state="checked"]) {
   border-color: var(--overview-blue);
@@ -309,7 +320,9 @@
 }
 .dashboard [data-addon] {
   padding: 1rem;
+  border-color: var(--overview-line);
   border-radius: 1rem;
+  background: var(--overview-canvas);
 }
 .dashboard [data-addon-duration] {
   flex-wrap: wrap;
@@ -376,21 +389,19 @@
 }
 .dashboard .summaryCard {
   gap: 0;
-  padding: 1.5rem;
+  padding: 1.1rem;
   border-color: var(--overview-line);
   border-radius: 1.5rem;
-  background: linear-gradient(
-    150deg,
-    var(--overview-sky),
-    var(--overview-paper) 65%
-  );
-  box-shadow: 0 8px 30px color-mix(in srgb, var(--overview-ink) 3%, transparent);
+  background: var(--overview-paper);
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--overview-ink) 6%, transparent);
 }
 .summaryHeading {
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--overview-line);
 }
 .summaryHeading > span {
   display: grid;
@@ -418,27 +429,40 @@
 }
 .summaryEmpty {
   display: grid;
-  gap: 0.85rem;
+  gap: 1rem;
   place-items: center;
-  padding: 1.3rem 1rem;
-  border: 1px dashed var(--overview-line);
+  padding: 1rem 0.75rem;
+  border: 1px solid var(--overview-line);
   border-radius: 1rem;
-  background: color-mix(in srgb, var(--overview-paper) 70%, transparent);
+  background: var(--overview-canvas);
   text-align: center;
 }
-.summaryEmpty > svg {
-  width: 1.6rem;
-  height: 1.6rem;
-  color: var(--overview-blue);
+.summaryMascot {
+  position: relative;
+  width: 7.5rem;
+  height: 7.5rem;
+  pointer-events: none;
 }
 .summaryEmpty p {
+  max-width: 28ch;
+  color: var(--overview-muted);
   line-height: 1.85;
+}
+.summaryDetails {
+  display: grid;
+  gap: 0;
 }
 .summaryDetails > div {
   align-items: baseline;
-  gap: 1rem;
-  font-size: 0.7rem;
+  gap: 0.6rem;
+  margin-block: 0;
+  padding-block: 0.65rem;
+  border-bottom: 1px solid var(--overview-line);
+  font-size: 0.75rem;
   line-height: 1.8;
+}
+.summaryDetails > div:last-child {
+  border-bottom: 0;
 }
 .summaryDetails > div > span:first-child {
   min-width: 0;
@@ -449,11 +473,15 @@
 }
 .summaryDetails > div > span:last-child {
   flex-shrink: 0;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 .dashboard .summaryFooter {
-  margin-top: 1.25rem;
-  padding-top: 1.25rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 1rem;
+  background: var(--overview-canvas);
 }
 .dashboard .summaryTotal {
   display: grid;
@@ -474,8 +502,8 @@
   overflow-wrap: anywhere;
 }
 .summaryFooter > div:nth-child(2) {
-  margin-top: 1rem;
-  padding: 0.85rem 0;
+  margin-top: 0.75rem;
+  padding: 0.75rem 0 0;
   font-size: 0.75rem;
 }
 .summaryFooter > p {
@@ -525,6 +553,11 @@
   }
 }
 @media (max-width: 639px) {
+  .dashboard.wizard {
+    gap: 1rem;
+    padding: 0.65rem;
+    border-radius: 1.4rem;
+  }
   .stage {
     padding: 1.1rem;
   }
@@ -542,7 +575,7 @@
     padding: 1rem;
   }
   .dashboard .summaryCard {
-    padding: 1.25rem;
+    padding: 1rem;
   }
   .stage h3 {
     font-size: 1.05rem;

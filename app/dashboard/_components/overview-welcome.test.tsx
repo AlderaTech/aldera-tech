@@ -5,6 +5,14 @@ import { OverviewWelcome } from "./overview-welcome";
 import { user } from "./_fixtures/overview";
 
 describe("Sambutan Ringkasan", () => {
+  it("menambahkan corak dekoratif tanpa menambah navigasi atau maskot", () => {
+    const html = renderToStaticMarkup(<OverviewWelcome user={user} />);
+    expect(html).toContain('focusable="false"');
+    expect(html.match(/<img\b/g)).toHaveLength(1);
+    expect(html.match(/<a\b/g)).toHaveLength(1);
+    expect(html).toContain(`href="${DASHBOARD_ROUTES.profile}"`);
+  });
+
   it("mempertahankan identitas akun, inisial, dan tautan profil", () => {
     const html = renderToStaticMarkup(<OverviewWelcome user={user} />);
     expect(html).toContain("Halo, Maya");

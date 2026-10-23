@@ -4,6 +4,13 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { EmptyStatePattern } from "./empty-state-pattern";
 
 describe("Corak empty state dashboard", () => {
+  it("menerima varian kelas lokal tanpa mengubah aksesibilitas dekorasi", () => {
+    const pattern = EmptyStatePattern({ className: "overview-accent" });
+    expect(pattern.props.className).toContain("overview-accent");
+    expect(pattern.props["aria-hidden"]).toBe("true");
+    expect(pattern.props.children.props.focusable).toBe("false");
+  });
+
   it("menampilkan SVG dekoratif tanpa kontrol atau urutan fokus tambahan", () => {
     const pattern = EmptyStatePattern();
     expect(pattern.props["aria-hidden"]).toBe("true");

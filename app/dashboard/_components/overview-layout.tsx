@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 import styles from "./overview.module.css";
+import patternStyles from "./overview-patterns.module.css";
 
 type OverviewLayoutProps = {
   welcome: ReactNode;
@@ -19,7 +21,7 @@ export function OverviewLayout({
   empty,
 }: OverviewLayoutProps) {
   return (
-    <div className={styles.page}>
+    <div className={cn(styles.page, patternStyles.scope)}>
       {welcome}
       {stats}
       {onboarding}

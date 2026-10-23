@@ -1,8 +1,9 @@
 import styles from "./empty-state-pattern.module.css";
+import { cn } from "@/lib/utils";
 
-export function EmptyStatePattern() {
+export function EmptyStatePattern({ className }: { className?: string } = {}) {
   return (
-    <div className={styles.decoration} aria-hidden="true">
+    <div className={cn(styles.decoration, className)} aria-hidden="true">
       <svg
         viewBox="0 0 260 260"
         fill="none"

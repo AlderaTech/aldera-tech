@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
+import { readFileSync } from "node:fs";
 import { OverviewLayout } from "./overview-layout";
 
 function render(empty: boolean, onboarding = <p>ONBOARDING</p>) {
@@ -16,6 +17,25 @@ function render(empty: boolean, onboarding = <p>ONBOARDING</p>) {
 }
 
 describe("Susunan panel Ringkasan", () => {
+  it("membatasi corak statis pada scope Ringkasan tanpa menghalangi pointer", () => {
+    const css = readFileSync(
+      new URL("./overview-patterns.module.css", import.meta.url),
+      "utf8"
+    );
+    expect(css).toContain(".scope");
+    for (const heading of [
+      "overview-heading",
+      "onboarding-heading",
+      "overview-projects-heading",
+      "overview-activity-heading",
+    ])
+      expect(css).toContain(`aria-labelledby="${heading}"`);
+    expect(css).toContain('aria-label="Ringkasan statistik akun"');
+    expect(css).toContain("pointer-events: none;");
+    expect(css).toContain(".scope .welcomePattern::before");
+    expect(css).not.toMatch(/:global|(?:^|\n)(?:body|html)\b|animation\s*:/);
+  });
+
   it("menempatkan onboarding penuh sebelum baris proyek dan aktivitas", () => {
     const html = render(false);
     const positions = [
