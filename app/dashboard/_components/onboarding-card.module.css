@@ -1,0 +1,227 @@
+.card {
+  container-type: inline-size;
+}
+.body {
+  display: grid;
+  min-width: 0;
+  gap: 1.5rem;
+  align-items: start;
+}
+.chart {
+  display: grid;
+  min-width: 0;
+  justify-items: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 1.2rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 1.1rem;
+  background: var(--overview-canvas);
+}
+.pie {
+  width: 154px;
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.track,
+.progressArc {
+  fill: none;
+  stroke-width: 13;
+}
+.track {
+  stroke: var(--overview-line);
+}
+.progressArc {
+  stroke: var(--overview-blue);
+}
+.chartValue {
+  fill: var(--overview-ink);
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+.chartCaption {
+  fill: var(--overview-muted);
+  font-size: 9px;
+  font-weight: 600;
+}
+.legend {
+  display: grid;
+  width: 100%;
+  max-width: 12rem;
+  gap: 0.7rem;
+  font-size: 0.72rem;
+  color: var(--overview-muted);
+}
+.legend > span {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.legend strong {
+  margin-left: auto;
+  color: var(--overview-ink);
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+.completeDot,
+.pendingDot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--overview-blue);
+}
+.pendingDot {
+  background: var(--overview-line);
+}
+.details {
+  min-width: 0;
+}
+.summary {
+  margin: 0 0 0.85rem;
+  color: var(--overview-muted);
+  font-size: 0.8rem;
+  line-height: 1.7;
+}
+.summary strong {
+  color: var(--overview-ink);
+  font-weight: 750;
+}
+.steps {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.step {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 0.9rem;
+  background: var(--overview-paper);
+}
+.step[data-next] {
+  border-color: color-mix(
+    in srgb,
+    var(--overview-blue) 36%,
+    var(--overview-line)
+  );
+  background: color-mix(
+    in srgb,
+    var(--overview-sky) 55%,
+    var(--overview-paper)
+  );
+}
+.stepIcon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid var(--overview-line);
+  border-radius: 50%;
+  background: var(--overview-canvas);
+  color: var(--overview-muted);
+  font-size: 0.65rem;
+  font-weight: 750;
+}
+.stepIcon svg {
+  width: 15px;
+  height: 15px;
+}
+.stepCopy {
+  min-width: 0;
+}
+.stepHeading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.65rem;
+}
+.step h3 {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 750;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.step p {
+  margin: 0.2rem 0 0;
+  color: var(--overview-muted);
+  font-size: 0.74rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.stepStatus {
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  background: var(--overview-sky);
+  color: var(--overview-blue);
+  font-size: 0.61rem;
+  font-weight: 700;
+}
+.done .stepIcon {
+  border-color: var(--overview-success);
+  background: var(--overview-success);
+  color: var(--overview-paper);
+}
+.done .stepStatus {
+  background: var(--overview-success-soft);
+  color: var(--overview-success);
+}
+.step .stepAction {
+  width: 8.2rem;
+  max-width: 100%;
+  min-height: 2.4rem;
+  justify-content: center;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 0.65rem;
+  background: var(--overview-paper);
+  font-size: 0.72rem;
+}
+.step .stepAction:hover {
+  border-color: var(--overview-blue);
+  background: var(--overview-sky);
+  text-decoration: none;
+}
+@container (min-width: 720px) {
+  .body {
+    grid-template-columns: 210px minmax(0, 1fr);
+    align-items: center;
+  }
+}
+@container (max-width: 719px) {
+  .chart {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+  }
+  .pie {
+    width: 130px;
+  }
+}
+@container (max-width: 480px) {
+  .step {
+    grid-template-columns: 30px minmax(0, 1fr);
+    align-items: start;
+    padding: 0.85rem;
+  }
+  .step .stepAction {
+    grid-column: 2;
+    justify-self: start;
+    min-height: 2.75rem;
+  }
+  .chart {
+    padding: 0.9rem;
+    gap: 0.8rem;
+  }
+  .legend {
+    font-size: 0.67rem;
+  }
+}

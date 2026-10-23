@@ -39,11 +39,13 @@ export function OverviewActivity({
           <span className={styles.emptyIcon}>
             <Clock3 aria-hidden="true" />
           </span>
-          <h3>Belum ada aktivitas.</h3>
-          <p>Update proyek dan kolaborasi Anda akan tampil di sini.</p>
-          <Link href={DASHBOARD_ROUTES.projects} className={styles.textLink}>
-            Lihat Proyek Saya <ArrowRight aria-hidden="true" />
-          </Link>
+          <div className={styles.emptyCopy}>
+            <h3>Belum ada aktivitas.</h3>
+            <p>Update proyek dan kolaborasi Anda akan tampil di sini.</p>
+            <Link href={DASHBOARD_ROUTES.projects} className={styles.textLink}>
+              Lihat Proyek Saya <ArrowRight aria-hidden="true" />
+            </Link>
+          </div>
         </div>
       ) : (
         <ol className={activityStyles.timeline}>

@@ -7,6 +7,8 @@ import { DASHBOARD_ROUTES } from "@/lib/routes";
 import { getInitials } from "@/lib/utils";
 import mascot from "@/public/images/auth/aldera-cat-register.webp";
 import styles from "./overview.module.css";
+import patternStyles from "./overview-patterns.module.css";
+import { EmptyStatePattern } from "./empty-state-pattern";
 
 export function OverviewWelcome({ user }: { user: Session["user"] }) {
   return (
@@ -39,9 +41,12 @@ export function OverviewWelcome({ user }: { user: Session["user"] }) {
         alt=""
         aria-hidden="true"
         className={styles.mascot}
-        sizes="(min-width: 640px) 104px, 1px"
+        width={80}
+        height={96}
+        sizes="(min-width: 640px) 80px, 1px"
         quality={90}
       />
+      <EmptyStatePattern className={patternStyles.welcomePattern} />
     </section>
   );
 }

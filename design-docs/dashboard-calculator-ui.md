@@ -8,6 +8,8 @@ Breadcrumb mempertahankan Dashboard, Riwayat Estimasi, dan Kalkulator Estimasi. 
 
 Konfigurasi berada di kiri dan ringkasan di kanan mulai 1280px; ringkasan sticky dengan offset header. Pada tablet dan HP keduanya tersusun vertikal. Tidak ada panel scroll bersarang atau tinggi konten yang dikunci. Stepper selalu menampilkan lima label, tanpa tombol lompatan tahap.
 
+Kedua kolom berada pada alas abu-abu kebiruan yang dibatasi border. Kartu konfigurasi dan ringkasan putih solid dengan bayangan halus; token border 18% navy dan teks sekunder 72% navy hanya diterapkan di halaman kalkulator dashboard. Pilihan proyek, skala, fitur, dan add-on memakai permukaan lembut dengan batas yang jelas; input putih terpisah dari permukaan kelompoknya. Panel kanan menggunakan padding ringkas, pemisah judul/rincian, baris biaya dengan garis tipis, serta kotak total dan DP tersendiri. Tinggi mengikuti isi tanpa ruang pengisi atau statistik tambahan. Varian publik tidak memakai alas dan gaya dashboard ini.
+
 ## Lima tahap
 
 | Tahap  | Presentasi dan perilaku                                                                                                                                                                                                                                                          |
@@ -22,7 +24,7 @@ Perubahan tahap memindahkan fokus ke region konfigurasi dan menyesuaikan posisi 
 
 ## Ringkasan dan sumber biaya
 
-Sebelum jenis proyek dipilih, ringkasan menampilkan instruksi tanpa total atau DP. Setelah pilihan tersedia, panel menampilkan biaya dasar, skala, fitur, fitur kustom, add-on, urgensi, total, DP, dan catatan konsultasi sesuai sumber lama. Nama rincian dibungkus penuh dan nominal memakai `formatCurrency`.
+Sebelum jenis proyek dipilih, ringkasan dashboard menampilkan maskot [Layanan](../public/images/services/aldera-cat-services.webp) dari aset yang tersedia, lalu instruksi tanpa total atau DP. Susunan vertikal rata tengah memakai area gambar 120×120px dengan `object-contain`, jarak 16px, dan tinggi panel mengikuti isi. Maskot dekoratif memakai `next/image` dengan static import dan tidak dibacakan pembaca layar. Ikon kalkulator pada judul tetap tersedia. Setelah pilihan tersedia, maskot/instruksi digantikan rincian biaya dasar, skala, fitur, fitur kustom, add-on, urgensi, total, DP, dan catatan konsultasi sesuai sumber lama. Nama rincian dibungkus penuh dan nominal memakai `formatCurrency`. Empty state varian publik tetap mengikuti tampilannya sendiri.
 
 `use-calculator-wizard.ts`, `lib/calculator.ts`, `lib/calculator-utils.ts`, dan `lib/actions/calculator.ts` tidak diubah. Pengambilan data server, serialisasi, harga dasar, pengali, persentase DP, pembulatan, validasi, payload, autentikasi, dan penghitungan ulang server tetap menggunakan implementasi asli. `getSiteSettings()` dan nomor WhatsApp diteruskan seperti semula. Callback login dan WhatsApp pada varian publik tetap tersedia.
 
@@ -46,7 +48,9 @@ Saat pending, tombol Ajukan Proyek disabled dan menampilkan Mengajukan. Toast er
 | Urgent    | Rp23.550.000 | Rp5.887.500 |
 
 - Pengajuan diperiksa memakai intersepsi browser sebelum POST mencapai server: pending, disabled, pencegahan klik ganda, respons gagal, retry, respons sukses, layar sukses, dan reset. Payload mempertahankan konfigurasi dan total yang sama. Catatan tetap tersedia setelah respons gagal. Jumlah pesanan database sebelum dan sesudah pemeriksaan tetap 0; tidak ada pesanan sungguhan dibuat.
-- Varian Harga diperiksa agar tetap memakai tema studio, opsi proyek asli, serta rute yang sama. Verifikasi statis memakai Prettier, ESLint terarah, Next.js typegen, dan TypeScript. Test suite serta build produksi memerlukan persetujuan pengguna sesuai AGENTS.md.
+- Varian Harga tetap memakai tema studio, opsi proyek asli, serta rute yang sama. Test pendamping `calculator-summary-sidebar.test.tsx` memeriksa aset/dekorasi empty state dashboard, penggantian oleh rincian saat proyek dipilih, nominal total/DP, dan isolasi varian publik. Verifikasi statis memakai Prettier, ESLint, Next.js typegen, dan TypeScript; test UI serta perhitungan dijalankan melalui `bun test`.
+- `app/dashboard/calculator/_components/calculator-panels.test.tsx` memeriksa isolasi permukaan dashboard, rendering kelima tahap, pilihan aktif, validasi skala kosong, nilai fitur/durasi, isi review, serta status pending tanpa mengirim pengajuan.
+- Pemeriksaan permukaan kelima tahap memakai komponen presentasi asli, CSS hasil kompilasi Next.js, dan katalog lokal pada browser terisolasi. Pada 1440, 768, dan 320px, kartu putih terpisah dari alas abu-abu kebiruan, input memiliki border terbaca, dan tidak ada overflow horizontal. Preview tidak menjalankan pengajuan atau menulis data pengguna.
 
 ## Berkas antarmuka
 
