@@ -60,13 +60,6 @@ export function DashboardHeader({ session, navConfig }: DashboardHeaderProps) {
         </SheetContent>
       </Sheet>
 
-      {studioSection && (
-        <div className={styles.headerTitle}>
-          <span>Workspace</span>
-          <span aria-hidden="true">/</span>
-          <strong>{studioSection}</strong>
-        </div>
-      )}
       <div className="flex-1" />
 
       <div className="flex items-center gap-1">

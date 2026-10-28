@@ -1,0 +1,80 @@
+.dialog {
+  --profile-line: color-mix(
+    in srgb,
+    var(--overview-ink) 18%,
+    var(--overview-paper)
+  );
+  --profile-muted: color-mix(
+    in srgb,
+    var(--overview-ink) 72%,
+    var(--overview-paper)
+  );
+  --border: var(--profile-line);
+  --input: var(--profile-line);
+  --primary: var(--overview-blue);
+  --primary-foreground: var(--overview-paper);
+  --ring: var(--overview-blue);
+  --background: var(--overview-paper);
+  --foreground: var(--overview-ink);
+  --muted-foreground: var(--profile-muted);
+  grid-template-columns: minmax(0, 1fr);
+  width: calc(100% - 2rem);
+  max-width: 38rem;
+  max-height: calc(100svh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  gap: 1.1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--profile-line);
+  border-radius: 1.5rem;
+  background: var(--overview-paper);
+  color: var(--overview-ink);
+  font-family: var(--font-jakarta-sans), sans-serif;
+}
+.dialog > * {
+  min-width: 0;
+  max-width: 100%;
+}
+.dialog [data-slot="dialog-header"] {
+  text-align: left;
+  padding-right: 2rem;
+}
+.dialog [data-slot="dialog-title"] {
+  font-size: 1.25rem;
+  font-weight: 750;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+.dialog [data-slot="dialog-description"] {
+  color: var(--profile-muted);
+  font-size: 0.875rem;
+  line-height: 1.75;
+}
+.dialog > button:last-child {
+  display: grid;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--overview-canvas);
+  color: var(--overview-ink);
+}
+.dialog :is(button, input, a):focus-visible {
+  outline: 2px solid var(--overview-blue);
+  outline-offset: 3px;
+}
+@media (max-width: 479px) {
+  .dialog {
+    padding: 1.1rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dialog,
+  .dialog :is(button, input) {
+    animation: none;
+    transition: none;
+  }
+}

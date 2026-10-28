@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { ProfileIdentity } from "./profile-identity";
-import { ProfileForm } from "./profile-form";
+import { ProfileEditor } from "./profile-editor";
+import { ProfilePreviewWorkspace } from "./profile-preview-workspace";
 import { ProfileUnavailable } from "./profile-unavailable";
 import styles from "./profile.module.css";
 
@@ -26,11 +27,16 @@ export async function ProfileContent({ userId }: { userId: string }) {
   if (!user) return <ProfileUnavailable />;
 
   return (
-    <div className={styles.layout}>
-      <ProfileIdentity user={user} />
-      <ProfileForm
-        defaultValues={{ name: user.name, phone: user.phone ?? "" }}
+    <div className={styles.workspace}>
+      <ProfileIdentity
+        user={user}
+        editAction={
+          <ProfileEditor
+            defaultValues={{ name: user.name, phone: user.phone ?? "" }}
+          />
+        }
       />
+      <ProfilePreviewWorkspace />
     </div>
   );
 }

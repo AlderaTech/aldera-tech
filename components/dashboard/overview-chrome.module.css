@@ -95,19 +95,6 @@
   background: rgb(255 255 255 / 80%);
   box-shadow: none;
 }
-.headerTitle {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  font-size: 0.75rem;
-  white-space: nowrap;
-}
-.headerTitle > span {
-  color: var(--overview-muted);
-}
-.headerTitle strong {
-  font-weight: 700;
-}
 .header button {
   min-height: 2.75rem;
   border-radius: 0.8rem;
@@ -133,13 +120,6 @@
 @media (max-width: 639px) {
   .shell [data-overview-content] {
     padding: 1rem;
-  }
-  .headerTitle {
-    gap: 0.4rem;
-    font-size: 0.73rem;
-  }
-  .headerTitle > span {
-    display: none;
   }
 }
 

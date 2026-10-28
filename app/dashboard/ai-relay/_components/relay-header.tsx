@@ -12,23 +12,25 @@ export function RelayHeader({
   onTopup: () => void;
 }) {
   return (
-    <header className={styles.header}>
+    <header className={styles.header} aria-labelledby="relay-heading">
       <div className={styles.welcome}>
-        <RelayMascot pose="connect" className={styles.welcomeMascot} />
         <div>
           <p className={styles.eyebrow}>
             <Network aria-hidden="true" /> Workspace AI Anda
           </p>
-          <h1>Aldera AI API Relay</h1>
+          <h1 id="relay-heading">Aldera AI API Relay</h1>
           <p className={styles.description}>
             Akses katalog model AI, hubungkan IDE, dan kelola pemakaian dengan
             saldo Rupiah.
           </p>
         </div>
+        <RelayMascot pose="connect" className={styles.welcomeMascot} />
       </div>
-      <div className={styles.balancePanel}>
+      <div className={styles.balancePanel} data-relay-balance-panel>
         <div>
-          <span>Saldo Aktif</span>
+          <span className={styles.balanceLabel}>
+            <Wallet aria-hidden="true" /> Saldo Aktif
+          </span>
           <strong data-relay-balance>{formatCurrency(balance)}</strong>
         </div>
         <Button onClick={onTopup}>
