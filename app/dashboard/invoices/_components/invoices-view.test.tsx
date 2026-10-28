@@ -1,4 +1,4 @@
-import { describe, expect, it, mock } from "bun:test";
+import { beforeEach, describe, expect, it, mock } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { InvoiceStatus } from "@prisma/client";
 import { API_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
@@ -6,6 +6,7 @@ import { formatCurrency } from "@/lib/utils";
 import { invoiceStatusMeta } from "@/lib/status-meta";
 import type { ClientInvoiceItem } from "../_types/invoice";
 
+let invoiceQuery = "";
 mock.module("@/lib/actions/invoice", () => ({
   submitPaymentProofAction: mock(),
 }));
@@ -15,7 +16,7 @@ mock.module("@/lib/actions/payment", () => ({
 mock.module("next/navigation", () => ({
   useRouter: () => ({ refresh: mock(), replace: mock(), push: mock() }),
   usePathname: () => "/dashboard/invoices",
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => new URLSearchParams(invoiceQuery),
 }));
 
 const { ClientInvoicesTable } = await import("./client-invoices-table");
@@ -47,6 +48,39 @@ const invoices: ClientInvoiceItem[] = statuses.map((status, index) => ({
 }));
 
 describe("Tampilan invoice dan tindakan yang diizinkan", () => {
+  beforeEach(() => {
+    invoiceQuery = "";
+  });
+  it("mengikuti filter URL dan membedakan hasil kosong dari daftar akun kosong", () => {
+    invoiceQuery = "status=PAID&page=2";
+    const html = renderToStaticMarkup(
+      <ClientInvoicesTable invoices={[]} totalItems={0} currentPage={2} />
+    );
+    expect(html).toContain("Tidak ada invoice dengan status ini");
+    expect(html).toContain(`href="${DASHBOARD_ROUTES.invoices}"`);
+    const emptyPage = renderToStaticMarkup(
+      <ClientInvoicesTable invoices={[]} totalItems={12} currentPage={5} />
+    );
+    expect(emptyPage).toContain("Ke halaman pertama");
+    expect(emptyPage).toContain(
+      `href="${DASHBOARD_ROUTES.invoicesWithParams({ status: "PAID" })}"`
+    );
+  });
+  it("tetap menampilkan pagination dan seluruh status filter dari implementasi asli", () => {
+    const html = renderToStaticMarkup(
+      <ClientInvoicesTable
+        invoices={invoices}
+        totalItems={24}
+        currentPage={2}
+        pageSize={10}
+      />
+    );
+    expect(html).toContain('aria-label="Filter status invoice"');
+    expect(html).toContain('aria-label="Paginasi navigasi data"');
+    expect(html).toContain("11–20");
+    expect(html).toContain("Hal. 2 / 3");
+    expect(html).toContain("24");
+  });
   for (const View of [InvoiceDesktopTable, InvoiceMobileCards]) {
     it(`${View.name}: nominal, status resmi, nomor PDF, dan izin tindakan tetap sesuai data`, () => {
       const html = renderToStaticMarkup(

@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it, mock } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
+import { Children, isValidElement, type ReactNode } from "react";
 import { AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 import { getStudioDashboardSection } from "@/components/dashboard/studio-dashboard-routes";
 import type { ProfileUser } from "./_types/profile";
+import type { ProfileValues } from "./_types/profile";
 
 const user: ProfileUser = {
   id: "test-profile-user",
@@ -30,6 +32,25 @@ mock.module("next/navigation", () => ({
 const { default: Page, metadata } = await import("./page");
 const { ProfileContent } = await import("./_components/profile-content");
 const { default: Loading } = await import("./loading");
+const { ProfileEditor } = await import("./_components/profile-editor");
+
+function findEditorValues(node: ReactNode): ProfileValues | undefined {
+  for (const child of Children.toArray(node)) {
+    if (
+      !isValidElement<{
+        children?: ReactNode;
+        editAction?: ReactNode;
+        defaultValues?: ProfileValues;
+      }>(child)
+    )
+      continue;
+    if (child.type === ProfileEditor) return child.props.defaultValues;
+    const found =
+      findEditorValues(child.props.children) ??
+      findEditorValues(child.props.editAction);
+    if (found) return found;
+  }
+}
 
 describe("Halaman Profil Saya", () => {
   beforeEach(() => {
@@ -46,9 +67,8 @@ describe("Halaman Profil Saya", () => {
     expect(redirect).toHaveBeenCalledWith(AUTH_ROUTES.login);
   });
   it("mempertahankan query, field yang dipilih, dan nilai awal dari pengguna", async () => {
-    const html = renderToStaticMarkup(
-      await ProfileContent({ userId: user.id })
-    );
+    const content = await ProfileContent({ userId: user.id });
+    const html = renderToStaticMarkup(content);
     expect(findUnique).toHaveBeenCalledWith({
       where: { id: user.id },
       select: {
@@ -62,8 +82,13 @@ describe("Halaman Profil Saya", () => {
       },
     });
     expect(html).toContain(user.email);
-    expect(html).toContain(`value="${user.name}"`);
-    expect(html).toContain(`value="${user.phone}"`);
+    expect(html).toContain(user.phone!);
+    expect(html).toContain("Edit Profil");
+    expect(findEditorValues(content)).toEqual({
+      name: user.name,
+      phone: user.phone,
+    });
+    expect(html).not.toContain("<form");
   });
   it("tidak menampilkan form kosong ketika data tidak tersedia atau query gagal", async () => {
     findUnique.mockResolvedValueOnce(null);
@@ -78,10 +103,10 @@ describe("Halaman Profil Saya", () => {
   });
   it("mendukung telepon kosong, metadata, loading, dan tema khusus rute profil", async () => {
     findUnique.mockResolvedValueOnce({ ...user, phone: null });
-    const html = renderToStaticMarkup(
-      await ProfileContent({ userId: user.id })
-    );
-    expect(html).toMatch(/name="phone"[^>]*value=""/);
+    const content = await ProfileContent({ userId: user.id });
+    const html = renderToStaticMarkup(content);
+    expect(findEditorValues(content)).toEqual({ name: user.name, phone: "" });
+    expect(html).toContain("Belum ditambahkan");
     expect(metadata.title).toBe("Profil Saya");
     expect(metadata.description).toContain("profil");
     expect(renderToStaticMarkup(<Loading />)).toContain(

@@ -9,25 +9,24 @@ export function RelayLoading() {
       role="status"
       aria-label="Memuat AI Relay"
     >
-      <div
-        className="flex flex-wrap items-center justify-between gap-5"
-        aria-hidden="true"
-      >
-        <div className="flex max-w-full min-w-0 items-center gap-4">
-          <Skeleton className="hidden size-20 shrink-0 rounded-2xl sm:block" />
+      <div className={styles.loadingHeader} aria-hidden="true">
+        <div className={styles.welcome}>
           <div className="min-w-0 space-y-3">
-            <Skeleton className="h-3 w-32" />
-            <Skeleton className="h-7 w-60" />
+            <Skeleton className="h-3 w-32 max-w-full" />
+            <Skeleton className="h-7 w-60 max-w-full" />
             <Skeleton className="h-3 w-72 max-w-full" />
           </div>
+          <Skeleton className="hidden size-20 shrink-0 rounded-2xl sm:block" />
         </div>
         <Skeleton className="h-20 w-60 rounded-2xl" />
       </div>
-      <Skeleton className="h-16 w-full rounded-2xl" />
-      <div
-        className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
-        aria-hidden="true"
-      >
+      <div className={styles.loadingTabs} aria-hidden="true">
+        {Array.from({ length: 8 }, (_, index) => (
+          <Skeleton key={index} className="h-11 rounded-xl" />
+        ))}
+      </div>
+      <Skeleton className="h-6 w-48 max-w-full" aria-hidden="true" />
+      <div className="grid gap-4" data-relay-model-grid aria-hidden="true">
         {Array.from({ length: 6 }, (_, index) => (
           <Card key={index} className="space-y-4 p-5">
             <Skeleton className="h-5 w-40" />

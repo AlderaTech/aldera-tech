@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CircleAlert, Loader2, Save, UserRoundPen } from "lucide-react";
+import { Check, CircleAlert, Loader2, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,100 +21,98 @@ export function ProfileForm({
       aria-labelledby="profile-form-heading"
       aria-busy={profile.pending}
     >
-      <header className={styles.formHeader}>
-        <span aria-hidden="true">
-          <UserRoundPen size={21} />
-        </span>
-        <div>
+      <div className={styles.formIntro}>
+        <header className={styles.formHeader}>
           <h2 id="profile-form-heading">Informasi profil</h2>
           <p>Perbarui nama dan kontak yang digunakan untuk komunikasi.</p>
-        </div>
-      </header>
-      <section
-        className={styles.formSection}
-        aria-labelledby="personal-heading"
-      >
-        <div className={styles.sectionHeading}>
-          <span aria-hidden="true">01</span>
-          <div>
-            <h3 id="personal-heading">Informasi pribadi</h3>
-            <p>Nama Anda di workspace Aldera Tech.</p>
-          </div>
-        </div>
-        <div className={styles.field}>
-          <Label htmlFor="name">
-            Nama Lengkap{" "}
-            <span className={styles.required} aria-hidden="true">
-              *
-            </span>
-          </Label>
-          <Input
-            id="name"
-            name="name"
-            required
-            autoComplete="name"
-            placeholder="Nama lengkap Anda"
-            value={profile.values.name}
-            onChange={(event) =>
-              profile.changeField("name", event.target.value)
-            }
-            onInvalid={profile.markNameInvalid}
-            disabled={profile.pending}
-            aria-invalid={!!profile.nameError}
-            aria-describedby={profile.nameError ? "name-error" : undefined}
-          />
-          {profile.nameError && (
-            <p id="name-error" className={styles.fieldError} role="alert">
-              {profile.nameError}
-            </p>
-          )}
-        </div>
-      </section>
-      <section className={styles.formSection} aria-labelledby="contact-heading">
-        <div className={styles.sectionHeading}>
-          <span aria-hidden="true">02</span>
-          <div>
-            <h3 id="contact-heading">Informasi kontak</h3>
-            <p>Nomor yang dapat digunakan untuk menghubungi Anda.</p>
-          </div>
-        </div>
-        <div className={styles.field}>
-          <Label htmlFor="phone">
-            Telepon / WhatsApp{" "}
-            <span className={styles.optional}>(Opsional)</span>
-          </Label>
-          <Input
-            id="phone"
-            name="phone"
-            inputMode="tel"
-            autoComplete="tel"
-            placeholder="+62..."
-            value={profile.values.phone}
-            onChange={(event) =>
-              profile.changeField("phone", event.target.value)
-            }
-            disabled={profile.pending}
-            aria-describedby="phone-hint"
-          />
-          <p id="phone-hint" className={styles.fieldHint}>
-            Boleh dikosongkan jika belum ingin menambahkan nomor kontak.
-          </p>
-        </div>
-      </section>
-      {profile.status && (
-        <p
-          className={styles.feedback}
-          data-kind={profile.status.kind}
-          role={profile.status.kind === "error" ? "alert" : "status"}
+        </header>
+      </div>
+      <div className={styles.formFields}>
+        <section
+          className={styles.formSection}
+          aria-labelledby="personal-heading"
         >
-          {profile.status.kind === "success" ? (
-            <Check size={17} aria-hidden="true" />
-          ) : (
-            <CircleAlert size={17} aria-hidden="true" />
-          )}
-          <span>{profile.status.message}</span>
-        </p>
-      )}
+          <h3 id="personal-heading" className="sr-only">
+            Informasi pribadi
+          </h3>
+          <div className={styles.field}>
+            <Label htmlFor="name">
+              Nama Lengkap{" "}
+              <span className={styles.required} aria-hidden="true">
+                *
+              </span>
+            </Label>
+            <Input
+              id="name"
+              name="name"
+              required
+              autoComplete="name"
+              placeholder="Nama lengkap Anda"
+              value={profile.values.name}
+              onChange={(event) =>
+                profile.changeField("name", event.target.value)
+              }
+              onInvalid={profile.markNameInvalid}
+              disabled={profile.pending}
+              aria-invalid={!!profile.nameError}
+              aria-describedby={profile.nameError ? "name-error" : "name-hint"}
+            />
+            {profile.nameError && (
+              <p id="name-error" className={styles.fieldError} role="alert">
+                {profile.nameError}
+              </p>
+            )}
+            <p id="name-hint" className={styles.fieldHint}>
+              Nama Anda di workspace Aldera Tech.
+            </p>
+          </div>
+        </section>
+        <section
+          className={styles.formSection}
+          aria-labelledby="contact-heading"
+        >
+          <h3 id="contact-heading" className="sr-only">
+            Informasi kontak
+          </h3>
+          <div className={styles.field}>
+            <Label htmlFor="phone">
+              Telepon / WhatsApp{" "}
+              <span className={styles.optional}>(Opsional)</span>
+            </Label>
+            <Input
+              id="phone"
+              name="phone"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder="+62..."
+              value={profile.values.phone}
+              onChange={(event) =>
+                profile.changeField("phone", event.target.value)
+              }
+              disabled={profile.pending}
+              aria-describedby="phone-hint"
+            />
+            <p id="phone-hint" className={styles.fieldHint}>
+              Nomor yang dapat digunakan untuk menghubungi Anda. Boleh
+              dikosongkan jika belum ingin menambahkan nomor kontak.
+            </p>
+          </div>
+        </section>
+        {profile.status && (
+          <p
+            className={styles.feedback}
+            data-kind={profile.status.kind}
+            role={profile.status.kind === "error" ? "alert" : "status"}
+          >
+            {profile.status.kind === "success" ? (
+              <Check size={17} aria-hidden="true" />
+            ) : (
+              <CircleAlert size={17} aria-hidden="true" />
+            )}
+            <span>{profile.status.message}</span>
+          </p>
+        )}
+      </div>
       <footer className={styles.formFooter}>
         <p>Pastikan informasi Anda sudah sesuai.</p>
         <Button

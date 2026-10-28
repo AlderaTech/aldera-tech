@@ -5,6 +5,7 @@ import {
   Bell,
   Info,
   Mail,
+  Phone,
   Settings2,
   UserRound,
 } from "lucide-react";
@@ -12,54 +13,116 @@ import { Button } from "@/components/ui/button";
 import { DASHBOARD_ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import assistant from "@/public/images/dashboard/ai-relay/aldera-relay-assistant.webp";
-import common from "../../projects/_components/project-list.module.css";
 import styles from "./settings.module.css";
 
 export function SettingsOverview() {
   return (
-    <div className={cn(common.page, styles.page)}>
-      <header className={common.header}>
-        <div>
-          <p className={common.eyebrow}>Workspace Anda</p>
-          <h1>Pengaturan</h1>
-          <p className={common.description}>
-            Kelola informasi akun dan lihat ketersediaan pengaturan dashboard.
-          </p>
+    <div className={styles.page} data-settings-page>
+      <header className={styles.header}>
+        <div className={styles.headingGroup}>
+          <span className={styles.headerMark} aria-hidden="true">
+            <Settings2 className="size-6" />
+          </span>
+          <div>
+            <p className={styles.eyebrow}>Akun & preferensi</p>
+            <h1>Pengaturan</h1>
+          </div>
         </div>
-        <span className={styles.headerMark} aria-hidden="true">
-          <Settings2 className="size-5" />
-        </span>
+        <p className={styles.description}>
+          Kelola informasi akun dan lihat ketersediaan pengaturan dashboard.
+        </p>
       </header>
 
       <div className={styles.grid}>
-        <section className={styles.panel} aria-labelledby="notifications-title">
+        <section
+          className={cn(styles.panel, styles.profilePanel)}
+          aria-labelledby="account-title"
+        >
           <header className={styles.panelHeader}>
             <span className={styles.icon} aria-hidden="true">
+              <UserRound className="size-5" />
+            </span>
+            <div className={styles.panelHeading}>
+              <p className={styles.eyebrow}>Informasi akun</p>
+              <h2 id="account-title">Informasi pribadi</h2>
+            </div>
+          </header>
+          <div className={styles.profileBody}>
+            <p className={styles.profileDescription}>
+              Perbarui nama lengkap dan nomor telepon Anda melalui halaman
+              Profil.
+            </p>
+            <ul
+              className={styles.profileFields}
+              aria-label="Informasi yang dapat dikelola di Profil"
+            >
+              <li>
+                <UserRound className="size-4" aria-hidden="true" />
+                <div>
+                  <h3>Nama lengkap</h3>
+                  <p>Nama yang digunakan pada akun Anda.</p>
+                </div>
+              </li>
+              <li>
+                <Phone className="size-4" aria-hidden="true" />
+                <div>
+                  <h3>Nomor telepon</h3>
+                  <p>Kontak untuk berkomunikasi dengan tim.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <footer className={styles.panelFooter}>
+            <Button asChild className={styles.profileLink}>
+              <Link href={DASHBOARD_ROUTES.profile}>
+                Kelola Profil
+                <ArrowUpRight className="size-4" aria-hidden="true" />
+              </Link>
+            </Button>
+          </footer>
+        </section>
+
+        <section
+          className={cn(styles.panel, styles.notificationsPanel)}
+          aria-labelledby="notifications-title"
+        >
+          <header className={styles.panelHeader}>
+            <span
+              className={cn(styles.icon, styles.notificationIcon)}
+              aria-hidden="true"
+            >
               <Bell className="size-5" />
             </span>
             <div className={styles.panelHeading}>
+              <p className={styles.eyebrow}>Preferensi pesan</p>
               <h2 id="notifications-title">Notifikasi</h2>
-              <p>Preferensi pembaruan melalui email.</p>
             </div>
-            <span className={styles.status}>Belum tersedia</span>
+            <span className={styles.status}>
+              <span aria-hidden="true" /> Belum tersedia
+            </span>
           </header>
 
           <div className={styles.notificationBody}>
             <div className={styles.notificationCopy}>
-              <span className={styles.mailIcon} aria-hidden="true">
-                <Mail className="size-5" />
-              </span>
               <h3>Notifikasi email</h3>
+              <p className={styles.notificationSubtitle}>
+                Preferensi pembaruan melalui email.
+              </p>
               <p>Pengaturan notifikasi email akan hadir sebentar lagi.</p>
             </div>
-            <div className={styles.mascot} aria-hidden="true">
-              <Image
-                src={assistant}
-                alt=""
-                fill
-                sizes="112px"
-                className="object-contain"
-              />
+            <div className={styles.mascotStage} aria-hidden="true">
+              <div className={styles.mascot}>
+                <Image
+                  src={assistant}
+                  alt=""
+                  fill
+                  sizes="112px"
+                  className="object-contain"
+                />
+              </div>
+              <span className={styles.mailIcon}>
+                <Mail className="size-4" />
+              </span>
             </div>
           </div>
 
@@ -69,29 +132,6 @@ export function SettingsOverview() {
               Belum ada preferensi notifikasi yang dapat diubah di halaman ini.
             </p>
           </div>
-        </section>
-
-        <section
-          className={cn(styles.panel, styles.profilePanel)}
-          aria-labelledby="account-title"
-        >
-          <span className={styles.icon} aria-hidden="true">
-            <UserRound className="size-5" />
-          </span>
-          <p className={styles.eyebrow}>Informasi akun</p>
-          <h2 id="account-title">Informasi pribadi</h2>
-          <p className={styles.profileDescription}>
-            Perbarui nama lengkap dan nomor telepon Anda melalui halaman Profil.
-          </p>
-          <Button
-            asChild
-            className={cn(common.primaryButton, styles.profileLink)}
-          >
-            <Link href={DASHBOARD_ROUTES.profile}>
-              Kelola Profil
-              <ArrowUpRight className="size-4" aria-hidden="true" />
-            </Link>
-          </Button>
         </section>
       </div>
     </div>
