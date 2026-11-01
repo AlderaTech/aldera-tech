@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
 import { ADMIN_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
+import { AdminMascot } from "../_components/admin-mascot";
 import { PortfolioStatGrid } from "./_components/portfolio-stat-grid";
 import { PortfolioTable } from "./_components/portfolio-table";
 
@@ -19,7 +20,10 @@ export default async function AdminPortfolioPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
             Portfolio & Case Studies
@@ -29,14 +33,17 @@ export default async function AdminPortfolioPage() {
             publik.
           </p>
         </div>
-        <Button
-          asChild
-          className="gap-1.5 bg-brand-primary text-white hover:bg-brand-primary-hover"
-        >
-          <Link href={ADMIN_ROUTES.portfolioNew}>
-            <Plus className="size-4" /> Tambah Studi Kasus
-          </Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <AdminMascot pose="portfolio" size="header" />
+          <Button
+            asChild
+            className="gap-1.5 bg-brand-primary text-white hover:bg-brand-primary-hover"
+          >
+            <Link href={ADMIN_ROUTES.portfolioNew}>
+              <Plus className="size-4" /> Tambah Studi Kasus
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <PortfolioStatGrid items={caseStudies} />

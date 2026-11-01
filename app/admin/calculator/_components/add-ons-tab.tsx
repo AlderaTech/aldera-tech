@@ -3,15 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import {
-  CalendarClock,
-  Loader2,
-  PackagePlus,
-  Pencil,
-  Plus,
-  Trash2,
-  X,
-} from "lucide-react";
+import { Loader2, PackagePlus, Pencil, Plus, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { upsertAddOnOption, deleteAddOnOption } from "@/lib/actions/calculator";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { AdminIconArt } from "../../_components/admin-icon-art";
 import type { AdminAddOn } from "../_types/calculator-admin";
 
 export function AddOnsTab({ items }: { items: AdminAddOn[] }) {
@@ -65,184 +58,209 @@ export function AddOnsTab({ items }: { items: AdminAddOn[] }) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Form Card */}
-      <Card className="border-slate-200/80 shadow-xs">
+    <div className="space-y-5">
+      {/* Compact Studio Form Card */}
+      <Card className="gap-0 overflow-hidden border-slate-200/80 py-0 shadow-2xs">
         <form action={handleSubmit}>
-          <CardHeader className="border-b border-slate-100 pb-4">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
-                  {editing ? (
-                    <>
-                      <Pencil className="size-4 text-primary" />
-                      <span>Edit Add-On / Retainer</span>
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="size-4 text-primary" />
-                      <span>Tambah Add-On Baru</span>
-                    </>
-                  )}
-                </CardTitle>
-                <CardDescription className="mt-0.5 text-xs text-muted-foreground">
-                  {editing
-                    ? "Perbarui tarif bulanan, durasi kontrak, dan deskripsi opsi add-on terpilih."
-                    : "Tambahkan paket langganan retainer atau layanan pemeliharaan berkala pada kalkulator."}
-                </CardDescription>
+          <CardHeader className="border-b border-slate-100 bg-slate-50/60 px-6 py-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <AdminIconArt
+                  artwork="service-cloud"
+                  hint={editing?.name || "Opsi Add-On"}
+                  size="sm"
+                />
+                <div className="min-w-0 space-y-0.5">
+                  <CardTitle className="flex items-center gap-1.5 text-sm font-semibold text-slate-900">
+                    {editing ? (
+                      <>
+                        <Pencil className="size-3.5 text-primary" />
+                        <span>Edit Add-On / Retainer</span>
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="size-3.5 text-primary" />
+                        <span>Tambah Add-On Baru</span>
+                      </>
+                    )}
+                  </CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground">
+                    {editing
+                      ? "Perbarui tarif bulanan, durasi kontrak, dan deskripsi opsi add-on terpilih."
+                      : "Tambahkan paket langganan retainer atau layanan pemeliharaan berkala pada kalkulator."}
+                  </CardDescription>
+                </div>
               </div>
-              {editing && (
-                <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
+                {editing ? (
+                  <>
+                    <Badge
+                      variant="outline"
+                      className="border-amber-300 bg-amber-50 px-2.5 py-0.5 text-[11px] text-amber-800"
+                    >
+                      Mode Edit: {editing.name}
+                    </Badge>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-2 text-xs text-muted-foreground"
+                      onClick={() => setEditing(null)}
+                    >
+                      <X className="mr-1 size-3.5" />
+                      Batal
+                    </Button>
+                  </>
+                ) : (
                   <Badge
                     variant="outline"
-                    className="border-amber-300 bg-amber-50 text-xs text-amber-800"
+                    className="bg-white px-2.5 py-0.5 text-[11px] font-medium text-slate-600"
                   >
-                    Mode Edit: {editing.name}
+                    Langkah 4 Wizard
                   </Badge>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 px-2 text-xs text-muted-foreground"
-                    onClick={() => setEditing(null)}
-                  >
-                    <X className="mr-1 size-3" />
-                    Batal
-                  </Button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-4 pt-5">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="addon-name" className="text-xs font-medium">
-                  Nama Add-On <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="addon-name"
-                  name="name"
-                  required
-                  placeholder="Contoh: SLA & Maintenance Rutin Bulanan"
-                  defaultValue={editing?.name}
-                  key={editing?.id + "-name"}
-                />
+          <CardContent className="p-5">
+            <div className="space-y-4">
+              {/* Row 1: Nama & Biaya Bulanan */}
+              <div className="grid gap-3.5 sm:grid-cols-3">
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label htmlFor="addon-name" className="text-xs font-medium">
+                    Nama Add-On <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="addon-name"
+                    name="name"
+                    required
+                    placeholder="Contoh: SLA & Maintenance Rutin Bulanan"
+                    defaultValue={editing?.name}
+                    key={editing?.id + "-name"}
+                  />
+                </div>
+
+                <div className="space-y-1.5 sm:col-span-1">
+                  <Label htmlFor="addon-price" className="text-xs font-medium">
+                    Biaya per Bulan (IDR){" "}
+                    <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="addon-price"
+                    name="pricePerMonth"
+                    type="number"
+                    min={0}
+                    step={50000}
+                    required
+                    placeholder="Contoh: 1500000"
+                    defaultValue={editing?.pricePerMonth}
+                    key={editing?.id + "-price"}
+                  />
+                </div>
               </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="addon-price" className="text-xs font-medium">
-                  Biaya per Bulan (IDR){" "}
-                  <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="addon-price"
-                  name="pricePerMonth"
-                  type="number"
-                  min={0}
-                  step={50000}
-                  required
-                  placeholder="Contoh: 1500000"
-                  defaultValue={editing?.pricePerMonth}
-                  key={editing?.id + "-price"}
-                />
-              </div>
-            </div>
+              {/* Row 2: Deskripsi, Min/Max Bulan & Urutan */}
+              <div className="grid gap-3.5 sm:grid-cols-6">
+                <div className="space-y-1.5 sm:col-span-3">
+                  <Label htmlFor="addon-desc" className="text-xs font-medium">
+                    Deskripsi Layanan{" "}
+                    <span className="text-xs font-normal text-muted-foreground">
+                      (Opsional)
+                    </span>
+                  </Label>
+                  <Input
+                    id="addon-desc"
+                    name="description"
+                    placeholder="Rincian cakupan paket retainer atau layanan garansi berkala..."
+                    defaultValue={editing?.description ?? ""}
+                    key={editing?.id + "-desc"}
+                  />
+                </div>
 
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="addon-min" className="text-xs font-medium">
-                  Minimal Durasi (Bulan){" "}
-                  <span className="text-xs font-normal text-muted-foreground">
-                    (opsional)
-                  </span>
-                </Label>
-                <Input
-                  id="addon-min"
-                  name="minMonths"
-                  type="number"
-                  min={1}
-                  placeholder="Contoh: 1"
-                  defaultValue={editing?.minMonths ?? 1}
-                  key={editing?.id + "-min"}
-                />
-              </div>
+                <div className="space-y-1.5 sm:col-span-1">
+                  <Label htmlFor="addon-min" className="text-xs font-medium">
+                    Min. Bulan{" "}
+                    <span className="text-xs font-normal text-muted-foreground">
+                      (Opsional)
+                    </span>
+                  </Label>
+                  <Input
+                    id="addon-min"
+                    name="minMonths"
+                    type="number"
+                    min={1}
+                    placeholder="1"
+                    defaultValue={editing?.minMonths ?? 1}
+                    key={editing?.id + "-min"}
+                  />
+                </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="addon-max" className="text-xs font-medium">
-                  Maksimal Durasi (Bulan){" "}
-                  <span className="text-xs font-normal text-muted-foreground">
-                    (opsional)
-                  </span>
-                </Label>
-                <Input
-                  id="addon-max"
-                  name="maxMonths"
-                  type="number"
-                  min={1}
-                  placeholder="Contoh: 12"
-                  defaultValue={editing?.maxMonths ?? 12}
-                  key={editing?.id + "-max"}
-                />
-              </div>
+                <div className="space-y-1.5 sm:col-span-1">
+                  <Label htmlFor="addon-max" className="text-xs font-medium">
+                    Maks. Bulan{" "}
+                    <span className="text-xs font-normal text-muted-foreground">
+                      (Opsional)
+                    </span>
+                  </Label>
+                  <Input
+                    id="addon-max"
+                    name="maxMonths"
+                    type="number"
+                    min={1}
+                    placeholder="12"
+                    defaultValue={editing?.maxMonths ?? 12}
+                    key={editing?.id + "-max"}
+                  />
+                </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="addon-order" className="text-xs font-medium">
-                  Urutan Tampilan{" "}
-                  <span className="text-xs font-normal text-muted-foreground">
-                    (opsional)
-                  </span>
-                </Label>
-                <Input
-                  id="addon-order"
-                  name="order"
-                  type="number"
-                  placeholder="Contoh: 1"
-                  defaultValue={editing?.order ?? 0}
-                  key={editing?.id + "-order"}
-                />
+                <div className="space-y-1.5 sm:col-span-1">
+                  <Label htmlFor="addon-order" className="text-xs font-medium">
+                    Urutan{" "}
+                    <span className="text-xs font-normal text-muted-foreground">
+                      (Opsional)
+                    </span>
+                  </Label>
+                  <Input
+                    id="addon-order"
+                    name="order"
+                    type="number"
+                    placeholder="0"
+                    defaultValue={editing?.order ?? 0}
+                    key={editing?.id + "-order"}
+                  />
+                </div>
               </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="addon-desc" className="text-xs font-medium">
-                Deskripsi Layanan{" "}
-                <span className="text-xs font-normal text-muted-foreground">
-                  (opsional)
-                </span>
-              </Label>
-              <Input
-                id="addon-desc"
-                name="description"
-                placeholder="Rincian cakupan paket retainer atau layanan garansi berkala..."
-                defaultValue={editing?.description ?? ""}
-                key={editing?.id + "-desc"}
-              />
             </div>
           </CardContent>
 
-          <CardFooter className="flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/50 px-6 py-3.5">
-            {editing && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setEditing(null)}
-              >
-                Batal
+          <CardFooter className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/60 px-5 py-3">
+            <p className="text-xs text-muted-foreground">
+              Biaya add-on dikalikan dengan jumlah bulan yang dipilih klien.
+            </p>
+            <div className="flex items-center gap-2">
+              {editing && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEditing(null)}
+                >
+                  Batal
+                </Button>
+              )}
+              <Button type="submit" size="sm" disabled={pending}>
+                {pending && <Loader2 className="mr-1.5 size-4 animate-spin" />}
+                {editing ? "Simpan Perubahan" : "Tambah Add-On"}
               </Button>
-            )}
-            <Button type="submit" size="sm" disabled={pending}>
-              {pending && <Loader2 className="mr-1.5 size-4 animate-spin" />}
-              {editing ? "Simpan Perubahan" : "Tambah Add-On"}
-            </Button>
+            </div>
           </CardFooter>
         </form>
       </Card>
 
-      {/* Item List Section */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
+      {/* Compact Item List Section */}
+      <div className="space-y-3.5">
+        <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-xl border border-slate-200/80 bg-white px-5 py-4 shadow-2xs">
           <div>
             <h2 className="text-sm font-semibold tracking-tight text-slate-900">
               Daftar Opsi Add-On & Retainer
@@ -252,15 +270,18 @@ export function AddOnsTab({ items }: { items: AdminAddOn[] }) {
               add-on.
             </p>
           </div>
-          <Badge variant="outline" className="text-xs font-medium">
+          <Badge
+            variant="outline"
+            className="px-2.5 py-0.5 text-xs font-semibold"
+          >
             {items.length} opsi terdaftar
           </Badge>
         </div>
 
         {items.length === 0 ? (
           <Card className="flex flex-col items-center justify-center border-dashed p-8 text-center">
-            <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-              <PackagePlus className="size-6" />
+            <div className="mb-2.5 flex size-10 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+              <PackagePlus className="size-5" />
             </div>
             <h3 className="text-sm font-semibold text-slate-900">
               Belum ada opsi add-on
@@ -271,76 +292,74 @@ export function AddOnsTab({ items }: { items: AdminAddOn[] }) {
             </p>
           </Card>
         ) : (
-          <div className="grid gap-3">
+          <div className="grid gap-3.5 md:grid-cols-2">
             {items.map((item) => (
               <Card
                 key={item.id}
-                className="p-4 transition-all hover:border-slate-300 hover:shadow-xs"
+                className="flex h-full flex-col justify-between gap-3.5 border-slate-200/80 p-5 transition-all hover:border-slate-300 hover:shadow-2xs"
               >
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex min-w-0 items-start gap-3.5">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-sky-700">
-                      <CalendarClock className="size-5" />
-                    </div>
-
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <AdminIconArt
+                      hint={`${item.name} ${item.description || ""}`}
+                      size="item"
+                    />
                     <div className="min-w-0 space-y-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-semibold text-slate-900">
-                          {item.name}
-                        </span>
-
-                        <Badge
-                          variant="outline"
-                          className="border-sky-200 bg-sky-50 text-xs font-semibold text-sky-700"
-                        >
-                          {formatCurrency(Number(item.pricePerMonth))}/bulan
-                        </Badge>
-
-                        <Badge
-                          variant="secondary"
-                          className="text-[11px] font-normal"
-                        >
-                          Durasi: {item.minMonths} - {item.maxMonths} Bulan
-                        </Badge>
-
-                        <Badge
-                          variant="outline"
-                          className="text-[11px] text-muted-foreground"
-                        >
-                          Urutan: #{item.order}
-                        </Badge>
-                      </div>
-
-                      {item.description && (
-                        <p className="line-clamp-2 text-xs text-muted-foreground">
-                          {item.description}
-                        </p>
-                      )}
+                      <span className="block text-sm font-semibold text-slate-900">
+                        {item.name}
+                      </span>
+                      <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                        {item.description ||
+                          "Paket pemeliharaan berkala, pemantauan server, dan dukungan teknis pasca-rilis."}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="flex shrink-0 items-center gap-2 self-end sm:self-center">
+                  <div className="flex shrink-0 items-center gap-1">
                     <Button
-                      size="sm"
+                      size="icon"
                       variant="outline"
-                      className="h-8 gap-1.5 text-xs"
+                      className="size-8"
+                      title={`Edit ${item.name}`}
                       onClick={() => {
                         setEditing(item);
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }}
                     >
                       <Pencil className="size-3.5" />
-                      <span>Edit</span>
                     </Button>
                     <Button
-                      size="sm"
+                      size="icon"
                       variant="ghost"
-                      className="h-8 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                      className="size-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
                       onClick={() => setDeleteTarget(item)}
-                      title="Hapus add-on"
+                      title={`Hapus ${item.name}`}
                     >
-                      <Trash2 className="size-4" />
+                      <Trash2 className="size-3.5" />
                     </Button>
+                  </div>
+                </div>
+
+                <div className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-2.5">
+                  <Badge
+                    variant="outline"
+                    className="border-sky-200 bg-sky-50 px-2.5 py-0.5 text-[11px] font-semibold text-sky-700"
+                  >
+                    {formatCurrency(Number(item.pricePerMonth))}/bulan
+                  </Badge>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <Badge
+                      variant="secondary"
+                      className="px-2 py-0 text-[10px] font-normal"
+                    >
+                      Durasi: {item.minMonths}-{item.maxMonths} bln
+                    </Badge>
+                    <Badge
+                      variant="outline"
+                      className="bg-slate-50 px-2 py-0 text-[10px] text-muted-foreground"
+                    >
+                      #{item.order}
+                    </Badge>
                   </div>
                 </div>
               </Card>

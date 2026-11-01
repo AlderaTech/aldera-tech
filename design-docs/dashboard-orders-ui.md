@@ -19,7 +19,7 @@ Komponen header, tombol, empty state, dan error mengimpor stylesheet daftar proy
 
 ## Kondisi dan responsivitas
 
-`OrdersFrame` memberi susunan header yang sama pada halaman dan loading. `OrdersSkeleton` mengikuti bentuk kartu akhir, digunakan oleh `orders/loading.tsx` dan Suspense lokal. Empty state memakai [maskot Layanan](../public/images/services/aldera-cat-services.webp) yang sudah tersedia, static import, `next/image`, sizes responsif, kualitas 90, lazy loading, serta atribut dekoratif.
+`OrdersFrame` memberi susunan header yang sama pada halaman dan loading, menggunakan kotak background card container yang seragam dengan Invoice & Pembayaran dan Proyek Saya (border dan shadow halus). `OrdersSkeleton` mengikuti bentuk kartu akhir, digunakan oleh `orders/loading.tsx` dan Suspense lokal. Empty state memakai [maskot Layanan](../public/images/services/aldera-cat-services.webp) yang sudah tersedia, static import, `next/image`, sizes responsif, kualitas 90, lazy loading, serta atribut dekoratif.
 
 Kartu Belum ada estimasi disusun vertikal rata tengah: maskot, label Rencanakan langkah Anda, judul, dan deskripsi asli. Gambar berukuran 140×140px pada desktop dan 112×112px pada HP, dengan jarak ke teks 18/16px. Lebar deskripsi maksimal 24rem; tinggi kartu mengikuti isi dengan padding 32/24px. Dasar putih solid, border navy yang jelas, serta bayangan halus mengikuti Proyek Saya melalui kelas `statePanel` dan `emptyPanel` yang sudah tersedia. Header tetap memiliki satu tombol Estimasi Baru ke kalkulator dashboard.
 

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
+import { AdminMascot } from "../../../_components/admin-mascot";
 import { BlogForm } from "../../_components/blog-form";
 
 type PageProps = {
@@ -43,9 +44,15 @@ export default async function EditBlogPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Edit Post</h1>
-        <p className="text-muted-foreground">Perbarui konten artikel ini.</p>
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Edit Post</h1>
+          <p className="text-muted-foreground">Perbarui konten artikel ini.</p>
+        </div>
+        <AdminMascot pose="blog" size="header" />
       </div>
       <BlogForm
         initial={{

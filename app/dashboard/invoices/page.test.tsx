@@ -16,6 +16,14 @@ mock.module("@/lib/prisma", () => ({
   prisma: { invoice: { findMany, count } },
 }));
 mock.module("@/lib/actions/invoice", () => ({
+  // Bun shares module export tables with the admin invoice UI tests.
+  createInvoiceAction: mock(),
+  updateInvoiceStatusAction: mock(),
+  sendInvoiceWhatsAppAction: mock(),
+  sendReminderAction: mock(),
+  deleteInvoiceAction: mock(),
+  verifyPaymentProofAction: mock(),
+  rejectPaymentProofAction: mock(),
   submitPaymentProofAction: mock(),
 }));
 mock.module("@/lib/actions/payment", () => ({

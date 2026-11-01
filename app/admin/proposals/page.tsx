@@ -20,6 +20,7 @@ import { ProposalStatus, type Prisma } from "@prisma/client";
 import { SearchFilterBar } from "@/components/shared/search-filter-bar";
 import { DataPagination } from "@/components/shared/data-pagination";
 import { ParamFilterSelect } from "@/components/shared/param-filter-select";
+import { AdminMascot } from "../_components/admin-mascot";
 
 const proposalStatusOptions = [
   { label: "Semua Status", value: "ALL" },
@@ -85,7 +86,10 @@ export default async function AdminProposalsPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
             <FileSignature className="size-6" />
@@ -96,11 +100,14 @@ export default async function AdminProposalsPage({
             menjadi proyek.
           </p>
         </div>
-        <Button asChild>
-          <Link href={ADMIN_ROUTES.proposalNew}>
-            <Plus className="size-4" /> Proposal Baru
-          </Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <AdminMascot pose="contact" size="header" />
+          <Button asChild>
+            <Link href={ADMIN_ROUTES.proposalNew}>
+              <Plus className="size-4" /> Proposal Baru
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <SearchFilterBar

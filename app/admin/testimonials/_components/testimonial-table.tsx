@@ -95,7 +95,7 @@ export function TestimonialTable({
 
   return (
     <div className="space-y-4">
-      <div className="p-4">
+      <div className="border-b border-slate-100 px-5 py-4">
         <SearchFilterBar
           placeholder="Cari nama klien, ulasan, atau proyek..."
           searchParamKey="q"

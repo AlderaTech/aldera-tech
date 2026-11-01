@@ -18,6 +18,7 @@ import { ADMIN_ROUTES, AUTH_ROUTES } from "@/lib/routes";
 import { SearchFilterBar } from "@/components/shared/search-filter-bar";
 import { DataPagination } from "@/components/shared/data-pagination";
 import { ParamFilterSelect } from "@/components/shared/param-filter-select";
+import { AdminMascot } from "../_components/admin-mascot";
 import type { Prisma } from "@prisma/client";
 
 const auditActionOptions = [
@@ -85,11 +86,17 @@ export default async function AuditLogPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Audit Log</h1>
-        <p className="text-muted-foreground">
-          Log pencatatan aktivitas untuk transparansi perubahan di sistem.
-        </p>
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Audit Log</h1>
+          <p className="text-muted-foreground">
+            Log pencatatan aktivitas untuk transparansi perubahan di sistem.
+          </p>
+        </div>
+        <AdminMascot pose="security" size="header" />
       </div>
 
       <SearchFilterBar

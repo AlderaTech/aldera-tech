@@ -4,7 +4,7 @@
 
 Rute `/dashboard/calculator` memakai `appearance="dashboard"` pada `CalculatorWizard`. Tema mengikuti Ringkasan, Proyek Saya, dan Pesanan & Estimasi: token `--overview-*`, Plus Jakarta Sans, navy/biru elektrik, putih, gradasi biru es, border tipis, radius membulat, serta tombol pill. `getStudioDashboardSection` mengaktifkan sidebar/header studio dan label Kalkulator Proyek hanya pada rute tepat tersebut. Halaman detail dan dashboard lain mempertahankan tampilannya.
 
-Breadcrumb mempertahankan Dashboard, Riwayat Estimasi, dan Kalkulator Estimasi. Header ringkas memakai judul Kalkulator Estimasi Proyek, deskripsi asli, serta tautan ke riwayat melalui `DASHBOARD_ROUTES.orders`.
+Header ringkas diseragamkan dengan halaman Invoice & Pembayaran, Proyek Saya, dan Pesanan & Estimasi (menggunakan kotak background card container dengan border dan shadow halus, tanpa breadcrumb dan badge redundan), menyajikan judul Kalkulator Estimasi Proyek, deskripsi, serta tombol Riwayat Estimasi melalui `DASHBOARD_ROUTES.orders`.
 
 Konfigurasi berada di kiri dan ringkasan di kanan mulai 1280px; ringkasan sticky dengan offset header. Pada tablet dan HP keduanya tersusun vertikal. Tidak ada panel scroll bersarang atau tinggi konten yang dikunci. Stepper selalu menampilkan lima label, tanpa tombol lompatan tahap.
 
@@ -26,7 +26,7 @@ Perubahan tahap memindahkan fokus ke region konfigurasi dan menyesuaikan posisi 
 
 ## Ringkasan dan sumber biaya
 
-Sebelum jenis proyek dipilih, ringkasan dashboard menampilkan maskot [Layanan](../public/images/services/aldera-cat-services.webp) dari aset yang tersedia, lalu instruksi tanpa total atau DP. Susunan vertikal rata tengah memakai area gambar 120×120px dengan `object-contain`, jarak 16px, dan tinggi panel mengikuti isi. Maskot dekoratif memakai `next/image` dengan static import dan tidak dibacakan pembaca layar. Ikon kalkulator pada judul tetap tersedia. Setelah pilihan tersedia, maskot/instruksi digantikan rincian biaya dasar, skala, fitur, fitur kustom, add-on, urgensi, total, DP, dan catatan konsultasi sesuai sumber lama. Nama rincian dibungkus penuh dan nominal memakai `formatCurrency`. Empty state varian publik tetap mengikuti tampilannya sendiri.
+Sebelum jenis proyek dipilih, ringkasan dashboard menampilkan ilustrasi teknologi 3D seragam [Design/Teknologi](../public/images/about/technology/design.webp) dari aset yang tersedia, lalu instruksi tanpa total atau DP. Susunan vertikal rata tengah memakai area gambar 120×120px dengan `object-contain`, jarak 16px, dan tinggi panel mengikuti isi. Ilustrasi dekoratif memakai `next/image` dengan static import dan tidak dibacakan pembaca layar. Ikon kalkulator pada judul tetap tersedia. Setelah pilihan tersedia, ilustrasi/instruksi digantikan rincian biaya dasar, skala, fitur, fitur kustom, add-on, urgensi, total, DP, dan catatan konsultasi sesuai sumber lama. Nama rincian dibungkus penuh dan nominal memakai `formatCurrency`. Empty state varian publik tetap mengikuti tampilannya sendiri.
 
 `use-calculator-wizard.ts`, `lib/calculator.ts`, `lib/calculator-utils.ts`, dan `lib/actions/calculator.ts` tidak diubah. Pengambilan data server, serialisasi, harga dasar, pengali, persentase DP, pembulatan, validasi, payload, autentikasi, dan penghitungan ulang server tetap menggunakan implementasi asli. `getSiteSettings()` dan nomor WhatsApp diteruskan seperti semula. Callback login dan WhatsApp pada varian publik tetap tersedia.
 

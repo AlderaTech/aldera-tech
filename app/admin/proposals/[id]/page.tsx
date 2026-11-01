@@ -54,7 +54,10 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-start justify-between gap-4"
+      >
         <div className="space-y-2">
           <Button asChild variant="ghost" size="sm" className="-ml-2">
             <Link href={ADMIN_ROUTES.proposals}>

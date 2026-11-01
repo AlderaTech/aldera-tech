@@ -5,7 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DASHBOARD_ROUTES } from "@/lib/routes";
 import { getInitials } from "@/lib/utils";
-import mascot from "@/public/images/auth/aldera-cat-register.webp";
+import mascotGreeting from "@/public/images/dashboard/aldera-cat-greeting.webp";
 import styles from "./overview.module.css";
 import patternStyles from "./overview-patterns.module.css";
 import { EmptyStatePattern } from "./empty-state-pattern";
@@ -36,16 +36,18 @@ export function OverviewWelcome({ user }: { user: Session["user"] }) {
           </div>
         </div>
       </div>
-      <Image
-        src={mascot}
-        alt=""
-        aria-hidden="true"
-        className={styles.mascot}
-        width={80}
-        height={96}
-        sizes="(min-width: 640px) 80px, 1px"
-        quality={90}
-      />
+      <div className={styles.welcomeVisual} aria-hidden="true">
+        <Image
+          src={mascotGreeting}
+          alt=""
+          aria-hidden="true"
+          className={styles.mascot}
+          width={112}
+          height={112}
+          sizes="(min-width: 640px) 112px, 1px"
+          priority
+        />
+      </div>
       <EmptyStatePattern className={patternStyles.welcomePattern} />
     </section>
   );

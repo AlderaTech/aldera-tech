@@ -16,7 +16,7 @@ Header berupa kartu ringkas berisi judul Aldera AI API Relay, deskripsi, mini ma
 
 Header aplikasi sticky setinggi 72px tetap berada dalam alur layout bersama. Workspace memakai lebar penuh area konten yang tersedia dan tambahan padding atas 4px, tanpa offset negatif. Track tab, panel aktif, dan kontrol fokus memiliki `scroll-margin-top: 5.5rem` agar navigasi tetap terlihat di bawah header.
 
-Delapan tab tetap memakai Radix Tabs dengan nilai dan urutan asli: `catalog`, `playground`, `keys`, `billing`, `telegram`, `analytics`, `simulator`, `health`. Navigasi selalu satu baris dengan label utuh 14px; track dapat digulir horizontal jika ruang tidak mencukupi. `RelayTabs` menerima `activeTab` dari state yang sama, mengungkap tab aktif saat dipilih atau di-resize, dan mengembalikan track ke area terlihat jika perpindahan dari katalog membuatnya berada di luar viewport. Helper posisi gulir membatasi perpindahan ke panjang track; `ResizeObserver` dibersihkan saat effect dilepas. Navigasi keyboard, query `tab`, alias lama, pemilihan model dari katalog, serta state workspace tetap menggunakan hook yang tersedia.
+Delapan tab tetap memakai Radix Tabs dengan nilai dan urutan asli: `catalog`, `playground`, `keys`, `billing`, `telegram`, `analytics`, `simulator`, `health`. Navigasi selalu satu baris dengan label utuh 14px, diposisikan rata tengah (center) pada track navigasi, serta dapat digulir horizontal jika ruang tidak mencukupi. `RelayTabs` menerima `activeTab` dari state yang sama, mengungkap tab aktif saat dipilih atau di-resize, dan mengembalikan track ke area terlihat jika perpindahan dari katalog membuatnya berada di luar viewport. Helper posisi gulir membatasi perpindahan ke panjang track; `ResizeObserver` dibersihkan saat effect dilepas. Navigasi keyboard, query `tab`, alias lama, pemilihan model dari katalog, serta state workspace tetap menggunakan hook yang tersedia.
 
 Label, ikon, dan deskripsi singkat setiap bagian berada dalam `_data/relay-sections.ts`, digunakan bersama oleh navigasi dan `RelaySectionHeading`. Header bagian tidak menambah kontrol atau sumber data baru. Panel nonaktif tetap tersembunyi; panel aktif memakai satu track `minmax(0, 1fr)` agar isi tabel tidak memperlebar seluruh halaman.
 
@@ -39,13 +39,13 @@ Grid katalog memakai satu kolom secara default, dua kolom pada lebar konten mini
 
 `RelayLoading` menyediakan skeleton kartu header, delapan slot navigasi dalam satu baris, judul bagian, dan enam kartu katalog. Grid skeleton memakai breakpoint container yang sama dengan katalog akhir.
 
-## Maskot
+## Ilustrasi maskot & teknologi 3D
 
-Tiga aset yang tersedia digunakan kembali tanpa membuat karakter atau gambar pengganti:
+Tiga aset digunakan pada workspace AI Relay:
 
-- `public/images/dashboard/ai-relay/aldera-relay-connect.webp`: aksen header sekitar 96 × 104px.
-- `public/images/dashboard/ai-relay/aldera-relay-coding.webp`: aksen dialog IDE sekitar 96px, disembunyikan pada HP.
-- `public/images/dashboard/ai-relay/aldera-relay-assistant.webp`: empty state Playground sekitar 104px.
+- `public/images/ai-relay/aldera-cat-relay-balance.webp`: maskot kucing 3D Aldera Tech di sebelah kartu Saldo Aktif pada header, berpose melayang sedikit dengan tangan kanan menengadah memunculkan hologram ikon dompet 3D biru bercahaya dan tangan kiri menunjuk/menyapa ke arah kanan (ke arah kartu saldo).
+- `public/images/about/technology/web.webp`: aksen dialog IDE sekitar 96px, disembunyikan pada HP.
+- `public/images/about/technology/design.webp`: empty state Playground sekitar 104px.
 
 Aset memiliki alpha transparan, ukuran intrinsik 512 × 512, static import, dan penyajian `next/image` dengan kualitas 90 serta `sizes` responsif. Maskot dekoratif memakai alt kosong, `aria-hidden`, dan `pointer-events: none`. Spesifikasi serta prompt sumber tersedia di [panduan maskot](dashboard-ai-relay-mascots.md).
 

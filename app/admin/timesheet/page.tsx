@@ -14,6 +14,8 @@ import {
 import { Clock, Users, Briefcase, DollarSign, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { API_ROUTES } from "@/lib/routes";
+import { AdminMascot } from "../_components/admin-mascot";
+import { AdminStatCard } from "../_components/admin-stat-card";
 
 export default async function TimesheetPage({
   searchParams,
@@ -115,103 +117,98 @@ export default async function TimesheetPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Timesheet</h1>
           <p className="text-sm text-muted-foreground">
             {formatDate(from)} — {formatDate(to)}
           </p>
         </div>
-        <form className="flex items-end gap-2">
-          <div>
-            <label htmlFor="from" className="text-xs text-muted-foreground">
-              Dari
-            </label>
-            <input
-              id="from"
-              type="date"
-              name="from"
-              defaultValue={from.toISOString().slice(0, 10)}
-              className="block rounded border px-2 py-1 text-sm"
-            />
-          </div>
-          <div>
-            <label htmlFor="to" className="text-xs text-muted-foreground">
-              Sampai
-            </label>
-            <input
-              id="to"
-              type="date"
-              name="to"
-              defaultValue={to.toISOString().slice(0, 10)}
-              className="block rounded border px-2 py-1 text-sm"
-            />
-          </div>
-          <button
-            type="submit"
-            className="rounded bg-primary px-3 py-1 text-sm text-primary-foreground"
-          >
-            Filter
-          </button>
-          <Button asChild variant="outline" size="sm">
-            <a
-              href={API_ROUTES.exportTimesheetWithRange(
-                from.toISOString().slice(0, 10),
-                to.toISOString().slice(0, 10)
-              )}
-              download
+        <div className="flex flex-wrap items-center gap-3">
+          <AdminMascot pose="activity" size="header" />
+          <form className="flex flex-wrap items-end gap-2">
+            <div>
+              <label htmlFor="from" className="text-xs text-muted-foreground">
+                Dari
+              </label>
+              <input
+                id="from"
+                type="date"
+                name="from"
+                defaultValue={from.toISOString().slice(0, 10)}
+                className="block rounded border px-2 py-1 text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="to" className="text-xs text-muted-foreground">
+                Sampai
+              </label>
+              <input
+                id="to"
+                type="date"
+                name="to"
+                defaultValue={to.toISOString().slice(0, 10)}
+                className="block rounded border px-2 py-1 text-sm"
+              />
+            </div>
+            <button
+              type="submit"
+              className="rounded bg-primary px-3 py-1 text-sm text-primary-foreground"
             >
-              <Download className="size-3.5" /> CSV
-            </a>
-          </Button>
-        </form>
+              Filter
+            </button>
+            <Button asChild variant="outline" size="sm">
+              <a
+                href={API_ROUTES.exportTimesheetWithRange(
+                  from.toISOString().slice(0, 10),
+                  to.toISOString().slice(0, 10)
+                )}
+                download
+              >
+                <Download className="size-3.5" /> CSV
+              </a>
+            </Button>
+          </form>
+        </div>
       </div>
 
       {/* Summary cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Jam</CardTitle>
-            <Clock className="size-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{data.totalHours} jam</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Billable</CardTitle>
-            <DollarSign className="size-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              {data.billableHours} jam{" "}
-              <span className="text-sm text-muted-foreground">
-                ({data.billableRate}%)
-              </span>
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Est. Revenue</CardTitle>
-            <Briefcase className="size-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              Rp {data.estimatedRevenue.toLocaleString("id-ID")}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Entries</CardTitle>
-            <Users className="size-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{data.entryCount}</p>
-          </CardContent>
-        </Card>
+        <AdminStatCard
+          label="Total Jam"
+          value={`${data.totalHours} jam`}
+          helper="Akumulasi durasi kerja"
+          icon={Clock}
+          artwork="tech-backend"
+          toneClassName="border-primary/20 bg-primary/10 text-primary"
+        />
+        <AdminStatCard
+          label="Billable"
+          value={`${data.billableHours} jam (${data.billableRate}%)`}
+          helper="Jam kerja dapat ditagihkan"
+          icon={DollarSign}
+          artwork="service-commerce"
+          toneClassName="border-sky-200 bg-sky-50 text-sky-700"
+        />
+        <AdminStatCard
+          label="Est. Revenue"
+          value={`Rp ${data.estimatedRevenue.toLocaleString("id-ID")}`}
+          helper="Estimasi nilai jam billable"
+          icon={Briefcase}
+          artwork="service-seo"
+          toneClassName="border-emerald-200 bg-emerald-50 text-emerald-700"
+        />
+        <AdminStatCard
+          label="Entries"
+          value={data.entryCount}
+          helper="Total sesi log tercatat"
+          icon={Users}
+          artwork="service-consulting"
+          toneClassName="border-amber-200 bg-amber-50 text-amber-700"
+        />
       </div>
 
       {/* Per-user table */}

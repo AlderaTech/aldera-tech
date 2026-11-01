@@ -8,7 +8,6 @@ export function ProjectListHeader() {
   return (
     <div className={styles.header}>
       <div>
-        <p className={styles.eyebrow}>Ruang kolaborasi</p>
         <h1 id="projects-heading">Proyek Saya</h1>
         <p className={styles.description}>
           Pantau semua proyek Anda dengan Aldera Tech.

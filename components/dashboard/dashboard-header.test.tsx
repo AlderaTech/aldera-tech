@@ -53,7 +53,7 @@ describe("Header halaman pengguna", () => {
       DASHBOARD_ROUTES.aiRelay,
       DASHBOARD_ROUTES.invoices,
       DASHBOARD_ROUTES.profile,
-      DASHBOARD_ROUTES.settings,
+
       DASHBOARD_ROUTES.projectDetail("project-ui-test"),
     ]) {
       pathname = route;
@@ -78,6 +78,40 @@ describe("Header halaman pengguna", () => {
       />
     );
     expectHeaderControls(html);
+  });
+
+  it("menghapus breadcrumb Admin / Dashboard di seluruh halaman admin tanpa menghilangkan kontrol", () => {
+    const adminSession: Session = {
+      ...session,
+      user: { ...session.user, role: "ADMIN", roles: ["ADMIN"] },
+    };
+    const adminNavConfig = getAdminNavConfig("ADMIN");
+
+    for (const route of [
+      ADMIN_ROUTES.home,
+      ADMIN_ROUTES.projects,
+      ADMIN_ROUTES.orders,
+      ADMIN_ROUTES.calculator,
+      ADMIN_ROUTES.proposals,
+      ADMIN_ROUTES.invoices,
+      ADMIN_ROUTES.aiRelay,
+      ADMIN_ROUTES.blog,
+      ADMIN_ROUTES.blogCategories,
+      ADMIN_ROUTES.settings,
+    ]) {
+      pathname = route;
+      const html = renderToStaticMarkup(
+        <DashboardHeader
+          session={adminSession}
+          navConfig={adminNavConfig}
+          className="admin-header-test"
+        />
+      );
+      expect(html).toContain("admin-header-test");
+      expect(html).not.toContain('aria-label="Breadcrumb admin"');
+      expect(html).not.toContain("Admin /");
+      expectHeaderControls(html);
+    }
   });
 
   it("membersihkan style breadcrumb yang sudah tidak digunakan", () => {

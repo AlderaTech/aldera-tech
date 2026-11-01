@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { AdminFieldLabel as Label } from "../../_components/admin-field-label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -51,7 +51,9 @@ export function ProjectCreateForm({
     <form onSubmit={handleSubmit}>
       <Card className="max-w-3xl space-y-5 p-6">
         <div className="space-y-2">
-          <Label htmlFor="title">Judul proyek</Label>
+          <Label required htmlFor="title">
+            Judul proyek
+          </Label>
           <Input
             id="title"
             name="title"
@@ -61,7 +63,9 @@ export function ProjectCreateForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="description">Deskripsi</Label>
+          <Label required htmlFor="description">
+            Deskripsi
+          </Label>
           <Textarea
             id="description"
             name="description"
@@ -72,7 +76,9 @@ export function ProjectCreateForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="clientId">Client</Label>
+          <Label required htmlFor="clientId">
+            Client
+          </Label>
           <Select name="clientId" required>
             <SelectTrigger id="clientId">
               <SelectValue placeholder="Pilih client…" />
@@ -89,7 +95,9 @@ export function ProjectCreateForm({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="deadline">Deadline</Label>
+            <Label optional htmlFor="deadline">
+              Deadline
+            </Label>
             <Input
               id="deadline"
               name="deadline"
@@ -98,7 +106,9 @@ export function ProjectCreateForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="budget">Budget (IDR)</Label>
+            <Label optional htmlFor="budget">
+              Budget (IDR)
+            </Label>
             <Input
               id="budget"
               name="budget"

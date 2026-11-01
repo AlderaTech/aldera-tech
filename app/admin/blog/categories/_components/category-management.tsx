@@ -28,7 +28,7 @@ export function CategoryManagement({
       <CategoryStatGrid categories={categories} />
 
       <Card className="overflow-hidden border-slate-200 bg-white shadow-sm">
-        <CardHeader className="border-b border-slate-200 bg-slate-50/70">
+        <CardHeader className="border-b border-slate-200 bg-slate-50/70 px-6 py-5">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <CardTitle className="flex items-center gap-2 text-base">

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { deleteTestimonialAction } from "@/lib/actions/testimonial";
+import { AdminMascot } from "../../_components/admin-mascot";
 
 import { TestimonialStatGrid } from "./testimonial-stat-grid";
 import { TestimonialTable } from "./testimonial-table";
@@ -81,7 +82,10 @@ export function TestimonialManagement({
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Testimoni Klien</h1>
           <p className="text-sm text-muted-foreground">
@@ -89,16 +93,19 @@ export function TestimonialManagement({
             Tech.
           </p>
         </div>
-        <Button onClick={handleCreate} className="cursor-pointer gap-2">
-          <Plus className="size-4" /> Tambah Testimoni
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <AdminMascot pose="assistant" size="header" />
+          <Button onClick={handleCreate} className="cursor-pointer gap-2">
+            <Plus className="size-4" /> Tambah Testimoni
+          </Button>
+        </div>
       </div>
 
       {/* Metrics Stat Grid */}
       <TestimonialStatGrid items={testimonials} />
 
       {/* Testimonials Table Card */}
-      <Card className="overflow-hidden border border-slate-200 bg-white shadow-xs">
+      <Card className="overflow-hidden border border-slate-200 bg-white p-0 shadow-xs">
         <TestimonialTable
           items={testimonials}
           onEdit={handleEdit}

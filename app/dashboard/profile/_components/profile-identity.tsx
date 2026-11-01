@@ -73,12 +73,10 @@ export function ProfileIdentity({
           </p>
         </div>
       </div>
-      {editAction && (
-        <div className={styles.identityActions}>
-          <ProfileMascot variant="guide" className={styles.identityMascot} />
-          {editAction}
-        </div>
-      )}
+      <div className={styles.identityActions}>
+        <ProfileMascot variant="guide" className={styles.identityMascot} />
+        {editAction}
+      </div>
     </section>
   );
 }

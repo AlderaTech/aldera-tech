@@ -44,7 +44,10 @@ export function InvoiceDetailHeader({ invoice }: { invoice: InvoiceDetail }) {
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-start justify-between gap-4"
+      >
         <div className="min-w-0 space-y-3">
           <Button asChild variant="ghost" size="sm" className="-ml-2">
             <Link href={ADMIN_ROUTES.invoices}>

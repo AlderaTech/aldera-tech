@@ -1,15 +1,48 @@
 .page {
+  --overview-line: color-mix(
+    in srgb,
+    var(--overview-ink, #102651) 18%,
+    var(--overview-paper, #fff)
+  );
+  --overview-muted: color-mix(
+    in srgb,
+    var(--overview-ink, #102651) 72%,
+    var(--overview-paper, #fff)
+  );
   display: grid;
   min-width: 0;
   gap: 1.5rem;
 }
 .header {
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 0.35rem 0 0.75rem;
+  gap: 1.25rem;
+  overflow: hidden;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 1.25rem;
+  background: var(--overview-paper, #fff);
+  box-shadow: 0 4px 18px
+    color-mix(in srgb, var(--overview-ink, #102651) 5%, transparent);
+}
+.header::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 0 auto;
+  width: min(35%, 15rem);
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--overview-blue, #245fe5) 20%, transparent) 0.8px,
+    transparent 1px
+  );
+  background-size: 13px 13px;
+  mask-image: linear-gradient(to left, black, transparent);
+  pointer-events: none;
+  content: "";
 }
 .eyebrow {
   margin: 0 0 0.45rem;

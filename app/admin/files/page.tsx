@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
+import { AdminEmptyState } from "../_components/admin-empty-state";
+import { AdminMascot } from "../_components/admin-mascot";
 import { safeDb } from "@/lib/safe-db";
 import { formatDate } from "@/lib/utils";
 import { FileUploader } from "@/components/dashboard/file-uploader";
@@ -85,11 +87,17 @@ export default async function AdminFilesPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">File Manager</h1>
-        <p className="text-muted-foreground">
-          Semua file yang diunggah ke platform.
-        </p>
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">File Manager</h1>
+          <p className="text-muted-foreground">
+            Semua file yang diunggah ke platform.
+          </p>
+        </div>
+        <AdminMascot pose="guide" size="header" />
       </div>
 
       <FileUploader />
@@ -103,8 +111,12 @@ export default async function AdminFilesPage({
       </SearchFilterBar>
 
       {files.length === 0 ? (
-        <Card className="p-10 text-center text-muted-foreground">
-          Belum ada file terunggah atau tidak ada file yang sesuai kriteria.
+        <Card>
+          <AdminEmptyState
+            mascot
+            title="Belum ada berkas untuk ditampilkan"
+            description="Belum ada file terunggah atau tidak ada file yang sesuai kriteria."
+          />
         </Card>
       ) : (
         <div className="space-y-6">

@@ -8,6 +8,7 @@ import { hasPermission, PERMISSIONS } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import { ADMIN_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
+import { AdminMascot } from "../../_components/admin-mascot";
 import { CategoryManagement } from "./_components/category-management";
 
 export default async function AdminBlogCategoriesPage() {
@@ -34,7 +35,10 @@ export default async function AdminBlogCategoriesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
         <div>
           <div className="mb-2">
             <Button asChild variant="ghost" size="sm" className="-ml-3">
@@ -48,6 +52,7 @@ export default async function AdminBlogCategoriesPage() {
             Kelola kategori untuk filter, navigasi, dan pengelompokan artikel.
           </p>
         </div>
+        <AdminMascot pose="blog" size="header" />
       </div>
 
       <CategoryManagement categories={categories} permissions={permissions} />

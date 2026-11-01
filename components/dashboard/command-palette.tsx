@@ -10,7 +10,6 @@ import {
   Users,
   Newspaper,
   Loader2,
-  Search as SearchIcon,
   LayoutDashboard,
   Plus,
   FileSignature,
@@ -29,8 +28,6 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES, API_ROUTES } from "@/lib/routes";
 import {
@@ -164,7 +161,7 @@ const adminQuickNav: QuickNavItem[] = [
 ];
 
 const clientQuickNav: QuickNavItem[] = [
-  { label: "Overview", href: DASHBOARD_ROUTES.home, icon: LayoutDashboard },
+  { label: "Ringkasan", href: DASHBOARD_ROUTES.home, icon: LayoutDashboard },
   {
     label: "Proyek Saya",
     href: DASHBOARD_ROUTES.projects,
@@ -281,12 +278,6 @@ export function CommandPalette({ role }: { role?: Role | null }) {
                 {n.label}
               </CommandItem>
             ))}
-            <CommandSeparator />
-            <CommandItem disabled className="!opacity-60">
-              <SearchIcon className="size-4" />
-              Ketik untuk mencari…
-              <CommandShortcut>⌘K</CommandShortcut>
-            </CommandItem>
           </CommandGroup>
         )}
 

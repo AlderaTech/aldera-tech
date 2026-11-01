@@ -57,7 +57,7 @@
   display: grid;
   width: 100%;
   min-width: 0;
-  gap: 1.5rem;
+  gap: 1.1rem;
   padding-top: 0.25rem;
   scroll-margin-top: 5.5rem;
   container-type: inline-size;
@@ -72,12 +72,12 @@
 .loadingHeader {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 20rem;
+  grid-template-columns: minmax(0, 1fr) 17rem;
   align-items: center;
-  gap: 1.75rem;
-  padding: 1.35rem;
+  gap: 1.25rem;
+  padding: 1rem 1.25rem;
   border: 1px solid var(--relay-line);
-  border-radius: 1.5rem;
+  border-radius: 1.25rem;
   background: var(--relay-paper);
   box-shadow: 0 4px 18px color-mix(in srgb, var(--relay-ink) 5%, transparent);
 }
@@ -98,9 +98,9 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.3rem;
   color: var(--relay-blue);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 750;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -110,7 +110,7 @@
   height: 0.9rem;
 }
 .header h1 {
-  font-size: clamp(1.5rem, 2.1vw, 1.9rem);
+  font-size: clamp(1.35rem, 1.9vw, 1.7rem);
   font-weight: 800;
   line-height: 1.3;
   letter-spacing: -0.045em;
@@ -118,10 +118,10 @@
 }
 .description {
   max-width: 32rem;
-  margin-top: 0.5rem;
+  margin-top: 0.35rem;
   color: var(--relay-muted);
-  font-size: 0.9375rem;
-  line-height: 1.8;
+  font-size: 0.875rem;
+  line-height: 1.65;
 }
 .mascot {
   position: relative;
@@ -136,17 +136,17 @@
   );
 }
 .welcomeMascot {
-  width: 6rem;
-  height: 6.5rem;
+  width: 6.25rem;
+  height: 7.25rem;
 }
 .balancePanel {
   display: grid;
   min-width: 0;
   align-items: center;
-  gap: 0.85rem;
-  padding: 1rem 1.2rem;
+  gap: 0.65rem;
+  padding: 0.8rem 1rem;
   border: 1px solid var(--relay-line);
-  border-radius: 1.25rem;
+  border-radius: 1rem;
   background: var(--relay-canvas);
 }
 .balancePanel > div {
@@ -169,7 +169,7 @@
   color: var(--relay-blue);
 }
 .balancePanel strong {
-  font-size: clamp(1.375rem, 1.7vw, 1.75rem);
+  font-size: clamp(1.25rem, 1.5vw, 1.5rem);
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.035em;
@@ -190,7 +190,7 @@
 .sectionPanel {
   min-width: 0;
   grid-template-columns: minmax(0, 1fr);
-  gap: 1.25rem;
+  gap: 1rem;
   padding: 0;
   border: 0;
   background: transparent;
@@ -210,8 +210,8 @@
   align-items: flex-end;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 0.75rem 1.25rem;
-  padding: 0.15rem 0.25rem 0.25rem;
+  gap: 0.5rem 1rem;
+  padding: 0 0.15rem;
 }
 .sectionHeading > div {
   display: flex;
@@ -222,21 +222,21 @@
 .sectionHeading span {
   display: grid;
   flex-shrink: 0;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2rem;
+  height: 2rem;
   place-items: center;
   border: 1px solid var(--relay-line);
-  border-radius: 0.7rem;
+  border-radius: 0.6rem;
   background: var(--relay-paper);
   color: var(--relay-blue);
 }
 .sectionHeading svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 .sectionHeading h2 {
   color: var(--relay-ink);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 800;
   line-height: 1.4;
   letter-spacing: -0.03em;
@@ -249,12 +249,12 @@
 }
 .loadingTabs {
   display: flex;
-  gap: 0.45rem;
+  gap: 0.35rem;
   min-width: 0;
   overflow: hidden;
-  padding: 0.65rem;
+  padding: 0.25rem;
   border: 1px solid var(--relay-line);
-  border-radius: 1.15rem;
+  border-radius: 0.85rem;
   background: var(--relay-paper);
 }
 .loadingTabs > * {
@@ -262,19 +262,21 @@
 }
 .loadingHeader > :last-child {
   width: 100%;
-  height: 8.25rem;
+  height: 6.5rem;
 }
 .tabScroll {
+  display: flex;
+  justify-content: center;
   min-width: 0;
   max-width: 100%;
-  padding: 0.35rem;
+  padding: 0.25rem;
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-behavior: auto;
   scroll-padding-inline: 0.5rem;
   scroll-margin-top: 5.5rem;
   border: 1px solid var(--relay-line);
-  border-radius: 1.15rem;
+  border-radius: 0.85rem;
   background: var(--relay-paper);
   scrollbar-width: thin;
   scrollbar-color: var(--relay-line) transparent;
@@ -283,7 +285,8 @@
 .workspace .tabList {
   display: flex;
   flex-wrap: nowrap;
-  justify-content: flex-start;
+  justify-content: center;
+  margin-inline: auto;
   width: max-content;
   min-width: max-content;
   height: auto;
@@ -293,12 +296,12 @@
 }
 .workspace .tabList button {
   flex-shrink: 0;
-  gap: 0.5rem;
-  min-height: 2.8rem;
-  padding: 0.7rem 0.85rem;
-  border-radius: 0.8rem;
+  gap: 0.4rem;
+  min-height: 2.25rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.6rem;
   color: var(--relay-muted);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 650;
   white-space: nowrap;
 }
@@ -319,10 +322,10 @@
   margin-block: 0;
 }
 .workspace [data-slot="card"] {
-  gap: 1rem;
-  padding-block: 1.25rem;
+  gap: 0.85rem;
+  padding-block: 1rem;
   border-color: var(--relay-line);
-  border-radius: 1.3rem;
+  border-radius: 1.1rem;
   background: var(--relay-paper);
   box-shadow: 0 4px 18px color-mix(in srgb, var(--relay-ink) 5%, transparent);
 }
@@ -458,28 +461,30 @@
   box-shadow: 0 8px 25px color-mix(in srgb, var(--relay-blue) 6%, transparent);
 }
 .workspace [data-relay-model-card] [data-slot="card-header"] {
-  padding-block: 1.1rem 0.85rem;
+  padding: 0.75rem 0.875rem 0.35rem;
 }
 .workspace [data-relay-model-card] [data-slot="card-content"] {
-  padding-bottom: 1.1rem;
+  padding: 0 0.875rem 0.6rem;
 }
 .workspace [data-relay-model-card] [data-slot="card-header"] > div:first-child {
   flex-wrap: wrap;
+  gap: 0.35rem;
 }
 .workspace [data-relay-model-card] [data-slot="card-title"] {
   flex: 1;
-  min-width: 8rem;
-  font-size: 1rem;
-  line-height: 1.6;
+  min-width: 7rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
 }
 .workspace [data-relay-model-card] code {
   flex: 1;
   min-width: 0;
   max-width: 100%;
   border-color: var(--relay-line);
-  border-radius: 0.45rem;
+  border-radius: 0.35rem;
   background: var(--relay-canvas);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.4rem;
 }
 .workspace [data-relay-model-card] [data-slot="card-header"] button {
   flex-shrink: 0;
@@ -491,9 +496,11 @@
   [data-relay-model-card]
   [data-slot="card-content"]
   > div:first-child {
-  padding: 0.85rem;
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.5rem 0.65rem;
   border-color: var(--relay-line);
-  border-radius: 0.8rem;
+  border-radius: 0.6rem;
   background: var(--relay-canvas);
 }
 .workspace
@@ -504,9 +511,9 @@
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.25rem 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.75;
+  gap: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
 }
 .workspace
   [data-relay-model-card]
@@ -526,23 +533,25 @@
   font-variant-numeric: tabular-nums;
 }
 .workspace [data-relay-model-card] [data-slot="card-content"] p {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-style: normal;
-  line-height: 1.8;
+  line-height: 1.45;
 }
 .workspace [data-relay-model-card] [data-slot="card-footer"] {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
-  gap: 0.5rem;
-  padding-block: 0.9rem;
+  gap: 0.4rem;
+  padding: 0.45rem 0.875rem 0.6rem;
   border-color: var(--relay-line);
   background: var(--relay-paper);
 }
 .workspace [data-relay-model-card] [data-slot="card-footer"] button {
   flex: 1;
-  padding-inline: 0.65rem;
-  font-size: 0.875rem;
+  min-height: 2rem;
+  height: 2rem;
+  padding-inline: 0.5rem;
+  font-size: 0.75rem;
 }
 .workspace [data-relay-playground] {
   grid-template-columns: minmax(0, 1fr);

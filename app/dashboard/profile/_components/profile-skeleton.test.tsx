@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { Children, isValidElement, type ReactNode } from "react";
 import { ProfileSkeleton } from "./profile-skeleton";
 describe("Skeleton susunan Profil", () => {
-  it("menampilkan identitas dan grid proyek/pembayaran/aktivitas tanpa panel langganan", () => {
+  it("menampilkan skeleton kartu identitas dan kartu formulir profil tanpa panel demo", () => {
     const element = ProfileSkeleton();
     const children = Children.toArray(element.props.children);
     expect(children).toHaveLength(2);
@@ -12,7 +12,7 @@ describe("Skeleton susunan Profil", () => {
     expect(html).toContain('role="status"');
     expect(html).not.toContain("Demo");
     if (!isValidElement<{ children: ReactNode }>(children[1]))
-      throw new Error("Grid hilang");
-    expect(Children.toArray(children[1].props.children)).toHaveLength(2);
+      throw new Error("Kartu formulir skeleton hilang");
+    expect(Children.toArray(children[1].props.children)).toHaveLength(3);
   });
 });

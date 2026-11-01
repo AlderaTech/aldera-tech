@@ -32,22 +32,19 @@ mock.module("next/navigation", () => ({
 const { default: Page, metadata } = await import("./page");
 const { ProfileContent } = await import("./_components/profile-content");
 const { default: Loading } = await import("./loading");
-const { ProfileEditor } = await import("./_components/profile-editor");
+const { ProfileForm } = await import("./_components/profile-form");
 
-function findEditorValues(node: ReactNode): ProfileValues | undefined {
+function findFormValues(node: ReactNode): ProfileValues | undefined {
   for (const child of Children.toArray(node)) {
     if (
       !isValidElement<{
         children?: ReactNode;
-        editAction?: ReactNode;
         defaultValues?: ProfileValues;
       }>(child)
     )
       continue;
-    if (child.type === ProfileEditor) return child.props.defaultValues;
-    const found =
-      findEditorValues(child.props.children) ??
-      findEditorValues(child.props.editAction);
+    if (child.type === ProfileForm) return child.props.defaultValues;
+    const found = findFormValues(child.props.children);
     if (found) return found;
   }
 }
@@ -66,7 +63,7 @@ describe("Halaman Profil Saya", () => {
     await expect(Page()).rejects.toThrow(`redirect:${AUTH_ROUTES.login}`);
     expect(redirect).toHaveBeenCalledWith(AUTH_ROUTES.login);
   });
-  it("mempertahankan query, field yang dipilih, dan nilai awal dari pengguna", async () => {
+  it("mempertahankan query, field yang dipilih, dan nilai awal dari pengguna tanpa kartu demo", async () => {
     const content = await ProfileContent({ userId: user.id });
     const html = renderToStaticMarkup(content);
     expect(findUnique).toHaveBeenCalledWith({
@@ -83,12 +80,16 @@ describe("Halaman Profil Saya", () => {
     });
     expect(html).toContain(user.email);
     expect(html).toContain(user.phone!);
-    expect(html).toContain("Edit Profil");
-    expect(findEditorValues(content)).toEqual({
+    expect(html).toContain("Informasi profil");
+    expect(html).toContain("Simpan Perubahan");
+    expect(findFormValues(content)).toEqual({
       name: user.name,
       phone: user.phone,
     });
-    expect(html).not.toContain("<form");
+    expect(html).not.toContain("Demo");
+    expect(html).not.toContain("Seluruh Proyek Saya");
+    expect(html).not.toContain("Informasi Pembayaran");
+    expect(html).not.toContain("Aktivitas Terbaru");
   });
   it("tidak menampilkan form kosong ketika data tidak tersedia atau query gagal", async () => {
     findUnique.mockResolvedValueOnce(null);
@@ -105,7 +106,7 @@ describe("Halaman Profil Saya", () => {
     findUnique.mockResolvedValueOnce({ ...user, phone: null });
     const content = await ProfileContent({ userId: user.id });
     const html = renderToStaticMarkup(content);
-    expect(findEditorValues(content)).toEqual({ name: user.name, phone: "" });
+    expect(findFormValues(content)).toEqual({ name: user.name, phone: "" });
     expect(html).toContain("Belum ditambahkan");
     expect(metadata.title).toBe("Profil Saya");
     expect(metadata.description).toContain("profil");
@@ -115,9 +116,7 @@ describe("Halaman Profil Saya", () => {
     expect(getStudioDashboardSection(DASHBOARD_ROUTES.profile)).toBe(
       "Profil Saya"
     );
-    expect(getStudioDashboardSection(DASHBOARD_ROUTES.settings)).toBe(
-      "Pengaturan"
-    );
+    expect(getStudioDashboardSection("/dashboard/settings")).toBeNull();
     expect(
       getStudioDashboardSection(`${DASHBOARD_ROUTES.profile}/detail`)
     ).toBeNull();

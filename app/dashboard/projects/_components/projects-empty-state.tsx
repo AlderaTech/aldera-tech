@@ -1,5 +1,5 @@
 import Image from "next/image";
-import mascot from "@/public/images/about/aldera-cat-about.webp";
+import emptyIllustration from "@/public/images/about/technology/design.webp";
 import { cn } from "@/lib/utils";
 import styles from "./project-list.module.css";
 import { EmptyStatePattern } from "../../_components/empty-state-pattern";
@@ -11,7 +11,7 @@ export function ProjectsEmptyState() {
       aria-labelledby="projects-empty-heading"
     >
       <Image
-        src={mascot}
+        src={emptyIllustration}
         alt=""
         aria-hidden="true"
         width={140}

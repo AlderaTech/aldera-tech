@@ -23,9 +23,14 @@ import { getStudioDashboardSection } from "./studio-dashboard-routes";
 type DashboardHeaderProps = {
   session: Session;
   navConfig: DashboardNavConfig;
+  className?: string;
 };
 
-export function DashboardHeader({ session, navConfig }: DashboardHeaderProps) {
+export function DashboardHeader({
+  session,
+  navConfig,
+  className,
+}: DashboardHeaderProps) {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
   const studioSection =
@@ -35,7 +40,8 @@ export function DashboardHeader({ session, navConfig }: DashboardHeaderProps) {
     <header
       className={cn(
         "sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-slate-200/80 bg-white/90 px-4 shadow-sm shadow-slate-950/[0.02] backdrop-blur-md sm:px-6",
-        studioSection && [styles.scope, styles.header]
+        studioSection && [styles.scope, styles.header],
+        className
       )}
     >
       <Sheet open={open} onOpenChange={setOpen}>

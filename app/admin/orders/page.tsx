@@ -11,6 +11,7 @@ import { OrderRequestStatus, type Prisma } from "@prisma/client";
 import { SearchFilterBar } from "@/components/shared/search-filter-bar";
 import { DataPagination } from "@/components/shared/data-pagination";
 import { ParamFilterSelect } from "@/components/shared/param-filter-select";
+import { AdminMascot } from "../_components/admin-mascot";
 
 const statusMeta: Record<
   string,
@@ -92,11 +93,17 @@ export default async function AdminOrdersPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Order Requests</h1>
-        <p className="text-muted-foreground">
-          Estimasi proyek yang diajukan klien dari kalkulator harga.
-        </p>
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Order Requests</h1>
+          <p className="text-muted-foreground">
+            Estimasi proyek yang diajukan klien dari kalkulator harga.
+          </p>
+        </div>
+        <AdminMascot pose="activity" size="header" />
       </div>
 
       <SearchFilterBar

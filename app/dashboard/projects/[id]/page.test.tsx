@@ -127,6 +127,9 @@ describe("Dashboard Project Detail - Tab Deep-Linking & URL Param State", () => 
 
       const html = renderToStaticMarkup(pageJsx);
       expect(html).toContain("Aplikasi Mobile E-Commerce");
+      expect(html).toContain("Kembali ke Proyek Saya");
+      expect(html).toContain("Ruang Kolaborasi Proyek");
+      expect(html).toContain("Timeline &amp; Milestone Proyek");
       expect(html).toContain("Timeline");
       expect(html).toContain("Tasks (1)");
       expect(html).toContain("Invoices (0)");

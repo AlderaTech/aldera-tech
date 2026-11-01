@@ -102,7 +102,7 @@ export function MilestonesTab({
       {showForm && (
         <Card className="border-slate-200 bg-white p-4 shadow-sm">
           <form onSubmit={handleCreate} className="space-y-3">
-            <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_180px_180px]">
+            <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_180px_180px]">
               <div className="space-y-1.5">
                 <Label htmlFor="m-title">Judul</Label>
                 <Input

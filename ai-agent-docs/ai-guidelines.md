@@ -346,3 +346,16 @@ Setiap file pengujian UI wajib menguji aspek relevan dari 7 pilar berikut:
    - Memverifikasi feedback interaktif melalui notifikasi toast `sonner`.
 
 Panduan operasional, arsitektur, dan contoh template lengkap pengujian antarmuka pengguna terdokumentasi di [`ai-agent-docs/ui-testing.md`](ui-testing.md).
+
+---
+
+## 12. Standar Tata Letak Kartu, Maskot & Ikon 3D Portal Admin (`app/admin/`)
+
+Untuk menjaga kenyamanan visual dan keterbacaan di seluruh 18 rute Portal Admin:
+
+1. **Padding Kartu & Larangan Selector `:is(> ...)`**:
+   - Seluruh `<CardHeader>`, `<CardContent:not(.p-0)>`, `<CardFooter>`, dan `<Card>` mandiri di dalam scope `app/admin/_components/admin-surfaces.module.css` wajib menggunakan selector anak eksplisit yang valid (`[data-slot="card"] > [data-slot="card-header"]` dan `[data-slot="card"] > form > [data-slot="card-header"]`) dengan ruang napas minimal `1.25rem 1.5rem` (`px-6 py-5`).
+   - Dilarang menggunakan relative selector `:is(> ...)` di CSS Module karena akan dihapus oleh kompilator LightningCSS.
+2. **Sistem Maskot (`AdminMascot`) & Ilustrasi 3D (`AdminIconArt`)**:
+   - Gunakan `AdminMascot` (`app/admin/_components/admin-mascot.tsx`) dengan 4 ukuran seragam 1:1 (`hero`, `header`, `panel`, `empty`) pada banner dan header halaman admin.
+   - Gunakan `AdminIconArt` (`app/admin/_components/admin-icon-art.tsx`) dengan 15 aset ilustrasi 3D WebP (`stat`, `item`, `sm`) pada `AdminStatCard` dan kartu item modul admin.

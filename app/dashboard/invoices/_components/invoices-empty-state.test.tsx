@@ -5,12 +5,12 @@ import { DASHBOARD_ROUTES } from "@/lib/routes";
 import { InvoicesEmptyState } from "./invoices-empty-state";
 
 describe("Empty state invoice", () => {
-  it("menampilkan maskot yang tersedia sebelum teks dan navigasi proyek asli", () => {
+  it("menampilkan ilustrasi non-kucing seragam sebelum teks dan navigasi proyek asli", () => {
     const html = renderToStaticMarkup(<InvoicesEmptyState />);
     expect(
       existsSync(
         new URL(
-          "../../../../public/images/dashboard/ai-relay/aldera-relay-assistant.webp",
+          "../../../../public/images/about/technology/design.webp",
           import.meta.url
         )
       )
@@ -18,7 +18,8 @@ describe("Empty state invoice", () => {
     expect(html.indexOf("<img")).toBeLessThan(
       html.indexOf("Belum ada invoice")
     );
-    expect(html).toContain("aldera-relay-assistant");
+    expect(html).toContain("design");
+    expect(html).not.toContain("aldera-cat");
     expect(html).toContain('alt=""');
     expect(html).toContain('focusable="false"');
     expect(html).toContain(`href="${DASHBOARD_ROUTES.projects}"`);

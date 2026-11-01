@@ -1,10 +1,10 @@
-import { Calculator } from "lucide-react";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { ADMIN_ROUTES } from "@/lib/routes";
 import { Badge } from "@/components/ui/badge";
+import { AdminMascot } from "../_components/admin-mascot";
 import { CalculatorAdmin } from "./_components/calculator-admin";
 
 type Props = {
@@ -58,29 +58,26 @@ export default async function AdminCalculatorPage({ searchParams }: Props) {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Calculator className="size-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-                  Kalkulator Harga
-                </h1>
-                <Badge variant="outline" className="text-xs font-normal">
-                  Konfigurasi Estimasi
-                </Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Kelola jenis proyek, fitur, add-on retainer, dan kebijakan
-                perhitungan estimasi biaya klien.
-              </p>
-            </div>
+    <div className="space-y-5">
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
+        <div className="space-y-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+              Kalkulator Harga
+            </h1>
+            <Badge variant="outline" className="bg-white text-xs font-medium">
+              Konfigurasi Estimasi
+            </Badge>
           </div>
+          <p className="text-sm text-muted-foreground">
+            Kelola jenis proyek, fitur, add-on retainer, dan kebijakan
+            perhitungan estimasi biaya klien.
+          </p>
         </div>
+        <AdminMascot pose="coding" size="header" />
       </div>
       <CalculatorAdmin data={data} initialTab={initialTab} />
     </div>

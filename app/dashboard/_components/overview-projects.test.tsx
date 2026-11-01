@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { readFileSync } from "node:fs";
 import { renderToStaticMarkup } from "react-dom/server";
 import { DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 import { OverviewProjects } from "./overview-projects";
@@ -31,5 +32,14 @@ describe("Proyek terbaru Ringkasan", () => {
     expect(html).toContain(title);
     expect(html).toContain('value="0"');
     expect(html).not.toContain("Berikutnya:");
+  });
+  it("menjaga kartu proyek tetap proporsional tanpa ruang kosong vertikal berlebih", () => {
+    const css = readFileSync(
+      new URL("./overview-projects.module.css", import.meta.url),
+      "utf8"
+    );
+    expect(css).not.toContain("grid-auto-rows: 1fr");
+    const progressBlock = css.match(/\.progressBlock\s*\{([^}]+)\}/)?.[1];
+    expect(progressBlock).not.toContain("margin-top: auto");
   });
 });

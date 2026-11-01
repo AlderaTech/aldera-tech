@@ -9,6 +9,7 @@ import { InvoiceTable } from "./_components/invoice-table";
 import { InvoiceStatus, type Prisma } from "@prisma/client";
 import { SearchFilterBar } from "@/components/shared/search-filter-bar";
 import { ParamFilterSelect } from "@/components/shared/param-filter-select";
+import { AdminMascot } from "../_components/admin-mascot";
 
 const invoiceStatusOptions = [
   { label: "Semua Status", value: "ALL" },
@@ -85,12 +86,16 @@ export default async function AdminInvoicesPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Invoice</h1>
           <p className="text-muted-foreground">Kelola tagihan untuk klien.</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <AdminMascot pose="services" size="header" />
           <Button asChild variant="outline">
             <Link href={ADMIN_ROUTES.invoicesRecurring}>
               <Repeat className="size-4" /> Recurring

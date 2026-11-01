@@ -25,6 +25,12 @@ mock.module("next/navigation", () => ({
   useRouter: () => ({ refresh: mock(), replace: mock(), push: mock() }),
   usePathname: () => "/dashboard/orders",
   useSearchParams: () => new URLSearchParams(),
+  notFound: () => {
+    throw new Error("NEXT_NOT_FOUND");
+  },
+  redirect: (url: string) => {
+    throw new Error(`REDIRECT:${url}`);
+  },
 }));
 
 const { default: Page, metadata } = await import("./page");

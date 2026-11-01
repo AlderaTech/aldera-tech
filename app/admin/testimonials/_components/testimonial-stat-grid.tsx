@@ -1,5 +1,5 @@
 import { Star, MessageSquare, CheckCircle, Clock } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { AdminStatCard } from "../../_components/admin-stat-card";
 import type { TestimonialItem } from "../_utils/testimonial-types";
 
 export function TestimonialStatGrid({ items }: { items: TestimonialItem[] }) {
@@ -15,56 +15,48 @@ export function TestimonialStatGrid({ items }: { items: TestimonialItem[] }) {
     {
       label: "Total Testimoni",
       value: total,
+      helper: "Seluruh ulasan terdaftar",
       icon: MessageSquare,
-      color: "text-brand-primary",
-      bg: "bg-brand-primary/10",
+      toneClassName: "text-primary bg-primary/10 border-primary/20",
     },
     {
       label: "Rata-rata Rating",
       value: `${avgRating} / 5.0`,
+      helper: "Kepuasan klien rata-rata",
       icon: Star,
-      color: "text-amber-500",
-      bg: "bg-amber-500/10",
+      toneClassName: "text-amber-600 bg-amber-500/10 border-amber-500/20",
     },
     {
       label: "Ditampilkan Publik",
       value: publishedCount,
+      helper: "Aktif di halaman publik",
       icon: CheckCircle,
-      color: "text-emerald-500",
-      bg: "bg-emerald-500/10",
+      toneClassName: "text-emerald-600 bg-emerald-500/10 border-emerald-500/20",
     },
     {
       label: "Menunggu Kurasi",
       value: moderationCount,
+      helper: "Perlu tinjauan admin",
       icon: Clock,
-      color: "text-sky-500",
-      bg: "bg-sky-500/10",
+      toneClassName: "text-sky-600 bg-sky-500/10 border-sky-500/20",
     },
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {stats.map((s) => {
-        const Icon = s.icon;
-        return (
-          <Card
-            key={s.label}
-            className="flex items-center justify-between border p-4 shadow-sm"
-          >
-            <div>
-              <p className="text-xs font-medium text-muted-foreground uppercase">
-                {s.label}
-              </p>
-              <p className="mt-1 text-2xl font-bold tracking-tight">
-                {s.value}
-              </p>
-            </div>
-            <div className={`rounded-lg p-2.5 ${s.bg}`}>
-              <Icon className={`size-5 ${s.color}`} />
-            </div>
-          </Card>
-        );
-      })}
+    <div
+      className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      aria-label="Statistik testimoni"
+    >
+      {stats.map((s) => (
+        <AdminStatCard
+          key={s.label}
+          icon={s.icon}
+          label={s.label}
+          value={s.value}
+          helper={s.helper}
+          toneClassName={s.toneClassName}
+        />
+      ))}
     </div>
   );
 }

@@ -13,11 +13,13 @@ mock.module("next/navigation", () => ({
 const { SearchFilterBar } = await import("./search-filter-bar");
 
 describe("SearchFilterBar UI Component", () => {
-  it("renders search input with placeholder and search icon", () => {
+  it("renders search input with placeholder and search icon without duplicate browser search clear button", () => {
     const html = renderToStaticMarkup(
       <SearchFilterBar placeholder="Cari nama proyek..." searchParamKey="q" />
     );
     expect(html).toContain("Cari nama proyek...");
+    expect(html).toContain('type="text"');
+    expect(html).not.toContain('type="search"');
     expect(html).toContain('value="test"');
     expect(html).toContain("Bersihkan pencarian");
   });

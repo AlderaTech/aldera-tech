@@ -105,11 +105,13 @@ interface MicroStateOverrides {
   } | null;
 }
 
-const internals = (React as unknown as {
-  __CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE: {
-    H: { useState: (initial: unknown) => [unknown, (v: unknown) => void] };
-  };
-}).__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+const internals = (
+  React as unknown as {
+    __CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE: {
+      H: { useState: (initial: unknown) => [unknown, (v: unknown) => void] };
+    };
+  }
+).__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
 
 /**
  * Helper to render AiRelayAdminClientView with deterministic injected hook state.
@@ -127,7 +129,9 @@ function renderWithInjectedState(
     searchParams?: string;
   }
 ): string {
-  currentSearchParams = new URLSearchParams(customProps?.searchParams ?? "tab=sync");
+  currentSearchParams = new URLSearchParams(
+    customProps?.searchParams ?? "tab=sync"
+  );
 
   if (!overrides || Object.keys(overrides).length === 0) {
     return renderToStaticMarkup(
@@ -281,7 +285,9 @@ describe("Feature F11: Sync Button States & Transitions", () => {
     expect(html).not.toContain("Menghubungi 9router...");
 
     // Header button is enabled and has static refresh icon without animate-spin
-    const headerBtnMatch = html.match(/<button[^>]*>[\s\S]*?Sync 9router<\/button>/);
+    const headerBtnMatch = html.match(
+      /<button[^>]*>[\s\S]*?Sync 9router<\/button>/
+    );
     expect(headerBtnMatch).not.toBeNull();
     const headerBtnHtml = headerBtnMatch![0];
     expect(headerBtnHtml).not.toContain('disabled=""');
@@ -299,7 +305,9 @@ describe("Feature F11: Sync Button States & Transitions", () => {
     expect(html).not.toContain(">Sync 9router<");
 
     // Header button has disabled attribute and animate-spin class
-    const headerBtnMatch = html.match(/<button[^>]*>[\s\S]*?Menghubungi 9router\.\.\.<\/button>/);
+    const headerBtnMatch = html.match(
+      /<button[^>]*>[\s\S]*?Menghubungi 9router\.\.\.<\/button>/
+    );
     expect(headerBtnMatch).not.toBeNull();
     const headerBtnHtml = headerBtnMatch![0];
     expect(headerBtnHtml).toContain('disabled=""');
@@ -316,7 +324,9 @@ describe("Feature F11: Sync Button States & Transitions", () => {
     expect(html).not.toContain("Menghubungi Upstream...");
 
     // Card header button is enabled and has static icon
-    const cardBtnMatch = html.match(/<button[^>]*>[\s\S]*?Sync dari 9router Sekarang<\/button>/);
+    const cardBtnMatch = html.match(
+      /<button[^>]*>[\s\S]*?Sync dari 9router Sekarang<\/button>/
+    );
     expect(cardBtnMatch).not.toBeNull();
     const cardBtnHtml = cardBtnMatch![0];
     expect(cardBtnHtml).not.toContain('disabled=""');
@@ -334,7 +344,9 @@ describe("Feature F11: Sync Button States & Transitions", () => {
     expect(html).not.toContain(">Sync dari 9router Sekarang<");
 
     // Card header button has disabled attribute and animate-spin class
-    const cardBtnMatch = html.match(/<button[^>]*>[\s\S]*?Menghubungi Upstream\.\.\.<\/button>/);
+    const cardBtnMatch = html.match(
+      /<button[^>]*>[\s\S]*?Menghubungi Upstream\.\.\.<\/button>/
+    );
     expect(cardBtnMatch).not.toBeNull();
     const cardBtnHtml = cardBtnMatch![0];
     expect(cardBtnHtml).toContain('disabled=""');
@@ -357,7 +369,8 @@ describe("Feature F11: Sync Button States & Transitions", () => {
 
 describe("Feature F12: Error Toast & Upstream Failure Fallback UI", () => {
   it("renders error notification alert banner with AlertCircle icon, error text, and dismiss button", () => {
-    const errorMessage = "Koneksi ke upstream 9router gagal: ECONNREFUSED 127.0.0.1:20128";
+    const errorMessage =
+      "Koneksi ke upstream 9router gagal: ECONNREFUSED 127.0.0.1:20128";
     const html = renderWithInjectedState({
       notification: {
         type: "error",
@@ -370,7 +383,9 @@ describe("Feature F12: Error Toast & Upstream Failure Fallback UI", () => {
     // AlertCircle icon is rendered with text-rose-600
     expect(html).toContain("text-rose-600");
     // Close button with X icon is rendered
-    expect(html).toContain("<button class=\"text-slate-400 hover:text-slate-600\"");
+    expect(html).toContain(
+      '<button class="text-slate-400 hover:text-slate-600"'
+    );
   });
 
   it("renders success and info notification variants according to style contracts", () => {
@@ -380,9 +395,13 @@ describe("Feature F12: Error Toast & Upstream Failure Fallback UI", () => {
         message: "Sinkronisasi 9router berhasil! Terdeteksi 3 model baru.",
       },
     });
-    expect(successHtml).toContain("border-emerald-200 bg-emerald-50 text-emerald-800");
+    expect(successHtml).toContain(
+      "border-emerald-200 bg-emerald-50 text-emerald-800"
+    );
     expect(successHtml).toContain("text-emerald-600");
-    expect(successHtml).toContain("Sinkronisasi 9router berhasil! Terdeteksi 3 model baru.");
+    expect(successHtml).toContain(
+      "Sinkronisasi 9router berhasil! Terdeteksi 3 model baru."
+    );
 
     const infoHtml = renderWithInjectedState({
       notification: {
@@ -404,7 +423,9 @@ describe("Feature F12: Error Toast & Upstream Failure Fallback UI", () => {
     });
 
     // Dismiss close button exists with Lucide X icon
-    expect(html).toContain('<button class="text-slate-400 hover:text-slate-600"');
+    expect(html).toContain(
+      '<button class="text-slate-400 hover:text-slate-600"'
+    );
     expect(html).toContain("lucide-x");
 
     // In accordance with R4 / Survey §3.3 specification:
@@ -443,11 +464,14 @@ describe("Feature F12: Error Toast & Upstream Failure Fallback UI", () => {
     expect(html).toContain("Gagal Terhubung");
     expect(html).toContain("border-rose-300 bg-rose-50 text-rose-700");
     expect(html).toContain("http://localhost:20128/v1/models");
-    expect(html).not.toContain("border-emerald-300 bg-emerald-50 text-emerald-700");
+    expect(html).not.toContain(
+      "border-emerald-300 bg-emerald-50 text-emerald-700"
+    );
   });
 
   it("renders error alert banner with specific error details and 'Coba Lagi' retry button", () => {
-    const errorDetails = "Upstream mengembalikan status 401: Unauthorized API Key";
+    const errorDetails =
+      "Upstream mengembalikan status 401: Unauthorized API Key";
     const html = renderWithInjectedState({
       syncResult: {
         success: false,
@@ -463,7 +487,9 @@ describe("Feature F12: Error Toast & Upstream Failure Fallback UI", () => {
 
     expect(html).toContain("Sinkronisasi Upstream 9router Gagal");
     expect(html).toContain(errorDetails);
-    expect(html).toContain("Katalog model lokal tetap aktif dan dapat dikelola.");
+    expect(html).toContain(
+      "Katalog model lokal tetap aktif dan dapat dikelola."
+    );
     expect(html).toContain("Coba Lagi");
   });
 
@@ -476,7 +502,10 @@ describe("Feature F12: Error Toast & Upstream Failure Fallback UI", () => {
         diff: {
           newModels: [],
           syncedModels: [],
-          missingUpstreamModels: ["anthropic/claude-3-5-sonnet", "openai/gpt-4o"],
+          missingUpstreamModels: [
+            "anthropic/claude-3-5-sonnet",
+            "openai/gpt-4o",
+          ],
         },
       },
     });
@@ -485,7 +514,9 @@ describe("Feature F12: Error Toast & Upstream Failure Fallback UI", () => {
     expect(html).not.toContain("Model Baru Terdeteksi (0)");
     expect(html).not.toContain("0 Model Baru Terdeteksi");
     // Must NOT falsely claim all models are synchronized
-    expect(html).not.toContain("Tidak ada model baru di upstream. Semua model telah tersinkronisasi");
+    expect(html).not.toContain(
+      "Tidak ada model baru di upstream. Semua model telah tersinkronisasi"
+    );
     // Must NOT show new models count badge in tabs
     expect(html).not.toContain("0 baru");
   });
@@ -562,7 +593,9 @@ describe("Feature F13: Diff Comparison Table & Instant Activation", () => {
         upstreamUrl: "http://localhost:20128/v1/models",
         diff: {
           newModels: sampleNewModels,
-          syncedModels: [{ id: "anthropic/claude-3-5-sonnet", object: "model" }],
+          syncedModels: [
+            { id: "anthropic/claude-3-5-sonnet", object: "model" },
+          ],
           missingUpstreamModels: [],
         },
       },
@@ -625,14 +658,18 @@ describe("Feature F13: Diff Comparison Table & Instant Activation", () => {
     // Activating row has loading label
     expect(html).toContain("Mengaktifkan...");
     // Activating button has disabled attribute and loading label
-    const activatingBtnMatch = html.match(/<button(?:(?!<button)[\s\S])*?Mengaktifkan\.\.\.<\/button>/);
+    const activatingBtnMatch = html.match(
+      /<button(?:(?!<button)[\s\S])*?Mengaktifkan\.\.\.<\/button>/
+    );
     expect(activatingBtnMatch).not.toBeNull();
     const activatingBtnHtml = activatingBtnMatch![0];
     expect(activatingBtnHtml).toContain('disabled=""');
     expect(activatingBtnHtml).toContain("Mengaktifkan...");
 
     // Other rows retain idle "1-Click Aktifkan" label and are not disabled
-    const remainingIdleButtons = html.match(/<button(?:(?!<button)[\s\S])*?1-Click Aktifkan<\/button>/g);
+    const remainingIdleButtons = html.match(
+      /<button(?:(?!<button)[\s\S])*?1-Click Aktifkan<\/button>/g
+    );
     expect(remainingIdleButtons).not.toBeNull();
     expect(remainingIdleButtons!.length).toBe(2);
     expect(remainingIdleButtons![0]).not.toContain('disabled=""');
@@ -660,7 +697,9 @@ describe("Feature F13: Diff Comparison Table & Instant Activation", () => {
     expect(html).toContain("anthropic/claude-3-5-sonnet");
     expect(html).toContain("openai/gpt-4o");
     // Empty state rendered for newModels
-    expect(html).toContain("Tidak ada model baru di upstream. Semua model telah tersinkronisasi dengan database lokal.");
+    expect(html).toContain(
+      "Tidak ada model baru di upstream. Semua model telah tersinkronisasi dengan database lokal."
+    );
   });
 
   it("renders missingUpstreamModels badge list in amber alert section when local models are absent upstream", () => {
@@ -681,7 +720,9 @@ describe("Feature F13: Diff Comparison Table & Instant Activation", () => {
     });
 
     expect(html).toContain("Model Lokal Tidak Ada di Upstream (2)");
-    expect(html).toContain("border-amber-200 bg-amber-50 font-mono text-[11px] text-amber-800");
+    expect(html).toContain(
+      "border-amber-200 bg-amber-50 font-mono text-[11px] text-amber-800"
+    );
     expect(html).toContain("legacy-provider/old-model-v1");
     expect(html).toContain("custom-fine-tune/qwen-specialized");
   });
@@ -696,7 +737,9 @@ describe("Feature F13: Diff Comparison Table & Instant Activation", () => {
     );
 
     expect(html).toContain("Sinkronisasi Katalog dari Upstream 9router");
-    expect(html).toContain("Deteksi model baru di 9router (`/v1/models`) yang belum terdaftar di database lokal, dan aktifkan dalam 1-klik.");
+    expect(html).toContain(
+      "Deteksi model baru di 9router (`/v1/models`) yang belum terdaftar di database lokal, dan aktifkan dalam 1-klik."
+    );
 
     // Model Pricing manager displays prices formatted in Indonesian Rupiah
     const pricingHtml = renderWithInjectedState(undefined, {
@@ -710,14 +753,21 @@ describe("Feature F13: Diff Comparison Table & Instant Activation", () => {
 describe("Adversarial & Resilience Micro-scenarios", () => {
   it("escapes special characters and HTML tags in model IDs and error messages to prevent XSS", () => {
     const adversarialModelId = '<script>alert("xss")</script>';
-    const adversarialError = 'Upstream <img src=x onerror=alert(1)> failed & crashed';
+    const adversarialError =
+      "Upstream <img src=x onerror=alert(1)> failed & crashed";
 
     const html = renderWithInjectedState({
       syncResult: {
         success: true,
         upstreamUrl: "http://localhost:20128/v1/models",
         diff: {
-          newModels: [{ id: adversarialModelId, object: "model", owned_by: "adversarial-team" }],
+          newModels: [
+            {
+              id: adversarialModelId,
+              object: "model",
+              owned_by: "adversarial-team",
+            },
+          ],
           syncedModels: [],
           missingUpstreamModels: [],
         },
@@ -730,8 +780,10 @@ describe("Adversarial & Resilience Micro-scenarios", () => {
 
     // Verifies tags are properly HTML-entity escaped
     expect(html).not.toContain('<script>alert("xss")</script>');
-    expect(html).toContain("&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;");
-    expect(html).not.toContain('<img src=x onerror=alert(1)>');
+    expect(html).toContain(
+      "&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;"
+    );
+    expect(html).not.toContain("<img src=x onerror=alert(1)>");
     expect(html).toContain("&lt;img src=x onerror=alert(1)&gt;");
   });
 

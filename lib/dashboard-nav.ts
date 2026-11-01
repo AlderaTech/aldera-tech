@@ -68,13 +68,13 @@ export const clientNavConfig: DashboardNavConfig = {
           href: DASHBOARD_ROUTES.projects,
           label: "Proyek Saya",
           icon: "folderKanban",
-          description: "Pemesanan web, mobile & delivery",
+          description: "Pantau progres pengerjaan web & mobile",
         },
         {
           href: DASHBOARD_ROUTES.orders,
           label: "Pesanan & Estimasi",
           icon: "receipt",
-          description: "Riwayat pesanan kalkulator",
+          description: "Riwayat estimasi & pengajuan proyek",
         },
         {
           href: DASHBOARD_ROUTES.calculator,
@@ -102,11 +102,6 @@ export const clientNavConfig: DashboardNavConfig = {
       ],
     },
   ],
-  footerItem: {
-    href: DASHBOARD_ROUTES.settings,
-    label: "Pengaturan",
-    icon: "settings",
-  },
 };
 
 const adminNavGroups: DashboardNavGroup[] = [

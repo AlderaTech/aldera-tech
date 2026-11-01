@@ -1,0 +1,204 @@
+.workspace {
+  display: grid;
+  min-width: 0;
+  gap: 1.25rem;
+}
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-width: 0;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  overflow: hidden;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--admin-line);
+  border-radius: 1.5rem;
+  background: linear-gradient(
+    110deg,
+    var(--overview-paper) 55%,
+    var(--overview-sky)
+  );
+  box-shadow: 0 3px 16px color-mix(in srgb, var(--overview-ink) 4%, transparent);
+}
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+.hero::before {
+  inset: 0 0 0 52%;
+  background-image:
+    radial-gradient(
+      circle,
+      color-mix(in srgb, var(--overview-blue) 26%, transparent) 1px,
+      transparent 1.5px
+    ),
+    linear-gradient(
+      color-mix(in srgb, var(--overview-blue) 10%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--overview-blue) 10%, transparent) 1px,
+      transparent 1px
+    );
+  background-size:
+    17px 17px,
+    34px 34px,
+    34px 34px;
+  mask-image: linear-gradient(to left, black 20%, transparent);
+}
+.hero::after {
+  top: -7.5rem;
+  right: -3.5rem;
+  width: 19rem;
+  height: 19rem;
+  border: 1px solid color-mix(in srgb, var(--overview-blue) 18%, transparent);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    color-mix(in srgb, var(--overview-sky) 70%, transparent),
+    transparent 70%
+  );
+  box-shadow:
+    0 0 0 1.75rem color-mix(in srgb, var(--overview-blue) 3.5%, transparent),
+    0 0 0 3.5rem color-mix(in srgb, var(--overview-blue) 2%, transparent);
+}
+.hero :global([data-admin-page-header]) {
+  padding: 0;
+  border: 0;
+}
+.hero h1 {
+  max-width: 25ch;
+  font-size: clamp(1.6rem, 2.5cqw, 2.2rem);
+}
+.hero :global([data-admin-page-header]) > div:first-child {
+  width: 100%;
+}
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+.heroMascot {
+  width: 6.75rem;
+  height: 6.75rem;
+  pointer-events: none;
+}
+.statsGrid {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.statsGrid > :last-child {
+  grid-column: 1/-1;
+}
+.chartsGrid,
+.bottomGrid {
+  display: grid;
+  min-width: 0;
+  align-items: stretch;
+  gap: 1.25rem;
+}
+.chartsGrid > :global([data-slot="card"]),
+.bottomGrid > :global([data-slot="card"]) {
+  height: 100%;
+  min-height: 0;
+}
+.opsLinks {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 0.75rem;
+}
+.opsLinks > a {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.opsLinks > a::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -2rem;
+  right: -1.5rem;
+  width: 5.25rem;
+  height: 5.25rem;
+  border: 1px solid color-mix(in srgb, var(--overview-blue) 15%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 0.6rem
+    color-mix(in srgb, var(--overview-blue) 3%, transparent);
+  pointer-events: none;
+}
+.opsLinks > a::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: 0.5rem;
+  bottom: 0.35rem;
+  width: 2.5rem;
+  height: 1rem;
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--overview-blue) 22%, transparent) 0.85px,
+    transparent 1.1px
+  );
+  background-size: 7px 7px;
+  mask-image: linear-gradient(to left, black, transparent);
+  pointer-events: none;
+}
+.opsActions {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.chartContent {
+  padding-top: 0.25rem;
+}
+@container (min-width:40rem) {
+  .statsGrid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .statsGrid > * {
+    grid-column: span 2;
+  }
+  .statsGrid > :nth-last-child(-n + 2) {
+    grid-column: span 3;
+  }
+  .bottomGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@container (min-width:60rem) {
+  .chartsGrid {
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  }
+}
+@container (min-width:72rem) {
+  .statsGrid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .statsGrid > *,
+  .statsGrid > :nth-last-child(-n + 2) {
+    grid-column: auto;
+  }
+}
+@media (max-width: 639px) {
+  .workspace {
+    gap: 1.25rem;
+  }
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1.25rem;
+  }
+  .heroMascot {
+    display: none;
+  }
+}

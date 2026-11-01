@@ -1,5 +1,5 @@
 import { Briefcase, Eye, EyeOff, Layers } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { AdminStatCard } from "../../_components/admin-stat-card";
 import type { PortfolioCaseStudyItem } from "../_utils/portfolio-types";
 
 export function PortfolioStatGrid({
@@ -18,56 +18,48 @@ export function PortfolioStatGrid({
     {
       label: "Total Studi Kasus",
       value: total,
+      helper: "Seluruh karya di database",
       icon: Briefcase,
-      color: "text-brand-primary",
-      bg: "bg-brand-primary/10",
+      toneClassName: "text-primary bg-primary/10 border-primary/20",
     },
     {
       label: "Dipublikasikan",
       value: publishedCount,
+      helper: "Tampil di website publik",
       icon: Eye,
-      color: "text-emerald-500",
-      bg: "bg-emerald-500/10",
+      toneClassName: "text-emerald-600 bg-emerald-500/10 border-emerald-500/20",
     },
     {
       label: "Draft",
       value: draftCount,
+      helper: "Menunggu publikasi",
       icon: EyeOff,
-      color: "text-amber-500",
-      bg: "bg-amber-500/10",
+      toneClassName: "text-amber-600 bg-amber-500/10 border-amber-500/20",
     },
     {
       label: "Sektor Industri",
       value: industriesCount,
+      helper: "Kategori industri unik",
       icon: Layers,
-      color: "text-sky-500",
-      bg: "bg-sky-500/10",
+      toneClassName: "text-sky-600 bg-sky-500/10 border-sky-500/20",
     },
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {stats.map((s) => {
-        const Icon = s.icon;
-        return (
-          <Card
-            key={s.label}
-            className="flex items-center justify-between border p-4 shadow-sm"
-          >
-            <div>
-              <p className="text-xs font-medium text-muted-foreground uppercase">
-                {s.label}
-              </p>
-              <p className="mt-1 text-2xl font-bold tracking-tight">
-                {s.value}
-              </p>
-            </div>
-            <div className={`rounded-lg p-2.5 ${s.bg}`}>
-              <Icon className={`size-5 ${s.color}`} />
-            </div>
-          </Card>
-        );
-      })}
+    <div
+      className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      aria-label="Statistik portfolio"
+    >
+      {stats.map((s) => (
+        <AdminStatCard
+          key={s.label}
+          icon={s.icon}
+          label={s.label}
+          value={s.value}
+          helper={s.helper}
+          toneClassName={s.toneClassName}
+        />
+      ))}
     </div>
   );
 }

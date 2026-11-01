@@ -74,8 +74,8 @@ export async function sendWhatsApp({
     const error = isTimeout
       ? "WhatsApp service timeout (4s exceeded)"
       : err instanceof Error
-      ? err.message
-      : "Unknown error";
+        ? err.message
+        : "Unknown error";
 
     console.error("[WhatsApp] Send failed:", error);
     return {

@@ -13,24 +13,20 @@
   gap: 1.5rem;
   min-width: 0;
 }
-.breadcrumb {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--overview-muted);
-  font-size: 0.7rem;
-}
-.breadcrumb svg {
-  flex-shrink: 0;
-}
 .header {
   position: relative;
   isolation: isolate;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1.25rem;
+  overflow: hidden;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--overview-line);
+  border-radius: 1.25rem;
+  background: var(--overview-paper);
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--overview-ink) 5%, transparent);
 }
 .header::before {
   position: absolute;
@@ -47,34 +43,20 @@
   pointer-events: none;
   content: "";
 }
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin-bottom: 0.6rem;
-  color: var(--overview-blue);
-  font-size: 0.65rem;
-  font-weight: 750;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.eyebrow svg {
-  width: 1rem;
-  height: 1rem;
-}
 .header h1 {
+  margin: 0;
   color: var(--overview-ink);
-  font-size: clamp(1.5rem, 2.25vw, 2rem);
+  font-size: clamp(1.5rem, 2.3vw, 1.85rem);
   font-weight: 800;
   line-height: 1.25;
   letter-spacing: -0.045em;
 }
 .description {
   max-width: 42rem;
-  margin-top: 0.6rem;
+  margin: 0.5rem 0 0;
   color: var(--overview-muted);
-  font-size: 0.8125rem;
-  line-height: 1.8;
+  font-size: 0.83rem;
+  line-height: 1.7;
 }
 .history {
   display: inline-flex;
@@ -83,13 +65,13 @@
   justify-content: center;
   gap: 0.5rem;
   min-height: 2.75rem;
-  padding: 0.6rem 1rem;
+  padding: 0.6rem 1.1rem;
   border: 1px solid var(--overview-line);
   border-radius: 999px;
   background: var(--overview-paper);
   color: var(--overview-ink);
   font-size: 0.75rem;
-  font-weight: 650;
+  font-weight: 700;
   transition:
     border-color 0.2s,
     background 0.2s;

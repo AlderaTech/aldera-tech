@@ -55,7 +55,7 @@ export const DASHBOARD_ROUTES = {
   orders: "/dashboard/orders",
   invoices: "/dashboard/invoices",
   profile: "/dashboard/profile",
-  settings: "/dashboard/settings",
+
   projectDetail: (id: string) => `/dashboard/projects/${id}`,
   projectDetailTab: (id: string, tab: string) =>
     `/dashboard/projects/${id}?tab=${encodeURIComponent(tab)}`,
