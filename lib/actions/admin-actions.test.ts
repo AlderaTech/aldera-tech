@@ -25,13 +25,19 @@ mock.module("next/cache", () => ({
   revalidateTag: mock(),
 }));
 
-import {
+import { getTestPrisma } from "@/lib/test-prisma";
+const prisma = getTestPrisma();
+mock.module("@/lib/prisma", () => ({
+  prisma,
+  default: prisma,
+}));
+
+const {
   inviteUserAction,
   updateUserRolesAction,
   toggleUserRoleAction,
   toggleUserActiveAction,
-} from "@/lib/actions/admin";
-import { prisma } from "@/lib/prisma";
+} = await import("@/lib/actions/admin");
 
 describe("AT-L2: lib/actions/admin.ts test suite", () => {
   const adminId = "admin_user_main_1";

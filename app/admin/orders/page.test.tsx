@@ -3,6 +3,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 // Mock auth
 mock.module("@/auth", () => ({
+  handlers: {},
+  signIn: mock(),
+  signOut: mock(),
   auth: () =>
     Promise.resolve({
       user: { id: "admin-1", role: "ADMIN", name: "Super Admin" },

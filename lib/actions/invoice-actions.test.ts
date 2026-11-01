@@ -35,13 +35,19 @@ mock.module("@/lib/notifications", () => ({
   notify: mock(async () => ({ success: true })),
 }));
 
+import { getTestPrisma } from "@/lib/test-prisma";
+const prisma = getTestPrisma();
+mock.module("@/lib/prisma", () => ({
+  prisma,
+  default: prisma,
+}));
+
 const {
   createInvoiceAction,
   submitPaymentProofAction,
   verifyPaymentProofAction,
   rejectPaymentProofAction,
 } = await import("@/lib/actions/invoice");
-const { prisma } = await import("@/lib/prisma");
 
 describe("AT-L3: lib/actions/invoice.ts test suite", () => {
   const adminId = "admin_inv_tester_1";
