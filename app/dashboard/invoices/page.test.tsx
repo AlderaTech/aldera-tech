@@ -7,6 +7,9 @@ const findMany = mock(async (): Promise<unknown[]> => []);
 const count = mock(async (): Promise<number> => 0);
 
 mock.module("@/auth", () => ({
+  handlers: {},
+  signIn: mock(),
+  signOut: mock(),
   auth: async () => ({ user: { id: "test-client" } }),
 }));
 mock.module("@/lib/prisma", () => ({

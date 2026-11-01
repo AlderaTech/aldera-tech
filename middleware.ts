@@ -1,4 +1,5 @@
 import NextAuth from "next-auth";
+import type { Role } from "@prisma/client";
 import authConfig from "@/auth.config";
 import { NextResponse } from "next/server";
 import {
@@ -11,7 +12,10 @@ import { AUTH_ROUTES, DASHBOARD_ROUTES, ADMIN_ROUTES } from "@/lib/routes";
 
 const { auth } = NextAuth(authConfig);
 
-export default auth((req) => {
+export function middlewareHandler(req: {
+  nextUrl: URL;
+  auth?: { user?: { role?: Role; roles?: Role[] } } | null;
+}) {
   // Normalize pathname to collapse multiple slashes: e.g. /admin//ai-relay -> /admin/ai-relay
   const rawPathname = req.nextUrl.pathname;
   const pathname = rawPathname.replace(/\/+/g, "/");
@@ -137,7 +141,9 @@ export default auth((req) => {
   }
 
   return NextResponse.next();
-});
+}
+
+export default auth((req) => middlewareHandler(req));
 
 export const config = {
   matcher: [

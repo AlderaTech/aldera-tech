@@ -69,6 +69,9 @@ mock.module("@/lib/prisma", () => ({
 }));
 
 mock.module("@/auth", () => ({
+  handlers: {},
+  signIn: mock(),
+  signOut: mock(),
   auth: mock(async () => ({
     user: { id: "user-client-1", role: "CLIENT", name: "Client Test" },
   })),

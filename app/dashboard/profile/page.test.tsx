@@ -22,7 +22,7 @@ const getSession = mock(async (): Promise<{ user: { id: string } } | null> => ({
 const redirect = mock((path: string): never => {
   throw new Error(`redirect:${path}`);
 });
-mock.module("@/auth", () => ({ auth: getSession }));
+mock.module("@/auth", () => ({ auth: getSession, signIn: mock(), signOut: mock(), handlers: {} }));
 mock.module("@/lib/prisma", () => ({ prisma: { user: { findUnique } } }));
 mock.module("@/lib/actions/profile", () => ({ updateProfile: mock() }));
 mock.module("next/navigation", () => ({
