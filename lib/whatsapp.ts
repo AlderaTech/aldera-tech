@@ -88,7 +88,7 @@ export async function sendWhatsApp({
 }
 
 /** Normalize phone to international format (62xxx) */
-function normalizePhone(phone: string): string | null {
+export function normalizePhone(phone: string): string | null {
   const digits = phone.replace(/\D/g, "");
   if (!digits || digits.length < 9) return null;
   if (digits.startsWith("0")) return "62" + digits.slice(1);

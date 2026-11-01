@@ -11,7 +11,10 @@ import { AUTH_ROUTES, DASHBOARD_ROUTES, ADMIN_ROUTES } from "@/lib/routes";
 
 const { auth } = NextAuth(authConfig);
 
-export default auth((req) => {
+export function middlewareHandler(req: {
+  nextUrl: URL;
+  auth?: { user?: { role?: string; roles?: string[] } } | null;
+}) {
   // Normalize pathname to collapse multiple slashes: e.g. /admin//ai-relay -> /admin/ai-relay
   const rawPathname = req.nextUrl.pathname;
   const pathname = rawPathname.replace(/\/+/g, "/");
@@ -137,7 +140,9 @@ export default auth((req) => {
   }
 
   return NextResponse.next();
-});
+}
+
+export default auth((req) => middlewareHandler(req));
 
 export const config = {
   matcher: [
