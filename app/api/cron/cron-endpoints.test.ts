@@ -26,8 +26,10 @@ mock.module("@/lib/balance-guard", () => ({
   runBalanceGuard: mockRunBalanceGuard,
 }));
 
+import * as realRecurringInvoice from "@/lib/actions/recurring-invoice";
 const mockIssueDueRecurringInvoices = mock();
 mock.module("@/lib/actions/recurring-invoice", () => ({
+  ...realRecurringInvoice,
   issueDueRecurringInvoices: mockIssueDueRecurringInvoices,
 }));
 
@@ -50,9 +52,12 @@ describe("AT-L10: Cron Endpoints Test Suite", () => {
     it("returns 401 when CRON_SECRET is not configured on server", async () => {
       delete process.env.CRON_SECRET;
       const { GET: balanceGuardGET } = await import("./balance-guard/route");
-      const req = new NextRequest("http://localhost:3000/api/cron/balance-guard", {
-        headers: { authorization: `Bearer ${TEST_SECRET}` },
-      });
+      const req = new NextRequest(
+        "http://localhost:3000/api/cron/balance-guard",
+        {
+          headers: { authorization: `Bearer ${TEST_SECRET}` },
+        }
+      );
 
       const res = await balanceGuardGET(req);
       expect(res.status).toBe(401);
@@ -62,7 +67,9 @@ describe("AT-L10: Cron Endpoints Test Suite", () => {
 
     it("returns 401 when Authorization header is missing", async () => {
       const { GET: balanceGuardGET } = await import("./balance-guard/route");
-      const req = new NextRequest("http://localhost:3000/api/cron/balance-guard");
+      const req = new NextRequest(
+        "http://localhost:3000/api/cron/balance-guard"
+      );
 
       const res = await balanceGuardGET(req);
       expect(res.status).toBe(401);
@@ -71,10 +78,14 @@ describe("AT-L10: Cron Endpoints Test Suite", () => {
     });
 
     it("returns 401 when Bearer token is invalid or mismatched", async () => {
-      const { GET: invoiceReminderGET } = await import("./invoice-reminder/route");
-      const req = new NextRequest("http://localhost:3000/api/cron/invoice-reminder", {
-        headers: { authorization: "Bearer wrong-secret-token" },
-      });
+      const { GET: invoiceReminderGET } =
+        await import("./invoice-reminder/route");
+      const req = new NextRequest(
+        "http://localhost:3000/api/cron/invoice-reminder",
+        {
+          headers: { authorization: "Bearer wrong-secret-token" },
+        }
+      );
 
       const res = await invoiceReminderGET(req);
       expect(res.status).toBe(401);
@@ -83,10 +94,14 @@ describe("AT-L10: Cron Endpoints Test Suite", () => {
     });
 
     it("returns 401 when token prefix is not Bearer", async () => {
-      const { GET: issueRecurringGET } = await import("./issue-recurring/route");
-      const req = new NextRequest("http://localhost:3000/api/cron/issue-recurring", {
-        headers: { authorization: `Basic ${TEST_SECRET}` },
-      });
+      const { GET: issueRecurringGET } =
+        await import("./issue-recurring/route");
+      const req = new NextRequest(
+        "http://localhost:3000/api/cron/issue-recurring",
+        {
+          headers: { authorization: `Basic ${TEST_SECRET}` },
+        }
+      );
 
       const res = await issueRecurringGET(req);
       expect(res.status).toBe(401);
@@ -97,20 +112,25 @@ describe("AT-L10: Cron Endpoints Test Suite", () => {
     it("executes balance guard and returns success when lock acquired", async () => {
       const { GET } = await import("./balance-guard/route");
 
-      mockWithCronLock.mockImplementation(async <T>(key: string, task: () => Promise<T>) => {
-        expect(key).toBe("balance-guard");
-        const res = await task();
-        return {
-          executed: true,
-          skipped: false,
-          result: res,
-        };
-      });
+      mockWithCronLock.mockImplementation(
+        async <T>(key: string, task: () => Promise<T>) => {
+          expect(key).toBe("balance-guard");
+          const res = await task();
+          return {
+            executed: true,
+            skipped: false,
+            result: res,
+          };
+        }
+      );
       mockRunBalanceGuard.mockResolvedValue({ scanned: 5, alerted: 2 });
 
-      const req = new NextRequest("http://localhost:3000/api/cron/balance-guard", {
-        headers: { authorization: `Bearer ${TEST_SECRET}` },
-      });
+      const req = new NextRequest(
+        "http://localhost:3000/api/cron/balance-guard",
+        {
+          headers: { authorization: `Bearer ${TEST_SECRET}` },
+        }
+      );
 
       const res = await GET(req);
       expect(res.status).toBe(200);
@@ -129,9 +149,12 @@ describe("AT-L10: Cron Endpoints Test Suite", () => {
         reason: "Job already running",
       });
 
-      const req = new NextRequest("http://localhost:3000/api/cron/balance-guard", {
-        headers: { authorization: `Bearer ${TEST_SECRET}` },
-      });
+      const req = new NextRequest(
+        "http://localhost:3000/api/cron/balance-guard",
+        {
+          headers: { authorization: `Bearer ${TEST_SECRET}` },
+        }
+      );
 
       const res = await GET(req);
       expect(res.status).toBe(200);
@@ -149,9 +172,12 @@ describe("AT-L10: Cron Endpoints Test Suite", () => {
         error: new Error("Telegram API Network Failure"),
       });
 
-      const req = new NextRequest("http://localhost:3000/api/cron/balance-guard", {
-        headers: { authorization: `Bearer ${TEST_SECRET}` },
-      });
+      const req = new NextRequest(
+        "http://localhost:3000/api/cron/balance-guard",
+        {
+          headers: { authorization: `Bearer ${TEST_SECRET}` },
+        }
+      );
 
       const res = await GET(req);
       expect(res.status).toBe(500);
@@ -165,20 +191,28 @@ describe("AT-L10: Cron Endpoints Test Suite", () => {
     it("executes recurring invoice issuance when authorized and lock acquired", async () => {
       const { GET } = await import("./issue-recurring/route");
 
-      mockWithCronLock.mockImplementation(async <T>(key: string, task: () => Promise<T>) => {
-        expect(key).toBe("issue-recurring");
-        const res = await task();
-        return {
-          executed: true,
-          skipped: false,
-          result: res,
-        };
+      mockWithCronLock.mockImplementation(
+        async <T>(key: string, task: () => Promise<T>) => {
+          expect(key).toBe("issue-recurring");
+          const res = await task();
+          return {
+            executed: true,
+            skipped: false,
+            result: res,
+          };
+        }
+      );
+      mockIssueDueRecurringInvoices.mockResolvedValue({
+        created: 3,
+        errors: [],
       });
-      mockIssueDueRecurringInvoices.mockResolvedValue({ created: 3, errors: [] });
 
-      const req = new NextRequest("http://localhost:3000/api/cron/issue-recurring", {
-        headers: { authorization: `Bearer ${TEST_SECRET}` },
-      });
+      const req = new NextRequest(
+        "http://localhost:3000/api/cron/issue-recurring",
+        {
+          headers: { authorization: `Bearer ${TEST_SECRET}` },
+        }
+      );
 
       const res = await GET(req);
       expect(res.status).toBe(200);
@@ -192,19 +226,24 @@ describe("AT-L10: Cron Endpoints Test Suite", () => {
     it("executes publish scheduled task when lock acquired", async () => {
       const { GET } = await import("./publish-scheduled/route");
 
-      mockWithCronLock.mockImplementation(async <T>(key: string, task: () => Promise<T>) => {
-        expect(key).toBe("publish-scheduled");
-        const res = await task();
-        return {
-          executed: true,
-          skipped: false,
-          result: res,
-        };
-      });
+      mockWithCronLock.mockImplementation(
+        async <T>(key: string, task: () => Promise<T>) => {
+          expect(key).toBe("publish-scheduled");
+          const res = await task();
+          return {
+            executed: true,
+            skipped: false,
+            result: res,
+          };
+        }
+      );
 
-      const req = new NextRequest("http://localhost:3000/api/cron/publish-scheduled", {
-        headers: { authorization: `Bearer ${TEST_SECRET}` },
-      });
+      const req = new NextRequest(
+        "http://localhost:3000/api/cron/publish-scheduled",
+        {
+          headers: { authorization: `Bearer ${TEST_SECRET}` },
+        }
+      );
 
       const res = await GET(req);
       expect(res.status).toBe(200);
