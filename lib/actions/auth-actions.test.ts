@@ -16,14 +16,20 @@ mock.module("@/lib/whatsapp", () => ({
   sendWhatsApp: mockSendWhatsApp,
 }));
 
-import {
+import { getTestPrisma } from "@/lib/test-prisma";
+const prisma = getTestPrisma();
+mock.module("@/lib/prisma", () => ({
+  prisma,
+  default: prisma,
+}));
+
+const {
   normalizePhone,
   loginAction,
   registerAction,
   verifyOtpAction,
   resendOtpAction,
-} from "@/lib/actions/auth";
-import { prisma } from "@/lib/prisma";
+} = await import("@/lib/actions/auth");
 
 describe("AT-L1: lib/actions/auth.ts test suite", () => {
   beforeEach(() => {

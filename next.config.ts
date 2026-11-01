@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     qualities: [50, 75, 90, 100],
   },
   experimental: {
+    agentUpgrade: "security",
     serverActions: {
       // Allow file uploads up to 20 MB via server actions.
       bodySizeLimit: "20mb",

@@ -27,13 +27,19 @@ mock.module("next/cache", () => ({
   revalidateTag: mock(),
 }));
 
+import { getTestPrisma } from "@/lib/test-prisma";
+const prisma = getTestPrisma();
+mock.module("@/lib/prisma", () => ({
+  prisma,
+  default: prisma,
+}));
+
 const {
   getTelegramBotConfigAction,
   updateTelegramBotConfigAction,
   createPaymentMethodAction,
   getPaymentMethodsAction,
 } = await import("@/lib/actions/telegram-bot");
-const { prisma } = await import("@/lib/prisma");
 const { queryRouter } = await import("@/lib/router-db");
 
 describe("AT-L6: lib/actions/telegram-bot.ts test suite", () => {

@@ -27,6 +27,13 @@ mock.module("next/cache", () => ({
   revalidateTag: mock(),
 }));
 
+import { getTestPrisma } from "@/lib/test-prisma";
+const prisma = getTestPrisma();
+mock.module("@/lib/prisma", () => ({
+  prisma,
+  default: prisma,
+}));
+
 const mockCreateMidtransSnapTransaction = mock();
 
 mock.module("@/lib/midtrans", () => ({
@@ -34,7 +41,6 @@ mock.module("@/lib/midtrans", () => ({
 }));
 
 const { createInvoicePaymentSnapAction } = await import("@/lib/actions/payment");
-const { prisma } = await import("@/lib/prisma");
 
 describe("AT-L4: lib/actions/payment.ts test suite", () => {
   let clientUser: { id: string; email: string };

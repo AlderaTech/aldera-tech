@@ -9,10 +9,16 @@ mock.module("@/lib/whatsapp", () => ({
   sendWhatsApp: mockSendWhatsApp,
 }));
 
+import { getTestPrisma } from "@/lib/test-prisma";
+const prisma = getTestPrisma();
+mock.module("@/lib/prisma", () => ({
+  prisma,
+  default: prisma,
+}));
+
 const { requestPasswordResetAction, resetPasswordAction } = await import(
   "@/lib/actions/password-reset"
 );
-const { prisma } = await import("@/lib/prisma");
 
 describe("AT-L5: lib/actions/password-reset.ts test suite", () => {
   beforeEach(() => {

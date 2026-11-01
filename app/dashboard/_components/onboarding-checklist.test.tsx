@@ -12,7 +12,7 @@ const countInvoices = mock(async () => 0);
 const auth = mock(async (): Promise<{ user: { id: string } } | null> => ({
   user: { id: "onboarding-test" },
 }));
-mock.module("@/auth", () => ({ auth }));
+mock.module("@/auth", () => ({ auth, signIn: mock(), signOut: mock(), handlers: {} }));
 mock.module("@/lib/prisma", () => ({
   prisma: {
     user: { findUnique: getUser },

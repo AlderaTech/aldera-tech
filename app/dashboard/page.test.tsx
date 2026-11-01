@@ -7,7 +7,7 @@ const invoiceCount = mock(async () => 2);
 const aggregate = mock(async () => ({ _sum: { total: 1234567.89 } }));
 const findProjects = mock(async () => projects);
 const findActivity = mock(async () => recent);
-mock.module("@/auth", () => ({ auth: async () => ({ user }) }));
+mock.module("@/auth", () => ({ auth: async () => ({ user }), signIn: mock(), signOut: mock(), handlers: {} }));
 mock.module("@/lib/prisma", () => ({
   prisma: {
     project: { count: projectCount, findMany: findProjects },
