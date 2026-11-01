@@ -119,11 +119,23 @@ function parseArgs(): {
   // Resolve aldera.env.j2
   const templateCandidates = [
     templateArg,
-    resolve(process.cwd(), "../server-infra-with-ansible/roles/applications/portfolio-apps/templates/aldera.env.j2"),
-    resolve(process.cwd(), ".server-infra/roles/applications/portfolio-apps/templates/aldera.env.j2"),
-    resolve(process.cwd(), "server-infra-with-ansible/roles/applications/portfolio-apps/templates/aldera.env.j2"),
+    resolve(
+      process.cwd(),
+      "../server-infra-with-ansible/roles/applications/portfolio-apps/templates/aldera.env.j2"
+    ),
+    resolve(
+      process.cwd(),
+      ".server-infra/roles/applications/portfolio-apps/templates/aldera.env.j2"
+    ),
+    resolve(
+      process.cwd(),
+      "server-infra-with-ansible/roles/applications/portfolio-apps/templates/aldera.env.j2"
+    ),
     resolve(process.cwd(), "aldera.env.j2"),
-    resolve(__dirname, "../../server-infra-with-ansible/roles/applications/portfolio-apps/templates/aldera.env.j2"),
+    resolve(
+      __dirname,
+      "../../server-infra-with-ansible/roles/applications/portfolio-apps/templates/aldera.env.j2"
+    ),
   ].filter(Boolean) as string[];
 
   let resolvedTemplate = "";
@@ -135,13 +147,17 @@ function parseArgs(): {
   }
 
   if (!resolvedExample) {
-    console.error(`${RED}[ERROR] Could not locate .env.example. Checked paths:${RESET}`);
+    console.error(
+      `${RED}[ERROR] Could not locate .env.example. Checked paths:${RESET}`
+    );
     exampleCandidates.forEach((c) => console.error(`  - ${c}`));
     process.exit(1);
   }
 
   if (!resolvedTemplate) {
-    console.error(`${RED}[ERROR] Could not locate aldera.env.j2. Checked paths:${RESET}`);
+    console.error(
+      `${RED}[ERROR] Could not locate aldera.env.j2. Checked paths:${RESET}`
+    );
     templateCandidates.forEach((c) => console.error(`  - ${c}`));
     process.exit(1);
   }
@@ -167,9 +183,15 @@ export function runConfigDriftScan(options?: {
         }
       : parseArgs();
 
-  console.log(`${BOLD}${CYAN}================================================================${RESET}`);
-  console.log(`${BOLD}${CYAN}      Aldera Tech — Pre-Flight Config Drift & Secret Scan      ${RESET}`);
-  console.log(`${BOLD}${CYAN}================================================================${RESET}`);
+  console.log(
+    `${BOLD}${CYAN}================================================================${RESET}`
+  );
+  console.log(
+    `${BOLD}${CYAN}      Aldera Tech — Pre-Flight Config Drift & Secret Scan      ${RESET}`
+  );
+  console.log(
+    `${BOLD}${CYAN}================================================================${RESET}`
+  );
   console.log(`📁 Contract (.env.example): ${examplePath}`);
   console.log(`📁 Template (aldera.env.j2): ${templatePath}`);
   console.log(`🛡️  Allowlist: ${Array.from(allowlist).join(", ")}\n`);
@@ -205,7 +227,9 @@ export function runConfigDriftScan(options?: {
     errors.push(msg);
     console.log(`  ${RED}✗ FAIL${RESET}: ${msg}`);
   } else {
-    console.log(`  ${GREEN}✓ PASS${RESET}: All keys in .env.example are present in aldera.env.j2.`);
+    console.log(
+      `  ${GREEN}✓ PASS${RESET}: All keys in .env.example are present in aldera.env.j2.`
+    );
   }
 
   if (undeclaredInTemplate.length > 0) {
@@ -213,11 +237,15 @@ export function runConfigDriftScan(options?: {
     errors.push(msg);
     console.log(`  ${RED}✗ FAIL${RESET}: ${msg}`);
   } else {
-    console.log(`  ${GREEN}✓ PASS${RESET}: No undeclared keys found in aldera.env.j2.`);
+    console.log(
+      `  ${GREEN}✓ PASS${RESET}: No undeclared keys found in aldera.env.j2.`
+    );
   }
 
   // 2. SECRET LEAK & PARAMETERIZATION CHECK in aldera.env.j2
-  console.log(`\n${BOLD}2. Template Secret Parameterization Check (aldera.env.j2):${RESET}`);
+  console.log(
+    `\n${BOLD}2. Template Secret Parameterization Check (aldera.env.j2):${RESET}`
+  );
   let templateLeakDetected = false;
 
   for (const [key, value] of template.keys.entries()) {
@@ -240,22 +268,31 @@ export function runConfigDriftScan(options?: {
         templateLeakDetected = true;
         const msg = `Unparameterized plaintext secret in aldera.env.j2 for key '${key}'! Found literal value instead of Jinja2 vault template.`;
         errors.push(msg);
-        console.log(`  ${RED}✗ LEAK DETECTED${RESET}: ${key} = ${value.slice(0, 4)}***`);
+        console.log(
+          `  ${RED}✗ LEAK DETECTED${RESET}: ${key} = ${value.slice(0, 4)}***`
+        );
       }
     }
   }
 
   if (!templateLeakDetected) {
-    console.log(`  ${GREEN}✓ PASS${RESET}: All sensitive keys in aldera.env.j2 are safely parameterized via Jinja2/vault.`);
+    console.log(
+      `  ${GREEN}✓ PASS${RESET}: All sensitive keys in aldera.env.j2 are safely parameterized via Jinja2/vault.`
+    );
   }
 
   // 3. SECRET LEAK CHECK in .env.example (repository commitment safety)
-  console.log(`\n${BOLD}3. Repository Credential Safety Check (.env.example):${RESET}`);
+  console.log(
+    `\n${BOLD}3. Repository Credential Safety Check (.env.example):${RESET}`
+  );
   let exampleLeakDetected = false;
 
   for (const [key, value] of example.keys.entries()) {
     // Check for live Midtrans production keys (Mid-server-...)
-    if (key.includes("MIDTRANS") && /Mid-server-[a-zA-Z0-9_-]{20,}/.test(value)) {
+    if (
+      key.includes("MIDTRANS") &&
+      /Mid-server-[a-zA-Z0-9_-]{20,}/.test(value)
+    ) {
       exampleLeakDetected = true;
       const msg = `Live production Midtrans server key detected in .env.example under '${key}'!`;
       errors.push(msg);
@@ -270,7 +307,10 @@ export function runConfigDriftScan(options?: {
       console.log(`  ${RED}✗ LEAK DETECTED${RESET}: ${msg}`);
     }
 
-    if (value.includes("BEGIN PRIVATE KEY") || value.includes("BEGIN RSA PRIVATE KEY")) {
+    if (
+      value.includes("BEGIN PRIVATE KEY") ||
+      value.includes("BEGIN RSA PRIVATE KEY")
+    ) {
       exampleLeakDetected = true;
       const msg = `Private cryptographic key detected in .env.example under '${key}'!`;
       errors.push(msg);
@@ -279,19 +319,31 @@ export function runConfigDriftScan(options?: {
   }
 
   if (!exampleLeakDetected) {
-    console.log(`  ${GREEN}✓ PASS${RESET}: No live credentials or private keys detected in .env.example.`);
+    console.log(
+      `  ${GREEN}✓ PASS${RESET}: No live credentials or private keys detected in .env.example.`
+    );
   }
 
   // Summary
-  console.log(`\n${BOLD}${CYAN}================================================================${RESET}`);
+  console.log(
+    `\n${BOLD}${CYAN}================================================================${RESET}`
+  );
   if (errors.length === 0) {
-    console.log(`${BOLD}${GREEN}  ✓ SCAN PASSED: 0 configuration drifts, 0 secret leaks detected.${RESET}`);
-    console.log(`${BOLD}${CYAN}================================================================${RESET}\n`);
+    console.log(
+      `${BOLD}${GREEN}  ✓ SCAN PASSED: 0 configuration drifts, 0 secret leaks detected.${RESET}`
+    );
+    console.log(
+      `${BOLD}${CYAN}================================================================${RESET}\n`
+    );
     return { success: true, errors: [] };
   } else {
-    console.log(`${BOLD}${RED}  ✗ SCAN FAILED: ${errors.length} violation(s) detected.${RESET}`);
+    console.log(
+      `${BOLD}${RED}  ✗ SCAN FAILED: ${errors.length} violation(s) detected.${RESET}`
+    );
     errors.forEach((err, idx) => console.log(`    ${idx + 1}. ${err}`));
-    console.log(`${BOLD}${CYAN}================================================================${RESET}\n`);
+    console.log(
+      `${BOLD}${CYAN}================================================================${RESET}\n`
+    );
     return { success: false, errors };
   }
 }

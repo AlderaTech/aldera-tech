@@ -2,9 +2,9 @@
 
 ## Cakupan dan tema
 
-Halaman daftar `/dashboard/projects` memakai tema yang sama dengan Ringkasan: Plus Jakarta Sans, navy/biru elektrik, gradasi terang, kartu putih, radius lembut, border tipis, dan fokus keyboard biru.
+Halaman daftar `/dashboard/projects` dan halaman detail `/dashboard/projects/[id]` memakai tema yang sama dengan Ringkasan: Plus Jakarta Sans, navy/biru elektrik, gradasi terang, kartu putih, radius lembut, border tipis, dan fokus keyboard biru.
 
-`getStudioDashboardSection` mengaktifkan wrapper, sidebar, serta header studio untuk rute tepat `/dashboard`, `/dashboard/projects`, `/dashboard/orders`, `/dashboard/calculator`, dan `/dashboard/ai-relay`. Menu, akses, command palette, dropdown akun, serta navigasi Sheet tetap menggunakan konfigurasi dan mekanisme yang sama. Nama bagian header mengikuti rute aktif. Detail `/dashboard/projects/[id]` tidak memakai variasi tampilan baru.
+`getStudioDashboardSection` mengaktifkan wrapper, sidebar, serta header studio untuk rute `/dashboard`, `/dashboard/projects`, `/dashboard/projects/[id]`, `/dashboard/orders`, `/dashboard/calculator`, `/dashboard/ai-relay`, `/dashboard/invoices`, dan `/dashboard/profile`. Menu, akses, command palette, dropdown akun, serta navigasi Sheet tetap menggunakan konfigurasi dan mekanisme yang sama. Pada detail proyek (`/dashboard/projects/[id]`), header dibungkus dalam kartu putih bergaya Studio dengan tombol kembali, metadata deadline/budget, serta bar progres proyek, sementara ke-6 tab (`Timeline`, `Tasks`, `Activity`, `Diskusi`, `Files`, `Invoices`) tersusun rata dalam bar putih dan menggunakan panel kartu seragam.
 
 ## Sumber data dan interaksi
 
@@ -13,7 +13,7 @@ Halaman daftar `/dashboard/projects` memakai tema yang sama dengan Ringkasan: Pl
 - Label status berasal dari `projectStatusMeta`. Warna lokal membedakan Pending, Berjalan, Review, Selesai, dan Dibatalkan dengan permukaan pastel serta teks, tanpa mengubah nilai status.
 - Progres memakai nilai `project.progress` langsung melalui elemen `progress` native. Badge tidak menentukan atau menghitung progres.
 - Seluruh kartu menuju `DASHBOARD_ROUTES.projectDetail(id)`. Tidak ada tombol/input atau tautan bersarang di dalam kartu. Kategori, anggota, thumbnail, dan nilai proyek tidak ditambahkan.
-- Satu CTA Hitung Estimasi ditempatkan pada header halaman dan menggunakan `PUBLIC_ROUTES.calculator`, sama dengan alur yang tersedia. Pencarian, filter status, dan paginasi memakai parameter URL `q`, `status`, serta `page`. Empty state belum memiliki proyek ditampilkan ketika total nol tanpa filter; hasil filter kosong memakai pesan dan tindakan Reset Filter yang terpisah.
+- Satu CTA Hitung Estimasi ditempatkan pada header halaman (dengan kotak background card container yang seragam dengan Invoice & Pembayaran, border dan shadow halus) dan menggunakan `PUBLIC_ROUTES.calculator`, sama dengan alur yang tersedia. Pencarian, filter status, dan paginasi memakai parameter URL `q`, `status`, serta `page`. Empty state belum memiliki proyek ditampilkan ketika total nol tanpa filter; hasil filter kosong memakai pesan dan tindakan Reset Filter yang terpisah.
 - Data tetap berada pada komponen server. Tidak ada perubahan API, database, autentikasi, izin, fitur detail, chat, milestone, file, atau invoice.
 
 ## Kondisi halaman

@@ -162,8 +162,8 @@ async function checkUpstreamRouter(): Promise<UpstreamCheck> {
       error: isTimeout
         ? "Upstream 9router request timed out (2000ms exceeded)"
         : err instanceof Error
-        ? err.message
-        : String(err),
+          ? err.message
+          : String(err),
     };
   }
 }

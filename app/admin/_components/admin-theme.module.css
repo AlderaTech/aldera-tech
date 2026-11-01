@@ -1,0 +1,86 @@
+.scope {
+  --admin-line: color-mix(
+    in srgb,
+    var(--overview-ink) 16%,
+    var(--overview-paper)
+  );
+  --admin-muted: color-mix(
+    in srgb,
+    var(--overview-ink) 72%,
+    var(--overview-paper)
+  );
+  --background: var(--overview-canvas);
+  --foreground: var(--overview-ink);
+  --card: var(--overview-paper);
+  --card-foreground: var(--overview-ink);
+  --popover: var(--overview-paper);
+  --popover-foreground: var(--overview-ink);
+  --primary: var(--overview-blue);
+  --primary-foreground: var(--overview-paper);
+  --secondary: var(--overview-sky);
+  --secondary-foreground: var(--overview-ink);
+  --accent: var(--overview-sky);
+  --accent-foreground: var(--overview-ink);
+  --muted: var(--overview-canvas);
+  --muted-foreground: var(--admin-muted);
+  --border: var(--admin-line);
+  --input: var(--admin-line);
+  --ring: var(--overview-blue);
+  color: var(--overview-ink);
+  font-family: var(--font-jakarta-sans), sans-serif;
+}
+.scope :is(h1, h2, h3) {
+  color: var(--overview-ink);
+  text-wrap: balance;
+}
+.scope h1 {
+  font-size: clamp(1.6rem, 2.2vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.3;
+}
+.scope :is(p, dd, dt, li) {
+  overflow-wrap: anywhere;
+}
+.scope
+  :is(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    [role="tab"],
+    [role="switch"]
+  ):focus-visible,
+.scope
+  :is(
+    button,
+    input,
+    textarea,
+    select,
+    [role="menuitem"],
+    [role="option"]
+  ):focus-visible {
+  outline: 2px solid var(--overview-blue);
+  outline-offset: 3px;
+}
+.scope :is(a, button, input, select, textarea, [role="tab"]) {
+  scroll-margin-top: 6rem;
+}
+.scope :global([class~="text-slate-400"]),
+.scope :global([class~="text-slate-500"]),
+.scope :global([class~="text-gray-500"]) {
+  color: var(--admin-muted);
+}
+.scope :global([class~="bg-brand-primary"]) {
+  background-color: var(--overview-blue);
+}
+@media (prefers-reduced-motion: reduce) {
+  .scope *,
+  .scope :is(button, [role="dialog"]) {
+    scroll-behavior: auto;
+    transition-duration: 0s;
+    animation-duration: 0s;
+    animation-iteration-count: 1;
+  }
+}

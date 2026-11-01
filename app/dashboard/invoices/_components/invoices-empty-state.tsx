@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { DASHBOARD_ROUTES } from "@/lib/routes";
-import mascot from "@/public/images/dashboard/ai-relay/aldera-relay-assistant.webp";
+import emptyIllustration from "@/public/images/about/technology/design.webp";
 import { EmptyStatePattern } from "../../_components/empty-state-pattern";
 import styles from "./invoices.module.css";
 
@@ -38,7 +38,7 @@ export function InvoicesEmptyState({
     <div className={styles.emptyState}>
       <EmptyStatePattern className={styles.emptyPattern} />
       <Image
-        src={mascot}
+        src={emptyIllustration}
         width={120}
         height={120}
         sizes="(max-width: 479px) 104px, 120px"

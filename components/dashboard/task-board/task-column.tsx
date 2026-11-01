@@ -39,12 +39,12 @@ export function TaskColumn({
   return (
     <div
       ref={setNodeRef}
-      className="min-h-72 rounded-xl border border-slate-200 bg-slate-50/70 p-3"
+      className="min-h-72 rounded-2xl border border-[#e1e8f2] bg-[#f5f8fd] p-3"
     >
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Badge variant={meta.variant}>{meta.label}</Badge>
-          <span className="text-xs text-muted-foreground tabular-nums">
+          <span className="rounded-full border border-[#e1e8f2] bg-white px-2 py-0.5 text-xs font-bold text-[#102651] tabular-nums">
             {tasks.length}
           </span>
         </div>
@@ -74,7 +74,7 @@ export function TaskColumn({
             />
           ))}
           {tasks.length === 0 && (
-            <div className="rounded-lg border border-dashed bg-white/70 p-5 text-center text-xs text-muted-foreground">
+            <div className="rounded-xl border border-dashed border-[#e1e8f2] bg-white/80 p-5 text-center text-xs font-medium text-[#65748b]">
               Belum ada task.
             </div>
           )}

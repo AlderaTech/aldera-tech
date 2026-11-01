@@ -45,5 +45,8 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  return NextResponse.json({ ...lockRes.result, timestamp: new Date().toISOString() });
+  return NextResponse.json({
+    ...lockRes.result,
+    timestamp: new Date().toISOString(),
+  });
 }

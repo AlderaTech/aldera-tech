@@ -5,15 +5,15 @@ import {
   CheckCircle2,
   Circle,
   Clock,
+  Flag,
   X,
 } from "lucide-react";
 
 import { MilestoneApproval } from "@/components/dashboard/milestone-approval";
-import { StaggerContainer, StaggerItem } from "@/components/shared/motion";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { milestoneStatusMeta } from "@/lib/status-meta";
 import { formatDate } from "@/lib/utils";
+import styles from "./project-detail.module.css";
 
 const milestoneIcon = {
   PENDING: Circle,
@@ -40,95 +40,94 @@ interface ProjectTimelineTabProps {
 }
 
 export function ProjectTimelineTab({ milestones }: ProjectTimelineTabProps) {
-  if (milestones.length === 0) {
-    return (
-      <Card className="p-10 text-center text-muted-foreground">
-        Belum ada milestone.
-      </Card>
-    );
-  }
-
   return (
-    <StaggerContainer>
-      <ol className="relative ml-3 space-y-5 border-l-2">
-        {milestones.map((m) => {
-          const mMeta = milestoneStatusMeta[m.status];
-          const Icon = milestoneIcon[m.status];
-          return (
-            <StaggerItem key={m.id}>
-              <li className="relative pl-6">
+    <section
+      className={styles.panel}
+      aria-labelledby="project-timeline-heading"
+    >
+      <div className={styles.panelHeader}>
+        <div>
+          <p className={styles.eyebrow}>
+            <Flag className="size-3.5" aria-hidden="true" /> Tahapan Pengerjaan
+          </p>
+          <h2 id="project-timeline-heading" className={styles.panelTitle}>
+            Timeline &amp; Milestone Proyek
+          </h2>
+          <p className={styles.panelSubtitle}>
+            Pantau capaian setiap tahapan pengerjaan dan berikan persetujuan
+            milestone.
+          </p>
+        </div>
+        <span className={styles.countBadge}>{milestones.length} Milestone</span>
+      </div>
+
+      {milestones.length === 0 ? (
+        <div className={styles.emptyBox}>Belum ada milestone.</div>
+      ) : (
+        <ol className={styles.timelineList}>
+          {milestones.map((m) => {
+            const mMeta = milestoneStatusMeta[m.status];
+            const Icon = milestoneIcon[m.status];
+            return (
+              <li key={m.id} className={styles.timelineItem}>
                 <span
-                  className={`absolute top-1 -left-[13px] flex size-6 items-center justify-center rounded-full ring-4 ring-background ${
-                    m.status === "COMPLETED"
-                      ? "bg-success text-success-foreground"
-                      : m.status === "IN_PROGRESS"
-                        ? "bg-primary text-primary-foreground"
-                        : m.status === "BLOCKED"
-                          ? "bg-destructive text-destructive-foreground"
-                          : "bg-muted text-muted-foreground"
-                  }`}
+                  className={styles.timelineMarker}
+                  data-status={m.status}
+                  aria-hidden="true"
                 >
-                  <Icon className="size-3.5" />
+                  <Icon className="size-4" />
                 </span>
-                <Card className="p-5">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="font-semibold">{m.title}</h3>
-                        <Badge variant={mMeta.variant}>{mMeta.label}</Badge>
-                      </div>
-                      {m.description && (
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          {m.description}
-                        </p>
+                <div className={styles.timelineCard}>
+                  <div className={styles.timelineCardHeader}>
+                    <h3>{m.title}</h3>
+                    <Badge variant={mMeta.variant}>{mMeta.label}</Badge>
+                  </div>
+                  {m.description && (
+                    <p className={styles.timelineCardDesc}>{m.description}</p>
+                  )}
+                  {(m.dueDate || m.completedAt) && (
+                    <div className={styles.timelineMeta}>
+                      {m.dueDate && (
+                        <span>Deadline: {formatDate(m.dueDate)}</span>
                       )}
-                      <div className="mt-2 flex flex-wrap gap-4 text-xs text-muted-foreground">
-                        {m.dueDate && (
-                          <span>Deadline: {formatDate(m.dueDate)}</span>
-                        )}
-                        {m.completedAt && (
-                          <span className="text-success">
-                            Selesai: {formatDate(m.completedAt)}
-                          </span>
-                        )}
-                      </div>
-                      {m.requiresClientApproval &&
-                        m.status === "COMPLETED" &&
-                        !m.clientApprovedAt &&
-                        !m.clientRejectedAt && (
-                          <MilestoneApproval milestoneId={m.id} />
-                        )}
-                      {m.clientApprovedAt && (
-                        <p className="mt-2 flex items-center gap-1 text-xs text-success">
-                          <Check className="size-3.5 shrink-0" />
-                          <span>
-                            Disetujui {formatDate(m.clientApprovedAt)}
-                          </span>
-                        </p>
-                      )}
-                      {m.clientRejectedAt && (
-                        <div className="mt-2 text-xs">
-                          <p className="flex items-center gap-1 text-destructive">
-                            <X className="size-3.5 shrink-0" />
-                            <span>
-                              Ditolak {formatDate(m.clientRejectedAt)}
-                            </span>
-                          </p>
-                          {m.clientFeedback && (
-                            <p className="mt-1 text-muted-foreground">
-                              Feedback: {m.clientFeedback}
-                            </p>
-                          )}
-                        </div>
+                      {m.completedAt && (
+                        <span className={styles.completedMeta}>
+                          Selesai: {formatDate(m.completedAt)}
+                        </span>
                       )}
                     </div>
-                  </div>
-                </Card>
+                  )}
+                  {m.requiresClientApproval &&
+                    m.status === "COMPLETED" &&
+                    !m.clientApprovedAt &&
+                    !m.clientRejectedAt && (
+                      <MilestoneApproval milestoneId={m.id} />
+                    )}
+                  {m.clientApprovedAt && (
+                    <p className="mt-2.5 flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
+                      <Check className="size-3.5 shrink-0" />
+                      <span>Disetujui {formatDate(m.clientApprovedAt)}</span>
+                    </p>
+                  )}
+                  {m.clientRejectedAt && (
+                    <div className="mt-2.5 text-xs">
+                      <p className="flex items-center gap-1.5 font-semibold text-rose-700">
+                        <X className="size-3.5 shrink-0" />
+                        <span>Ditolak {formatDate(m.clientRejectedAt)}</span>
+                      </p>
+                      {m.clientFeedback && (
+                        <p className="mt-1 text-slate-600">
+                          Feedback: {m.clientFeedback}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
               </li>
-            </StaggerItem>
-          );
-        })}
-      </ol>
-    </StaggerContainer>
+            );
+          })}
+        </ol>
+      )}
+    </section>
   );
 }

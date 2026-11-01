@@ -1,6 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import styles from "./profile.module.css";
-import preview from "./profile-preview.module.css";
 
 export function ProfileSkeleton() {
   return (
@@ -16,25 +15,26 @@ export function ProfileSkeleton() {
         </div>
         <Skeleton className="h-28 w-28 max-w-full rounded-xl" />
       </div>
-      <div className={preview.dashboardGrid} aria-hidden="true">
-        <div className={preview.panel}>
+      <div className={styles.formCard} aria-hidden="true">
+        <div className="space-y-2">
           <Skeleton className="h-6 w-48 max-w-full" />
-          {[0, 1, 2].map((index) => (
-            <Skeleton className="h-36 w-full rounded-2xl" key={index} />
-          ))}
+          <Skeleton className="h-4 w-72 max-w-full" />
         </div>
-        <div className={preview.rightColumn}>
-          <div className={preview.panel}>
-            <Skeleton className="h-6 w-40 max-w-full" />
-            <Skeleton className="h-24 w-full rounded-2xl" />
-            <Skeleton className="h-11 w-full rounded-xl" />
+        <div className={styles.formFields}>
+          <div className="space-y-2.5">
+            <Skeleton className="h-4 w-32 max-w-full" />
+            <Skeleton className="h-12 w-full rounded-xl" />
+            <Skeleton className="h-3 w-52 max-w-full" />
           </div>
-          <div className={preview.panel}>
-            <Skeleton className="h-16 w-full rounded-xl" />
-            {[0, 1, 2].map((index) => (
-              <Skeleton key={index} className="h-12 w-full rounded-xl" />
-            ))}
+          <div className="space-y-2.5">
+            <Skeleton className="h-4 w-40 max-w-full" />
+            <Skeleton className="h-12 w-full rounded-xl" />
+            <Skeleton className="h-3 w-64 max-w-full" />
           </div>
+        </div>
+        <div className={styles.formFooter}>
+          <Skeleton className="h-4 w-56 max-w-full" />
+          <Skeleton className="h-12 w-40 max-w-full rounded-xl" />
         </div>
       </div>
     </div>

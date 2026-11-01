@@ -1,3 +1,4 @@
+import { RevenueAreaChart } from "@/components/dashboard/analytics-charts";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { formatCurrency } from "@/lib/utils";
@@ -21,6 +22,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { API_ROUTES } from "@/lib/routes";
+import { AdminMascot } from "../_components/admin-mascot";
+import { AdminStatCard } from "../_components/admin-stat-card";
 
 export default async function AnalyticsPage() {
   const data = await safeDb(
@@ -192,7 +195,10 @@ export default async function AnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
             Revenue & Profitability
@@ -201,57 +207,50 @@ export default async function AnalyticsPage() {
             Analisis performa bisnis Aldera Tech
           </p>
         </div>
-        <Button asChild variant="outline" size="sm">
-          <a href={API_ROUTES.exportAnalytics} download>
-            <Download className="size-3.5" /> Export CSV
-          </a>
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <AdminMascot pose="vision" size="header" />
+          <Button asChild variant="outline" size="sm">
+            <a href={API_ROUTES.exportAnalytics} download>
+              <Download className="size-3.5" /> Export CSV
+            </a>
+          </Button>
+        </div>
       </div>
 
       {/* Summary cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="size-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              {formatCurrency(data.totalRevenue)}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              Collection Rate
-            </CardTitle>
-            <Percent className="size-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{data.collectionRate}%</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              Avg. Durasi Proyek
-            </CardTitle>
-            <BarChart3 className="size-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{data.avgDurationDays} hari</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Proyek</CardTitle>
-            <TrendingUp className="size-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{data.totalProjects}</p>
-          </CardContent>
-        </Card>
+        <AdminStatCard
+          label="Total Revenue"
+          value={formatCurrency(data.totalRevenue)}
+          helper="Seluruh invoice berstatus paid"
+          icon={DollarSign}
+          artwork="service-seo"
+          toneClassName="border-emerald-200 bg-emerald-50 text-emerald-700"
+        />
+        <AdminStatCard
+          label="Collection Rate"
+          value={`${data.collectionRate}%`}
+          helper="Rasio pelunasan tagihan"
+          icon={Percent}
+          artwork="service-quality"
+          toneClassName="border-primary/20 bg-primary/10 text-primary"
+        />
+        <AdminStatCard
+          label="Avg. Durasi Proyek"
+          value={`${data.avgDurationDays} hari`}
+          helper="Rata-rata waktu penyelesaian"
+          icon={BarChart3}
+          artwork="tech-backend"
+          toneClassName="border-sky-200 bg-sky-50 text-sky-700"
+        />
+        <AdminStatCard
+          label="Total Proyek"
+          value={data.totalProjects}
+          helper="Proyek aktif & selesai"
+          icon={TrendingUp}
+          artwork="tech-web"
+          toneClassName="border-amber-200 bg-amber-50 text-amber-700"
+        />
       </div>
 
       {/* Monthly revenue */}
@@ -263,30 +262,7 @@ export default async function AnalyticsPage() {
           {data.monthlyRevenue.length === 0 ? (
             <p className="text-sm text-muted-foreground">Belum ada data.</p>
           ) : (
-            <div className="flex h-40 items-end gap-1">
-              {data.monthlyRevenue.map((m) => {
-                const max = Math.max(
-                  ...data.monthlyRevenue.map((x) => x.revenue),
-                  1
-                );
-                const pct = (m.revenue / max) * 100;
-                return (
-                  <div
-                    key={m.month}
-                    className="flex flex-1 flex-col items-center gap-1"
-                  >
-                    <div
-                      className="w-full rounded-t bg-primary/80"
-                      style={{ height: `${Math.max(pct, 2)}%` }}
-                      title={formatCurrency(m.revenue)}
-                    />
-                    <span className="text-[10px] text-muted-foreground">
-                      {m.month}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
+            <RevenueAreaChart data={data.monthlyRevenue} animate={false} />
           )}
         </CardContent>
       </Card>

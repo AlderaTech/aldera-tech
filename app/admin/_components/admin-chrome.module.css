@@ -1,0 +1,130 @@
+.portalScope {
+  --admin-portal-theme: 1;
+}
+.shell {
+  display: flex;
+  min-height: 100svh;
+  min-width: 0;
+  background: var(--overview-canvas);
+}
+.shell [data-admin-sidebar] {
+  width: 17rem;
+}
+.shell [data-admin-main] {
+  width: 100%;
+  max-width: 108rem;
+  min-width: 0;
+  margin-inline: auto;
+  padding: 1.5rem;
+  container-type: inline-size;
+}
+.shell [data-admin-content] {
+  min-width: 0;
+}
+.shell [data-admin-content] > :first-child {
+  min-width: 0;
+}
+.shell [data-admin-sidebar] > aside,
+.portalScope :global([data-slot="sheet-content"] > aside) {
+  min-height: 0;
+  border-color: var(--admin-line);
+  background: var(--overview-paper);
+  color: var(--overview-ink);
+}
+.shell [data-admin-sidebar] > aside > div:first-child,
+.portalScope :global([data-slot="sheet-content"] > aside > div:first-child) {
+  min-height: 4.5rem;
+  padding-inline: 1rem;
+  border-color: var(--admin-line);
+}
+.shell [data-admin-sidebar] nav,
+.portalScope :global([data-slot="sheet-content"] aside nav) {
+  min-height: 0;
+  padding: 1rem 0.75rem;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.shell [data-admin-sidebar] nav > div,
+.portalScope :global([data-slot="sheet-content"] aside nav > div) {
+  display: grid;
+  gap: 1.3rem;
+}
+.shell [data-admin-sidebar] nav > div > div > div:first-child,
+.portalScope
+  :global([data-slot="sheet-content"] aside nav > div > div > div:first-child) {
+  color: var(--admin-muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.09em;
+}
+.shell [data-admin-sidebar] nav a,
+.portalScope :global([data-slot="sheet-content"] aside nav a) {
+  min-height: 42px;
+  padding-block: 0.5rem;
+  gap: 0.65rem;
+  border-radius: 0.8rem;
+  color: var(--admin-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+.shell [data-admin-sidebar] nav a > span:last-child,
+.portalScope
+  :global([data-slot="sheet-content"] aside nav a > span:last-child) {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+.shell [data-admin-sidebar] nav a > span:first-child,
+.portalScope
+  :global([data-slot="sheet-content"] aside nav a > span:first-child) {
+  background: var(--overview-canvas);
+  color: var(--admin-muted);
+}
+.shell [data-admin-sidebar] nav a[aria-current="page"],
+.portalScope
+  :global([data-slot="sheet-content"] aside nav a[aria-current="page"]) {
+  background: var(--overview-blue);
+  color: var(--overview-paper);
+  box-shadow: 0 4px 10px
+    color-mix(in srgb, var(--overview-blue) 14%, transparent);
+}
+.shell [data-admin-sidebar] nav a[aria-current="page"] > span:first-child,
+.portalScope
+  :global(
+    [data-slot="sheet-content"]
+      aside
+      nav
+      a[aria-current="page"]
+      > span:first-child
+  ) {
+  background: color-mix(in srgb, var(--overview-paper) 16%, transparent);
+  color: var(--overview-paper);
+}
+.shell [data-admin-sidebar] nav a:hover:not([aria-current]),
+.portalScope
+  :global([data-slot="sheet-content"] aside nav a:hover:not([aria-current])) {
+  background: var(--overview-sky);
+  color: var(--overview-ink);
+}
+.header {
+  height: 4.5rem;
+  min-width: 0;
+  border-color: var(--admin-line);
+  background: color-mix(in srgb, var(--overview-paper) 94%, transparent);
+  box-shadow: none;
+}
+.header > div:last-of-type {
+  flex-shrink: 0;
+}
+.header button[aria-label="Buka pencarian"] {
+  border-radius: 0.75rem;
+  background: var(--overview-canvas);
+}
+@media (max-width: 639px) {
+  .shell [data-admin-main] {
+    padding: 1rem;
+  }
+  .header {
+    padding-inline: 0.75rem;
+    gap: 0.35rem;
+  }
+}

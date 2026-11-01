@@ -10,7 +10,6 @@ export function OrdersFrame({ children }: { children: ReactNode }) {
     <div className={commonStyles.page} aria-labelledby="orders-heading">
       <div className={commonStyles.header}>
         <div>
-          <p className={commonStyles.eyebrow}>Perencanaan proyek</p>
           <h1 id="orders-heading">Riwayat Estimasi</h1>
           <p className={commonStyles.description}>
             Pantau estimasi proyek yang pernah Anda ajukan.

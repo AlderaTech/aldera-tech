@@ -4,6 +4,7 @@ import { safeDb } from "@/lib/safe-db";
 import { OnboardingChecklist } from "./_components/onboarding-checklist";
 import { OverviewWelcome } from "./_components/overview-welcome";
 import { OverviewStats } from "./_components/overview-stats";
+import { OverviewCharts } from "./_components/overview-charts";
 import { OverviewProjects } from "./_components/overview-projects";
 import { OverviewActivity } from "./_components/overview-activity";
 import { OverviewLayout } from "./_components/overview-layout";
@@ -80,6 +81,14 @@ export default async function DashboardHome() {
           active={stats.active}
           pending={stats.pending}
           spent={stats.spent}
+        />
+      }
+      charts={
+        <OverviewCharts
+          active={stats.active}
+          pending={stats.pending}
+          spent={stats.spent}
+          projects={stats.projects}
         />
       }
       projects={<OverviewProjects projects={stats.projects} />}

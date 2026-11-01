@@ -55,16 +55,16 @@ export function SearchFilterBar({
           {placeholder}
         </label>
         <Search
-          className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+          className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400 dark:text-muted-foreground"
           aria-hidden="true"
         />
         <Input
           id={`search-${searchParamKey}`}
-          type="search"
+          type="text"
           value={localValue}
           onChange={(e) => setLocalValue(e.target.value)}
           placeholder={placeholder}
-          className="h-9 pr-8 pl-9 text-sm"
+          className="h-9 border-slate-300 bg-white pr-8 pl-9 text-sm text-slate-900 shadow-2xs placeholder:text-slate-400 focus-visible:border-primary dark:border-border dark:bg-background dark:text-foreground"
         />
         {localValue ? (
           <Button

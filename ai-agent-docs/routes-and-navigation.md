@@ -77,7 +77,7 @@ DASHBOARD_ROUTES.calculator; // "/dashboard/calculator" (sub-rute kalkulator di 
 DASHBOARD_ROUTES.orders; // "/dashboard/orders"
 DASHBOARD_ROUTES.invoices; // "/dashboard/invoices"
 DASHBOARD_ROUTES.profile; // "/dashboard/profile"
-DASHBOARD_ROUTES.settings; // "/dashboard/settings"
+
 DASHBOARD_ROUTES.projectDetail(id); // "/dashboard/projects/{id}"
 DASHBOARD_ROUTES.projectDetailTab(id, tab); // "/dashboard/projects/{id}?tab={tab}"
 DASHBOARD_ROUTES.projectsWithParams({ q, status, page }); // "/dashboard/projects?..."

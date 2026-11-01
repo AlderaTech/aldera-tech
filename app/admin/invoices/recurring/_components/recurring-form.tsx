@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { AdminFieldLabel as Label } from "../../../_components/admin-field-label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -98,7 +98,9 @@ export function RecurringTemplateForm({
     <form onSubmit={handleSubmit} className="max-w-4xl space-y-6">
       <Card className="space-y-5 p-6">
         <div className="space-y-2">
-          <Label htmlFor="name">Nama Template</Label>
+          <Label htmlFor="name" required>
+            Nama Template
+          </Label>
           <Input
             id="name"
             value={name}
@@ -109,9 +111,11 @@ export function RecurringTemplateForm({
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label>Client</Label>
+            <Label htmlFor="recurring-client" required>
+              Client
+            </Label>
             <Select value={clientId} onValueChange={setClientId} required>
-              <SelectTrigger>
+              <SelectTrigger id="recurring-client">
                 <SelectValue placeholder="Pilih client…" />
               </SelectTrigger>
               <SelectContent>
@@ -124,13 +128,15 @@ export function RecurringTemplateForm({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Proyek (opsional)</Label>
+            <Label htmlFor="recurring-project" optional>
+              Proyek
+            </Label>
             <Select
               value={projectId}
               onValueChange={setProjectId}
               disabled={!clientId}
             >
-              <SelectTrigger>
+              <SelectTrigger id="recurring-project">
                 <SelectValue placeholder="Pilih proyek…" />
               </SelectTrigger>
               <SelectContent>
@@ -145,9 +151,9 @@ export function RecurringTemplateForm({
         </div>
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-2">
-            <Label>Frekuensi</Label>
+            <Label htmlFor="recurring-frequency">Frekuensi</Label>
             <Select value={frequency} onValueChange={setFrequency}>
-              <SelectTrigger>
+              <SelectTrigger id="recurring-frequency">
                 <SelectValue placeholder="Pilih frekuensi invoice" />
               </SelectTrigger>
               <SelectContent>
@@ -159,8 +165,11 @@ export function RecurringTemplateForm({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Terbit Berikutnya</Label>
+            <Label htmlFor="recurring-next-issue" required>
+              Terbit Berikutnya
+            </Label>
             <Input
+              id="recurring-next-issue"
               type="date"
               value={nextIssueDate}
               onChange={(e) => setNextIssueDate(e.target.value)}
@@ -169,25 +178,27 @@ export function RecurringTemplateForm({
             />
           </div>
           <div className="space-y-2">
-            <Label>Hari Jatuh Tempo</Label>
+            <Label htmlFor="recurring-due-days">Hari Jatuh Tempo</Label>
             <Input
               type="number"
               min="1"
               max="90"
               value={dueDays}
               onChange={(e) => setDueDays(e.target.value)}
+              id="recurring-due-days"
               placeholder="14"
             />
           </div>
         </div>
         <div className="max-w-xs space-y-2">
-          <Label>Pajak (%)</Label>
+          <Label htmlFor="recurring-tax">Pajak (%)</Label>
           <Input
             type="number"
             min="0"
             max="100"
             value={taxRate}
             onChange={(e) => setTaxRate(e.target.value)}
+            id="recurring-tax"
             placeholder="11"
           />
         </div>
@@ -212,29 +223,52 @@ export function RecurringTemplateForm({
         </div>
         <div className="space-y-3">
           {items.map((it, i) => (
-            <div key={i} className="grid grid-cols-[1fr_80px_140px_40px] gap-2">
-              <Input
-                placeholder="Deskripsi"
-                value={it.description}
-                onChange={(e) => updateItem(i, { description: e.target.value })}
-                required
-              />
-              <Input
-                type="number"
-                step="0.01"
-                placeholder="Qty"
-                value={it.quantity}
-                onChange={(e) => updateItem(i, { quantity: e.target.value })}
-                required
-              />
-              <Input
-                type="number"
-                step="0.01"
-                placeholder="Harga"
-                value={it.price}
-                onChange={(e) => updateItem(i, { price: e.target.value })}
-                required
-              />
+            <div
+              key={i}
+              className="grid grid-cols-1 items-start gap-2 sm:grid-cols-[minmax(0,1fr)_80px_140px_40px]"
+            >
+              <div className="space-y-1.5">
+                <Label htmlFor={`recurring-item-description-${i}`} required>
+                  Deskripsi
+                </Label>
+                <Input
+                  id={`recurring-item-description-${i}`}
+                  placeholder="Deskripsi"
+                  value={it.description}
+                  onChange={(e) =>
+                    updateItem(i, { description: e.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor={`recurring-item-quantity-${i}`} required>
+                  Kuantitas
+                </Label>
+                <Input
+                  id={`recurring-item-quantity-${i}`}
+                  type="number"
+                  step="0.01"
+                  placeholder="Qty"
+                  value={it.quantity}
+                  onChange={(e) => updateItem(i, { quantity: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor={`recurring-item-price-${i}`} required>
+                  Harga (Rp)
+                </Label>
+                <Input
+                  id={`recurring-item-price-${i}`}
+                  type="number"
+                  step="0.01"
+                  placeholder="Harga"
+                  value={it.price}
+                  onChange={(e) => updateItem(i, { price: e.target.value })}
+                  required
+                />
+              </div>
               <Button
                 type="button"
                 variant="ghost"
@@ -257,7 +291,9 @@ export function RecurringTemplateForm({
       </Card>
 
       <Card className="space-y-2 p-6">
-        <Label htmlFor="notes">Catatan (opsional)</Label>
+        <Label htmlFor="notes" optional>
+          Catatan
+        </Label>
         <Textarea
           id="notes"
           value={notes}

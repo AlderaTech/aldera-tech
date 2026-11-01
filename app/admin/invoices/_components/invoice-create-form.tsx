@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { AdminFieldLabel as Label } from "../../_components/admin-field-label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -117,9 +117,11 @@ export function InvoiceCreateForm({
       <Card className="space-y-5 p-6">
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label>Client</Label>
+            <Label htmlFor="invoice-client" required>
+              Client
+            </Label>
             <Select value={clientId} onValueChange={setClientId} required>
-              <SelectTrigger>
+              <SelectTrigger id="invoice-client">
                 <SelectValue placeholder="Pilih client…" />
               </SelectTrigger>
               <SelectContent>
@@ -132,13 +134,15 @@ export function InvoiceCreateForm({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Proyek (opsional)</Label>
+            <Label htmlFor="invoice-project" optional>
+              Proyek
+            </Label>
             <Select
               value={projectId}
               onValueChange={setProjectId}
               disabled={!clientId}
             >
-              <SelectTrigger>
+              <SelectTrigger id="invoice-project">
                 <SelectValue
                   placeholder={clientId ? "Pilih proyek…" : "Pilih client dulu"}
                 />
@@ -156,7 +160,9 @@ export function InvoiceCreateForm({
 
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-2">
-            <Label htmlFor="issueDate">Tanggal Terbit</Label>
+            <Label required htmlFor="issueDate">
+              Tanggal Terbit
+            </Label>
             <Input
               id="issueDate"
               type="date"
@@ -167,7 +173,9 @@ export function InvoiceCreateForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="dueDate">Jatuh Tempo</Label>
+            <Label required htmlFor="dueDate">
+              Jatuh Tempo
+            </Label>
             <Input
               id="dueDate"
               type="date"
@@ -178,7 +186,9 @@ export function InvoiceCreateForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="taxRate">Pajak (%)</Label>
+            <Label optional htmlFor="taxRate">
+              Pajak (%)
+            </Label>
             <Input
               id="taxRate"
               type="number"
@@ -203,30 +213,50 @@ export function InvoiceCreateForm({
           {items.map((it, i) => (
             <div
               key={i}
-              className="grid grid-cols-1 items-start gap-2 sm:grid-cols-[1fr_80px_140px_40px]"
+              className="grid grid-cols-1 items-start gap-2 sm:grid-cols-[minmax(0,1fr)_80px_140px_40px]"
             >
-              <Input
-                placeholder="Deskripsi"
-                value={it.description}
-                onChange={(e) => updateItem(i, { description: e.target.value })}
-                required
-              />
-              <Input
-                type="number"
-                step="0.01"
-                placeholder="Qty"
-                value={it.quantity}
-                onChange={(e) => updateItem(i, { quantity: e.target.value })}
-                required
-              />
-              <Input
-                type="number"
-                step="0.01"
-                placeholder="Harga"
-                value={it.price}
-                onChange={(e) => updateItem(i, { price: e.target.value })}
-                required
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor={`invoice-item-description-${i}`} required>
+                  Deskripsi
+                </Label>
+                <Input
+                  id={`invoice-item-description-${i}`}
+                  placeholder="Deskripsi"
+                  value={it.description}
+                  onChange={(e) =>
+                    updateItem(i, { description: e.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor={`invoice-item-quantity-${i}`} required>
+                  Kuantitas
+                </Label>
+                <Input
+                  id={`invoice-item-quantity-${i}`}
+                  type="number"
+                  step="0.01"
+                  placeholder="Qty"
+                  value={it.quantity}
+                  onChange={(e) => updateItem(i, { quantity: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor={`invoice-item-price-${i}`} required>
+                  Harga (Rp)
+                </Label>
+                <Input
+                  id={`invoice-item-price-${i}`}
+                  type="number"
+                  step="0.01"
+                  placeholder="Harga"
+                  value={it.price}
+                  onChange={(e) => updateItem(i, { price: e.target.value })}
+                  required
+                />
+              </div>
               <Button
                 type="button"
                 variant="ghost"
@@ -257,7 +287,9 @@ export function InvoiceCreateForm({
       </Card>
 
       <Card className="space-y-3 p-6">
-        <Label htmlFor="notes">Catatan (opsional)</Label>
+        <Label optional htmlFor="notes">
+          Catatan
+        </Label>
         <Textarea
           id="notes"
           value={notes}

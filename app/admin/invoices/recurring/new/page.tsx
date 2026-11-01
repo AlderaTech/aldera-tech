@@ -31,7 +31,7 @@ export default async function NewRecurringPage() {
       <Button asChild variant="ghost" size="sm" className="-ml-2">
         <Link href={ADMIN_ROUTES.invoicesRecurring}>← Kembali</Link>
       </Button>
-      <div>
+      <div data-admin-page-header>
         <h1 className="text-2xl font-bold tracking-tight">Template Baru</h1>
         <p className="text-muted-foreground">
           Invoice akan otomatis diterbitkan sesuai jadwal.

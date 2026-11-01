@@ -1,14 +1,12 @@
 import Link from "next/link";
 import type { ProjectStatus } from "@prisma/client";
-import { ArrowLeft, Calendar, Wallet } from "lucide-react";
+import { ArrowLeft, Calendar, FolderKanban, Wallet } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { projectStatusMeta } from "@/lib/status-meta";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { DASHBOARD_ROUTES } from "@/lib/routes";
+import styles from "./project-detail.module.css";
 
 interface ProjectHeaderProps {
   title: string;
@@ -30,46 +28,58 @@ export function ProjectHeader({
   const meta = projectStatusMeta[status];
 
   return (
-    <div className="space-y-6">
-      <Button asChild variant="ghost" size="sm" className="-ml-2">
-        <Link href={DASHBOARD_ROUTES.projects}>
-          <ArrowLeft className="size-4" /> Kembali
+    <header className={styles.headerCard}>
+      <div className={styles.headerTop}>
+        <Link href={DASHBOARD_ROUTES.projects} className={styles.backLink}>
+          <ArrowLeft aria-hidden="true" /> Kembali ke Proyek Saya
         </Link>
-      </Button>
-
-      <div className="space-y-3">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-bold tracking-tight xxxl:text-3xl">
-            {title}
-          </h1>
-          <Badge variant={meta.variant}>{meta.label}</Badge>
-        </div>
-        {description && (
-          <p className="max-w-3xl text-muted-foreground">{description}</p>
-        )}
-        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-          {deadline && (
-            <span className="inline-flex items-center gap-1">
-              <Calendar className="size-3.5" />
-              Deadline: {formatDate(deadline)}
-            </span>
-          )}
-          {budget != null && (
-            <span className="inline-flex items-center gap-1">
-              <Wallet className="size-3.5" />
-              {formatCurrency(Number(budget))}
-            </span>
-          )}
-        </div>
+        <p className={styles.eyebrow}>
+          <FolderKanban className="size-3.5" aria-hidden="true" /> Ruang
+          Kolaborasi Proyek
+        </p>
       </div>
 
-      <Card className="p-6">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="font-medium">Progres Proyek</span>
-          <span className="text-2xl font-bold tabular-nums">{progress}%</span>
+      <div className={styles.headerMain}>
+        <div className={styles.titleBlock}>
+          <div className={styles.titleRow}>
+            <h1>{title}</h1>
+            <Badge variant={meta.variant}>{meta.label}</Badge>
+          </div>
+          {description && <p className={styles.description}>{description}</p>}
         </div>
-        <Progress value={progress} className="h-3" />
-      </Card>
-    </div>
+
+        {(deadline || budget != null) && (
+          <div className={styles.metaChips}>
+            {deadline && (
+              <span className={styles.metaChip}>
+                <Calendar aria-hidden="true" />
+                Deadline: {formatDate(deadline)}
+              </span>
+            )}
+            {budget != null && (
+              <span className={styles.metaChip}>
+                <Wallet aria-hidden="true" />
+                {formatCurrency(Number(budget))}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className={styles.progressBox}>
+        <div className={styles.progressHeader}>
+          <span>Progres Proyek</span>
+          <strong>{progress}%</strong>
+        </div>
+        <progress
+          className={styles.progressBar}
+          value={progress}
+          max={100}
+          aria-label={`Progres ${title}`}
+        >
+          {progress}%
+        </progress>
+      </div>
+    </header>
   );
 }

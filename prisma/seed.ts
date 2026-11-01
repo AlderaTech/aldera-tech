@@ -185,7 +185,7 @@ async function main() {
     },
   });
 
-  await prisma.user.upsert({
+  const clientRafli = await prisma.user.upsert({
     where: { email: "rafli-client@gmail.com" },
     update: {
       name: "Rafli",
@@ -229,6 +229,7 @@ async function main() {
   const admin = staffGading;
   const client1 = clientGading;
   const client2 = clientDery;
+  const client3 = clientRafli;
 
   console.log("✔ Users seeded");
 
@@ -746,7 +747,67 @@ async function main() {
     },
   });
 
-  // Activity logs for project1
+  const project3 = await prisma.project.create({
+    data: {
+      title: "SaaS Dashboard & Analytics ERP",
+      description:
+        "Platform dashboard analitik dan manajemen operasional multi-cabang terintegrasi dengan laporan real-time dan export PDF otomatis.",
+      status: "IN_PROGRESS",
+      progress: 75,
+      clientId: client3.id,
+      deadline: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000),
+      budget: "38500000",
+      milestones: {
+        create: [
+          {
+            title: "Discovery & Perancangan Arsitektur",
+            description:
+              "Riset kebutuhan, spesifikasi teknis, skema database, dan diagram arsitektur sistem.",
+            status: "COMPLETED",
+            order: 1,
+            dueDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+            completedAt: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000),
+          },
+          {
+            title: "Desain UI/UX & Design System",
+            description:
+              "Wireframing, prototyping di Figma, design system, dan usability testing antarmuka.",
+            status: "COMPLETED",
+            order: 2,
+            dueDate: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000),
+            completedAt: new Date(Date.now() - 17 * 24 * 60 * 60 * 1000),
+          },
+          {
+            title: "Frontend & Integrasi Dashboard Analytics",
+            description:
+              "Implementasi chart visualisasi data real-time, filter tanggal, dan komponen interaktif.",
+            status: "COMPLETED",
+            order: 3,
+            dueDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+            completedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+          },
+          {
+            title: "Integrasi Pembayaran & Export Laporan PDF",
+            description:
+              "Payment gateway otomatis, background processing penjadwalan, dan generator PDF laporan bulanan.",
+            status: "IN_PROGRESS",
+            order: 4,
+            dueDate: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000),
+          },
+          {
+            title: "Uji Keamanan & Peluncuran Produksi",
+            description:
+              "Security audit, stress test performa tinggi, staging deployment, dan migrasi DNS produksi.",
+            status: "PENDING",
+            order: 5,
+            dueDate: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000),
+          },
+        ],
+      },
+    },
+  });
+
+  // Activity logs for project1 and project3
   await prisma.activityLog.createMany({
     data: [
       {
@@ -779,6 +840,40 @@ async function main() {
         action: "NOTE_ADDED",
         description:
           "Integrasi Midtrans terkonfirmasi, menunggu approval API key.",
+      },
+      {
+        projectId: project3.id,
+        userId: admin.id,
+        action: "PROJECT_CREATED",
+        description: "Proyek dibuat dan client di-assign.",
+      },
+      {
+        projectId: project3.id,
+        userId: admin.id,
+        action: "MILESTONE_COMPLETED",
+        description:
+          "Milestone 'Discovery & Perancangan Arsitektur' berhasil diselesaikan.",
+      },
+      {
+        projectId: project3.id,
+        userId: admin.id,
+        action: "MILESTONE_COMPLETED",
+        description:
+          "Milestone 'Desain UI/UX & Design System' disetujui oleh client.",
+      },
+      {
+        projectId: project3.id,
+        userId: admin.id,
+        action: "MILESTONE_COMPLETED",
+        description:
+          "Milestone 'Frontend & Integrasi Dashboard Analytics' selesai dikembangkan.",
+      },
+      {
+        projectId: project3.id,
+        userId: admin.id,
+        action: "PROGRESS_UPDATED",
+        description:
+          "Progress proyek diperbarui menjadi 75% sesuai pencapaian sprint 3.",
       },
     ],
   });
@@ -1132,6 +1227,73 @@ async function main() {
             quantity: "1",
             price: "7500000",
             total: "7500000",
+            order: 1,
+          },
+        ],
+      },
+    },
+  });
+
+  // Invoices for client3 (project3)
+  await prisma.invoice.create({
+    data: {
+      number: `INV-${year}-0004`,
+      status: "PAID",
+      issueDate: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
+      dueDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      paidAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+      subtotal: "19250000",
+      taxRate: "11",
+      taxAmount: "2117500",
+      total: "21367500",
+      currency: "IDR",
+      clientId: client3.id,
+      projectId: project3.id,
+      notes: "Pembayaran termin 1 (50%), Discovery, Arsitektur & UI/UX Design.",
+      items: {
+        create: [
+          {
+            description: "Discovery & Perancangan Arsitektur",
+            quantity: "1",
+            price: "8250000",
+            total: "8250000",
+            order: 1,
+          },
+          {
+            description: "Desain UI/UX & Design System",
+            quantity: "1",
+            price: "11000000",
+            total: "11000000",
+            order: 2,
+          },
+        ],
+      },
+    },
+  });
+
+  await prisma.invoice.create({
+    data: {
+      number: `INV-${year}-0005`,
+      status: "SENT",
+      issueDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+      dueDate: new Date(Date.now() + 11 * 24 * 60 * 60 * 1000),
+      subtotal: "9625000",
+      taxRate: "11",
+      taxAmount: "1058750",
+      total: "10683750",
+      currency: "IDR",
+      clientId: client3.id,
+      projectId: project3.id,
+      notes:
+        "Pembayaran termin 2 (25%), Frontend & Integrasi Dashboard Analytics.",
+      items: {
+        create: [
+          {
+            description:
+              "Frontend & Integrasi Dashboard Analytics (Milestone 3)",
+            quantity: "1",
+            price: "9625000",
+            total: "9625000",
             order: 1,
           },
         ],

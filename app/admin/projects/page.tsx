@@ -21,6 +21,7 @@ import { ProjectStatus, type Prisma } from "@prisma/client";
 import { SearchFilterBar } from "@/components/shared/search-filter-bar";
 import { DataPagination } from "@/components/shared/data-pagination";
 import { ParamFilterSelect } from "@/components/shared/param-filter-select";
+import { AdminMascot } from "../_components/admin-mascot";
 
 const statusFilterOptions = [
   { label: "Semua Status", value: "ALL" },
@@ -89,14 +90,18 @@ export default async function AdminProjectsList({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Proyek</h1>
           <p className="text-muted-foreground">
             Manage semua proyek yang sedang berjalan.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <AdminMascot pose="guide" size="header" />
           <Button asChild variant="outline">
             <a href={API_ROUTES.exportProjects} download>
               <Download className="size-4" /> Export CSV

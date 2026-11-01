@@ -81,17 +81,20 @@ export function MessagesTab({
   const replyTarget = parentId ? messages.find((m) => m.id === parentId) : null;
 
   return (
-    <div className="max-w-4xl space-y-4">
-      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-base font-semibold text-slate-950">
+    <div className="w-full space-y-4 rounded-[1.4rem] border border-[#e1e8f2] bg-white p-5 shadow-[0_4px_16px_rgb(16_38_81/5%)]">
+      <div className="border-b border-[#e1e8f2] pb-3.5">
+        <p className="m-0 text-[11px] font-extrabold tracking-[0.12em] text-[#65748b] uppercase">
+          Ruang Komunikasi
+        </p>
+        <h2 className="mt-1 text-base font-extrabold tracking-[-0.03em] text-[#102651]">
           Diskusi proyek
         </h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="mt-0.5 text-xs text-[#65748b]">
           Komunikasi terpusat antara tim dan client, semua riwayat tersimpan.
         </p>
       </div>
 
-      <Card className="space-y-3 border-slate-200 bg-white p-4 shadow-sm">
+      <Card className="space-y-3 rounded-2xl border-[#e1e8f2] bg-[#f5f8fd] p-4 shadow-none">
         {replyTarget && (
           <div className="flex items-start justify-between gap-2 rounded bg-muted/50 px-3 py-2 text-xs">
             <div className="min-w-0 flex-1">
@@ -135,9 +138,9 @@ export function MessagesTab({
       </Card>
 
       {topLevel.length === 0 ? (
-        <Card className="border-dashed p-8 text-center text-sm text-muted-foreground">
+        <div className="rounded-2xl border border-dashed border-[#e1e8f2] bg-[#f5f8fd] p-8 text-center text-sm font-semibold text-[#65748b]">
           Belum ada pesan. Mulai diskusi di atas.
-        </Card>
+        </div>
       ) : (
         <div className="space-y-3">
           {topLevel

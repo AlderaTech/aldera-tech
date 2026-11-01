@@ -44,7 +44,7 @@ export function getOverviewStatCards(stats: AdminOverviewStats) {
       label: "Order Pending",
       value: stats.orderPending,
       helper: "Estimasi dari kalkulator",
-      color: "text-violet-700 bg-violet-50 border-violet-200",
+      color: "text-cyan-700 bg-cyan-50 border-cyan-200",
     },
     {
       icon: DollarSign,

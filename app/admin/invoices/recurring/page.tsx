@@ -52,7 +52,7 @@ export default async function RecurringListPage() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div data-admin-page-header>
         <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
           <Link href={ADMIN_ROUTES.invoices}>← Kembali ke Invoice</Link>
         </Button>

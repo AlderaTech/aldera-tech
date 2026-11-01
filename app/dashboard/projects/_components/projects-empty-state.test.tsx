@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import { readFileSync } from "node:fs";
 import { PUBLIC_ROUTES } from "@/lib/routes";
-import mascot from "@/public/images/about/aldera-cat-about.webp";
+import emptyIllustration from "@/public/images/about/technology/design.webp";
 import { ProjectListHeader } from "./project-list-header";
 import { ProjectsEmptyState } from "./projects-empty-state";
 import { EmptyStatePattern } from "../../_components/empty-state-pattern";
@@ -40,7 +40,7 @@ describe("Empty state Proyek Saya", () => {
     expect(emptyRule).toContain("box-shadow:");
   });
 
-  it("menempatkan maskot sebelum label, judul, dan deskripsi tanpa mengubah teks", () => {
+  it("menempatkan ilustrasi non-kucing sebelum label, judul, dan deskripsi tanpa mengubah teks", () => {
     const html = renderToStaticMarkup(<ProjectsEmptyState />);
     const positions = [
       html.indexOf("<img"),
@@ -55,11 +55,12 @@ describe("Empty state Proyek Saya", () => {
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
     expect(html).toContain('aria-labelledby="projects-empty-heading"');
     expect(html).toContain('<h2 id="projects-empty-heading">');
+    expect(html).not.toContain("aldera-cat");
   });
 
   it("mempertahankan aset dekoratif dan ukuran responsif tanpa menambahkan tindakan", () => {
     const image = ProjectsEmptyState().props.children[0];
-    expect(image.props.src).toBe(mascot);
+    expect(image.props.src).toBe(emptyIllustration);
     expect(image.props.alt).toBe("");
     expect(image.props["aria-hidden"]).toBe("true");
     expect(image.props.width).toBe(140);

@@ -13,7 +13,6 @@ const { ProfileForm } = await import("./profile-form");
 const { ProfileIdentity } = await import("./profile-identity");
 const { ProfileFrame } = await import("./profile-frame");
 const { ProfileSkeleton } = await import("./profile-skeleton");
-const { ProfileActivityPanel } = await import("./profile-activity-panel");
 
 function findAvatar(
   node: ReactNode
@@ -116,11 +115,6 @@ describe("Identitas dan formulir profil", () => {
     expect(css).toContain("var(--overview-ink) 18%");
     expect(css).toContain("var(--overview-ink) 72%");
     expect(css).toContain("@container (min-width: 54rem)");
-    const previewCss = readFileSync(
-      new URL("./profile-preview.module.css", import.meta.url),
-      "utf8"
-    );
-    expect(previewCss).toContain("pointer-events: none;");
     expect(css).toContain("prefers-reduced-motion");
     expect(css).toMatch(/\[data-slot="skeleton"\]\s*\{\s*animation: none;/);
     const input = css.match(/\.field input\s*\{([^}]+)\}/)?.[1];
@@ -133,10 +127,8 @@ describe("Identitas dan formulir profil", () => {
     expect(css).toContain(".identityDetails");
     expect(css).not.toMatch(/:global|(?:^|\n)(?:body|html)\s*\{/);
   });
-  it("memisahkan identitas asli, formulir, dan maskot aktivitas demo", () => {
-    const identity = renderToStaticMarkup(
-      <ProfileIdentity user={user} editAction={<button>Edit Profil</button>} />
-    );
+  it("memisahkan identitas asli, formulir, dan maskot profil", () => {
+    const identity = renderToStaticMarkup(<ProfileIdentity user={user} />);
     const form = renderToStaticMarkup(
       <ProfileForm defaultValues={{ name: user.name, phone: "" }} />
     );
@@ -144,9 +136,6 @@ describe("Identitas dan formulir profil", () => {
     expect(identity).toContain("aldera-profile-guide");
     expect(identity).toContain('data-slot="avatar-fallback"');
     expect(form).not.toContain("aldera-relay-assistant");
-    expect(renderToStaticMarkup(<ProfileActivityPanel />)).toContain(
-      "aldera-profile-activity"
-    );
     expect(form).toContain('id="personal-heading"');
     expect(form).toContain('id="contact-heading"');
     expect(form).toContain('id="name-hint"');

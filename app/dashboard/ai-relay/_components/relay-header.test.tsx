@@ -21,14 +21,14 @@ describe("Header workspace AI Relay", () => {
     }
   });
 
-  it("menggunakan maskot koneksi yang tersedia sebagai dekorasi kecil", () => {
+  it("menampilkan ilustrasi maskot 3D dengan hologram dompet di sebelah kartu saldo", () => {
     const html = renderToStaticMarkup(
       <RelayHeader balance={0} onTopup={mock()} />
     );
     expect(
       existsSync(
         new URL(
-          "../../../../public/images/dashboard/ai-relay/aldera-relay-connect.webp",
+          "../../../../public/images/ai-relay/aldera-cat-relay-balance.webp",
           import.meta.url
         )
       )
@@ -36,5 +36,6 @@ describe("Header workspace AI Relay", () => {
     expect(html).toContain('aria-hidden="true"');
     expect(html).toContain('alt=""');
     expect(html.match(/<img\b/g)).toHaveLength(1);
+    expect(html).not.toContain("aldera-relay-connect");
   });
 });

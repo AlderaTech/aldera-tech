@@ -71,6 +71,7 @@ import {
   runLedgerAudit,
 } from "@/lib/actions/admin-ai-relay";
 import type { LedgerInvariantResult } from "@/lib/router-db";
+import { AdminMascot } from "../_components/admin-mascot";
 
 const ALLOWED_TABS = ["overview", "pricing", "sync", "topup", "audit"] as const;
 type AiRelayTab = (typeof ALLOWED_TABS)[number];
@@ -445,28 +446,30 @@ export function AiRelayAdminClientView({
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="flex flex-col gap-4 border-b pb-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="rounded-xl bg-slate-900 p-2.5 text-white shadow-xs">
+      <div
+        data-admin-page-header
+        className="flex flex-col gap-4 border-b pb-5 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div className="flex min-w-0 items-start gap-3">
+          <div className="shrink-0 rounded-xl bg-primary/10 p-2.5 text-primary">
             <Bot className="h-6 w-6" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
+          <div className="min-w-0 space-y-2">
+            <Badge variant="outline">ADMIN ONLY</Badge>
+            <div>
               <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                 AI Operations & Admin Portal
               </h1>
-              <Badge className="border-amber-300 bg-amber-100 text-amber-800 hover:bg-amber-100">
-                ADMIN ONLY
-              </Badge>
             </div>
-            <p className="mt-0.5 text-xs text-muted-foreground">
+            <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
               Kelola dynamic pricing, sinkronisasi model 9router, antrean tiket
               top-up, dan validasi integritas audit ledger.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
+          <AdminMascot pose="relay" size="header" />
           <Button
             variant="outline"
             size="sm"
@@ -485,7 +488,7 @@ export function AiRelayAdminClientView({
             size="sm"
             onClick={handleSync9router}
             disabled={isSyncing}
-            className="h-9 bg-indigo-600 text-xs text-white shadow-xs hover:bg-indigo-700"
+            className="h-9 bg-primary text-xs text-white shadow-xs hover:bg-primary/90"
           >
             <RefreshCw
               className={`mr-1.5 h-3.5 w-3.5 ${isSyncing ? "animate-spin" : ""}`}
@@ -617,7 +620,7 @@ export function AiRelayAdminClientView({
                 <CardTitle className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                   Volume Token Terpakai
                 </CardTitle>
-                <div className="rounded-lg bg-indigo-50 p-2 text-indigo-600">
+                <div className="rounded-lg bg-primary/10 p-2 text-primary">
                   <Cpu className="h-4 w-4" />
                 </div>
               </CardHeader>
@@ -807,8 +810,8 @@ export function AiRelayAdminClientView({
                 </CardDescription>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="relative w-48 sm:w-60">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
+                <div className="relative w-full sm:w-60">
                   <Search className="absolute top-2.5 left-2.5 h-3.5 w-3.5 text-muted-foreground" />
                   <Input
                     placeholder="Cari model..."
@@ -820,7 +823,7 @@ export function AiRelayAdminClientView({
                 <Button
                   size="sm"
                   onClick={() => setIsAddModalOpen(true)}
-                  className="h-8 bg-indigo-600 text-xs text-white hover:bg-indigo-700"
+                  className="h-8 bg-primary text-xs text-white hover:bg-primary/90"
                 >
                   <Plus className="mr-1 h-3.5 w-3.5" />
                   Tambah Model
@@ -934,7 +937,7 @@ export function AiRelayAdminClientView({
             <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2 text-base font-semibold">
-                  <Server className="h-4 w-4 text-indigo-600" />
+                  <Server className="h-4 w-4 text-primary" />
                   <span>Sinkronisasi Katalog dari Upstream 9router</span>
                 </CardTitle>
                 <CardDescription className="text-xs">
@@ -947,7 +950,7 @@ export function AiRelayAdminClientView({
                 onClick={handleSync9router}
                 disabled={isSyncing}
                 size="sm"
-                className="h-9 bg-indigo-600 text-xs text-white shadow-xs hover:bg-indigo-700"
+                className="h-9 bg-primary text-xs text-white shadow-xs hover:bg-primary/90"
               >
                 <RefreshCw
                   className={`mr-1.5 h-3.5 w-3.5 ${isSyncing ? "animate-spin" : ""}`}
@@ -964,7 +967,7 @@ export function AiRelayAdminClientView({
                   <span className="block font-semibold text-slate-700">
                     Upstream Endpoint:
                   </span>
-                  <code className="text-[11px] text-indigo-600">
+                  <code className="text-[11px] text-primary">
                     {syncResult?.upstreamUrl ||
                       "http://localhost:20128/v1/models"}
                   </code>
@@ -993,10 +996,13 @@ export function AiRelayAdminClientView({
                           Sinkronisasi Upstream 9router Gagal
                         </p>
                         <p className="text-rose-700">
-                          {syncResult.error || "Gagal terhubung ke upstream 9router."}
+                          {syncResult.error ||
+                            "Gagal terhubung ke upstream 9router."}
                         </p>
                         <p className="text-[11px] text-rose-600/90">
-                          Katalog model lokal tetap aktif dan dapat dikelola. Pastikan upstream 9router dapat diakses dan konfigurasi environment telah sesuai.
+                          Katalog model lokal tetap aktif dan dapat dikelola.
+                          Pastikan upstream 9router dapat diakses dan
+                          konfigurasi environment telah sesuai.
                         </p>
                       </div>
                     </div>
@@ -1005,7 +1011,7 @@ export function AiRelayAdminClientView({
                       disabled={isSyncing}
                       size="sm"
                       variant="outline"
-                      className="border-rose-300 bg-white text-xs text-rose-700 shadow-2xs hover:bg-rose-50 hover:text-rose-800 shrink-0 self-start sm:self-center"
+                      className="shrink-0 self-start border-rose-300 bg-white text-xs text-rose-700 shadow-2xs hover:bg-rose-50 hover:text-rose-800 sm:self-center"
                     >
                       <RefreshCw
                         className={`mr-1.5 h-3.5 w-3.5 ${isSyncing ? "animate-spin" : ""}`}
@@ -1218,7 +1224,7 @@ export function AiRelayAdminClientView({
                                 variant="outline"
                                 size="sm"
                                 onClick={() => setViewProofTicket(ticket)}
-                                className="h-6 px-2 text-[11px] text-indigo-600"
+                                className="h-6 px-2 text-[11px] text-primary"
                               >
                                 Lihat Bukti
                               </Button>
@@ -1286,7 +1292,7 @@ export function AiRelayAdminClientView({
                 onClick={handleRunAudit}
                 disabled={isAuditing}
                 size="sm"
-                className="h-9 bg-slate-900 text-xs text-white shadow-xs hover:bg-slate-800"
+                className="h-9 bg-primary text-xs text-white shadow-xs hover:bg-primary/90"
               >
                 <ShieldCheck
                   className={`mr-1.5 h-3.5 w-3.5 ${isAuditing ? "animate-pulse" : ""}`}
@@ -1493,7 +1499,7 @@ export function AiRelayAdminClientView({
               size="sm"
               onClick={handleCreateModel}
               disabled={isPending}
-              className="bg-indigo-600 text-xs text-white hover:bg-indigo-700"
+              className="bg-primary text-xs text-white hover:bg-primary/90"
             >
               Simpan & Aktifkan
             </Button>
@@ -1605,7 +1611,7 @@ export function AiRelayAdminClientView({
               size="sm"
               onClick={handleSaveEdit}
               disabled={isPending}
-              className="bg-indigo-600 text-xs text-white hover:bg-indigo-700"
+              className="bg-primary text-xs text-white hover:bg-primary/90"
             >
               Simpan Perubahan
             </Button>

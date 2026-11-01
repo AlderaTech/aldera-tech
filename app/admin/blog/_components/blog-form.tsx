@@ -23,7 +23,7 @@ export function BlogForm({
 
   return (
     <form onSubmit={form.handleSubmit} className="space-y-6">
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]">
         <BlogContentFields form={form} />
         <div className="space-y-6">
           <BlogPublishCard form={form} initial={initial} />

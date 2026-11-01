@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
+import { AdminMascot } from "../../_components/admin-mascot";
 import { ProjectCreateForm } from "../_components/project-create-form";
 
 export default async function NewProjectPage() {
@@ -15,11 +16,17 @@ export default async function NewProjectPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Proyek Baru</h1>
-        <p className="text-muted-foreground">
-          Buat proyek dan assign ke client.
-        </p>
+      <div
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Proyek Baru</h1>
+          <p className="text-muted-foreground">
+            Buat proyek dan assign ke client.
+          </p>
+        </div>
+        <AdminMascot pose="guide" size="header" />
       </div>
       <ProjectCreateForm clients={clients} />
     </div>

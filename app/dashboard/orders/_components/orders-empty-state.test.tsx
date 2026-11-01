@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import { DASHBOARD_ROUTES } from "@/lib/routes";
-import mascot from "@/public/images/services/aldera-cat-services.webp";
+import emptyIllustration from "@/public/images/about/technology/design.webp";
 import { EmptyStatePattern } from "../../_components/empty-state-pattern";
 import { OrdersEmptyState } from "./orders-empty-state";
 import { OrdersFrame } from "./orders-frame";
 
 describe("Empty state Pesanan & Estimasi", () => {
-  it("menempatkan maskot sebelum label, judul, dan deskripsi asli", () => {
+  it("menempatkan ilustrasi non-kucing sebelum label, judul, dan deskripsi asli", () => {
     const html = renderToStaticMarkup(<OrdersEmptyState />);
     const positions = [
       "<img",
@@ -19,12 +19,13 @@ describe("Empty state Pesanan & Estimasi", () => {
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
     expect(html).toContain('aria-labelledby="orders-empty-heading"');
     expect(html).toContain('<h2 id="orders-empty-heading">');
+    expect(html).not.toContain("aldera-cat");
   });
 
   it("mempertahankan aset dan ukuran responsif dengan corak bersama", () => {
     const state = OrdersEmptyState();
     const image = state.props.children[0];
-    expect(image.props.src).toBe(mascot);
+    expect(image.props.src).toBe(emptyIllustration);
     expect(image.props.alt).toBe("");
     expect(image.props["aria-hidden"]).toBe("true");
     expect(image.props.width).toBe(140);

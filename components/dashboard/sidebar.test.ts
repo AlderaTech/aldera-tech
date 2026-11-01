@@ -4,21 +4,19 @@ import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 import { clientNavConfig } from "@/lib/dashboard-nav";
 
 describe("Sidebar Navigation Active State (isNavItemActive)", () => {
-  it("menandai Pengaturan aktif tanpa mengaktifkan menu dashboard lain", () => {
-    const hrefs = [
-      ...clientNavConfig.groups.flatMap((group) =>
-        group.items.map((item) => item.href)
-      ),
-      clientNavConfig.footerItem!.href,
-    ];
-    expect(clientNavConfig.footerItem?.href).toBe(DASHBOARD_ROUTES.settings);
-    expect(clientNavConfig.footerItem?.label).toBe("Pengaturan");
+  it("menghapus menu Pengaturan dari sidebar pengguna dan menjaga grup menu tetap bersih", () => {
+    const hrefs = clientNavConfig.groups.flatMap((group) =>
+      group.items.map((item) => item.href)
+    );
+    expect(clientNavConfig.footerItem).toBeUndefined();
+    expect(hrefs).not.toContain("/dashboard/settings");
     expect(
       hrefs.filter((href) =>
-        isNavItemActive(DASHBOARD_ROUTES.settings, href, hrefs)
+        isNavItemActive(DASHBOARD_ROUTES.projects, href, hrefs)
       )
-    ).toEqual([DASHBOARD_ROUTES.settings]);
+    ).toEqual([DASHBOARD_ROUTES.projects]);
   });
+
   const allHrefs = [
     ADMIN_ROUTES.home,
     ADMIN_ROUTES.projects,

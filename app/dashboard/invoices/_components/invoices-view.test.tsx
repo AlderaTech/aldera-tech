@@ -8,6 +8,14 @@ import type { ClientInvoiceItem } from "../_types/invoice";
 
 let invoiceQuery = "";
 mock.module("@/lib/actions/invoice", () => ({
+  // Keep the full export contract for combined client/admin UI testing.
+  createInvoiceAction: mock(),
+  updateInvoiceStatusAction: mock(),
+  sendInvoiceWhatsAppAction: mock(),
+  sendReminderAction: mock(),
+  deleteInvoiceAction: mock(),
+  verifyPaymentProofAction: mock(),
+  rejectPaymentProofAction: mock(),
   submitPaymentProofAction: mock(),
 }));
 mock.module("@/lib/actions/payment", () => ({
