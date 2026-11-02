@@ -1,12 +1,18 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, FolderKanban } from "lucide-react";
+import { WorkspaceBanner } from "@/components/dashboard/workspace-banner";
 import { Button } from "@/components/ui/button";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 import styles from "./project-list.module.css";
 
 export function ProjectListHeader() {
   return (
-    <div className={styles.header}>
+    <WorkspaceBanner
+      className={styles.header}
+      eyebrow="Proyek Anda"
+      badgeIcon={FolderKanban}
+      mascotPose="projects"
+    >
       <div>
         <h1 id="projects-heading">Proyek Saya</h1>
         <p className={styles.description}>
@@ -18,6 +24,6 @@ export function ProjectListHeader() {
           Hitung Estimasi <ArrowUpRight aria-hidden="true" />
         </Link>
       </Button>
-    </div>
+    </WorkspaceBanner>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 
 import Link from "next/link";
 import {
@@ -220,8 +221,8 @@ function ProjectFilesPanel({ project }: { project: AdminProjectDetail }) {
       </Card>
 
       {project.files.length === 0 ? (
-        <Card className="border-dashed p-8 text-center text-sm text-muted-foreground">
-          Belum ada file untuk proyek ini.
+        <Card className="p-0">
+          <AdminEmptyState context="files" />
         </Card>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -270,8 +271,8 @@ function ProjectInvoicesPanel({ project }: { project: AdminProjectDetail }) {
         </Button>
       </div>
       {project.invoices.length === 0 ? (
-        <Card className="border-dashed p-8 text-center text-sm text-muted-foreground">
-          Belum ada invoice untuk proyek ini.
+        <Card className="p-0">
+          <AdminEmptyState context="invoices" />
         </Card>
       ) : (
         <div className="space-y-3">

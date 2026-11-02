@@ -1,10 +1,10 @@
 "use client";
 
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  FolderKanban,
   Loader2,
   Pencil,
   Plus,
@@ -318,16 +318,8 @@ export function ProjectTypesTab({ items }: { items: AdminProjectType[] }) {
         </div>
 
         {items.length === 0 ? (
-          <Card className="flex flex-col items-center justify-center border-dashed p-8 text-center">
-            <div className="mb-2.5 flex size-10 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-              <FolderKanban className="size-5" />
-            </div>
-            <h3 className="text-sm font-semibold text-slate-900">
-              Belum ada jenis proyek
-            </h3>
-            <p className="mt-1 max-w-sm text-xs text-muted-foreground">
-              Tambahkan jenis proyek pertama Anda menggunakan formulir di atas.
-            </p>
+          <Card>
+            <AdminEmptyState context="projectTypes" />
           </Card>
         ) : (
           <div className="grid gap-3.5 md:grid-cols-2">

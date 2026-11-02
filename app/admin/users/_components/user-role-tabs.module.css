@@ -1,0 +1,111 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.5rem;
+  border: 1px solid var(--admin-line);
+  border-radius: 1rem;
+  background: var(--overview-paper);
+  box-shadow: 0 3px 12px color-mix(in srgb, var(--overview-ink) 4%, transparent);
+}
+.roles {
+  flex: 1 1 34rem;
+  min-width: 0;
+}
+.roleList {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.375rem;
+}
+.roleList[data-role-count="1"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+.bar .option[data-admin-user-option] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 0;
+  min-height: 44px;
+  height: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 0.7rem;
+  background: var(--overview-paper);
+  color: var(--overview-ink);
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1.4;
+  white-space: normal;
+  text-decoration: none;
+}
+.label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.bar .option[data-admin-user-option] .count {
+  flex-shrink: 0;
+  min-width: 1.6rem;
+  padding: 0.15rem 0.4rem;
+  border: 1px solid var(--admin-line);
+  border-radius: 999px;
+  background: var(--overview-canvas);
+  color: var(--overview-ink);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+.bar .option[data-admin-user-option][aria-current="page"] {
+  border-color: var(--overview-blue);
+  background: var(--overview-blue);
+  color: var(--overview-paper);
+  box-shadow: 0 3px 10px
+    color-mix(in srgb, var(--overview-blue) 18%, transparent);
+}
+.bar .option[data-admin-user-option][aria-current="page"] .count {
+  background: var(--overview-paper);
+  border-color: var(--overview-paper);
+  color: var(--overview-blue);
+}
+.bar .option[data-admin-user-option]:hover:not([aria-current]) {
+  background: var(--overview-sky);
+}
+.bar .option[data-admin-user-option]:focus-visible {
+  outline: 2px solid var(--overview-blue);
+  outline-offset: 2px;
+}
+.views {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem;
+  min-width: 0;
+  margin-left: auto;
+  padding: 0.25rem;
+  border: 1px solid var(--admin-line);
+  border-radius: 0.8rem;
+  background: var(--overview-canvas);
+}
+.views .option[data-admin-user-option] {
+  min-height: 40px;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.75rem;
+}
+@media (max-width: 639px) {
+  .roles {
+    flex-basis: 100%;
+  }
+  .roleList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .views {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bar .option[data-admin-user-option] {
+    transition: none;
+  }
+}

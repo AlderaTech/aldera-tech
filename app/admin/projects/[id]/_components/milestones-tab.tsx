@@ -1,4 +1,5 @@
 "use client";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -161,8 +162,8 @@ export function MilestonesTab({
       )}
 
       {milestones.length === 0 ? (
-        <Card className="border-dashed p-8 text-center text-sm text-muted-foreground">
-          Belum ada milestone.
+        <Card className="p-0">
+          <AdminEmptyState context="milestones" />
         </Card>
       ) : (
         <ol className="relative ml-3 space-y-3 border-l-2 border-slate-200">

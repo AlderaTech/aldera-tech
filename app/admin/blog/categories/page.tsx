@@ -1,3 +1,4 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -35,9 +36,11 @@ export default async function AdminBlogCategoriesPage() {
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="content"
+        mascot={<AdminMascot pose="blog" size="header" />}
       >
         <div>
           <div className="mb-2">
@@ -49,11 +52,11 @@ export default async function AdminBlogCategoriesPage() {
           </div>
           <h1 className="text-2xl font-bold tracking-tight">Kategori Blog</h1>
           <p className="text-muted-foreground">
-            Kelola kategori untuk filter, navigasi, dan pengelompokan artikel.
+            Kelola kategori untuk penyaringan, navigasi, dan pengelompokan
+            artikel.
           </p>
         </div>
-        <AdminMascot pose="blog" size="header" />
-      </div>
+      </AdminBanner>
 
       <CategoryManagement categories={categories} permissions={permissions} />
     </div>

@@ -14,6 +14,7 @@ describe("Sambutan Admin", () => {
     ])
       expect(html).toContain(`href="${route}"`);
     expect(html).toContain("aldera-profile-guide.webp");
+    expect(html).toContain("RINGKASAN SISTEM");
     expect(html).toContain('alt=""');
     expect(html).toContain('aria-hidden="true"');
   });

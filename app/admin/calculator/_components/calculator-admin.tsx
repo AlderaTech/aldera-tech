@@ -6,7 +6,11 @@ import {
   PackagePlus,
   SlidersHorizontal,
 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import {
+  WorkspaceTabsList as TabsList,
+  WorkspaceTabsTrigger as TabsTrigger,
+} from "@/components/dashboard/workspace-segmented-tabs";
 import { Badge } from "@/components/ui/badge";
 import { useUrlState } from "@/lib/hooks/use-url-state";
 import { AdminStatCard } from "../../_components/admin-stat-card";
@@ -91,7 +95,7 @@ export function CalculatorAdmin({ data, initialTab = "types" }: Props) {
       </div>
 
       <Tabs value={currentTab} onValueChange={handleTabChange}>
-        <TabsList className="grid h-auto w-full grid-cols-2 gap-1.5 rounded-[0.85rem] border border-slate-200/90 bg-white p-1 shadow-2xs sm:grid-cols-4">
+        <TabsList>
           <TabsTrigger
             value="types"
             className="flex min-h-9 w-full items-center justify-between gap-2 rounded-[0.6rem] px-3.5 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xs data-[state=active]:hover:bg-primary data-[state=active]:hover:text-white"

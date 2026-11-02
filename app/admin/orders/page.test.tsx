@@ -95,8 +95,6 @@ describe("AdminOrdersPage", () => {
     });
 
     const html = renderToStaticMarkup(pageElement);
-    expect(html).toContain(
-      "Belum ada order request atau tidak ada yang sesuai kriteria."
-    );
+    expect(html).toContain("Belum ada permohonan pesanan");
   });
 });

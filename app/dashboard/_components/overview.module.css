@@ -127,25 +127,6 @@
   width: 0.8rem;
   height: 0.8rem;
 }
-.welcomeVisual {
-  position: relative;
-  display: grid;
-  width: 7rem;
-  height: 7rem;
-  flex-shrink: 0;
-  place-items: center;
-  pointer-events: none;
-}
-.mascot {
-  width: 7rem;
-  height: 7rem;
-  flex-shrink: 0;
-  object-fit: contain;
-  filter: drop-shadow(
-    0 10px 16px color-mix(in srgb, var(--overview-ink) 12%, transparent)
-  );
-  pointer-events: none;
-}
 .stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -365,10 +346,6 @@
   .welcome .avatar {
     width: 2.6rem;
     height: 2.6rem;
-  }
-  .welcomeVisual,
-  .mascot {
-    display: none;
   }
   .stats {
     grid-template-columns: 1fr;

@@ -1,3 +1,4 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
@@ -44,16 +45,17 @@ export default async function EditBlogPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="content"
+        mascot={<AdminMascot pose="blog" size="header" />}
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Edit Post</h1>
           <p className="text-muted-foreground">Perbarui konten artikel ini.</p>
         </div>
-        <AdminMascot pose="blog" size="header" />
-      </div>
+      </AdminBanner>
       <BlogForm
         initial={{
           id: post.id,

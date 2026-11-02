@@ -1,3 +1,4 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { AdminMascot } from "../../_components/admin-mascot";
@@ -15,18 +16,19 @@ export default async function NewBlogPage() {
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="content"
+        mascot={<AdminMascot pose="blog" size="header" />}
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Post Baru</h1>
           <p className="text-muted-foreground">
-            Tulis dan publish artikel baru.
+            Tulis dan terbitkan artikel baru.
           </p>
         </div>
-        <AdminMascot pose="blog" size="header" />
-      </div>
+      </AdminBanner>
       <BlogForm categories={categories} />
     </div>
   );

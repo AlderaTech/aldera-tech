@@ -5,7 +5,7 @@ import { LayoutGrid, List } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ADMIN_ROUTES } from "@/lib/routes";
-import { cn } from "@/lib/utils";
+import styles from "./user-role-tabs.module.css";
 
 type UserRoleTabsProps = {
   activeRole: string;
@@ -60,61 +60,62 @@ export function UserRoleTabs({
   ];
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-3">
-      <div className="flex flex-wrap items-center gap-1.5">
-        {tabs.map((tab) => {
-          const isActive = activeRole === tab.key;
+    <div className={styles.bar} data-admin-user-filters>
+      <nav className={styles.roles} aria-label="Filter peran pengguna">
+        <div className={styles.roleList} data-role-count={tabs.length}>
+          {tabs.map((tab) => {
+            const isActive = activeRole === tab.key;
 
-          return (
-            <Button
-              key={tab.key}
-              variant={isActive ? "secondary" : "ghost"}
-              size="sm"
-              asChild
-              className={cn(
-                "gap-2 text-xs sm:text-sm",
-                isActive && "font-semibold shadow-xs"
-              )}
-            >
-              <Link href={tab.href}>
-                {tab.label}
-                <Badge
-                  variant={isActive ? "default" : "outline"}
-                  className="px-1.5 py-0 text-xs"
+            return (
+              <Button
+                key={tab.key}
+                variant="ghost"
+                size="sm"
+                asChild
+                className={styles.option}
+              >
+                <Link
+                  href={tab.href}
+                  data-admin-user-option
+                  aria-current={isActive ? "page" : undefined}
                 >
-                  {tab.count}
-                </Badge>
-              </Link>
-            </Button>
-          );
-        })}
-      </div>
+                  <span className={styles.label}>{tab.label}</span>
+                  <Badge
+                    variant={isActive ? "default" : "outline"}
+                    className={styles.count}
+                  >
+                    {tab.count}
+                  </Badge>
+                </Link>
+              </Button>
+            );
+          })}
+        </div>
+      </nav>
 
       {activeRole === "DEVELOPER" && (
-        <div className="flex items-center gap-1 rounded-lg border border-border bg-muted/40 p-1">
-          <Button
-            size="sm"
-            variant={activeView === "workload" ? "secondary" : "ghost"}
-            asChild
-            className="h-7 gap-1.5 px-2.5 text-xs font-medium"
-          >
-            <Link href={`${ADMIN_ROUTES.users}?role=DEVELOPER&view=workload`}>
-              <LayoutGrid className="size-3.5" />
+        <nav className={styles.views} aria-label="Tampilan anggota tim">
+          <Button size="sm" variant="ghost" asChild className={styles.option}>
+            <Link
+              href={`${ADMIN_ROUTES.users}?role=DEVELOPER&view=workload`}
+              data-admin-user-option
+              aria-current={activeView === "workload" ? "page" : undefined}
+            >
+              <LayoutGrid className="size-4" aria-hidden="true" />
               <span>Beban Kerja</span>
             </Link>
           </Button>
-          <Button
-            size="sm"
-            variant={activeView === "table" ? "secondary" : "ghost"}
-            asChild
-            className="h-7 gap-1.5 px-2.5 text-xs font-medium"
-          >
-            <Link href={`${ADMIN_ROUTES.users}?role=DEVELOPER&view=table`}>
-              <List className="size-3.5" />
+          <Button size="sm" variant="ghost" asChild className={styles.option}>
+            <Link
+              href={`${ADMIN_ROUTES.users}?role=DEVELOPER&view=table`}
+              data-admin-user-option
+              aria-current={activeView === "table" ? "page" : undefined}
+            >
+              <List className="size-4" aria-hidden="true" />
               <span>Daftar Akun</span>
             </Link>
           </Button>
-        </div>
+        </nav>
       )}
     </div>
   );

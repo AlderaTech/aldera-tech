@@ -88,7 +88,7 @@ describe("AdminFilesPage", () => {
 
     const html = renderToStaticMarkup(pageElement);
     expect(html).toContain(
-      "Belum ada file terunggah atau tidak ada file yang sesuai kriteria."
+      "Berkas proyek yang tersedia dan sesuai dengan pencarian akan ditampilkan di sini."
     );
   });
 });

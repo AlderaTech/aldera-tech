@@ -1,4 +1,4 @@
-.scope :is([aria-labelledby="relay-heading"], [data-relay-balance-panel]) {
+.scope [data-relay-balance-panel] {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -7,8 +7,6 @@
   position: relative;
   isolation: isolate;
 }
-.scope [aria-labelledby="relay-heading"]::before,
-.scope [aria-labelledby="relay-heading"]::after,
 .scope [data-relay-balance-panel]::before,
 .scope [data-slot="card-header"]::after,
 .scope [data-relay-section-heading]::after {
@@ -16,43 +14,6 @@
   z-index: -1;
   pointer-events: none;
   content: "";
-}
-.scope [aria-labelledby="relay-heading"]::before {
-  inset: 0 0 0 auto;
-  width: min(45%, 24rem);
-  background-image:
-    linear-gradient(
-      color-mix(in srgb, var(--relay-blue) 14%, transparent) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--relay-blue) 14%, transparent) 1px,
-      transparent 1px
-    );
-  background-size: 22px 22px;
-  mask-image: linear-gradient(to left, black, transparent);
-  opacity: 0.65;
-}
-.scope [aria-labelledby="relay-heading"]::after {
-  right: 1rem;
-  bottom: 0;
-  width: min(48%, 27rem);
-  height: 6rem;
-  background:
-    radial-gradient(circle, var(--relay-blue) 2px, transparent 3px) 24px 68px /
-      8px 8px no-repeat,
-    radial-gradient(circle, var(--relay-blue) 2px, transparent 3px) 160px 24px /
-      8px 8px no-repeat,
-    radial-gradient(circle, var(--relay-blue) 2px, transparent 3px) 348px 24px /
-      8px 8px no-repeat,
-    linear-gradient(var(--relay-blue), var(--relay-blue)) 28px 72px / 136px 1px
-      no-repeat,
-    linear-gradient(var(--relay-blue), var(--relay-blue)) 164px 28px / 1px 44px
-      no-repeat,
-    linear-gradient(var(--relay-blue), var(--relay-blue)) 164px 28px / 188px 1px
-      no-repeat;
-  opacity: 0.12;
 }
 .scope [data-relay-balance-panel]::before {
   top: -4rem;
@@ -96,14 +57,8 @@
   opacity: 0.4;
 }
 @media (max-width: 639px) {
-  .scope [aria-labelledby="relay-heading"]::before {
-    opacity: 0.4;
-  }
   .scope [data-relay-balance-panel]::before {
     opacity: 0.5;
-  }
-  .scope [aria-labelledby="relay-heading"]::after {
-    opacity: 0.08;
   }
   .scope [data-slot="card-header"]::after {
     width: 4rem;

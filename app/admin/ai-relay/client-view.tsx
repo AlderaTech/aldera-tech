@@ -1,4 +1,7 @@
 "use client";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
+
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 
 import { useEffect, useState, useTransition } from "react";
 import {
@@ -19,7 +22,11 @@ import {
   TrendingUp,
   X,
 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import {
+  WorkspaceTabsList as TabsList,
+  WorkspaceTabsTrigger as TabsTrigger,
+} from "@/components/dashboard/workspace-segmented-tabs";
 import { useUrlState } from "@/lib/hooks/use-url-state";
 import {
   Card,
@@ -71,6 +78,7 @@ import {
   runLedgerAudit,
 } from "@/lib/actions/admin-ai-relay";
 import type { LedgerInvariantResult } from "@/lib/router-db";
+import { getLedgerCheckLabel } from "./_utils/ledger-check-label";
 import { AdminMascot } from "../_components/admin-mascot";
 
 const ALLOWED_TABS = ["overview", "pricing", "sync", "topup", "audit"] as const;
@@ -446,30 +454,30 @@ export function AiRelayAdminClientView({
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-col gap-4 border-b pb-5 sm:flex-row sm:items-center sm:justify-between"
+        category="ai"
+        mascot={<AdminMascot pose="relay" size="header" />}
       >
         <div className="flex min-w-0 items-start gap-3">
           <div className="shrink-0 rounded-xl bg-primary/10 p-2.5 text-primary">
             <Bot className="h-6 w-6" />
           </div>
           <div className="min-w-0 space-y-2">
-            <Badge variant="outline">ADMIN ONLY</Badge>
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                 AI Operations & Admin Portal
               </h1>
             </div>
             <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Kelola dynamic pricing, sinkronisasi model 9router, antrean tiket
-              top-up, dan validasi integritas audit ledger.
+              Kelola harga model, sinkronisasi 9router, antrean pengisian saldo,
+              dan pemeriksaan integritas buku besar.
             </p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
-          <AdminMascot pose="relay" size="header" />
           <Button
             variant="outline"
             size="sm"
@@ -496,7 +504,7 @@ export function AiRelayAdminClientView({
             {isSyncing ? "Menghubungi 9router..." : "Sync 9router"}
           </Button>
         </div>
-      </div>
+      </AdminBanner>
 
       {/* Global Toast / Notification */}
       {notification && (
@@ -536,7 +544,7 @@ export function AiRelayAdminClientView({
         onValueChange={setActiveTab}
         className="space-y-6"
       >
-        <TabsList className="flex h-auto flex-wrap gap-1 rounded-xl border bg-slate-100 p-1">
+        <TabsList>
           <TabsTrigger
             value="overview"
             className="rounded-lg px-3 py-2 text-xs font-medium data-[state=active]:bg-white data-[state=active]:shadow-2xs"
@@ -583,12 +591,18 @@ export function AiRelayAdminClientView({
             Audit Ledger
             <span
               className={`py-0.2 ml-1.5 rounded-full px-1.5 text-[10px] font-bold ${
-                allInvariantsPass
-                  ? "bg-emerald-500 text-white"
-                  : "bg-rose-500 text-white"
+                auditResults.length === 0
+                  ? "bg-slate-100 text-slate-600"
+                  : allInvariantsPass
+                    ? "bg-emerald-500 text-white"
+                    : "bg-rose-500 text-white"
               }`}
             >
-              {allInvariantsPass ? "5 PASS" : "FAIL"}
+              {auditResults.length === 0
+                ? "Belum ada hasil"
+                : allInvariantsPass
+                  ? "5 PASS"
+                  : "FAIL"}
             </span>
           </TabsTrigger>
         </TabsList>
@@ -742,12 +756,18 @@ export function AiRelayAdminClientView({
                   <span>Status Integritas Audit Ledger</span>
                   <Badge
                     className={
-                      allInvariantsPass
-                        ? "border-emerald-300 bg-emerald-100 text-emerald-800"
-                        : "border-rose-300 bg-rose-100 text-rose-800"
+                      auditResults.length === 0
+                        ? "border-slate-200 bg-slate-50 text-slate-600"
+                        : allInvariantsPass
+                          ? "border-emerald-300 bg-emerald-100 text-emerald-800"
+                          : "border-rose-300 bg-rose-100 text-rose-800"
                     }
                   >
-                    {allInvariantsPass ? "SEMUA PASS" : "ADA MASALAH"}
+                    {auditResults.length === 0
+                      ? "Belum ada hasil"
+                      : allInvariantsPass
+                        ? "SEMUA PASS"
+                        : "ADA MASALAH"}
                   </Badge>
                 </CardTitle>
                 <CardDescription className="text-xs">
@@ -756,13 +776,16 @@ export function AiRelayAdminClientView({
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
+                {auditResults.length === 0 && (
+                  <AdminEmptyState context="ledger" />
+                )}
                 {auditResults.map((inv) => (
                   <div
                     key={inv.check_name}
                     className="flex items-center justify-between border-b py-1.5 text-xs last:border-0"
                   >
-                    <span className="max-w-[240px] truncate font-mono text-[11px] text-slate-700">
-                      {inv.check_name}
+                    <span className="min-w-0 text-sm leading-relaxed font-medium text-slate-700">
+                      {getLedgerCheckLabel(inv.check_name)}
                     </span>
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] text-slate-400">
@@ -858,11 +881,8 @@ export function AiRelayAdminClientView({
                 <TableBody>
                   {filteredPricing.length === 0 ? (
                     <TableRow>
-                      <TableCell
-                        colSpan={8}
-                        className="py-6 text-center text-xs text-muted-foreground"
-                      >
-                        Tidak ada model yang sesuai dengan pencarian.
+                      <TableCell colSpan={8} className="p-0">
+                        <AdminEmptyState context="models" />
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -1031,10 +1051,7 @@ export function AiRelayAdminClientView({
                     </h3>
 
                     {syncResult.diff.newModels.length === 0 ? (
-                      <div className="rounded-lg border border-dashed bg-slate-50/50 p-4 text-center text-xs text-muted-foreground">
-                        Tidak ada model baru di upstream. Semua model telah
-                        tersinkronisasi dengan database lokal.
-                      </div>
+                      <AdminEmptyState context="sync" />
                     ) : (
                       <div className="overflow-hidden rounded-lg border">
                         <Table>
@@ -1088,6 +1105,12 @@ export function AiRelayAdminClientView({
                       {syncResult.diff.syncedModels.length})
                     </h3>
                     <div className="flex flex-wrap gap-1.5">
+                      {syncResult.diff.syncedModels.length === 0 && (
+                        <AdminEmptyState
+                          context="sync"
+                          title="Tidak ada model yang diperbarui"
+                        />
+                      )}
                       {syncResult.diff.syncedModels.map((m) => (
                         <Badge
                           key={m.id}
@@ -1154,18 +1177,7 @@ export function AiRelayAdminClientView({
 
             <CardContent>
               {pendingTopups.length === 0 ? (
-                <div className="space-y-2 py-12 text-center">
-                  <div className="inline-flex rounded-full bg-emerald-50 p-3 text-emerald-600">
-                    <CheckCircle2 className="h-8 w-8" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-slate-800">
-                    Tidak Ada Tiket Top-up Menunggu
-                  </h3>
-                  <p className="mx-auto max-w-sm text-xs text-muted-foreground">
-                    Seluruh tiket top-up pengguna telah diproses. Tiket baru
-                    yang masuk akan muncul secara otomatis di antrean ini.
-                  </p>
-                </div>
+                <AdminEmptyState context="topups" />
               ) : (
                 <div className="overflow-hidden rounded-lg border">
                   <Table>
@@ -1309,12 +1321,18 @@ export function AiRelayAdminClientView({
                   Status Terakhir:{" "}
                   <strong
                     className={
-                      allInvariantsPass ? "text-emerald-700" : "text-rose-600"
+                      auditResults.length === 0
+                        ? "text-slate-600"
+                        : allInvariantsPass
+                          ? "text-emerald-700"
+                          : "text-rose-600"
                     }
                   >
-                    {allInvariantsPass
-                      ? "5 dari 5 Invarian PASS (0 Pelanggaran)"
-                      : "Ditemukan Pelanggaran Invarian!"}
+                    {auditResults.length === 0
+                      ? "Belum ada hasil pemeriksaan"
+                      : allInvariantsPass
+                        ? "5 dari 5 Invarian PASS (0 Pelanggaran)"
+                        : "Ditemukan Pelanggaran Invarian!"}
                   </strong>
                 </span>
                 <span>
@@ -1328,6 +1346,9 @@ export function AiRelayAdminClientView({
               </div>
 
               <div className="grid grid-cols-1 gap-3">
+                {auditResults.length === 0 && (
+                  <AdminEmptyState context="ledger" />
+                )}
                 {auditResults.map((inv, idx) => (
                   <div
                     key={inv.check_name}
@@ -1339,8 +1360,8 @@ export function AiRelayAdminClientView({
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-slate-800">
-                          #{idx + 1}. {inv.check_name}
+                        <span className="text-sm leading-relaxed font-semibold text-slate-800">
+                          #{idx + 1}. {getLedgerCheckLabel(inv.check_name)}
                         </span>
                         <Badge
                           className={

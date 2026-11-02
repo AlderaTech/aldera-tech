@@ -27,10 +27,7 @@ export function OverviewCharts({
           {analytics.revenueSeries.length > 0 ? (
             <RevenueAreaChart data={analytics.revenueSeries} animate={false} />
           ) : (
-            <AdminEmptyState
-              title="Belum ada data revenue"
-              description="Grafik akan tampil saat data revenue tersedia."
-            />
+            <AdminEmptyState context="revenue" />
           )}
         </CardContent>
       </Card>
@@ -45,7 +42,7 @@ export function OverviewCharts({
           {analytics.statusData.some((item) => item.value > 0) ? (
             <ProjectStatusPie data={analytics.statusData} animate={false} />
           ) : (
-            <AdminEmptyState title="Belum ada proyek" />
+            <AdminEmptyState context="projectStatus" />
           )}
         </CardContent>
       </Card>

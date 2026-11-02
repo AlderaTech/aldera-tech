@@ -29,7 +29,7 @@ describe("Grafik operasional", () => {
         analytics={{ revenueSeries: [], statusData: [], clientsData: [] }}
       />
     );
-    expect(html).toContain("Belum ada data revenue");
+    expect(html).toContain("Belum ada data pendapatan");
     expect(html).toContain("Belum ada proyek");
     expect(html).not.toContain('<svg class="recharts');
   });

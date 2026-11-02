@@ -1,4 +1,5 @@
 "use client";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 
 import { useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -80,8 +81,8 @@ export function ActivityTab({
       </Card>
 
       {activities.length === 0 ? (
-        <Card className="border-dashed p-8 text-center text-sm text-muted-foreground">
-          Belum ada aktivitas.
+        <Card className="p-0">
+          <AdminEmptyState context="activity" />
         </Card>
       ) : (
         <div className="relative ml-3 space-y-3 border-l-2 border-slate-200 pl-6">

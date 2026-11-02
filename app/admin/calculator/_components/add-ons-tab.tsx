@@ -1,9 +1,10 @@
 "use client";
 
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, PackagePlus, Pencil, Plus, Trash2, X } from "lucide-react";
+import { Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -279,17 +280,8 @@ export function AddOnsTab({ items }: { items: AdminAddOn[] }) {
         </div>
 
         {items.length === 0 ? (
-          <Card className="flex flex-col items-center justify-center border-dashed p-8 text-center">
-            <div className="mb-2.5 flex size-10 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-              <PackagePlus className="size-5" />
-            </div>
-            <h3 className="text-sm font-semibold text-slate-900">
-              Belum ada opsi add-on
-            </h3>
-            <p className="mt-1 max-w-sm text-xs text-muted-foreground">
-              Tambahkan paket add-on atau pemeliharaan pertama menggunakan
-              formulir di atas.
-            </p>
+          <Card>
+            <AdminEmptyState context="addons" />
           </Card>
         ) : (
           <div className="grid gap-3.5 md:grid-cols-2">

@@ -16,6 +16,8 @@ describe("Frame Invoice & Pembayaran", () => {
     expect(html).toContain("Pantau tagihan, unduh invoice");
     expect(html).toContain("Konten dinamis invoice");
     expect(html).toContain('aria-hidden="true"');
+    expect(html).toContain('data-workspace-mascot-pose="invoice"');
+    expect(decodeURIComponent(html)).toContain("aldera-cat-invoice.webp");
     expect(html).not.toMatch(/<(?:button|input|a)\b/);
   });
 

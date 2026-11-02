@@ -1,3 +1,4 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { Card } from "@/components/ui/card";
@@ -16,20 +17,22 @@ export default async function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="settings"
+        mascot={<AdminMascot pose="coding" size="header" />}
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
             Settings Website
           </h1>
           <p className="text-muted-foreground">
-            Kelola informasi publik, kontak, sosial, dan SEO website.
+            Kelola informasi situs, kontak, media sosial, dan pengaturan
+            optimasi mesin pencari.
           </p>
         </div>
-        <AdminMascot pose="coding" size="header" />
-      </div>
+      </AdminBanner>
 
       <Card className="overflow-hidden border-slate-200 bg-white p-0 shadow-sm">
         <SettingsForm settings={settings} />

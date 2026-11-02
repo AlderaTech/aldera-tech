@@ -101,8 +101,6 @@ describe("AuditLogPage", () => {
     });
 
     const html = renderToStaticMarkup(pageElement);
-    expect(html).toContain(
-      "Belum ada audit log atau tidak ada log yang sesuai kriteria filter."
-    );
+    expect(html).toContain("Belum ada catatan audit");
   });
 });

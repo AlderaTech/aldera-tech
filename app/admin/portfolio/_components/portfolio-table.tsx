@@ -1,16 +1,10 @@
 "use client";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  ExternalLink,
-  Pencil,
-  Trash2,
-  Eye,
-  EyeOff,
-  Briefcase,
-} from "lucide-react";
+import { ExternalLink, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import {
   Table,
@@ -162,12 +156,17 @@ export function PortfolioTable({ items }: { items: PortfolioCaseStudyItem[] }) {
         <TableBody>
           {paginatedItems.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={6}
-                className="py-10 text-center text-muted-foreground"
-              >
-                <Briefcase className="mx-auto mb-2 size-8 opacity-40" />
-                Tidak ada studi kasus yang sesuai.
+              <TableCell colSpan={6} className="p-0">
+                <AdminEmptyState
+                  context="portfolio"
+                  action={
+                    <Button asChild>
+                      <Link href={ADMIN_ROUTES.portfolioNew}>
+                        Tambah Studi Kasus
+                      </Link>
+                    </Button>
+                  }
+                />
               </TableCell>
             </TableRow>
           ) : (

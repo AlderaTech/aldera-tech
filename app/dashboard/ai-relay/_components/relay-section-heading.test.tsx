@@ -5,6 +5,23 @@ import { RELAY_SECTIONS } from "../_data/relay-sections";
 import { RelaySectionHeading } from "./relay-section-heading";
 
 describe("Hierarki panel AI Relay", () => {
+  it("menyatukan judul dan deskripsi serta menjaga toolbar ringkas tanpa mengecilkan kontrol fitur lainnya", () => {
+    const css = readFileSync(
+      new URL("./relay-workspace.module.css", import.meta.url),
+      "utf8"
+    );
+    const heading = css.match(/\.sectionHeading\s*\{([^}]+)\}/)?.[1];
+    expect(heading).toContain("display: grid;");
+    expect(heading).not.toContain("space-between");
+    const filter = css.match(
+      /\[data-relay-categories\] button\s*\{([^}]+)\}/
+    )?.[1];
+    expect(filter).toContain("min-height: 1.875rem;");
+    expect(filter).toContain("font-size: 0.75rem;");
+    const search = css.match(/\[data-relay-search\] input\s*\{([^}]+)\}/)?.[1];
+    expect(search).toContain("height: 2.25rem;");
+    expect(css).toContain("min-height: 2.75rem;");
+  });
   it("memberi setiap tab judul dan penjelasan tanpa kontrol baru", () => {
     for (const section of RELAY_SECTIONS) {
       const html = renderToStaticMarkup(
@@ -31,10 +48,16 @@ describe("Hierarki panel AI Relay", () => {
     expect(css).toMatch(
       /\.sectionPanel\[data-state="inactive"\]\s*\{\s*display: none;/
     );
-    const tabs = css.match(/\.workspace \.tabList\s*\{([^}]+)\}/)?.[1];
-    expect(tabs).toContain("display: flex;");
-    expect(tabs).toContain("flex-wrap: nowrap;");
-    expect(tabs).toContain("width: max-content;");
+    const tabs = readFileSync(
+      new URL(
+        "../../../../components/dashboard/workspace-segmented-tabs.module.css",
+        import.meta.url
+      ),
+      "utf8"
+    );
+    expect(tabs).toContain("display: grid;");
+    expect(tabs).toContain("width: 100%;");
+    expect(tabs).toContain("repeat(2, minmax(0, 1fr))");
     expect(css).toMatch(
       /\.sectionPanel\s*\{[^}]*grid-template-columns: minmax\(0, 1fr\);/
     );
@@ -69,8 +92,6 @@ describe("Hierarki panel AI Relay", () => {
       "utf8"
     );
     for (const selector of [
-      '[aria-labelledby="relay-heading"]::before',
-      '[aria-labelledby="relay-heading"]::after',
       "[data-relay-balance-panel]::before",
       '[data-slot="card-header"]::after',
       "[data-relay-section-heading]::after",

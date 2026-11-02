@@ -1,3 +1,5 @@
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { formatDate } from "@/lib/utils";
@@ -11,9 +13,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Clock, Users, Briefcase, DollarSign, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { API_ROUTES } from "@/lib/routes";
+import { Clock, Users, Briefcase, DollarSign } from "lucide-react";
+import { TimesheetFilters } from "./_components/timesheet-filters";
+
 import { AdminMascot } from "../_components/admin-mascot";
 import { AdminStatCard } from "../_components/admin-stat-card";
 
@@ -117,9 +119,11 @@ export default async function TimesheetPage({
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="projects"
+        mascot={<AdminMascot pose="activity" size="header" />}
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Timesheet</h1>
@@ -127,53 +131,12 @@ export default async function TimesheetPage({
             {formatDate(from)} — {formatDate(to)}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <AdminMascot pose="activity" size="header" />
-          <form className="flex flex-wrap items-end gap-2">
-            <div>
-              <label htmlFor="from" className="text-xs text-muted-foreground">
-                Dari
-              </label>
-              <input
-                id="from"
-                type="date"
-                name="from"
-                defaultValue={from.toISOString().slice(0, 10)}
-                className="block rounded border px-2 py-1 text-sm"
-              />
-            </div>
-            <div>
-              <label htmlFor="to" className="text-xs text-muted-foreground">
-                Sampai
-              </label>
-              <input
-                id="to"
-                type="date"
-                name="to"
-                defaultValue={to.toISOString().slice(0, 10)}
-                className="block rounded border px-2 py-1 text-sm"
-              />
-            </div>
-            <button
-              type="submit"
-              className="rounded bg-primary px-3 py-1 text-sm text-primary-foreground"
-            >
-              Filter
-            </button>
-            <Button asChild variant="outline" size="sm">
-              <a
-                href={API_ROUTES.exportTimesheetWithRange(
-                  from.toISOString().slice(0, 10),
-                  to.toISOString().slice(0, 10)
-                )}
-                download
-              >
-                <Download className="size-3.5" /> CSV
-              </a>
-            </Button>
-          </form>
-        </div>
-      </div>
+      </AdminBanner>
+
+      <TimesheetFilters
+        from={from.toISOString().slice(0, 10)}
+        to={to.toISOString().slice(0, 10)}
+      />
 
       {/* Summary cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -218,9 +181,7 @@ export default async function TimesheetPage({
         </CardHeader>
         <CardContent>
           {data.userSummary.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Belum ada data timesheet.
-            </p>
+            <AdminEmptyState context="timesheet" />
           ) : (
             <Table>
               <TableHeader>
@@ -263,7 +224,7 @@ export default async function TimesheetPage({
         </CardHeader>
         <CardContent>
           {data.projectSummary.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Belum ada data.</p>
+            <AdminEmptyState context="timesheet" />
           ) : (
             <Table>
               <TableHeader>

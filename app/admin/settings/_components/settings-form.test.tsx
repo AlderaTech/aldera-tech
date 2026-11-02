@@ -42,6 +42,11 @@ describe("SettingsForm UI Component", () => {
 
     expect(html).toContain("Profil Website");
     expect(html).toContain("Sosial &amp; Kontak");
+    expect(html).toContain('aria-label="Pengaturan situs"');
+    expect(html).toContain('data-tab-count="2"');
+    expect(html).toContain("data-workspace-tab-nav");
+    expect(html.match(/role="tab"/g)).toHaveLength(2);
+    expect(html.match(/aria-selected="true"/g)).toHaveLength(1);
   });
 
   it("activates profile tab by default when no ?tab= query param is provided", () => {

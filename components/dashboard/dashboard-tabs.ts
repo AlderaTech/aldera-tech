@@ -1,7 +1,7 @@
 /**
- * Gaya tab navigasi dashboard yang seragam (pill bar ringkas).
- * Dipakai oleh seluruh tab halaman dashboard pengguna agar tampilannya konsisten
- * dengan tab AI Gateway / Relay: bar putih ber-border, tab aktif biru dengan teks putih.
+ * Pill bar ringkas untuk tab detail proyek dan pemanggil dashboard yang tersedia.
+ * AI Relay pengguna/admin dan kalkulator admin memakai WorkspaceSegmentedTabs
+ * agar setiap pilihan mengisi track navigasi secara merata.
  */
 export const dashboardTabsListClass =
   "h-auto w-full max-w-full justify-center gap-1 overflow-x-auto rounded-[0.85rem] border border-slate-200/90 bg-white p-1 text-slate-500 shadow-2xs";

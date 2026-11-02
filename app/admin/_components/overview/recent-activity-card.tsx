@@ -32,7 +32,7 @@ export function RecentActivityCard({
       </CardHeader>
       <CardContent className="flex flex-1 flex-col justify-between p-0">
         {activities.length === 0 ? (
-          <AdminEmptyState title="Belum ada aktivitas." />
+          <AdminEmptyState context="activity" />
         ) : (
           <>
             <div className="divide-y divide-slate-100">

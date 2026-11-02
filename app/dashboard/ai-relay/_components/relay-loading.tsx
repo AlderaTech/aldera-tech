@@ -20,9 +20,13 @@ export function RelayLoading() {
         </div>
         <Skeleton className="h-20 w-60 rounded-2xl" />
       </div>
-      <div className={styles.loadingTabs} aria-hidden="true">
+      <div
+        className={styles.loadingTabs}
+        data-relay-loading-tabs
+        aria-hidden="true"
+      >
         {Array.from({ length: 8 }, (_, index) => (
-          <Skeleton key={index} className="h-11 rounded-xl" />
+          <Skeleton key={index} className="h-9 rounded-xl" />
         ))}
       </div>
       <Skeleton className="h-6 w-48 max-w-full" aria-hidden="true" />

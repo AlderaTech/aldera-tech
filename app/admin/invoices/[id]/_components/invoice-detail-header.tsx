@@ -1,3 +1,4 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -44,9 +45,10 @@ export function InvoiceDetailHeader({ invoice }: { invoice: InvoiceDetail }) {
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-start justify-between gap-4"
+        category="billing"
       >
         <div className="min-w-0 space-y-3">
           <Button asChild variant="ghost" size="sm" className="-ml-2">
@@ -76,7 +78,7 @@ export function InvoiceDetailHeader({ invoice }: { invoice: InvoiceDetail }) {
             <Download className="size-4" /> Download PDF
           </a>
         </Button>
-      </div>
+      </AdminBanner>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {summaryItems.map((item) => (

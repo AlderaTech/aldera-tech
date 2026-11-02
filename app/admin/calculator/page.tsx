@@ -1,3 +1,4 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -59,9 +60,11 @@ export default async function AdminCalculatorPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-5">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="estimates"
+        mascot={<AdminMascot pose="coding" size="header" />}
       >
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -73,12 +76,11 @@ export default async function AdminCalculatorPage({ searchParams }: Props) {
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground">
-            Kelola jenis proyek, fitur, add-on retainer, dan kebijakan
+            Kelola jenis proyek, fitur, opsi pemeliharaan, dan kebijakan
             perhitungan estimasi biaya klien.
           </p>
         </div>
-        <AdminMascot pose="coding" size="header" />
-      </div>
+      </AdminBanner>
       <CalculatorAdmin data={data} initialTab={initialTab} />
     </div>
   );

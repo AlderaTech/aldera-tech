@@ -1,3 +1,4 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { redirect } from "next/navigation";
 import { UserPlus } from "lucide-react";
 import { auth } from "@/auth";
@@ -55,19 +56,20 @@ export default async function AdminUsersPage({
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="users"
+        mascot={<AdminMascot pose="users" size="header" />}
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Pengguna & Tim</h1>
           <p className="text-sm text-muted-foreground">
-            Kelola akun pengguna, peran akses, dan monitoring kapasitas beban
-            kerja tim.
+            Kelola akun pengguna, peran akses, dan pantau kapasitas beban kerja
+            tim.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <AdminMascot pose="users" size="header" />
           {canManageUsers && (
             <InviteUserDialog>
               <button className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90">
@@ -76,7 +78,7 @@ export default async function AdminUsersPage({
             </InviteUserDialog>
           )}
         </div>
-      </div>
+      </AdminBanner>
 
       <UserRoleTabs
         activeRole={activeRole}

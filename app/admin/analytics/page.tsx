@@ -1,3 +1,5 @@
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { RevenueAreaChart } from "@/components/dashboard/analytics-charts";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
@@ -195,9 +197,11 @@ export default async function AnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="analytics"
+        mascot={<AdminMascot pose="vision" size="header" />}
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
@@ -208,14 +212,13 @@ export default async function AnalyticsPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <AdminMascot pose="vision" size="header" />
           <Button asChild variant="outline" size="sm">
             <a href={API_ROUTES.exportAnalytics} download>
               <Download className="size-3.5" /> Export CSV
             </a>
           </Button>
         </div>
-      </div>
+      </AdminBanner>
 
       {/* Summary cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -260,7 +263,7 @@ export default async function AnalyticsPage() {
         </CardHeader>
         <CardContent>
           {data.monthlyRevenue.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Belum ada data.</p>
+            <AdminEmptyState context="revenue" />
           ) : (
             <RevenueAreaChart data={data.monthlyRevenue} animate={false} />
           )}
@@ -274,7 +277,7 @@ export default async function AnalyticsPage() {
         </CardHeader>
         <CardContent>
           {data.projectProfitability.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Belum ada data.</p>
+            <AdminEmptyState context="revenue" />
           ) : (
             <Table>
               <TableHeader>
@@ -335,7 +338,7 @@ export default async function AnalyticsPage() {
         </CardHeader>
         <CardContent>
           {data.clientLTV.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Belum ada data.</p>
+            <AdminEmptyState context="clients" />
           ) : (
             <Table>
               <TableHeader>

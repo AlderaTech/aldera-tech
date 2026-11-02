@@ -8,7 +8,7 @@ Backend, API, autentikasi, query profil, validasi, header/sidebar bersama, dan h
 
 ## Susunan dan corak
 
-- Header halaman (`Profil Saya`) dibungkus dalam kartu putih berborder halus yang konsisten dengan halaman dashboard lainnya.
+- Header halaman (`Profil Saya`) berada langsung di atas latar halaman, dengan badge berikon Akun & identitas dan deskripsi. Header tidak memakai kartu, grid, bayangan atau maskot; visual utama berada pada kartu identitas.
 - Kartu identitas memenuhi lebar bagian atas. Foto akun/fallback inisial berada di kiri; nama, peran, email, telepon, dan tanggal bergabung memakai data asli. Email bersifat read-only dan telepon kosong ditampilkan sebagai `Belum ditambahkan`.
 - Pose maskot `guide` (`aldera-profile-guide.webp`) berada pada sisi kanan kartu identitas dan tetap terpisah dari avatar akun.
 - Di bawah kartu identitas terdapat kartu formulir **Informasi profil** (`ProfileForm`) yang menampilkan input `Nama Lengkap *` dan `Telepon / WhatsApp (Opsional)` berdampingan dalam grid 2 kolom pada layar desktop (`@container (min-width: 54rem)`) dan tersusun vertikal pada layar sempit.
@@ -33,11 +33,13 @@ Skeleton (`ProfileSkeleton`) menampilkan kerangka kartu identitas dan kartu form
 
 Semua path komponen berikut relatif terhadap `app/dashboard/profile/`.
 
-| Berkas                                                            | Tanggung jawab                                           |
-| ----------------------------------------------------------------- | -------------------------------------------------------- |
-| `page.tsx`, `loading.tsx`, `_components/profile-content.tsx`      | Autentikasi, query asli, Suspense, komposisi halaman     |
-| `profile-frame.tsx`, `profile-identity.tsx`, `profile.module.css` | Header kartu, identitas akun, penempatan maskot, styling |
-| `profile-form.tsx`, `_hooks/use-profile-form.ts`                  | Formulir pembaruan nama & telepon dan mekanisme simpan   |
-| `profile-mascot.tsx`, `profile-mascot.module.css`                 | Aset maskot 3D transparan dan animasi dekoratif          |
-| `profile-skeleton.tsx`, `profile-unavailable.tsx`                 | Loading skeleton dan error state profil                  |
-| `page.test.tsx`, `_components/*.test.tsx`                         | Pengujian unit dan UI untuk identitas, form, dan maskot  |
+| Berkas                                                            | Tanggung jawab                                                  |
+| ----------------------------------------------------------------- | --------------------------------------------------------------- |
+| `page.tsx`, `loading.tsx`, `_components/profile-content.tsx`      | Autentikasi, query asli, Suspense, komposisi halaman            |
+| `profile-frame.tsx`, `profile-identity.tsx`, `profile.module.css` | Header standar, identitas akun, penempatan satu maskot, styling |
+| `profile-form.tsx`, `_hooks/use-profile-form.ts`                  | Formulir pembaruan nama & telepon dan mekanisme simpan          |
+| `profile-mascot.tsx`, `profile-mascot.module.css`                 | Aset maskot 3D transparan dan animasi dekoratif                 |
+| `profile-skeleton.tsx`, `profile-unavailable.tsx`                 | Loading skeleton dan error state profil                         |
+| `page.test.tsx`, `_components/*.test.tsx`                         | Pengujian unit dan UI untuk identitas, form, dan maskot         |
+
+Rincian pose, kepadatan katalog dan hasil pengujian aktif tersedia di [kepadatan dashboard dan maskot](dashboard-density-and-mascots.md).

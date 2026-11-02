@@ -1,3 +1,4 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import Link from "next/link";
 import { Plus, Tags } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -74,9 +75,11 @@ export default async function AdminBlogPage({
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="content"
+        mascot={<AdminMascot pose="blog" size="header" />}
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Blog</h1>
@@ -85,7 +88,6 @@ export default async function AdminBlogPage({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
-          <AdminMascot pose="blog" size="header" />
           <Button asChild variant="outline">
             <Link href={ADMIN_ROUTES.blogCategories}>
               <Tags className="size-4" /> Kategori
@@ -97,7 +99,7 @@ export default async function AdminBlogPage({
             </Link>
           </Button>
         </div>
-      </div>
+      </AdminBanner>
 
       <SearchFilterBar
         placeholder="Cari judul artikel blog..."

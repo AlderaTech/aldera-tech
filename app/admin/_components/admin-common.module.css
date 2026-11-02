@@ -1,22 +1,6 @@
-.pageHeader {
-  display: flex;
-  min-width: 0;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-}
 .headerCopy {
   min-width: 0;
   max-width: 48rem;
-}
-.eyebrow {
-  margin-bottom: 0.6rem;
-  color: var(--overview-blue);
-  font-size: 0.7rem;
-  font-weight: 750;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
 }
 .description {
   margin-top: 0.5rem;
@@ -30,6 +14,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.6rem;
+  margin-top: 1rem;
 }
 .empty {
   position: relative;
@@ -39,39 +24,102 @@
   min-width: 0;
   justify-items: center;
   align-content: center;
-  gap: 0.65rem;
-  padding: 2rem 1rem;
+  gap: 1rem;
+  padding: 2.5rem 1.5rem;
+  border: 1px solid var(--admin-line);
+  border-radius: 1.25rem;
+  background: var(--overview-paper);
   text-align: center;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--overview-ink) 4%, transparent);
 }
-.empty::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  width: 9rem;
-  height: 9rem;
-  border: 1px dashed color-mix(in srgb, var(--overview-blue) 18%, transparent);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at center,
-    color-mix(in srgb, var(--overview-sky) 65%, transparent),
-    transparent 70%
-  );
-  box-shadow: 0 0 0 1.25rem
-    color-mix(in srgb, var(--overview-blue) 3%, transparent);
-  pointer-events: none;
+:global([data-slot="card"]) .empty,
+:global(td) > .empty {
+  border: 0;
+  box-shadow: none;
 }
-.empty > svg {
-  color: var(--overview-blue);
-}
-.empty img {
-  width: 100%;
-  height: 100%;
+.emptyIllustration {
+  position: relative;
+  z-index: 1;
+  width: 120px;
+  height: 120px;
   object-fit: contain;
-  object-position: center bottom;
   pointer-events: none;
   filter: drop-shadow(
-    0 6px 8px color-mix(in srgb, var(--overview-ink) 10%, transparent)
+    0 8px 10px color-mix(in srgb, var(--overview-blue) 12%, transparent)
   );
+}
+.emptyCopy,
+.emptyAction {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  max-width: 100%;
+}
+.emptyCopy {
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+}
+.emptyCopy .emptyLabel {
+  color: var(--admin-muted);
+  font-size: 0.65rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.emptyCopy h3 {
+  color: var(--overview-ink);
+  font-size: 1rem;
+  font-weight: 750;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.emptyDescription {
+  max-width: 28rem;
+  color: var(--admin-muted);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.empty .emptyAction :is(a, button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0.65rem 1.1rem;
+  border: 1px solid var(--overview-blue);
+  border-radius: 999px;
+  background: var(--overview-blue);
+  color: var(--overview-paper);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.empty .emptyAction :is(a, button):hover:not(:disabled) {
+  background: color-mix(in srgb, var(--overview-blue) 85%, var(--overview-ink));
+}
+.empty .emptyAction :is(a, button):focus-visible {
+  outline: 2px solid var(--overview-blue);
+  outline-offset: 3px;
+}
+.emptyAction svg {
+  width: 16px;
+  height: 16px;
+}
+@media (max-width: 639px) {
+  .empty {
+    padding: 2rem 1rem;
+  }
+  .emptyIllustration {
+    width: 104px;
+    height: 104px;
+  }
 }
 .mascotFrame {
   position: relative;
@@ -79,6 +127,8 @@
   display: inline-grid;
   flex-shrink: 0;
   place-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   aspect-ratio: 1 / 1;
   pointer-events: none;
   user-select: none;
@@ -101,6 +151,10 @@
   display: block;
   width: 100%;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   object-position: center bottom;
   pointer-events: none;
@@ -119,11 +173,6 @@
 .mascot_panel {
   width: 2.65rem;
   height: 2.65rem;
-}
-.mascot_empty {
-  width: 4.75rem;
-  height: 4.75rem;
-  margin-bottom: 0.25rem;
 }
 @media (prefers-reduced-motion: no-preference) {
   .mascotImage {
@@ -154,19 +203,6 @@
     width: 2.5rem;
     height: 2.5rem;
   }
-}
-.empty h2,
-.empty h3 {
-  max-width: 34rem;
-  font-size: 0.9375rem;
-  line-height: 1.6;
-  font-weight: 700;
-}
-.empty p {
-  max-width: 34rem;
-  color: var(--admin-muted);
-  font-size: 0.875rem;
-  line-height: 1.7;
 }
 .stat {
   min-width: 0;

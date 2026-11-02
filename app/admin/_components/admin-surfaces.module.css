@@ -306,7 +306,7 @@
 .scope :global([data-slot="tabs"]) {
   min-width: 0;
 }
-.scope :global([data-slot="tabs-list"]) {
+.scope :global([data-slot="tabs-list"]:not([data-workspace-tab-nav])) {
   display: flex;
   width: fit-content;
   max-width: 100%;
@@ -322,11 +322,14 @@
   background: var(--overview-paper);
   scrollbar-width: thin;
 }
-.scope :global([data-slot="tabs-list"][class~="w-full"]) {
+.scope
+  :global(
+    [data-slot="tabs-list"]:not([data-workspace-tab-nav])[class~="w-full"]
+  ) {
   display: grid;
   width: 100%;
 }
-.scope :global([data-slot="tabs-trigger"]) {
+.scope :global([data-slot="tabs-trigger"]:not([data-workspace-tab])) {
   flex: 0 0 auto;
   min-height: 36px;
   padding: 0.5rem 0.85rem;
@@ -336,18 +339,25 @@
   white-space: nowrap;
 }
 .scope
-  :global([data-slot="tabs-list"][class~="w-full"])
-  :global([data-slot="tabs-trigger"]) {
+  :global(
+    [data-slot="tabs-list"]:not([data-workspace-tab-nav])[class~="w-full"]
+  )
+  :global([data-slot="tabs-trigger"]:not([data-workspace-tab])) {
   width: 100%;
 }
-.scope :global([data-slot="tabs-trigger"][data-state="active"]) {
+.scope
+  :global(
+    [data-slot="tabs-trigger"]:not([data-workspace-tab])[data-state="active"]
+  ) {
   background: var(--overview-blue);
   color: var(--overview-paper);
   box-shadow: 0 2px 6px
     color-mix(in srgb, var(--overview-blue) 16%, transparent);
 }
 .scope
-  :global([data-slot="tabs-trigger"][data-state="active"])
+  :global(
+    [data-slot="tabs-trigger"]:not([data-workspace-tab])[data-state="active"]
+  )
   :global([data-slot="badge"]) {
   border-color: color-mix(in srgb, var(--overview-paper) 30%, transparent);
   background: color-mix(in srgb, var(--overview-paper) 20%, transparent);
@@ -360,6 +370,14 @@
   width: 100%;
   min-width: 36rem;
   font-size: 0.8125rem;
+}
+@media (max-width: 639px) {
+  .scope table:has(tbody > tr:only-child [data-admin-empty]) {
+    min-width: 0;
+  }
+  .scope table:has(tbody > tr:only-child [data-admin-empty]) thead {
+    display: none;
+  }
 }
 .scope thead {
   background: var(--overview-canvas);
@@ -381,6 +399,13 @@
 }
 .scope :is(th, td):last-child {
   padding-right: 1.35rem;
+}
+.scope td:has(> [data-admin-empty]) {
+  padding: 0;
+}
+.scope :global([data-slot="card"]):has([data-admin-empty])::before,
+.scope :global([data-slot="card"]):has([data-admin-empty])::after {
+  display: none;
 }
 .scope tbody tr {
   border-color: var(--admin-line);
@@ -482,124 +507,6 @@
   :global([data-slot="card"][class~="justify-between"][class~="items-center"]) {
   flex-direction: row;
 }
-.scope :global([data-admin-page-header]) {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  display: flex;
-  min-width: 0;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.85rem;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--admin-line);
-  border-radius: 1.1rem;
-  background: linear-gradient(
-    110deg,
-    var(--overview-paper) 62%,
-    var(--overview-sky)
-  );
-  box-shadow: 0 2px 12px
-    color-mix(in srgb, var(--overview-ink) 3.5%, transparent);
-}
-.scope :global([data-admin-page-header])::before,
-.scope :global([data-admin-page-header])::after {
-  position: absolute;
-  z-index: -1;
-  pointer-events: none;
-  content: "";
-}
-.scope :global([data-admin-page-header])::before {
-  inset: 0 0 0 58%;
-  background-image:
-    radial-gradient(
-      circle,
-      color-mix(in srgb, var(--overview-blue) 22%, transparent) 1px,
-      transparent 1.4px
-    ),
-    linear-gradient(
-      color-mix(in srgb, var(--overview-blue) 8%, transparent) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--overview-blue) 8%, transparent) 1px,
-      transparent 1px
-    );
-  background-size:
-    16px 16px,
-    32px 32px,
-    32px 32px;
-  mask-image: linear-gradient(to left, black 15%, transparent);
-}
-.scope :global([data-admin-page-header])::after {
-  top: -6.5rem;
-  right: -3rem;
-  width: 15rem;
-  height: 15rem;
-  border: 1px solid color-mix(in srgb, var(--overview-blue) 16%, transparent);
-  border-radius: 50%;
-  box-shadow: 0 0 0 1.4rem
-    color-mix(in srgb, var(--overview-blue) 3%, transparent);
-}
-.scope
-  :is(section, :global([class~="rounded-2xl"]))
-  :global([data-admin-page-header]) {
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
-  overflow: visible;
-}
-.scope
-  :is(section, :global([class~="rounded-2xl"]))
-  :global([data-admin-page-header])::before,
-.scope
-  :is(section, :global([class~="rounded-2xl"]))
-  :global([data-admin-page-header])::after {
-  display: none;
-}
-.scope :global([data-admin-page-header]) > div {
-  min-width: 0;
-  max-width: 100%;
-}
-.scope :global([data-admin-page-header]):has(> h1) {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0.5rem;
-}
-.scope :global([data-admin-page-header]) > p {
-  max-width: 65ch;
-  color: var(--admin-muted);
-  font-size: 0.875rem;
-  line-height: 1.8;
-}
-.scope
-  :global([data-admin-page-header])
-  > div:not(:has(h1)):has(> :is(button, a[data-slot="button"])) {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-}
-.scope :global([data-admin-page-header]) > div > p:not(:first-child) {
-  max-width: 65ch;
-  margin-top: 0.5rem;
-  color: var(--admin-muted);
-  font-size: 0.875rem;
-  line-height: 1.8;
-}
-.scope :global([data-admin-page-header]) > form {
-  display: flex;
-  max-width: 100%;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-}
-.scope :global([data-admin-page-header]) h1 > svg {
-  color: var(--overview-blue);
-  flex-shrink: 0;
-}
 .scope :is(form, :global([data-slot="tabs-content"])) {
   min-width: 0;
   max-width: 100%;
@@ -612,16 +519,6 @@
   font-size: 0.8125rem;
 }
 @media (max-width: 639px) {
-  .scope :global([data-admin-page-header]) > form > div {
-    flex: 1 1 8rem;
-    min-width: 0;
-  }
-  .scope :global([data-admin-page-header]) input[type="date"] {
-    width: 100%;
-  }
-  .scope :global([data-admin-page-header]) {
-    align-items: flex-start;
-  }
 }
 
 .scope pre {
