@@ -1,3 +1,4 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import Link from "next/link";
 import { Plus, Download, Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -86,16 +87,17 @@ export default async function AdminInvoicesPage({
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="billing"
+        mascot={<AdminMascot pose="services" size="header" />}
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Invoice</h1>
           <p className="text-muted-foreground">Kelola tagihan untuk klien.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
-          <AdminMascot pose="services" size="header" />
           <Button asChild variant="outline">
             <Link href={ADMIN_ROUTES.invoicesRecurring}>
               <Repeat className="size-4" /> Recurring
@@ -112,7 +114,7 @@ export default async function AdminInvoicesPage({
             </Link>
           </Button>
         </div>
-      </div>
+      </AdminBanner>
 
       <SearchFilterBar
         placeholder="Cari nomor invoice, client, atau proyek..."

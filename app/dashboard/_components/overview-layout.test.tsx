@@ -24,7 +24,6 @@ describe("Susunan panel Ringkasan", () => {
     );
     expect(css).toContain(".scope");
     for (const heading of [
-      "overview-heading",
       "onboarding-heading",
       "overview-projects-heading",
       "overview-activity-heading",
@@ -32,7 +31,15 @@ describe("Susunan panel Ringkasan", () => {
       expect(css).toContain(`aria-labelledby="${heading}"`);
     expect(css).toContain('aria-label="Ringkasan statistik akun"');
     expect(css).toContain("pointer-events: none;");
-    expect(css).toContain(".scope .welcomePattern::before");
+    const bannerCss = readFileSync(
+      new URL(
+        "../../../components/dashboard/workspace-banner.module.css",
+        import.meta.url
+      ),
+      "utf8"
+    );
+    expect(bannerCss).toContain("[data-workspace-banner]::before");
+    expect(bannerCss).toContain("pointer-events: none;");
     expect(css).not.toMatch(/:global|(?:^|\n)(?:body|html)\b|animation\s*:/);
   });
 

@@ -1,4 +1,5 @@
 "use client";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 
 import * as React from "react";
 import Link from "next/link";
@@ -136,11 +137,15 @@ export function InvoiceTable({
         <TableBody>
           {invoices.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={8}
-                className="py-10 text-center text-muted-foreground"
-              >
-                Belum ada invoice.
+              <TableCell colSpan={8} className="p-0">
+                <AdminEmptyState
+                  context="invoices"
+                  action={
+                    <Button asChild>
+                      <Link href={ADMIN_ROUTES.invoiceNew}>Invoice Baru</Link>
+                    </Button>
+                  }
+                />
               </TableCell>
             </TableRow>
           ) : (

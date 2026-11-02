@@ -4,21 +4,21 @@
 
 Rute `/dashboard/ai-relay` mengikuti tema [Ringkasan pengguna](dashboard-overview-ui.md), Kalkulator, dan Invoice: Plus Jakarta Sans, navy, biru elektrik, kartu putih solid, border yang terlihat, dan bayangan lembut. Header dan sidebar tetap menggunakan varian studio melalui `getStudioDashboardSection`; navigasi memakai `DASHBOARD_ROUTES.aiRelay` dan aturan akses yang tersedia.
 
-Semua perubahan presentasi dibatasi pada `relay-workspace.module.css`, `relay-patterns.module.css`, dan wrapper rute ini. Token warna lokal memakai permukaan putih, canvas abu-abu kebiruan, border campuran navy 18%, serta teks sekunder navy 72%. Panel tab tidak memiliki frame atau padding tambahan; kartu putih langsung berada di atas latar halaman. Informasi utama memakai 14–16px, judul kartu 16px, serta badge dan label pendukung 12px. Input memakai 16px agar nyaman digunakan pada HP. Warna status transaksi dan model tetap dibedakan dengan label teks.
+Presentasi workspace dibatasi oleh CSS Module lokal dan wrapper rute ini. Banner dan segmented tab memakai komponen bersama di components/dashboard; halaman AI Relay publik tetap utuh. Token lokal memakai permukaan putih, canvas abu-abu kebiruan, border campuran navy dan teks sekunder terbaca. Panel tab tidak mempunyai frame bertumpuk; kartu putih langsung berada di atas latar halaman. Informasi utama memakai 14–16px, judul kartu 16px, badge/label 12px dan input 16px.
 
-Corak teknologi terdiri dari grid dan jalur sirkuit di sisi kanan header, orbit berlapis di panel saldo, garis diagonal pada sudut header kartu, serta titik kecil di ujung judul bagian. CSS dekorasi memiliki scope tersendiri pada workspace dashboard dan memakai token `--relay-*` yang tersedia. Pseudo-element berada di belakang isi dengan `pointer-events: none`; tidak menambah tinggi, kontrol, atau animasi. Intensitas turun pada HP dan titik judul bagian disembunyikan. Area isi kartu, pesan chat, kode, tabel, tombol, serta dialog portal tidak diberi corak.
+Banner menggunakan pola titik, grid dan orbit dari WorkspaceBanner. Corak lokal mempertahankan orbit di panel saldo, diagonal di header kartu dan titik judul bagian. Dekorasi statis berada di belakang isi dengan pointer-events: none; area pesan, kode, tabel, tombol dan dialog tetap bersih. Intensitas dikurangi pada HP.
 
 Portal dialog dan dropdown memakai selector `body:has(.workspace)`. Tema tersebut hanya aktif ketika workspace terpasang; primitif UI bersama, dashboard lain, dan AI Relay publik tetap memakai tampilannya masing-masing.
 
 ## Header dan navigasi
 
-Header berupa kartu ringkas berisi judul Aldera AI API Relay, deskripsi, mini maskot koneksi, serta panel saldo Rupiah dan tombol Top-up Saldo. Panel saldo desktop memiliki lebar 20rem dan terpisah dari area maskot dengan gap 1.75rem. Angka menggunakan state saldo asli dan `formatCurrency`, tanpa truncation; nominal panjang dapat membungkus. Tombol tetap membuka tab billing. Pada lebar konten maksimal 54rem, panel saldo turun ke baris berikutnya; pada HP, susunannya vertikal. Maskot header disembunyikan pada layar di bawah 480px.
+Header memakai WorkspaceBanner dengan badge Workspace AI Anda berikon Network, judul Aldera AI API Relay, deskripsi serta panel saldo Rupiah dan tombol Top-up Saldo. Saldo memakai state asli dan formatCurrency, tanpa truncation; nominal panjang dapat membungkus. Panel saldo membungkus mengikuti ruang konten, sedangkan maskot mempunyai track kanan terpisah 144px pada desktop, 120px pada tablet dan disembunyikan di bawah 640px. Tombol tetap membuka tab billing.
 
 Header aplikasi sticky setinggi 72px tetap berada dalam alur layout bersama. Workspace memakai lebar penuh area konten yang tersedia dan tambahan padding atas 4px, tanpa offset negatif. Track tab, panel aktif, dan kontrol fokus memiliki `scroll-margin-top: 5.5rem` agar navigasi tetap terlihat di bawah header.
 
-Delapan tab tetap memakai Radix Tabs dengan nilai dan urutan asli: `catalog`, `playground`, `keys`, `billing`, `telegram`, `analytics`, `simulator`, `health`. Navigasi selalu satu baris dengan label utuh 14px, diposisikan rata tengah (center) pada track navigasi, serta dapat digulir horizontal jika ruang tidak mencukupi. `RelayTabs` menerima `activeTab` dari state yang sama, mengungkap tab aktif saat dipilih atau di-resize, dan mengembalikan track ke area terlihat jika perpindahan dari katalog membuatnya berada di luar viewport. Helper posisi gulir membatasi perpindahan ke panjang track; `ResizeObserver` dibersihkan saat effect dilepas. Navigasi keyboard, query `tab`, alias lama, pemilihan model dari katalog, serta state workspace tetap menggunakan hook yang tersedia.
+Delapan tab Radix mempertahankan nilai dan urutan asli: catalog, playground, keys, billing, telegram, analytics, simulator, health. WorkspaceTabsList dan WorkspaceTabsTrigger membentuk segmented track selebar container, dengan delapan kolom, empat pada lebar container maksimal 64rem dan dua pada maksimal 36rem. Mode density compact memakai label 12px yang dapat membungkus, ikon 16px, tinggi trigger minimal 36px dan pilihan aktif biru. Default tab Admin/Kalkulator tetap memakai kepadatan standar. RelayTabs tetap menerima activeTab dari state asli; helper scroll, ResizeObserver dan pengungkapan track menjaga tab terlihat di bawah header. Query tab, alias lama, keyboard serta pemilihan model tetap mengikuti hook yang tersedia.
 
-Label, ikon, dan deskripsi singkat setiap bagian berada dalam `_data/relay-sections.ts`, digunakan bersama oleh navigasi dan `RelaySectionHeading`. Header bagian tidak menambah kontrol atau sumber data baru. Panel nonaktif tetap tersembunyi; panel aktif memakai satu track `minmax(0, 1fr)` agar isi tabel tidak memperlebar seluruh halaman.
+Label, ikon, dan deskripsi singkat setiap bagian berada dalam `_data/relay-sections.ts`, digunakan bersama oleh navigasi dan `RelaySectionHeading`. Judul dan penjelasan bagian berada dalam satu kelompok vertikal yang rapat. Header bagian tidak menambah kontrol atau sumber data baru. Panel nonaktif tetap tersembunyi; panel aktif memakai satu track `minmax(0, 1fr)` agar isi tabel tidak memperlebar seluruh halaman.
 
 ## Isi tab
 
@@ -35,9 +35,11 @@ Label, ikon, dan deskripsi singkat setiap bagian berada dalam `_data/relay-secti
 
 Tabel, track tab, blok kode, dan navigasi grafik menampung gulir horizontal secara lokal. Kartu menyesuaikan tinggi isi. Dialog dibatasi tinggi viewport dan memiliki gulir vertikal; tombol tutup berukuran 36px dengan fokus yang jelas. Kontrol utama memiliki tinggi minimal 44px. Dukungan reduced motion tetap tersedia.
 
+Toolbar katalog memakai ModelCatalogToolbar sebagai komponen presentasi, dengan state/callback dari useModelCatalog. Khusus workspace dashboard, filter berukuran 30px, font 12px dan padding vertikal 4px; search 36px; padding toolbar 10px x 12px. Input memakai font 16px pada HP. Kontrol tab lain tetap memakai ukuran aslinya.
+
 Grid katalog memakai satu kolom secara default, dua kolom pada lebar konten minimal 44rem, dan tiga kolom mulai 78rem. Tombol salin ID berukuran 44 × 44px; nilai lengkap tetap disalin dari data asli walaupun teks ID memakai ellipsis. Baris harga dapat membungkus pada HP; CTA memakai dua kolom yang sama besar dan sejajar di bagian bawah kartu. Ringkasan empat metrik pada Analitik dan Status memakai 1/2/4 kolom mengikuti ruang konten. Pilihan nominal cepat pada dialog top-up memakai grid auto-fit dan teks angka tanpa pemenggalan, tanpa mengubah nilai atau perilaku pemilihan.
 
-`RelayLoading` menyediakan skeleton kartu header, delapan slot navigasi dalam satu baris, judul bagian, dan enam kartu katalog. Grid skeleton memakai breakpoint container yang sama dengan katalog akhir.
+`RelayLoading` menyediakan skeleton header, delapan slot navigasi 36px yang mengikuti grid 8/4/2 kolom, judul bagian, dan enam kartu katalog. Grid skeleton memakai breakpoint container yang sama dengan katalog akhir.
 
 ## Ilustrasi maskot & teknologi 3D
 
@@ -57,11 +59,7 @@ Query `tab` tetap disinkronkan ke URL oleh hook workspace. Pencarian dan kategor
 
 ## Pemeriksaan
 
-- `bun test app/dashboard/ai-relay`: 23 test lulus dalam tujuh berkas. UI test co-located mencakup header dengan saldo nol dan nominal panjang, keberadaan aset dekoratif, delapan tab dan deep link, heading tiap bagian, empty state, skeleton, panel nonaktif, katalog 48 model dengan ID panjang serta tarif/konteks asli, keterbacaan, nominal top-up, pembatasan CSS portal, serta isolasi corak statis tanpa intersepsi pointer. Test helper gulir mencakup tab yang terlihat, tab di kedua ujung, dan track yang cukup lebar. Pengujian hook sinkronisasi tab tetap dijalankan bersama test UI.
-- Preview browser terisolasi merender komponen React asli dengan stylesheet workspace dan corak, data fixture, serta action mock. Delapan tab diperiksa pada desktop dan HP; lebar 320, 390, 768, 1024, sekitar 1440, 1600, dan 1904px diperiksa tanpa overflow halaman. Grid menjadi tiga kolom pada viewport 1600px; tab tetap satu baris dan tab aktif terlihat. Header dimulai di bawah chrome sticky, saldo tidak tertutup maskot, dan tombol salin terukur 44 × 44px. Tabel yang lebar tetap dapat digulir di dalam kartu. Kondisi katalog kosong, nama/ID panjang, saldo nol dan panjang, loading, serta dialog IDE/top-up juga diperiksa. Preview ini tidak menjalankan data fetching route AI Relay atau transaksi asli.
-- Interaksi mock mencakup navigasi tab dengan keyboard, pencarian Claude, filter Budget/All, salin ID lengkap, dialog IDE, pemilihan model dari katalog ke Playground, respons/error chat, pembaruan saldo dari callback mock, top-up pending dan nominal, pembuatan key/penayangan sekali, kode binding Telegram, analitik fixture, serta perubahan parameter simulator. Pada parameter prompt 2.000 dan completion 500, perubahan 100 menjadi 110 permintaan/hari menghasilkan Rp712.800 untuk Claude 3.5 Sonnet dan Rp29.040 untuk DeepSeek V3 memakai tarif sumber. Tidak ada panggilan provider, pembuatan key sungguhan, penghubungan Telegram, atau pembayaran dari preview ini.
-- ESLint, formatter terarah, Next.js typegen, dan TypeScript lulus. Pengujian tugas UI dibatasi pada test route dan mock. Suite integrasi backend membutuhkan fixture Router DB yang sesuai (`web_user_id` dan kolom binding `telegram_id`); skema, backend, serta environment tidak diubah untuk pemeriksaan ini.
-- Provider AI, streaming jaringan nyata, transaksi bank, serta sinkronisasi Telegram eksternal memerlukan lingkungan integrasi tersendiri dan belum diverifikasi oleh pemeriksaan UI ini.
+Test co-located mencakup header dengan saldo nol/panjang, aset, delapan tab, URL, heading bagian, loading/empty, ID model lengkap, tarif, top-up dan pembatasan tema. Regresi segmented tab memverifikasi jumlah pilihan, status aktif, callback dan ukuran track. Browser memakai komponen asli dengan fixture serta action mock; tidak menjalankan pembayaran atau provider sungguhan. Hasil verifikasi aktif tersedia di [standar visual workspace](workspace-visual-consistency.md).
 
 ## Tanggung jawab berkas
 
@@ -75,3 +73,5 @@ Query `tab` tetap disinkronkan ke URL oleh hook workspace. Pencarian dan kategor
 | `client-view.test.tsx`, `_components/relay-header.test.tsx`, `relay-tabs.test.tsx`, `relay-section-heading.test.tsx`, `relay-loading.test.tsx` | Rendering, data/URL, aset, skeleton, dan regresi pembatasan layout. Test hook yang tersedia di `_hooks/use-relay-workspace.test.ts` juga dijalankan tanpa perubahan. |
 
 Tidak ada aset yang ditambah atau dihapus. Komponen fitur bersama dan AI Relay publik tidak diedit.
+
+Spesifikasi compact dan hasil verifikasi aktif tersedia di [kepadatan dashboard dan maskot](dashboard-density-and-mascots.md).

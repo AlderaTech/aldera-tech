@@ -1,3 +1,4 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,21 +21,22 @@ export default async function AdminPortfolioPage() {
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="content"
+        mascot={<AdminMascot pose="portfolio" size="header" />}
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
             Portfolio & Case Studies
           </h1>
           <p className="text-muted-foreground">
-            Kelola studi kasus dan etalase karya digital yang tampil di website
+            Kelola studi kasus dan karya digital yang ditampilkan pada situs
             publik.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <AdminMascot pose="portfolio" size="header" />
           <Button
             asChild
             className="gap-1.5 bg-brand-primary text-white hover:bg-brand-primary-hover"
@@ -44,7 +46,7 @@ export default async function AdminPortfolioPage() {
             </Link>
           </Button>
         </div>
-      </div>
+      </AdminBanner>
 
       <PortfolioStatGrid items={caseStudies} />
 

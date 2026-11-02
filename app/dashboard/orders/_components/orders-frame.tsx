@@ -4,11 +4,17 @@ import { Calculator, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DASHBOARD_ROUTES } from "@/lib/routes";
 import commonStyles from "../../projects/_components/project-list.module.css";
+import { WorkspaceBanner } from "@/components/dashboard/workspace-banner";
 
 export function OrdersFrame({ children }: { children: ReactNode }) {
   return (
     <div className={commonStyles.page} aria-labelledby="orders-heading">
-      <div className={commonStyles.header}>
+      <WorkspaceBanner
+        className={commonStyles.header}
+        eyebrow="Perencanaan proyek"
+        badgeIcon={Calculator}
+        mascotPose="orders"
+      >
         <div>
           <h1 id="orders-heading">Riwayat Estimasi</h1>
           <p className={commonStyles.description}>
@@ -21,7 +27,7 @@ export function OrdersFrame({ children }: { children: ReactNode }) {
             <ArrowUpRight aria-hidden="true" />
           </Link>
         </Button>
-      </div>
+      </WorkspaceBanner>
       {children}
     </div>
   );

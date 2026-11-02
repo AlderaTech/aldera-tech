@@ -190,7 +190,7 @@
 .sectionPanel {
   min-width: 0;
   grid-template-columns: minmax(0, 1fr);
-  gap: 1rem;
+  gap: 0.75rem;
   padding: 0;
   border: 0;
   background: transparent;
@@ -206,11 +206,9 @@
   display: none;
 }
 .sectionHeading {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.5rem 1rem;
+  display: grid;
+  justify-items: start;
+  gap: 0.3rem;
   padding: 0 0.15rem;
 }
 .sectionHeading > div {
@@ -242,81 +240,34 @@
   letter-spacing: -0.03em;
 }
 .sectionHeading > p {
-  max-width: 32rem;
+  max-width: 72ch;
   color: var(--relay-muted);
   font-size: 0.875rem;
-  line-height: 1.75;
+  line-height: 1.6;
 }
 .loadingTabs {
-  display: flex;
-  gap: 0.35rem;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 0.2rem;
   min-width: 0;
   overflow: hidden;
-  padding: 0.25rem;
+  padding: 0.2rem;
   border: 1px solid var(--relay-line);
   border-radius: 0.85rem;
   background: var(--relay-paper);
-}
-.loadingTabs > * {
-  flex: 0 0 10rem;
 }
 .loadingHeader > :last-child {
   width: 100%;
   height: 6.5rem;
 }
 .tabScroll {
-  display: flex;
-  justify-content: center;
   min-width: 0;
-  max-width: 100%;
-  padding: 0.25rem;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-behavior: auto;
-  scroll-padding-inline: 0.5rem;
+  width: 100%;
   scroll-margin-top: 5.5rem;
-  border: 1px solid var(--relay-line);
-  border-radius: 0.85rem;
-  background: var(--relay-paper);
-  scrollbar-width: thin;
-  scrollbar-color: var(--relay-line) transparent;
-  box-shadow: 0 3px 12px color-mix(in srgb, var(--relay-ink) 4%, transparent);
-}
-.workspace .tabList {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  margin-inline: auto;
-  width: max-content;
-  min-width: max-content;
-  height: auto;
-  gap: 0.25rem;
-  padding: 0;
-  background: transparent;
-}
-.workspace .tabList button {
-  flex-shrink: 0;
-  gap: 0.4rem;
-  min-height: 2.25rem;
-  padding: 0.45rem 0.75rem;
-  border-radius: 0.6rem;
-  color: var(--relay-muted);
-  font-size: 0.8125rem;
-  font-weight: 650;
-  white-space: nowrap;
-}
-.workspace .tabList button[data-state="active"] {
-  background: var(--relay-blue);
-  color: var(--relay-paper);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--relay-blue) 14%, transparent);
-}
-.workspace .tabList button:hover:not([data-state="active"]) {
-  background: var(--relay-canvas);
-  color: var(--relay-ink);
 }
 .workspace [data-slot="tabs"] {
   min-width: 0;
-  gap: 1.25rem;
+  gap: 0.75rem;
 }
 .workspace [data-slot="tabs"] > * {
   margin-block: 0;
@@ -405,32 +356,35 @@
 .workspace :is(button, a, input, textarea, [tabindex]) {
   scroll-margin-top: 5.5rem;
 }
-.workspace [data-relay-catalog] > div:first-child {
+.workspace [data-relay-catalog-toolbar] {
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.9rem;
-  padding: 1rem;
+  gap: 0.625rem;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--relay-line);
   border-radius: 1.1rem;
   background: var(--relay-paper);
 }
-.workspace [data-relay-catalog] > div:first-child > div:first-child {
-  flex: 1 1 26rem;
+.workspace [data-relay-categories] {
+  flex: 1 1 24rem;
   min-width: 0;
   gap: 0.4rem;
 }
-.workspace [data-relay-catalog] > div:first-child > div:last-child {
-  flex: 1 1 18rem;
+.workspace [data-relay-search] {
+  flex: 0 1 16rem;
   width: auto;
   max-width: 100%;
 }
-.workspace [data-relay-catalog] > div:first-child button {
-  min-height: 2.75rem;
-  padding-block: 0.5rem;
-  font-size: 0.875rem;
+.workspace [data-relay-categories] button {
+  min-height: 1.875rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
 }
-.workspace [data-relay-catalog] input {
+.workspace [data-relay-search] input {
+  min-height: 2.25rem;
+  height: 2.25rem;
+  font-size: 0.875rem;
   padding-left: 2.25rem;
   background: var(--relay-canvas);
 }
@@ -439,9 +393,9 @@
   background: var(--relay-paper);
   box-shadow: 0 4px 16px color-mix(in srgb, var(--relay-ink) 4%, transparent);
 }
-.workspace [data-relay-catalog] input + svg,
-.workspace [data-relay-catalog] [class~="relative"] > svg {
-  top: 0.85rem;
+.workspace [data-relay-search] > svg {
+  top: 50%;
+  transform: translateY(-50%);
   left: 0.8rem;
 }
 .workspace [data-relay-model-grid] {
@@ -794,6 +748,16 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+@container (max-width: 64rem) {
+  .loadingTabs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@container (max-width: 36rem) {
+  .loadingTabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 @container (min-width: 40rem) {
   .sectionPanel > div > [class~="lg:grid-cols-4"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -837,7 +801,7 @@
     padding: 1rem;
   }
   .sectionPanel {
-    gap: 1rem;
+    gap: 0.75rem;
   }
   .welcome {
     min-width: 0;
@@ -862,8 +826,13 @@
   .balancePanel strong {
     font-size: 1.375rem;
   }
-  .workspace [data-relay-catalog] > div:first-child > div:last-child {
+  .workspace [data-relay-search] {
+    flex-basis: 100%;
+    flex-grow: 1;
     width: 100%;
+  }
+  .workspace [data-relay-search] input {
+    font-size: 1rem;
   }
   .workspace [data-slot="card-header"],
   .workspace [data-slot="card-content"],

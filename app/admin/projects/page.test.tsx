@@ -79,8 +79,6 @@ describe("AdminProjectsList Page", () => {
     });
 
     const html = renderToStaticMarkup(pageElement);
-    expect(html).toContain(
-      "Belum ada proyek atau tidak ada proyek yang sesuai kriteria."
-    );
+    expect(html).toContain("Belum ada proyek");
   });
 });

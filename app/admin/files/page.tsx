@@ -1,3 +1,4 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { Download, File as FileIcon, ImageIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -87,18 +88,19 @@ export default async function AdminFilesPage({
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="projects"
+        mascot={<AdminMascot pose="guide" size="header" />}
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">File Manager</h1>
           <p className="text-muted-foreground">
-            Semua file yang diunggah ke platform.
+            Kelola dan telusuri seluruh berkas yang diunggah ke platform.
           </p>
         </div>
-        <AdminMascot pose="guide" size="header" />
-      </div>
+      </AdminBanner>
 
       <FileUploader />
 
@@ -112,11 +114,7 @@ export default async function AdminFilesPage({
 
       {files.length === 0 ? (
         <Card>
-          <AdminEmptyState
-            mascot
-            title="Belum ada berkas untuk ditampilkan"
-            description="Belum ada file terunggah atau tidak ada file yang sesuai kriteria."
-          />
+          <AdminEmptyState context="files" />
         </Card>
       ) : (
         <div className="space-y-6">

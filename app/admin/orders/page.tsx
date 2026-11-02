@@ -1,3 +1,5 @@
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -93,9 +95,11 @@ export default async function AdminOrdersPage({
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="estimates"
+        mascot={<AdminMascot pose="activity" size="header" />}
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Order Requests</h1>
@@ -103,8 +107,7 @@ export default async function AdminOrdersPage({
             Estimasi proyek yang diajukan klien dari kalkulator harga.
           </p>
         </div>
-        <AdminMascot pose="activity" size="header" />
-      </div>
+      </AdminBanner>
 
       <SearchFilterBar
         placeholder="Cari nama client, email, atau tipe proyek..."
@@ -118,8 +121,8 @@ export default async function AdminOrdersPage({
       </SearchFilterBar>
 
       {orders.length === 0 ? (
-        <Card className="p-12 text-center text-muted-foreground">
-          Belum ada order request atau tidak ada yang sesuai kriteria.
+        <Card className="p-0">
+          <AdminEmptyState context="orders" />
         </Card>
       ) : (
         <div className="space-y-3">

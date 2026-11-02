@@ -90,6 +90,27 @@ const mockAuditResults: LedgerInvariantResult[] = [
   },
 ];
 
+describe("Hasil audit yang belum tersedia", () => {
+  it("menampilkan ilustrasi kosong dan tidak menyatakan audit lulus", () => {
+    currentSearchParams = new URLSearchParams({ tab: "audit" });
+    const html = renderToStaticMarkup(
+      <AiRelayAdminClientView
+        initialPricing={[]}
+        initialMetrics={mockMetrics}
+        initialPendingTopups={[]}
+        initialAuditResults={[]}
+      />
+    );
+    expect(html).toContain('data-admin-empty-context="ledger"');
+    expect(html).toContain("design");
+    expect(html).toContain("Belum ada hasil pemeriksaan");
+    expect(html).not.toContain("5 PASS");
+    expect(html).not.toContain("SEMUA PASS");
+    expect(html).not.toContain("5 dari 5 Invarian PASS");
+    currentSearchParams = new URLSearchParams();
+  });
+});
+
 interface MicroStateOverrides {
   isSyncing?: boolean;
   syncResult?: {
@@ -256,7 +277,7 @@ describe("AiRelayAdminClientView UI Component — Navigation & Tab Routing", () 
       />
     );
 
-    expect(html).toContain("inv_balance_non_negative");
+    expect(html).toContain("Inv balance non negative");
   });
 
   it("falls back to overview tab when an invalid ?tab= parameter is provided", () => {
@@ -514,9 +535,7 @@ describe("Feature F12: Error Toast & Upstream Failure Fallback UI", () => {
     expect(html).not.toContain("Model Baru Terdeteksi (0)");
     expect(html).not.toContain("0 Model Baru Terdeteksi");
     // Must NOT falsely claim all models are synchronized
-    expect(html).not.toContain(
-      "Tidak ada model baru di upstream. Semua model telah tersinkronisasi"
-    );
+    expect(html).not.toContain("Tidak ada model baru");
     // Must NOT show new models count badge in tabs
     expect(html).not.toContain("0 baru");
   });
@@ -562,7 +581,7 @@ describe("Feature F12: Error Toast & Upstream Failure Fallback UI", () => {
       searchParams: "tab=audit",
     });
     expect(auditHtml).toContain("Live Database Invariant Audit Runner");
-    expect(auditHtml).toContain("inv_balance_non_negative");
+    expect(auditHtml).toContain("Inv balance non negative");
     expect(auditHtml).toContain("PASS");
   });
 });
@@ -697,9 +716,7 @@ describe("Feature F13: Diff Comparison Table & Instant Activation", () => {
     expect(html).toContain("anthropic/claude-3-5-sonnet");
     expect(html).toContain("openai/gpt-4o");
     // Empty state rendered for newModels
-    expect(html).toContain(
-      "Tidak ada model baru di upstream. Semua model telah tersinkronisasi dengan database lokal."
-    );
+    expect(html).toContain("Tidak ada model baru");
   });
 
   it("renders missingUpstreamModels badge list in amber alert section when local models are absent upstream", () => {

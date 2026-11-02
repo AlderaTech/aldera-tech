@@ -20,15 +20,15 @@ export const ADMIN_MASCOT_POSES = {
     aspect: "portrait",
   },
   relay: {
-    src: "/images/services/cards/ai.webp",
-    aspect: "square",
+    src: "/images/ai-relay/aldera-cat-relay-connect.webp",
+    aspect: "portrait",
   },
   coding: {
-    src: "/images/services/cards/web.webp",
-    aspect: "square",
+    src: "/images/services/aldera-cat-services.webp",
+    aspect: "portrait",
   },
   assistant: {
-    src: "/images/services/cards/cloud.webp",
+    src: "/images/ai-relay/aldera-cat-relay-peek.webp",
     aspect: "square",
   },
   services: {
@@ -55,24 +55,19 @@ export const ADMIN_MASCOT_POSES = {
 
 export const ADMIN_MASCOT_SIZES = {
   hero: {
-    width: 112,
-    height: 112,
-    sizes: "(max-width: 639px) 0px, 112px",
+    width: 160,
+    height: 160,
+    sizes: "(max-width: 639px) 0px, 144px",
   },
   header: {
-    width: 76,
-    height: 76,
-    sizes: "(max-width: 639px) 0px, 76px",
+    width: 160,
+    height: 160,
+    sizes: "(max-width: 639px) 0px, 144px",
   },
   panel: {
     width: 48,
     height: 48,
     sizes: "48px",
-  },
-  empty: {
-    width: 92,
-    height: 92,
-    sizes: "92px",
   },
 } as const;
 

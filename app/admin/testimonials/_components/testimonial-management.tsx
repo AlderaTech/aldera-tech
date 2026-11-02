@@ -1,4 +1,5 @@
 "use client";
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
@@ -82,24 +83,25 @@ export function TestimonialManagement({
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="content"
+        mascot={<AdminMascot pose="assistant" size="header" />}
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Testimoni Klien</h1>
           <p className="text-sm text-muted-foreground">
-            Kelola ulasan, testimoni proyek, dan rating kepuasan klien Aldera
+            Kelola ulasan proyek, testimoni, dan penilaian kepuasan klien Aldera
             Tech.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <AdminMascot pose="assistant" size="header" />
           <Button onClick={handleCreate} className="cursor-pointer gap-2">
             <Plus className="size-4" /> Tambah Testimoni
           </Button>
         </div>
-      </div>
+      </AdminBanner>
 
       {/* Metrics Stat Grid */}
       <TestimonialStatGrid items={testimonials} />
@@ -111,6 +113,7 @@ export function TestimonialManagement({
           onEdit={handleEdit}
           onDelete={handleDelete}
           onRefresh={handleRefresh}
+          onCreate={handleCreate}
         />
       </Card>
 

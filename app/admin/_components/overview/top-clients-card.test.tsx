@@ -6,7 +6,7 @@ import { formatCurrency } from "@/lib/utils";
 describe("Top 5 Client", () => {
   it("menampilkan kosong secara jujur tanpa peringkat palsu", () => {
     const html = renderToStaticMarkup(<TopClientsCard clients={[]} />);
-    expect(html).toContain("Belum ada data client");
+    expect(html).toContain("Belum ada data klien");
     expect(html).not.toContain("Rp");
   });
   it("mempertahankan urutan, nama, dan nominal sumber", () => {
@@ -29,7 +29,7 @@ describe("Top 5 Client", () => {
     expect(html).toContain("Gading");
     expect(html).toContain(formatCurrency(13875000));
     expect(html.match(/data-client-slot-placeholder/g)).toHaveLength(4);
-    expect(html).toContain("Total Revenue Top Client (1/5 slot)");
+    expect(html).toContain("Total Pendapatan Klien Teratas (1/5 slot)");
     expect(html).toContain(`href="${ADMIN_ROUTES.invoices}"`);
     expect(html).toContain(`href="${ADMIN_ROUTES.analytics}"`);
   });

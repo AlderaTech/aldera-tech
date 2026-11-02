@@ -28,11 +28,11 @@ export function TopClientsCard({
               Top 5 Client by Revenue
             </CardTitle>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Ranking client berdasarkan invoice berstatus paid.
+              Peringkat klien berdasarkan invoice berstatus lunas.
             </p>
           </div>
           <div className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
-            {clients.length} client
+            {clients.length} klien
           </div>
         </div>
       </CardHeader>
@@ -59,7 +59,7 @@ export function TopClientsCard({
                             Slot peringkat tersedia
                           </div>
                           <div className="truncate text-[11px] text-slate-400">
-                            Menunggu client dengan invoice paid berikutnya
+                            Menunggu klien dengan invoice lunas berikutnya
                           </div>
                         </div>
                       </div>
@@ -74,7 +74,7 @@ export function TopClientsCard({
             <div className="mt-auto flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3">
               <div className="min-w-0">
                 <div className="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">
-                  Total Revenue Top Client ({clients.length}/
+                  Total Pendapatan Klien Teratas ({clients.length}/
                   {MAX_TOP_CLIENT_SLOTS} slot)
                 </div>
                 <div className="mt-0.5 text-sm font-bold text-slate-950 tabular-nums">
@@ -93,17 +93,14 @@ export function TopClientsCard({
                   href={ADMIN_ROUTES.analytics}
                   className="inline-flex items-center gap-1 text-primary hover:underline"
                 >
-                  Analitik Revenue
+                  Analitik Pendapatan
                   <ArrowUpRight className="size-3.5" aria-hidden="true" />
                 </Link>
               </div>
             </div>
           </>
         ) : (
-          <AdminEmptyState
-            title="Belum ada data client"
-            description="Peringkat mengikuti invoice berstatus paid."
-          />
+          <AdminEmptyState context="clients" />
         )}
       </CardContent>
     </Card>

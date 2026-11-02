@@ -53,6 +53,9 @@ export function CategoryManagement({
             permissions={permissions}
             onEdit={manager.openEditDialog}
             onDelete={manager.setDeleteTarget}
+            onCreate={
+              permissions.canCreate ? manager.openCreateDialog : undefined
+            }
           />
         </CardContent>
       </Card>

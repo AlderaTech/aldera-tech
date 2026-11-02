@@ -12,6 +12,10 @@ describe("Antarmuka admin timesheet", () => {
     );
     expect(html).toContain("Timesheet");
     expect(html).toContain("data-admin-page-header");
+    expect(html).toContain("data-timesheet-filters");
+    expect(html.indexOf("data-timesheet-filters")).toBeGreaterThan(
+      html.indexOf("</header>")
+    );
     expect(html).not.toContain("undefined");
   });
   it("tidak menjalankan mutasi ketika halaman dibuka", async () => {

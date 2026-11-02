@@ -1,3 +1,5 @@
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import Link from "next/link";
 import { Plus, FileSignature } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -86,9 +88,11 @@ export default async function AdminProposalsPage({
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
+        category="projects"
+        mascot={<AdminMascot pose="contact" size="header" />}
       >
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
@@ -96,19 +100,18 @@ export default async function AdminProposalsPage({
             Proposal
           </h1>
           <p className="text-muted-foreground">
-            Kirim proposal dengan e-signature. Setelah ditandatangani, konversi
-            menjadi proyek.
+            Kirim proposal dengan tanda tangan elektronik, lalu ubah menjadi
+            proyek setelah ditandatangani.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <AdminMascot pose="contact" size="header" />
           <Button asChild>
             <Link href={ADMIN_ROUTES.proposalNew}>
               <Plus className="size-4" /> Proposal Baru
             </Link>
           </Button>
         </div>
-      </div>
+      </AdminBanner>
 
       <SearchFilterBar
         placeholder="Cari nomor proposal, judul, atau client..."
@@ -136,12 +139,18 @@ export default async function AdminProposalsPage({
           <TableBody>
             {proposals.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={6}
-                  className="py-10 text-center text-muted-foreground"
-                >
-                  Belum ada proposal atau tidak ada proposal yang sesuai
-                  kriteria filter.
+                <TableCell colSpan={6} className="p-0">
+                  <AdminEmptyState
+                    context="proposals"
+                    action={
+                      <Button asChild>
+                        <Link href={ADMIN_ROUTES.proposalNew}>
+                          <Plus aria-hidden="true" className="size-4" />{" "}
+                          Proposal Baru
+                        </Link>
+                      </Button>
+                    }
+                  />
                 </TableCell>
               </TableRow>
             ) : (

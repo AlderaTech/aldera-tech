@@ -1,18 +1,10 @@
 "use client";
 
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import {
-  Filter,
-  Loader2,
-  Pencil,
-  Plus,
-  Sparkles,
-  Star,
-  Trash2,
-  X,
-} from "lucide-react";
+import { Filter, Loader2, Pencil, Plus, Star, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -363,17 +355,8 @@ export function FeaturesTab({
         </div>
 
         {filteredItems.length === 0 ? (
-          <Card className="flex flex-col items-center justify-center border-dashed p-8 text-center">
-            <div className="mb-2.5 flex size-10 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-              <Sparkles className="size-5" />
-            </div>
-            <h3 className="text-sm font-semibold text-slate-900">
-              Belum ada fitur untuk kategori ini
-            </h3>
-            <p className="mt-1 max-w-sm text-xs text-muted-foreground">
-              Tambahkan fitur baru menggunakan formulir di atas untuk
-              menampilkannya di kalkulator.
-            </p>
+          <Card>
+            <AdminEmptyState context="features" />
           </Card>
         ) : (
           <div className="grid gap-3.5 md:grid-cols-2">

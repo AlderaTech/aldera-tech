@@ -21,16 +21,13 @@ describe("Gaya tab dashboard yang seragam", () => {
 
   it("selaras dengan ukuran ringkas tab AI Gateway / Relay", () => {
     const relayCss = readFileSync(
-      new URL(
-        "../../app/dashboard/ai-relay/_components/relay-workspace.module.css",
-        import.meta.url
-      ),
+      new URL("./workspace-segmented-tabs.module.css", import.meta.url),
       "utf8"
     );
     const trigger = relayCss.match(
-      /\.workspace \.tabList button\s*\{([^}]+)\}/
+      /\.list \.trigger\[data-workspace-tab\]\s*\{([^}]+)\}/
     )?.[1];
-    expect(trigger).toContain("min-height: 2.25rem;");
+    expect(trigger).toContain("min-height: 44px;");
     expect(trigger).toContain("border-radius: 0.6rem;");
     expect(trigger).toContain("font-size: 0.8125rem;");
     expect(dashboardTabsTriggerClass).toContain("rounded-[0.6rem]");

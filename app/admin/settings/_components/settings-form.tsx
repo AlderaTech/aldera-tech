@@ -4,7 +4,11 @@ import * as React from "react";
 import { useActionState } from "react";
 import { Building2, Share2 } from "lucide-react";
 import { toast } from "sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import {
+  WorkspaceTabsList as TabsList,
+  WorkspaceTabsTrigger as TabsTrigger,
+} from "@/components/dashboard/workspace-segmented-tabs";
 import { useUrlState } from "@/lib/hooks/use-url-state";
 import {
   updateSiteSettingsAction,
@@ -45,13 +49,13 @@ export function SettingsForm({ settings }: { settings: PublicSiteSettings }) {
       className="gap-0"
     >
       <div className="border-b border-slate-200 bg-slate-50/80 px-4 py-3 sm:px-5">
-        <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto bg-white p-1 shadow-sm sm:w-max">
+        <TabsList aria-label="Pengaturan situs">
           <TabsTrigger value="profile" className="gap-2">
-            <Building2 className="size-4" />
+            <Building2 className="size-4" aria-hidden="true" />
             Profil Website
           </TabsTrigger>
           <TabsTrigger value="contact" className="gap-2">
-            <Share2 className="size-4" />
+            <Share2 className="size-4" aria-hidden="true" />
             Sosial & Kontak
           </TabsTrigger>
         </TabsList>

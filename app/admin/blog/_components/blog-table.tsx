@@ -1,4 +1,5 @@
 "use client";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 
 import * as React from "react";
 import Link from "next/link";
@@ -135,11 +136,15 @@ export function BlogTable({
         <TableBody>
           {posts.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={7}
-                className="py-10 text-center text-muted-foreground"
-              >
-                Belum ada post. Buat yang pertama!
+              <TableCell colSpan={7} className="p-0">
+                <AdminEmptyState
+                  context="blog"
+                  action={
+                    <Button asChild>
+                      <Link href={ADMIN_ROUTES.blogNew}>Artikel Baru</Link>
+                    </Button>
+                  }
+                />
               </TableCell>
             </TableRow>
           ) : (

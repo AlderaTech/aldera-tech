@@ -9,6 +9,8 @@ describe("Skeleton workspace AI Relay", () => {
     expect(html).toContain('aria-label="Memuat AI Relay"');
     expect(html.match(/data-slot="card"/g)).toHaveLength(6);
     expect(html).toContain("data-relay-model-grid");
+    expect(html).toContain("data-relay-loading-tabs");
+    expect(html.match(/h-9 rounded-xl/g)).toHaveLength(8);
     expect(
       (html.match(/data-slot="skeleton"/g) || []).length
     ).toBeGreaterThanOrEqual(12);

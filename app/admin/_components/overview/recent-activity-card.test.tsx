@@ -6,7 +6,7 @@ describe("Aktivitas admin", () => {
   it("menampilkan kondisi kosong tanpa aktivitas contoh", () => {
     expect(
       renderToStaticMarkup(<RecentActivityCard activities={[]} />)
-    ).toContain("Belum ada aktivitas.");
+    ).toContain("Belum ada aktivitas");
   });
   it("mempertahankan batas enam, deskripsi panjang, pelaku, waktu dan route proyek", () => {
     const description = "Deskripsi pengujian ".repeat(25);

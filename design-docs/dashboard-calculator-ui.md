@@ -4,7 +4,7 @@
 
 Rute `/dashboard/calculator` memakai `appearance="dashboard"` pada `CalculatorWizard`. Tema mengikuti Ringkasan, Proyek Saya, dan Pesanan & Estimasi: token `--overview-*`, Plus Jakarta Sans, navy/biru elektrik, putih, gradasi biru es, border tipis, radius membulat, serta tombol pill. `getStudioDashboardSection` mengaktifkan sidebar/header studio dan label Kalkulator Proyek hanya pada rute tepat tersebut. Halaman detail dan dashboard lain mempertahankan tampilannya.
 
-Header ringkas diseragamkan dengan halaman Invoice & Pembayaran, Proyek Saya, dan Pesanan & Estimasi (menggunakan kotak background card container dengan border dan shadow halus, tanpa breadcrumb dan badge redundan), menyajikan judul Kalkulator Estimasi Proyek, deskripsi, serta tombol Riwayat Estimasi melalui `DASHBOARD_ROUTES.orders`.
+Header memakai WorkspaceBanner dengan badge berikon, corak dan pose maskot khusus kalkulator. Tombol Riwayat Estimasi memakai Button asChild: pill biru, teks putih, ikon dokumen/panah, tinggi minimum 44px, hover/fokus yang konsisten dan Link ke DASHBOARD_ROUTES.orders.
 
 Konfigurasi berada di kiri dan ringkasan di kanan mulai 1280px; ringkasan sticky dengan offset header. Pada tablet dan HP keduanya tersusun vertikal. Tidak ada panel scroll bersarang atau tinggi konten yang dikunci. Stepper selalu menampilkan lima label, tanpa tombol lompatan tahap.
 
@@ -30,7 +30,7 @@ Sebelum jenis proyek dipilih, ringkasan dashboard menampilkan ilustrasi teknolog
 
 `use-calculator-wizard.ts`, `lib/calculator.ts`, `lib/calculator-utils.ts`, dan `lib/actions/calculator.ts` tidak diubah. Pengambilan data server, serialisasi, harga dasar, pengali, persentase DP, pembulatan, validasi, payload, autentikasi, dan penghitungan ulang server tetap menggunakan implementasi asli. `getSiteSettings()` dan nomor WhatsApp diteruskan seperti semula. Callback login dan WhatsApp pada varian publik tetap tersedia.
 
-Saat pending, tombol Ajukan Proyek disabled dan menampilkan Mengajukan. Toast error/sukses, layar sukses, reset, serta tautan riwayat mengikuti respons action asli. Reset tetap mempertahankan perilaku state dari hook yang sama. Tidak ada API, rute, env var, dependensi, maupun aset gambar baru.
+Saat pending, tombol Ajukan Proyek disabled dan menampilkan Mengajukan. Toast error/sukses, layar sukses, reset, serta tautan riwayat mengikuti respons action asli. Reset tetap mempertahankan perilaku state dari hook yang sama. Tidak ada API, rute, env var atau dependensi baru. Aset maskot header kalkulator terpisah dari gambar tablet/dokumen pada empty state Estimasi Biaya.
 
 ## Isolasi varian publik
 
@@ -67,3 +67,5 @@ Saat pending, tombol Ajukan Proyek disabled dan menampilkan Mengajukan. Toast er
 | Dokumentasi | `design-docs/dashboard-calculator-ui.md`, `design-docs/dashboard-overview-ui.md`, `design-docs/dashboard-projects-ui.md`, `design-docs/dashboard-orders-ui.md`, `design-docs/pricing-ui.md`, `ai-agent-docs/brand-context.md` |
 
 Tidak ada berkas yang dihapus dalam cakupan kalkulator.
+
+Aset, kontrak tombol dan hasil pengujian aktif tersedia di [kepadatan dashboard dan maskot](dashboard-density-and-mascots.md).

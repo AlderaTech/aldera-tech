@@ -1,6 +1,5 @@
 .scope
   :is(
-    [aria-labelledby="overview-heading"],
     [aria-labelledby="onboarding-heading"],
     [aria-labelledby="overview-projects-heading"],
     [aria-labelledby="overview-activity-heading"],
@@ -12,37 +11,14 @@
 }
 .scope
   :is(
-    [aria-labelledby="overview-heading"],
     [aria-labelledby="onboarding-heading"],
     [aria-labelledby="overview-projects-heading"],
     [aria-labelledby="overview-activity-heading"],
     [aria-label="Ringkasan statistik akun"] > article
   )
-  > :not(.welcomePattern) {
+  > * {
   position: relative;
   z-index: 1;
-}
-.welcomePattern {
-  opacity: 0.8;
-}
-.scope .welcomePattern::before {
-  top: -9rem;
-  right: -4rem;
-  left: auto;
-  width: 22rem;
-  height: 22rem;
-}
-.scope .welcomePattern::after {
-  right: -1rem;
-  bottom: -2rem;
-  width: 12rem;
-  height: 6rem;
-}
-.welcomePattern > svg {
-  top: -0.5rem;
-  right: 6rem;
-  width: 12rem;
-  opacity: 0.65;
 }
 .scope [aria-label="Ringkasan statistik akun"] > article {
   --pattern-accent: var(--overview-blue);
@@ -106,22 +82,6 @@
   content: "";
 }
 @media (max-width: 639px) {
-  .welcomePattern {
-    opacity: 0.55;
-  }
-  .scope .welcomePattern::before {
-    top: -7rem;
-    right: -5rem;
-    width: 13rem;
-    height: 13rem;
-  }
-  .scope .welcomePattern::after {
-    width: 7rem;
-    height: 5rem;
-  }
-  .welcomePattern > svg {
-    display: none;
-  }
   .scope [aria-label="Ringkasan statistik akun"] > article::before {
     right: -2.25rem;
     width: 7rem;

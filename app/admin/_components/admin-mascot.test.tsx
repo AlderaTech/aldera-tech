@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -11,6 +11,16 @@ import {
 } from "./admin-mascot";
 
 describe("AdminMascot", () => {
+  it("membatasi gambar potret pada bingkai agar tidak menimpa isi banner", () => {
+    const css = readFileSync(
+      new URL("./admin-common.module.css", import.meta.url),
+      "utf8"
+    );
+    expect(css).toContain("grid-template-rows: minmax(0, 1fr)");
+    expect(css).toContain("max-height: 100%");
+    expect(ADMIN_MASCOT_POSES.relay.src).toContain("aldera-cat-relay");
+    expect(ADMIN_MASCOT_POSES.coding.src).toContain("aldera-cat-services");
+  });
   it("menyediakan seluruh pose kontekstual yang mengarah ke aset WebP valid dengan atribut dekoratif aksesibel", () => {
     const poses = Object.keys(ADMIN_MASCOT_POSES) as AdminMascotPose[];
     expect(poses.length).toBeGreaterThanOrEqual(12);
@@ -35,9 +45,9 @@ describe("AdminMascot", () => {
     }
   });
 
-  it("menyeragamkan ukuran bingkai 1:1 (width === height) pada seluruh tier ukuran (hero, header, panel, empty)", () => {
+  it("menyeragamkan bingkai hero, header dan panel tanpa menyediakan pose empty state", () => {
     const sizes = Object.keys(ADMIN_MASCOT_SIZES) as AdminMascotSize[];
-    expect(sizes).toEqual(["hero", "header", "panel", "empty"]);
+    expect(sizes).toEqual(["hero", "header", "panel"]);
 
     for (const size of sizes) {
       const spec = ADMIN_MASCOT_SIZES[size];

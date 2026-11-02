@@ -18,6 +18,7 @@ describe("Navigasi AI Relay", () => {
     expect(html.match(/role="tab"/g)).toHaveLength(8);
     expect(html.match(/aria-selected="true"/g)).toHaveLength(1);
     expect(html).toContain('aria-label="Fitur AI Relay"');
+    expect(html).toContain('data-density="compact"');
     for (const { label } of RELAY_SECTIONS) {
       expect(html).toContain(label.replaceAll("&", "&amp;"));
     }

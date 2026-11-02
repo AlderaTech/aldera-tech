@@ -1,3 +1,4 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -54,9 +55,10 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <div
+      <AdminBanner
         data-admin-page-header
         className="flex flex-wrap items-start justify-between gap-4"
+        category="projects"
       >
         <div className="space-y-2">
           <Button asChild variant="ghost" size="sm" className="-ml-2">
@@ -78,7 +80,7 @@ export default async function AdminProposalDetailPage({ params }: PageProps) {
           status={proposal.status}
           convertedProjectId={proposal.convertedProjectId}
         />
-      </div>
+      </AdminBanner>
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="space-y-2 p-5">

@@ -35,11 +35,7 @@
   display: grid;
   gap: 0.35rem;
   min-width: 0;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--profile-line);
-  border-radius: 1.25rem;
-  background: var(--overview-paper);
-  box-shadow: 0 4px 18px color-mix(in srgb, var(--overview-ink) 5%, transparent);
+  padding: 0.25rem 0.15rem;
 }
 .eyebrow {
   color: var(--profile-muted);
@@ -49,7 +45,11 @@
   text-transform: uppercase;
 }
 .header .eyebrow {
-  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--overview-blue);
+  font-size: 0.6875rem;
 }
 .header h1 {
   font-size: clamp(1.75rem, 2.4vw, 2rem);

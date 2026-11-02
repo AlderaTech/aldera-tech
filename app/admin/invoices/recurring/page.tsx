@@ -1,3 +1,5 @@
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import Link from "next/link";
 import { Plus, Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -52,7 +54,7 @@ export default async function RecurringListPage() {
 
   return (
     <div className="space-y-6">
-      <div data-admin-page-header>
+      <AdminBanner data-admin-page-header category="billing">
         <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
           <Link href={ADMIN_ROUTES.invoices}>← Kembali ke Invoice</Link>
         </Button>
@@ -72,7 +74,7 @@ export default async function RecurringListPage() {
             </Link>
           </Button>
         </div>
-      </div>
+      </AdminBanner>
 
       <Card className="overflow-hidden p-0">
         <Table>
@@ -94,12 +96,18 @@ export default async function RecurringListPage() {
           <TableBody>
             {templates.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="py-10 text-center text-muted-foreground"
-                >
-                  Belum ada template. Buat yang pertama untuk mulai otomasi
-                  tagihan.
+                <TableCell colSpan={7} className="p-0">
+                  <AdminEmptyState
+                    context="recurring"
+                    action={
+                      <Button asChild>
+                        <Link href={ADMIN_ROUTES.invoiceRecurringNew}>
+                          <Plus aria-hidden="true" className="size-4" />{" "}
+                          Template Baru
+                        </Link>
+                      </Button>
+                    }
+                  />
                 </TableCell>
               </TableRow>
             ) : (

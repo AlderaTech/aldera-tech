@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  WorkspaceTabsList as TabsList,
+  WorkspaceTabsTrigger as TabsTrigger,
+} from "@/components/dashboard/workspace-segmented-tabs";
 import { RELAY_SECTIONS } from "../_data/relay-sections";
 import { getRelayTabScrollLeft } from "../_utils/relay-tab-scroll";
 import styles from "./relay-workspace.module.css";
@@ -45,7 +48,7 @@ export function RelayTabs({ activeTab }: { activeTab: string }) {
 
   return (
     <div ref={scrollRef} className={styles.tabScroll}>
-      <TabsList aria-label="Fitur AI Relay" className={styles.tabList}>
+      <TabsList aria-label="Fitur AI Relay" density="compact">
         {RELAY_SECTIONS.map(({ value, label, icon: Icon }) => (
           <TabsTrigger key={value} value={value}>
             <Icon className="size-4" aria-hidden="true" />

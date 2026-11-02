@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
 import { RelayMascot } from "./relay-mascot";
 import styles from "./relay-workspace.module.css";
+import { WorkspaceBanner } from "@/components/dashboard/workspace-banner";
 
 export function RelayHeader({
   balance,
@@ -12,19 +13,21 @@ export function RelayHeader({
   onTopup: () => void;
 }) {
   return (
-    <header className={styles.header} aria-labelledby="relay-heading">
+    <WorkspaceBanner
+      className={styles.header}
+      aria-labelledby="relay-heading"
+      eyebrow="Workspace AI Anda"
+      badgeIcon={Network}
+      mascot={<RelayMascot pose="connect" />}
+    >
       <div className={styles.welcome}>
         <div>
-          <p className={styles.eyebrow}>
-            <Network aria-hidden="true" /> Workspace AI Anda
-          </p>
           <h1 id="relay-heading">Aldera AI API Relay</h1>
           <p className={styles.description}>
             Akses katalog model AI, hubungkan IDE, dan kelola pemakaian dengan
             saldo Rupiah.
           </p>
         </div>
-        <RelayMascot pose="connect" className={styles.welcomeMascot} />
       </div>
       <div className={styles.balancePanel} data-relay-balance-panel>
         <div>
@@ -37,6 +40,6 @@ export function RelayHeader({
           <Wallet className="size-4" aria-hidden="true" /> Top-up Saldo
         </Button>
       </div>
-    </header>
+    </WorkspaceBanner>
   );
 }

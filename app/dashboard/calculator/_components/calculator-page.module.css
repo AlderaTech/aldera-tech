@@ -66,10 +66,12 @@
   gap: 0.5rem;
   min-height: 2.75rem;
   padding: 0.6rem 1.1rem;
-  border: 1px solid var(--overview-line);
+  border: 1px solid var(--overview-blue);
   border-radius: 999px;
-  background: var(--overview-paper);
-  color: var(--overview-ink);
+  background: var(--overview-blue);
+  color: var(--overview-paper);
+  box-shadow: 0 6px 16px
+    color-mix(in srgb, var(--overview-blue) 14%, transparent);
   font-size: 0.75rem;
   font-weight: 700;
   transition:
@@ -82,7 +84,8 @@
 }
 .history:hover {
   border-color: var(--overview-blue);
-  background: var(--overview-sky);
+  background: color-mix(in srgb, var(--overview-blue) 85%, var(--overview-ink));
+  color: var(--overview-paper);
 }
 .page a:focus-visible {
   outline: 2px solid var(--overview-blue);

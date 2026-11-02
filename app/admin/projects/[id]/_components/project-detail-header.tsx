@@ -19,6 +19,7 @@ import { projectStatusMeta } from "@/lib/status-meta";
 import { formatCurrency, formatDate, getInitials } from "@/lib/utils";
 import type { AdminProjectDetail } from "../_data/project-detail";
 import { getProjectDetailStats } from "../_data/project-detail";
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 
 export function ProjectDetailHeader({
   project,
@@ -53,7 +54,7 @@ export function ProjectDetailHeader({
   return (
     <>
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+        <AdminBanner category="projects" data-admin-page-header>
           <div className="min-w-0 space-y-3">
             <Button asChild variant="ghost" size="sm" className="-ml-2">
               <Link href={ADMIN_ROUTES.projects}>
@@ -89,7 +90,7 @@ export function ProjectDetailHeader({
               )}
             </div>
           </div>
-        </div>
+        </AdminBanner>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {summaryItems.map((item) => (

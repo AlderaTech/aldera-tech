@@ -13,6 +13,7 @@ export default function AdminError({
   return (
     <section className={styles.error} role="alert">
       <AdminEmptyState
+        label="STATUS HALAMAN"
         title="Halaman belum dapat dimuat"
         description="Terjadi kendala saat memuat halaman admin. Coba muat ulang untuk melanjutkan."
         action={<Button onClick={reset}>Coba lagi</Button>}

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Receipt } from "lucide-react";
+import { Receipt, Calculator, ArrowUpRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { WorkspaceBanner } from "@/components/dashboard/workspace-banner";
 import { CalculatorWizard } from "@/app/(public)/pricing/_components/calculator-wizard";
 import { getCalculatorData } from "@/lib/calculator";
 import { getSiteSettings } from "@/lib/public-settings";
@@ -21,7 +23,12 @@ export default async function DashboardCalculatorPage() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
+      <WorkspaceBanner
+        className={styles.header}
+        eyebrow="Rencanakan proyek"
+        badgeIcon={Calculator}
+        mascotPose="calculator"
+      >
         <div>
           <h1>Kalkulator Estimasi Proyek</h1>
           <p className={styles.description}>
@@ -29,10 +36,13 @@ export default async function DashboardCalculatorPage() {
             kirimkan order request langsung ke tim engineering Aldera Tech.
           </p>
         </div>
-        <Link className={styles.history} href={DASHBOARD_ROUTES.orders}>
-          <Receipt aria-hidden="true" /> Riwayat Estimasi
-        </Link>
-      </header>
+        <Button asChild className={styles.history}>
+          <Link href={DASHBOARD_ROUTES.orders}>
+            <Receipt aria-hidden="true" /> Riwayat Estimasi
+            <ArrowUpRight aria-hidden="true" />
+          </Link>
+        </Button>
+      </WorkspaceBanner>
 
       <CalculatorWizard
         data={calculatorData}
