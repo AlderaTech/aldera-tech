@@ -6,7 +6,9 @@ import { randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { isStaff } from "@/lib/permissions";
+import { lockAccountKey } from "@/lib/account-locks";
+import { nextDocumentNumber } from "@/lib/document-number";
+import { hasPermission, PERMISSIONS } from "@/lib/permissions";
 import {
   proposalCreateSchema,
   signatureSchema,
@@ -14,7 +16,7 @@ import {
 import { sendWhatsApp } from "@/lib/whatsapp";
 import { waTemplates } from "@/lib/whatsapp-templates";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { logAudit } from "@/lib/actions/team";
+import { logAudit } from "@/lib/audit-log";
 import { ADMIN_ROUTES, PROPOSAL_ROUTES } from "@/lib/routes";
 import { sanitizeHtml } from "@/lib/sanitize-html";
 
@@ -26,21 +28,16 @@ export type ProposalActionState = {
 
 async function requireStaff() {
   const session = await auth();
-  if (!session?.user || !isStaff(session.user.role)) {
+  if (
+    !session?.user ||
+    !hasPermission(
+      session.user.roles ?? session.user.role,
+      PERMISSIONS.PROPOSAL_MANAGE
+    )
+  ) {
     throw new Error("Forbidden");
   }
   return session.user;
-}
-
-async function generateProposalNumber() {
-  const year = new Date().getFullYear();
-  const last = await prisma.proposal.findFirst({
-    where: { number: { startsWith: `PROP-${year}-` } },
-    orderBy: { number: "desc" },
-    select: { number: true },
-  });
-  const seq = last ? Number(last.number.split("-")[2] ?? 0) + 1 : 1;
-  return `PROP-${year}-${String(seq).padStart(4, "0")}`;
 }
 
 export async function createProposalAction(
@@ -80,35 +77,37 @@ export async function createProposalAction(
   const tax = (subtotal * data.taxRate) / 100;
   const total = subtotal + tax;
 
-  const number = await generateProposalNumber();
   // URL-safe token (not hashed, it's a public-view capability URL)
   const token = randomBytes(24).toString("base64url");
 
-  const proposal = await prisma.proposal.create({
-    data: {
-      number,
-      token,
-      title: data.title,
-      summary: data.summary || null,
-      content: sanitizeHtml(data.content),
-      clientName: data.clientName,
-      clientEmail: data.clientEmail,
-      clientPhone: data.clientPhone || null,
-      taxRate: data.taxRate.toString(),
-      totalAmount: total.toFixed(2),
-      expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
-      createdById: user.id,
-      items: {
-        create: data.items.map((it, idx) => ({
-          description: it.description,
-          quantity: it.quantity.toString(),
-          price: it.price.toString(),
-          total: (it.quantity * it.price).toFixed(2),
-          order: idx,
-        })),
+  const proposal = await prisma.$transaction(async (tx) => {
+    const number = await nextDocumentNumber(tx, "proposal");
+    return tx.proposal.create({
+      data: {
+        number,
+        token,
+        title: data.title,
+        summary: data.summary || null,
+        content: sanitizeHtml(data.content),
+        clientName: data.clientName,
+        clientEmail: data.clientEmail,
+        clientPhone: data.clientPhone || null,
+        taxRate: data.taxRate.toString(),
+        totalAmount: total.toFixed(2),
+        expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
+        createdById: user.id,
+        items: {
+          create: data.items.map((it, idx) => ({
+            description: it.description,
+            quantity: it.quantity.toString(),
+            price: it.price.toString(),
+            total: (it.quantity * it.price).toFixed(2),
+            order: idx,
+          })),
+        },
       },
-    },
-    select: { id: true },
+      select: { id: true },
+    });
   });
 
   await logAudit(user.id, "PROPOSAL_CREATED", "Proposal", proposal.id);
@@ -298,74 +297,65 @@ export async function rejectProposalAction(
  */
 export async function convertProposalToProjectAction(id: string) {
   const user = await requireStaff();
-  const proposal = await prisma.proposal.findUnique({
-    where: { id },
-    include: { items: true },
-  });
-  if (!proposal) throw new Error("Not found");
-  if (proposal.status !== "SIGNED") {
-    throw new Error("Proposal harus ditandatangani dulu");
-  }
-  if (proposal.convertedProjectId) {
-    throw new Error("Proposal sudah dikonversi");
-  }
-
-  // Find or create client user
-  let client = await prisma.user.findUnique({
-    where: { email: proposal.clientEmail },
-    select: { id: true },
-  });
-  if (!client) {
-    const tempPassword = randomBytes(6).toString("base64url") + "1A!";
-    client = await prisma.user.create({
+  const tempPassword = randomBytes(18).toString("base64url") + "1A!";
+  const passwordHash = await bcrypt.hash(tempPassword, 10);
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT "id" FROM "Proposal" WHERE "id" = ${id} FOR UPDATE`;
+    const proposal = await tx.proposal.findUniqueOrThrow({ where: { id } });
+    if (proposal.convertedProjectId)
+      return { projectId: proposal.convertedProjectId, credentials: null };
+    if (proposal.status !== "SIGNED")
+      throw new Error("Proposal harus ditandatangani dulu");
+    await lockAccountKey(tx, "email:" + proposal.clientEmail.toLowerCase());
+    let client = await tx.user.findUnique({
+      where: { email: proposal.clientEmail },
+      select: { id: true },
+    });
+    let credentials: { email: string; password: string } | null = null;
+    if (!client) {
+      client = await tx.user.create({
+        data: {
+          email: proposal.clientEmail,
+          name: proposal.clientName,
+          password: passwordHash,
+          roles: ["CLIENT"],
+          invitedAt: new Date(),
+        },
+        select: { id: true },
+      });
+      credentials = { email: proposal.clientEmail, password: tempPassword };
+    }
+    const project = await tx.project.create({
       data: {
-        email: proposal.clientEmail,
-        name: proposal.clientName,
-        password: await bcrypt.hash(tempPassword, 10),
-        roles: ["CLIENT"],
+        title: proposal.title,
+        description:
+          proposal.summary || "Proyek dari proposal " + proposal.number,
+        clientId: client.id,
+        budget: proposal.totalAmount,
       },
       select: { id: true },
     });
-  }
-
-  const project = await prisma.project.create({
-    data: {
-      title: proposal.title,
-      description:
-        proposal.summary ||
-        `Proyek dari proposal ${proposal.number} untuk ${proposal.clientName}.`,
-      clientId: client.id,
-      budget: proposal.totalAmount,
-    },
-    select: { id: true },
-  });
-
-  await prisma.proposal.update({
-    where: { id },
-    data: {
-      status: "CONVERTED",
-      convertedProjectId: project.id,
-    },
-  });
-
-  await prisma.activityLog.create({
-    data: {
-      projectId: project.id,
-      userId: user.id,
-      action: "PROJECT_CREATED",
-      description: `Proyek dibuat dari proposal ${proposal.number}.`,
-    },
+    await tx.proposal.update({
+      where: { id },
+      data: { status: "CONVERTED", convertedProjectId: project.id },
+    });
+    await tx.activityLog.create({
+      data: {
+        projectId: project.id,
+        userId: user.id,
+        action: "PROJECT_CREATED",
+        description: "Proyek dibuat dari proposal " + proposal.number,
+      },
+    });
+    return { projectId: project.id, credentials };
   });
   await logAudit(user.id, "PROPOSAL_CONVERTED", "Proposal", id, {
-    projectId: project.id,
+    projectId: result.projectId,
   });
-
   revalidatePath(ADMIN_ROUTES.proposals);
   revalidatePath(ADMIN_ROUTES.proposalDetail(id));
   revalidatePath(ADMIN_ROUTES.projects);
-  revalidatePath(ADMIN_ROUTES.projectDetail(project.id));
-  revalidatePath(PROPOSAL_ROUTES.publicDetail(proposal.token));
-  return { ok: true, projectId: project.id };
+  return { ok: true, ...result };
 }
 
 export async function deleteProposalAction(id: string) {

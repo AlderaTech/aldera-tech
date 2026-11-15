@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { ActivityAction, TaskStatus } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import { validateTaskRelations } from "@/lib/task-relations";
 import { requireStaff } from "@/lib/actions/team";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 import { taskMutationSchema, taskReorderSchema } from "@/lib/validations/task";
@@ -66,6 +67,12 @@ export async function createTaskAction(
     select: { id: true },
   });
   if (!project) return { ok: false, message: "Project tidak ditemukan." };
+  const relationError = await validateTaskRelations(
+    projectId,
+    parsed.data.milestoneId,
+    parsed.data.assigneeId
+  );
+  if (relationError) return { ok: false, message: relationError };
 
   const count = await prisma.task.count({
     where: { projectId, status: parsed.data.status },
@@ -135,6 +142,12 @@ export async function updateTaskAction(
     },
   });
   if (!existing) return { ok: false, message: "Task tidak ditemukan." };
+  const relationError = await validateTaskRelations(
+    existing.projectId,
+    parsed.data.milestoneId,
+    parsed.data.assigneeId
+  );
+  if (relationError) return { ok: false, message: relationError };
 
   const moved = existing.status !== parsed.data.status;
   const order = moved

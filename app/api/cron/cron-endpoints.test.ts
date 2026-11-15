@@ -26,9 +26,9 @@ mock.module("@/lib/balance-guard", () => ({
   runBalanceGuard: mockRunBalanceGuard,
 }));
 
-import * as realRecurringInvoice from "@/lib/actions/recurring-invoice";
+import * as realRecurringInvoice from "@/lib/recurring-invoice-issuer";
 const mockIssueDueRecurringInvoices = mock();
-mock.module("@/lib/actions/recurring-invoice", () => ({
+mock.module("@/lib/recurring-invoice-issuer", () => ({
   ...realRecurringInvoice,
   issueDueRecurringInvoices: mockIssueDueRecurringInvoices,
 }));

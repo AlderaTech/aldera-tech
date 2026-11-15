@@ -1,6 +1,6 @@
 import { describe, it, expect, afterAll } from "bun:test";
 import type { Pool } from "pg";
-import { withCronLock, closeCronPool, getCronPool } from "./cron-lock";
+import { withCronLock, closeCronPool } from "./cron-lock";
 
 describe("AT-L11: lib/cron-lock.ts (PostgreSQL Distributed Advisory Lock)", () => {
   afterAll(async () => {

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { changeInvoiceStatus } from "@/lib/invoice-status-transition";
 import { prisma } from "@/lib/prisma";
 import { requirePermission, PERMISSIONS } from "@/lib/permissions";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
@@ -39,18 +40,11 @@ export async function bulkInvoiceStatusAction(
   ids: string[],
   status: InvoiceStatus
 ) {
-  await requirePermission(PERMISSIONS.INVOICE_EDIT);
-  if (ids.length === 0) return { ok: true, count: 0 };
-  const result = await prisma.invoice.updateMany({
-    where: { id: { in: ids } },
-    data: {
-      status,
-      paidAt: status === "PAID" ? new Date() : null,
-    },
-  });
+  const actor = await requirePermission(PERMISSIONS.INVOICE_EDIT);
+  const result = await changeInvoiceStatus(ids, status, actor.id);
   revalidatePath(ADMIN_ROUTES.invoices);
   revalidatePath(DASHBOARD_ROUTES.invoices);
-  return { ok: true, count: result.count };
+  return { ok: true, count: result.length };
 }
 
 export async function bulkInvoiceDeleteAction(ids: string[]) {

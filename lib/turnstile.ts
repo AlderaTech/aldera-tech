@@ -15,8 +15,19 @@ export async function verifyTurnstileToken(
 ): Promise<VerifyTurnstileResult> {
   const secretKey = process.env.TURNSTILE_SECRET_KEY;
 
-  // In development or test environments where secret is not configured, bypass verification
+  // Only local development/test may bypass an unconfigured integration.
   if (!secretKey) {
+    if (
+      process.env.NODE_ENV !== "development" &&
+      process.env.NODE_ENV !== "test"
+    ) {
+      return {
+        success: false,
+        code: "NOT_CONFIGURED",
+        error:
+          "Verifikasi keamanan belum dikonfigurasi. Silakan hubungi pengelola situs.",
+      };
+    }
     return { success: true };
   }
 

@@ -37,6 +37,7 @@ export function InvoiceCreateForm({
   projects: Project[];
 }) {
   const router = useRouter();
+  const [purpose, setPurpose] = useState("PROJECT");
   const [clientId, setClientId] = useState("");
   const [projectId, setProjectId] = useState("");
   const [issueDate, setIssueDate] = useState(
@@ -84,6 +85,7 @@ export function InvoiceCreateForm({
     e.preventDefault();
     const fd = new FormData();
     fd.set("clientId", clientId);
+    fd.set("purpose", purpose);
     fd.set("projectId", projectId);
     fd.set("issueDate", issueDate);
     fd.set("dueDate", dueDate);
@@ -116,6 +118,28 @@ export function InvoiceCreateForm({
     <form onSubmit={handleSubmit} className="max-w-4xl space-y-6">
       <Card className="space-y-5 p-6">
         <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="invoice-purpose" required>
+              Tujuan tagihan
+            </Label>
+            <Select
+              value={purpose}
+              onValueChange={(value) => {
+                setPurpose(value);
+                if (value === "AI_RELAY_TOPUP") setProjectId("");
+              }}
+            >
+              <SelectTrigger id="invoice-purpose">
+                <SelectValue placeholder="Pilih tujuan tagihan" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="PROJECT">Proyek / layanan</SelectItem>
+                <SelectItem value="AI_RELAY_TOPUP">
+                  Top-up saldo AI Relay
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="space-y-2">
             <Label htmlFor="invoice-client" required>
               Client

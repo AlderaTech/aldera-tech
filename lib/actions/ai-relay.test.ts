@@ -516,12 +516,23 @@ describe("AI Relay Action Utilities & Calculations (F4 - F10)", () => {
       expect(balBefore.balance).toBe(50000);
 
       // Execute chat
+      const savedFetch = globalThis.fetch;
+      globalThis.fetch = mock(
+        async () =>
+          new Response(
+            JSON.stringify({
+              choices: [{ message: { content: "Mock assistant response" } }],
+              usage: { prompt_tokens: 12, completion_tokens: 8 },
+            })
+          )
+      ) as typeof fetch;
       const chatRes = await executePlaygroundChat({
         model: "gpt-4o-mini",
         prompt: "Hello Aldera AI Relay!",
         systemPrompt: "Test system assistant",
       });
 
+      globalThis.fetch = savedFetch;
       expect(chatRes.success).toBe(true);
       expect(chatRes.content.length).toBeGreaterThan(0);
       expect(chatRes.usage.promptTokens).toBeGreaterThan(0);

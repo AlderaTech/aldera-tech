@@ -275,3 +275,21 @@ Aldera Tech menerapkan isolasi lingkungan multi-stack pada server VPS produksi t
   - `staging.aldera.tech` $\rightarrow$ `http://aldera-tech-staging:3000`
 - Service staging router proxy tidak menggunakan alias generik `billing-proxy` pada bridge proxy untuk mencegah tabrakan rute (collision).
 - Database staging `aldera_tech_staging` dan `aldera_router_staging` terisolasi penuh dari database produksi untuk mencegah kontaminasi data transaksi finansial dan pengguna.
+
+## Prasyarat integritas backend
+
+- Sinkronkan kolom nullable `User.invitedAt` sebelum menjalankan aplikasi. Migrasi aditif tersedia pada `prisma/migrations/20261115000000_admin_invitation_marker/migration.sql`; deployment dengan `AUTO_MIGRATE=true` memakai schema Prisma yang sama. Tidak ada perubahan atau backfill identitas akun lama secara otomatis.
+- Entrypoint menghentikan startup jika sinkronisasi skema yang diaktifkan gagal; aplikasi tidak dijalankan dengan skema yang tidak kompatibel.
+- Produksi memerlukan `TURNSTILE_SECRET_KEY` untuk verifikasi captcha dan `WHATSAPP_API_KEY` valid untuk OTP/notifikasi. Konfigurasi kosong menghasilkan kegagalan, bukan keberhasilan simulasi. Jangan menggunakan test key dalam produksi.
+- Upstream AI Relay harus tersedia pada `NINE_ROUTER_BASE_URL` dari jaringan container. HTTP 503 pada health check akibat upstream down harus diperbaiki melalui layanan/config upstream; jangan mengganti hasilnya dengan status sukses buatan.
+- Gunakan lockfile yang disertakan: Next.js `16.4.3`, NextAuth `5.0.0-beta.32`. Validasi alur login, undangan, upload bukti, dan persetujuan pembayaran di staging sebelum Release PR.
+- Detail kontrak: [Integritas Backend](backend-integrity.md).
+
+## Penyimpanan privat dan rekonsiliasi lintas database
+
+- Schema aktif memerlukan migrasi aditif `prisma/migrations/20261116000000_backend_security_and_reconciliation/migration.sql` atau sinkronisasi schema Prisma melalui entrypoint. Tidak ada backfill tujuan invoice berdasarkan catatan bebas. Admin harus meninjau invoice top-up lama secara eksplisit sebelum mengubah tujuannya; jangan menerbitkan kredit ulang untuk transaksi lama.
+- Persist volume `private_uploads_data` pada direktori runtime `storage/private-uploads`; Docker menggunakan `/app/storage/private-uploads`. Backup volume publik dan privat bersama database. Jangan menerbitkan direktori privat melalui reverse proxy.
+- Semua URL `/uploads/*` harus diteruskan ke aplikasi agar rewrite kontrol akses berjalan. Hapus aturan nginx/CDN yang menyajikan unggahan langsung dan purge cache unggahan lama sebelum rilis; cache publik lama tidak dapat dicabut oleh kode aplikasi. Media publik lama dikenali melalui referensi artikel terbit, portfolio, testimoni dan avatar.
+- Cron terautentikasi `/api/cron/reconcile-integrations` berjalan setiap lima menit pada `docker/crontab` dan crontab entrypoint. Pantau `InvoiceBalanceEffect` berstatus PENDING/REVIEW dan `IntegrationSyncState.lastError`; jangan mengubah ledger secara langsung.
+- Refund bersaldo kurang memblokir konsumsi AI pada akun router. Lakukan verifikasi ledger dan proses top-up resmi bila diperlukan, retry refund, lalu buka akses secara eksplisit melalui panel admin. Integrasi proxy/router eksternal harus menghormati `users.is_active`; verifikasi perilakunya di VPS staging.
+- Uji staging dengan sandbox gateway, upstream AI mock dan kanal pesan pengujian: duplikasi webhook, refund setelah saldo dipakai, pemulihan setelah router terputus, unduhan privat, serta reset password dan pencabutan sesi. Promosi produksi hanya setelah E2E staging terverifikasi.

@@ -1,6 +1,8 @@
 "use server";
 
 import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { requestRelayCompletion } from "@/lib/relay-upstream";
 import { generateApiKey as generateCryptoApiKey } from "@/lib/ai-relay-auth";
 import { queryRouter, transactionRouter } from "@/lib/router-db";
 import {
@@ -10,7 +12,6 @@ import {
   aggregateUsageLogs,
   calculateModelHealth,
   MODEL_METADATA_MAP,
-  DEFAULT_MODEL_CATALOG,
   type ApiKeyRecord,
   type BalanceTransactionRecord,
   type ModelCatalogItem,
@@ -43,19 +44,26 @@ export type {
  * Links or creates the corresponding user record in `aldera_router.users` table
  * using the NextAuth web_user_id.
  */
-export async function ensureRouterUser(
+async function ensureRouterAccount(
   webUserId: string,
   name?: string,
-  email?: string
+  email?: string,
+  allowInactive = false
 ): Promise<{ id: number; balance: number }> {
   const existing = await queryRouter<{
     id: string | number;
     balance: string | number;
-  }>("SELECT id, balance FROM users WHERE web_user_id = $1 LIMIT 1;", [
-    webUserId,
-  ]);
+    is_active: boolean;
+  }>(
+    "SELECT id, balance, is_active FROM users WHERE web_user_id = $1 LIMIT 1;",
+    [webUserId]
+  );
 
   if (existing.rows.length > 0) {
+    if (!allowInactive && !existing.rows[0].is_active)
+      throw new Error(
+        "Akses AI sementara diblokir. Silakan hubungi administrator."
+      );
     return {
       id: Number(existing.rows[0].id),
       balance: Number(existing.rows[0].balance),
@@ -82,7 +90,22 @@ export async function ensureRouterUser(
   };
 }
 
-async function resolveCurrentUser(): Promise<{
+export async function ensureRouterUser(
+  webUserId: string,
+  name?: string,
+  email?: string
+) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+  if (session.user.id !== webUserId) throw new Error("Forbidden");
+  return ensureRouterAccount(
+    webUserId,
+    session.user.name ?? name,
+    session.user.email ?? email
+  );
+}
+
+async function resolveCurrentUser(allowInactive = false): Promise<{
   id: number;
   balance: number;
   webUserId: string;
@@ -92,10 +115,11 @@ async function resolveCurrentUser(): Promise<{
     throw new Error("Unauthorized: Anda harus login untuk mengakses AI Relay.");
   }
 
-  const routerUser = await ensureRouterUser(
+  const routerUser = await ensureRouterAccount(
     session.user.id,
     session.user.name ?? undefined,
-    session.user.email ?? undefined
+    session.user.email ?? undefined,
+    allowInactive
   );
 
   return {
@@ -114,7 +138,7 @@ export async function getUserBalance(): Promise<{
   userId: number;
   webUserId: string;
 }> {
-  const user = await resolveCurrentUser();
+  const user = await resolveCurrentUser(true);
   const res = await queryRouter<{ balance: string | number }>(
     "SELECT balance FROM users WHERE id = $1;",
     [user.id]
@@ -133,11 +157,11 @@ export async function createTopupRequest(amount: number): Promise<{
   success: boolean;
   topup: TopupRequestRecord;
 }> {
-  if (amount <= 0 || isNaN(amount)) {
+  if (!Number.isSafeInteger(amount) || amount <= 0 || amount > 9999999999) {
     throw new Error("Nominal top-up harus berupa angka positif.");
   }
 
-  const user = await resolveCurrentUser();
+  const user = await resolveCurrentUser(true);
   const uniqueCode = generateUniqueCode();
   const totalTransfer = calculateTotalTransfer(amount, uniqueCode);
 
@@ -190,7 +214,19 @@ export async function uploadTopupProof(
     throw new Error("Berkas bukti transfer wajib disertakan.");
   }
 
-  const user = await resolveCurrentUser();
+  const user = await resolveCurrentUser(true);
+  const session = await auth();
+  const proof = await prisma.file.findFirst({
+    where: {
+      id: proofFileId.trim(),
+      topupId,
+      scope: "TOPUP_PROOF",
+      uploaderId: session!.user.id,
+    },
+    select: { id: true },
+  });
+  if (!proof)
+    throw new Error("Unggah bukti transfer untuk tiket ini terlebih dahulu.");
 
   const res = await queryRouter<{
     id: string | number;
@@ -237,7 +273,7 @@ export async function uploadTopupProof(
 export async function getBalanceTransactions(
   limit = 50
 ): Promise<BalanceTransactionRecord[]> {
-  const user = await resolveCurrentUser();
+  const user = await resolveCurrentUser(true);
   const res = await queryRouter<{
     id: string | number;
     user_id: string | number;
@@ -275,7 +311,7 @@ export async function getBalanceTransactions(
 // ============================================================================
 
 export async function listApiKeys(): Promise<ApiKeyRecord[]> {
-  const user = await resolveCurrentUser();
+  const user = await resolveCurrentUser(true);
   const res = await queryRouter<{
     id: string | number;
     user_id: string | number;
@@ -335,7 +371,7 @@ export async function createApiKey(label: string): Promise<{
 export async function revokeApiKey(
   keyId: number
 ): Promise<{ success: boolean }> {
-  const user = await resolveCurrentUser();
+  const user = await resolveCurrentUser(true);
 
   await queryRouter(
     `UPDATE api_keys
@@ -352,7 +388,7 @@ export async function revokeApiKey(
 // ============================================================================
 
 export async function getUsageLogs(limit = 100): Promise<UsageLogRecord[]> {
-  const user = await resolveCurrentUser();
+  const user = await resolveCurrentUser(true);
   const res = await queryRouter<{
     id: string | number;
     user_id: string | number;
@@ -411,7 +447,7 @@ export async function getModelCatalog(): Promise<ModelCatalogItem[]> {
     );
 
     if (!res?.rows || res.rows.length === 0) {
-      return DEFAULT_MODEL_CATALOG;
+      return [];
     }
 
     return res.rows.map((row) => {
@@ -433,7 +469,7 @@ export async function getModelCatalog(): Promise<ModelCatalogItem[]> {
       };
     });
   } catch {
-    return DEFAULT_MODEL_CATALOG;
+    throw new Error("Katalog model belum dapat dimuat. Silakan coba kembali.");
   }
 }
 
@@ -510,6 +546,12 @@ export async function executePlaygroundChat(params: {
 
   const inputPrice = Number(pricingRes.rows[0].input_price_per_m);
   const outputPrice = Number(pricingRes.rows[0].output_price_per_m);
+  if (
+    ![inputPrice, outputPrice].every(
+      (value) => Number.isFinite(value) && value >= 0
+    )
+  )
+    throw new Error("Tarif model tidak valid.");
 
   // 2. Pre-flight balance check
   const balanceCheck = await queryRouter<{ balance: string | number }>(
@@ -524,60 +566,9 @@ export async function executePlaygroundChat(params: {
     );
   }
 
-  // 3. Upstream 9router Call or Realistic Local Relay
-  const upstreamBaseUrl =
-    process.env.NINE_ROUTER_BASE_URL || "http://localhost:20128";
   const startTime = Date.now();
-  let content = "";
-  let promptTokens = Math.max(
-    8,
-    Math.ceil((prompt.length + (systemPrompt?.length || 0)) / 4)
-  );
-  let completionTokens = 0;
-
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000);
-
-    const upstreamRes = await fetch(
-      `${upstreamBaseUrl.replace(/\/+$/, "")}/v1/chat/completions`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model,
-          messages: [
-            ...(systemPrompt
-              ? [{ role: "system", content: systemPrompt }]
-              : []),
-            { role: "user", content: prompt },
-          ],
-          stream: false,
-        }),
-        signal: controller.signal,
-      }
-    );
-    clearTimeout(timeoutId);
-
-    if (upstreamRes.ok) {
-      const data = (await upstreamRes.json()) as {
-        choices?: { message?: { content?: string } }[];
-        usage?: { prompt_tokens?: number; completion_tokens?: number };
-      };
-      content = data.choices?.[0]?.message?.content || "";
-      if (data.usage?.prompt_tokens) promptTokens = data.usage.prompt_tokens;
-      if (data.usage?.completion_tokens)
-        completionTokens = data.usage.completion_tokens;
-      else completionTokens = Math.max(10, Math.ceil(content.length / 4));
-    } else {
-      throw new Error(`Upstream returned HTTP ${upstreamRes.status}`);
-    }
-  } catch {
-    // Graceful fallback for offline dev/test environment: real generated response
-    const modelMeta = MODEL_METADATA_MAP[model];
-    content = `[Respon AI Relay: ${model}]\n\nTerima kasih atas pertanyaan Anda. Permintaan chat Anda ke model ${modelMeta ? modelMeta.bestFor : model} telah berhasil diproses melalui Aldera AI Relay gateway.\n\nPrompt: "${prompt}"\n\nEksekusi terverifikasi dengan penyesuaian biaya token otomatis.`;
-    completionTokens = Math.max(12, Math.ceil(content.length / 4));
-  }
+  const { content, promptTokens, completionTokens } =
+    await requestRelayCompletion(model, prompt, systemPrompt);
 
   const durationMs = Math.max(50, Date.now() - startTime);
   const totalCost = calculateTokenCost(
@@ -590,11 +581,17 @@ export async function executePlaygroundChat(params: {
   // 4. Atomic Transaction: Debit balance, record usage_log and balance_transactions
   const transactionResult = await transactionRouter(async (client) => {
     // Acquire row-level lock on user to ensure strict serialized debit
-    const userRow = await client.query<{ balance: string | number }>(
-      "SELECT balance FROM users WHERE id = $1 FOR UPDATE;",
-      [user.id]
-    );
+    const userRow = await client.query<{
+      balance: string | number;
+      is_active: boolean;
+    }>("SELECT balance, is_active FROM users WHERE id = $1 FOR UPDATE;", [
+      user.id,
+    ]);
 
+    if (!userRow.rows[0]?.is_active)
+      throw new Error(
+        "Akses AI sementara diblokir. Silakan hubungi administrator."
+      );
     const currentBal = Number(userRow.rows[0].balance);
     if (currentBal < totalCost) {
       throw new Error(
@@ -620,18 +617,19 @@ export async function executePlaygroundChat(params: {
     );
 
     // C. Insert immutable ledger entry into balance_transactions satisfying all trigger invariants
-    await client.query(
-      `INSERT INTO balance_transactions (user_id, amount, transaction_type, reference_id, balance_before, balance_after, notes)
+    if (totalCost > 0)
+      await client.query(
+        `INSERT INTO balance_transactions (user_id, amount, transaction_type, reference_id, balance_before, balance_after, notes)
        VALUES ($1, $2, 'usage', $3, $4, $5, $6);`,
-      [
-        user.id,
-        -totalCost,
-        usageLogId,
-        currentBal,
-        newBal,
-        `Playground relay: ${model} (${promptTokens} in, ${completionTokens} out)`,
-      ]
-    );
+        [
+          user.id,
+          -totalCost,
+          usageLogId,
+          currentBal,
+          newBal,
+          `Playground relay: ${model} (${promptTokens} in, ${completionTokens} out)`,
+        ]
+      );
 
     return newBal;
   });

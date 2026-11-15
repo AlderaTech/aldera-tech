@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { submitPaymentProofAction } from "@/lib/actions/invoice";
 import { createInvoicePaymentSnapAction } from "@/lib/actions/payment";
 import { API_ROUTES } from "@/lib/routes";
+import { createPaymentProofUpload } from "@/lib/payment-proof-upload";
 import type { PaymentInvoice } from "../_types/invoice";
 
 export function useInvoicePayment(
@@ -110,8 +111,9 @@ export function useInvoicePayment(
         let finalProofUrl = invoice.paymentProofUrl || "";
         if (selectedFile) {
           setIsUploading(true);
-          const formData = new FormData();
-          formData.append("file", selectedFile);
+          const formData = createPaymentProofUpload(selectedFile, {
+            invoiceId: invoice.id,
+          });
           const res = await fetch(API_ROUTES.upload, {
             method: "POST",
             body: formData,

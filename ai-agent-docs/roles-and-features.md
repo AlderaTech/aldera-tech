@@ -455,3 +455,17 @@ Format deterministik untuk transisi status antar entitas sistem:
 | `Template: active = true`<br/>`nextIssueDate <= now` | Cron Job (`/api/cron/issue-recurring`)  | Eksekusi terjadwal harian | `Invoice` baru terbuat dengan nomor faktur urut | `Invoice: SENT`<br/>Template diperbarui ke `nextIssueDate` baru. |
 | `Invoice: SENT`<br/>`now > dueDate`                  | Cron Job (`/api/cron/invoice-reminder`) | Pindai tagihan overdue    | Notifikasi WA pengingat pembayaran              | `Invoice: OVERDUE`<br/>`lastReminderSentAt` diperbarui.          |
 | Pembayaran diterima                                  |                 `ADMIN`                 | Klik "Mark as Paid"       | Konfirmasi pelunasan                            | `Invoice: PAID`<br/>`paidAt = now`<br/>Metrik revenue bertambah. |
+
+### Integritas akun dan transaksi
+
+- Sesi server memeriksa status aktif dan peran akun terbaru; perubahan harga dibatasi oleh `settings.manage`.
+- Akun undangan administrator memiliki penanda `User.invitedAt`, terpisah dari verifikasi telepon.
+- Verifikasi pembayaran manual bersifat idempoten; unggah bukti memverifikasi kepemilikan invoice atau tiket top-up.
+- Kontrak dan pemetaan tes lengkap: [Integritas Backend](backend-integrity.md).
+
+### Batas akses backend
+
+- Penghapusan proyek memerlukan `project.delete`; pengelolaan proposal `proposal.manage`; publikasi dan penghapusan blog memeriksa izin masing-masing; pengelolaan testimoni mengikuti `testimonial.manage`. Developer tidak mendapat hak admin melalui pemeriksaan staf umum.
+- `/api/files/[id]` dan rewrite unggahan lama memeriksa pemilik berkas/proyek/invoice/tiket; administrator dapat meninjau bukti. Developer tidak dapat membaca bukti invoice klien lain. `PUBLIC_MEDIA` tetap terbuka.
+- `/api/cron/reconcile-integrations` hanya menerima secret cron; tindakan tinjauan saldo di Admin AI Relay memerlukan `invoice.edit`. Pembukaan akses ditolak bila refund belum direkonsiliasi.
+- Versi keamanan sesi berubah saat reset password dan perubahan status aktif. Identitas profil tetap memakai sumber akun asli.

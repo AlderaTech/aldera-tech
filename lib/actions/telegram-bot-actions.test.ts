@@ -60,8 +60,12 @@ describe("AT-L6: lib/actions/telegram-bot.ts test suite", () => {
   describe("Authorization & Security Boundaries", () => {
     it("throws Unauthorized (401) when user is unauthenticated", async () => {
       currentSession = null;
-      expect(updateTelegramBotConfigAction({})).rejects.toThrow("Unauthorized (401)");
-      expect(createPaymentMethodAction({ name: "BCA" })).rejects.toThrow("Unauthorized (401)");
+      expect(updateTelegramBotConfigAction({})).rejects.toThrow(
+        "Unauthorized (401)"
+      );
+      expect(createPaymentMethodAction({ name: "BCA" })).rejects.toThrow(
+        "Unauthorized (401)"
+      );
     });
 
     it("throws Forbidden (403) when user role is not ADMIN", async () => {
@@ -74,8 +78,12 @@ describe("AT-L6: lib/actions/telegram-bot.ts test suite", () => {
           email: "client@aldera.test",
         },
       };
-      expect(updateTelegramBotConfigAction({})).rejects.toThrow("Forbidden (403)");
-      expect(createPaymentMethodAction({ name: "BCA" })).rejects.toThrow("Forbidden (403)");
+      expect(updateTelegramBotConfigAction({})).rejects.toThrow(
+        "Forbidden (403)"
+      );
+      expect(createPaymentMethodAction({ name: "BCA" })).rejects.toThrow(
+        "Forbidden (403)"
+      );
     });
   });
 
@@ -99,6 +107,9 @@ describe("AT-L6: lib/actions/telegram-bot.ts test suite", () => {
         where: { id: "default" },
       });
       expect(prismaConfig).not.toBeNull();
+      expect((await getTelegramBotConfigAction()).ticketTemplate).toBe(
+        customTicketTemplate
+      );
       expect(prismaConfig?.ticketTemplate).toBe(customTicketTemplate);
       expect(prismaConfig?.adminTelegramUsername).toBe(customAdmin);
       expect(prismaConfig?.topupAmounts).toEqual(customAmounts);
@@ -109,7 +120,9 @@ describe("AT-L6: lib/actions/telegram-bot.ts test suite", () => {
         ticket_template: string;
         admin_telegram_username: string;
         topup_amounts: unknown;
-      }>("SELECT id, ticket_template, admin_telegram_username, topup_amounts FROM telegram_bot_configs WHERE id = 'default';");
+      }>(
+        "SELECT id, ticket_template, admin_telegram_username, topup_amounts FROM telegram_bot_configs WHERE id = 'default';"
+      );
 
       expect(routerResult.rows.length).toBe(1);
       const routerRow = routerResult.rows[0];
@@ -149,7 +162,10 @@ describe("AT-L6: lib/actions/telegram-bot.ts test suite", () => {
         id: string;
         name: string;
         account_number: string;
-      }>("SELECT id, name, account_number FROM payment_method_settings WHERE id = $1;", [pmId]);
+      }>(
+        "SELECT id, name, account_number FROM payment_method_settings WHERE id = $1;",
+        [pmId]
+      );
 
       expect(routerPM.rows.length).toBe(1);
       expect(routerPM.rows[0].name).toBe("Bank BCA Virtual Account");

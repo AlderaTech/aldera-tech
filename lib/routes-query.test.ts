@@ -1,7 +1,13 @@
 import { describe, expect, it } from "bun:test";
-import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
+import { ADMIN_ROUTES, DASHBOARD_ROUTES, API_ROUTES } from "@/lib/routes";
 
 describe("Route builders for query parameters", () => {
+  it("preserves canonical extensions on protected proof URLs without using filenames as IDs", () => {
+    const url = API_ROUTES.fileDownload("private-id", "proof.pdf");
+    expect(url).toBe("/api/files/private-id?filename=proof.pdf");
+    expect(/\.pdf(?:[?#]|$)/i.test(url)).toBe(true);
+    expect(API_ROUTES.fileDownload("id/escape")).toBe("/api/files/id%2Fescape");
+  });
   it("generates correct tab query URLs for ADMIN_ROUTES", () => {
     expect(ADMIN_ROUTES.projectDetailTab("proj-123", "tasks")).toBe(
       "/admin/projects/proj-123?tab=tasks"

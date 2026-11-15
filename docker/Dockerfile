@@ -64,10 +64,10 @@ COPY docker/crontab /app/crontab
 RUN chmod +x /app/docker-entrypoint.sh
 
 # Setup uploads volume directory
-RUN mkdir -p /app/public/uploads \
-  && chown -R nextjs:nodejs /app/public/uploads
+RUN mkdir -p /app/public/uploads /app/storage/private-uploads \
+  && chown -R nextjs:nodejs /app/public/uploads /app/storage/private-uploads
 
-VOLUME ["/app/public/uploads"]
+VOLUME ["/app/public/uploads", "/app/storage/private-uploads"]
 
 EXPOSE 3000
 

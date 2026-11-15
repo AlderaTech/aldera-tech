@@ -6,7 +6,9 @@ export function getTelegramConfig() {
     process.env.TELEGRAM_API_SERVER ||
     "https://api.telegram.org";
   const baseUrl = rawBaseUrl.replace(/\/+$/, "");
-  const isMockMode = baseUrl !== "https://api.telegram.org";
+  const isMockMode =
+    process.env.NODE_ENV !== "production" &&
+    baseUrl !== "https://api.telegram.org";
   const botToken =
     process.env.TELEGRAM_BOT_TOKEN ||
     process.env.BOT_TOKEN ||
@@ -45,11 +47,8 @@ export async function sendTelegramMessage({
   const { baseUrl, botToken, isMockMode } = getTelegramConfig();
 
   if (!botToken && !isMockMode) {
-    console.log("[Telegram] No BOT_TOKEN configured. Simulated message:", {
-      chatId,
-      text,
-      hasReplyMarkup: !!replyMarkup,
-    });
+    if (process.env.NODE_ENV === "production")
+      return { success: false, error: "Token Telegram belum dikonfigurasi." };
     return { success: true, simulated: true };
   }
 

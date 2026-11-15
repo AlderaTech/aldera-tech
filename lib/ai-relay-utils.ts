@@ -157,69 +157,6 @@ export const MODEL_METADATA_MAP: Record<
   },
 };
 
-export const DEFAULT_MODEL_CATALOG: ModelCatalogItem[] = [
-  {
-    id: "deepseek-chat",
-    displayName: "DeepSeek V3",
-    category: "Budget",
-    contextWindow: 64000,
-    inputPricePerM: 2200,
-    outputPricePerM: 8800,
-    bestFor: "Ultra-affordable reasoning and general intelligence",
-    isActive: true,
-  },
-  {
-    id: "gpt-4o-mini",
-    displayName: "OpenAI GPT-4o Mini",
-    category: "Fast",
-    contextWindow: 128000,
-    inputPricePerM: 2500,
-    outputPricePerM: 10000,
-    bestFor: "High-speed lightweight completions, cost-efficient chat",
-    isActive: true,
-  },
-  {
-    id: "deepseek-reasoner",
-    displayName: "DeepSeek R1",
-    category: "Reasoning",
-    contextWindow: 64000,
-    inputPricePerM: 8000,
-    outputPricePerM: 32000,
-    bestFor: "Complex mathematical proofs, step-by-step logic",
-    isActive: true,
-  },
-  {
-    id: "claude-3-5-haiku-20241022",
-    displayName: "Claude 3.5 Haiku",
-    category: "Fast",
-    contextWindow: 200000,
-    inputPricePerM: 16000,
-    outputPricePerM: 80000,
-    bestFor: "Rapid agent workflows, low-latency code review",
-    isActive: true,
-  },
-  {
-    id: "gpt-4o",
-    displayName: "OpenAI GPT-4o",
-    category: "Vision",
-    contextWindow: 128000,
-    inputPricePerM: 40000,
-    outputPricePerM: 160000,
-    bestFor: "Multimodal analysis, complex reasoning, general tasks",
-    isActive: true,
-  },
-  {
-    id: "claude-3-5-sonnet-20241022",
-    displayName: "Claude 3.5 Sonnet",
-    category: "Coding",
-    contextWindow: 200000,
-    inputPricePerM: 48000,
-    outputPricePerM: 240000,
-    bestFor: "Advanced code generation, refactoring, architectural reasoning",
-    isActive: true,
-  },
-];
-
 // ============================================================================
 // Pure Calculation & Formatting Helpers (F4, F5, F6, F7, F8, F9, F10)
 // ============================================================================

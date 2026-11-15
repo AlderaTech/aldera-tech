@@ -8,6 +8,7 @@ export const invoiceItemSchema = z.object({
 
 export const invoiceCreateSchema = z.object({
   clientId: z.string().min(1, "Pilih client"),
+  purpose: z.enum(["PROJECT", "AI_RELAY_TOPUP"]).default("PROJECT"),
   projectId: z.string().optional().or(z.literal("")),
   issueDate: z.string(),
   dueDate: z.string(),

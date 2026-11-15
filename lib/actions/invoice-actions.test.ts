@@ -100,7 +100,9 @@ describe("AT-L3: lib/actions/invoice.ts test suite", () => {
       };
 
       const formData = new FormData();
-      expect(createInvoiceAction({ ok: false }, formData)).rejects.toThrow("Forbidden");
+      expect(createInvoiceAction({ ok: false }, formData)).rejects.toThrow(
+        "Forbidden"
+      );
     });
 
     it("creates invoice with sequential number INV-YYYY-XXXX and calculates totals", async () => {
@@ -116,8 +118,16 @@ describe("AT-L3: lib/actions/invoice.ts test suite", () => {
       formData1.set(
         "items",
         JSON.stringify([
-          { description: "Landing Page Development", quantity: 1, price: 10000000 },
-          { description: "Hosting & Domain (1 Year)", quantity: 2, price: 500000 },
+          {
+            description: "Landing Page Development",
+            quantity: 1,
+            price: 10000000,
+          },
+          {
+            description: "Hosting & Domain (1 Year)",
+            quantity: 2,
+            price: 500000,
+          },
         ])
       );
 
@@ -147,13 +157,17 @@ describe("AT-L3: lib/actions/invoice.ts test suite", () => {
       formData2.set("taxRate", "0");
       formData2.set(
         "items",
-        JSON.stringify([{ description: "Maintenance", quantity: 1, price: 500000 }])
+        JSON.stringify([
+          { description: "Maintenance", quantity: 1, price: 500000 },
+        ])
       );
 
       const res2 = await createInvoiceAction({ ok: false }, formData2);
       expect(res2.ok).toBe(true);
 
-      const inv2 = await prisma.invoice.findUnique({ where: { id: res2.invoiceId } });
+      const inv2 = await prisma.invoice.findUnique({
+        where: { id: res2.invoiceId },
+      });
       const seq1 = parseInt(inv1!.number.split("-")[2], 10);
       const seq2 = parseInt(inv2!.number.split("-")[2], 10);
       expect(seq2).toBe(seq1 + 1);
@@ -271,6 +285,19 @@ describe("AT-L3: lib/actions/invoice.ts test suite", () => {
         },
       };
 
+      await prisma.file.create({
+        data: {
+          filename: "proof123.jpg",
+          originalName: "proof123.jpg",
+          path: "proof123.jpg",
+          url: "/uploads/proof123.jpg",
+          mimeType: "image/jpeg",
+          size: 10,
+          scope: "INVOICE_PROOF",
+          invoiceId: inv.id,
+          uploaderId: clientUser.id,
+        },
+      });
       const res = await submitPaymentProofAction({
         invoiceId: inv.id,
         proofUrl: "/uploads/proof123.jpg",
@@ -338,6 +365,19 @@ describe("AT-L3: lib/actions/invoice.ts test suite", () => {
       expect(updated?.paidAt).not.toBeNull();
       expect(updated?.payments[0].status).toBe("SUCCESS");
       expect(updated?.payments[0].verifiedById).toBe(adminId);
+      expect((await verifyPaymentProofAction(inv.id)).ok).toBe(true);
+      expect(
+        await prisma.payment.count({
+          where: { invoiceId: inv.id, status: "SUCCESS" },
+        })
+      ).toBe(1);
+      expect((await rejectPaymentProofAction(inv.id, "stale review")).ok).toBe(
+        false
+      );
+      expect(
+        (await prisma.invoice.findUniqueOrThrow({ where: { id: inv.id } }))
+          .status
+      ).toBe("PAID");
     });
 
     it("rejects payment proof and sets invoice back to UNPAID/OVERDUE and payment to FAILED", async () => {
@@ -364,7 +404,10 @@ describe("AT-L3: lib/actions/invoice.ts test suite", () => {
         },
       });
 
-      const res = await rejectPaymentProofAction(inv.id, "Struk tidak terbaca atau buram");
+      const res = await rejectPaymentProofAction(
+        inv.id,
+        "Struk tidak terbaca atau buram"
+      );
       expect(res.ok).toBe(true);
 
       const updated = await prisma.invoice.findUnique({

@@ -32,6 +32,7 @@ services:
       - NINE_ROUTER_API_KEY=${NINE_ROUTER_API_KEY:-}
     volumes:
       - uploads_data:/app/public/uploads
+      - private_uploads_data:/app/storage/private-uploads
     depends_on:
       db:
         condition: service_healthy
@@ -69,3 +70,6 @@ volumes:
     name: aldera_tech_postgres_data
   uploads_data:
     name: aldera_tech_uploads_data
+
+  private_uploads_data:
+    name: aldera_tech_private_uploads_data

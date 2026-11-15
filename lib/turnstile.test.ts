@@ -4,6 +4,7 @@ import { verifyTurnstileToken } from "./turnstile";
 describe("AT-L13: lib/turnstile.ts (Cloudflare Turnstile Verification)", () => {
   const originalEnv = process.env.TURNSTILE_SECRET_KEY;
   const originalFetch = globalThis.fetch;
+  const originalNodeEnv = process.env.NODE_ENV;
   const TEST_SECRET = "0x4AAAAAAtestsecretkey";
 
   beforeEach(() => {
@@ -13,13 +14,23 @@ describe("AT-L13: lib/turnstile.ts (Cloudflare Turnstile Verification)", () => {
   afterEach(() => {
     process.env.TURNSTILE_SECRET_KEY = originalEnv;
     globalThis.fetch = originalFetch;
+    process.env.NODE_ENV = originalNodeEnv;
   });
 
   it("bypasses verification when TURNSTILE_SECRET_KEY is not configured", async () => {
+    process.env.NODE_ENV = "test";
     delete process.env.TURNSTILE_SECRET_KEY;
 
     const res = await verifyTurnstileToken("dummy-token");
     expect(res.success).toBe(true);
+  });
+
+  it("fails closed in production when the secret is missing", async () => {
+    process.env.NODE_ENV = "production";
+    delete process.env.TURNSTILE_SECRET_KEY;
+    const res = await verifyTurnstileToken("");
+    expect(res.success).toBe(false);
+    expect(res.code).toBe("NOT_CONFIGURED");
   });
 
   it("returns MISSING_TOKEN error when token is empty or undefined", async () => {
@@ -31,7 +42,9 @@ describe("AT-L13: lib/turnstile.ts (Cloudflare Turnstile Verification)", () => {
 
   it("returns success: true when Cloudflare API responds with success", async () => {
     globalThis.fetch = (async (url: RequestInfo | URL, init?: RequestInit) => {
-      expect(url).toBe("https://challenges.cloudflare.com/turnstile/v0/siteverify");
+      expect(url).toBe(
+        "https://challenges.cloudflare.com/turnstile/v0/siteverify"
+      );
       expect(init?.method).toBe("POST");
       return new Response(JSON.stringify({ success: true }), {
         status: 200,
@@ -46,7 +59,10 @@ describe("AT-L13: lib/turnstile.ts (Cloudflare Turnstile Verification)", () => {
   it("returns VERIFICATION_FAILED error when Cloudflare API reports invalid token", async () => {
     globalThis.fetch = (async () => {
       return new Response(
-        JSON.stringify({ success: false, "error-codes": ["invalid-input-response"] }),
+        JSON.stringify({
+          success: false,
+          "error-codes": ["invalid-input-response"],
+        }),
         {
           status: 200,
           headers: { "Content-Type": "application/json" },
@@ -90,7 +106,9 @@ describe("AT-L13: lib/turnstile.ts (Cloudflare Turnstile Verification)", () => {
 
   it("handles network timeout / AbortError gracefully", async () => {
     globalThis.fetch = (async () => {
-      const timeoutError = new Error("The operation was aborted due to timeout");
+      const timeoutError = new Error(
+        "The operation was aborted due to timeout"
+      );
       timeoutError.name = "TimeoutError";
       throw timeoutError;
     }) as typeof fetch;

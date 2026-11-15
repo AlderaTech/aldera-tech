@@ -1,3 +1,4 @@
+import { API_ROUTES } from "./lib/routes";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -15,18 +16,17 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "20mb",
     },
   },
-  async headers() {
-    return [
-      {
-        source: "/uploads/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-    ];
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: API_ROUTES.uploadsPattern,
+          destination: API_ROUTES.legacyFilePattern,
+        },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
   },
   async redirects() {
     return [

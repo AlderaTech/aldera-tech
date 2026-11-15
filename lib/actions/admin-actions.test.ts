@@ -118,9 +118,13 @@ describe("AT-L2: lib/actions/admin.ts test suite", () => {
       expect(res.ok).toBe(true);
       expect(res.tempPassword).toBeDefined();
 
-      const created = await prisma.user.findUnique({ where: { email: newEmail } });
+      const created = await prisma.user.findUnique({
+        where: { email: newEmail },
+      });
       expect(created).not.toBeNull();
       expect(created?.roles).toEqual(["DEVELOPER"]);
+      expect(created?.invitedAt).toBeInstanceOf(Date);
+      expect(created?.phoneVerified).toBeNull();
     });
   });
 
@@ -149,7 +153,9 @@ describe("AT-L2: lib/actions/admin.ts test suite", () => {
       });
 
       await updateUserRolesAction(targetUser.id, ["DEVELOPER"]);
-      const updated = await prisma.user.findUnique({ where: { id: targetUser.id } });
+      const updated = await prisma.user.findUnique({
+        where: { id: targetUser.id },
+      });
       expect(updated?.roles).toEqual(["DEVELOPER"]);
     });
   });
@@ -188,7 +194,7 @@ describe("AT-L2: lib/actions/admin.ts test suite", () => {
     });
 
     it("prevents self-demotion from ADMIN role", async () => {
-      const selfUser = await prisma.user.upsert({
+      await prisma.user.upsert({
         where: { id: adminId },
         create: {
           id: adminId,

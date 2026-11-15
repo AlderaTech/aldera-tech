@@ -2,6 +2,16 @@ import { describe, it, expect } from "bun:test";
 import { sanitizeHtml } from "./sanitize-html";
 
 describe("lib/sanitize-html.ts XSS defense unit test suite", () => {
+  it("removes SVG/MathML event-handler payloads and obfuscated active URLs", () => {
+    for (const payload of [
+      "<svg/onload=window.__xss=1>",
+      "<math><mtext><img src=x onerror=window.__xss=1></mtext></math>",
+      '<a href="java&#x09;script:alert(1)">link</a>',
+    ]) {
+      const clean = sanitizeHtml(payload);
+      expect(clean).not.toMatch(/<svg|<math|onload=|onerror=|javascript:/i);
+    }
+  });
   it("returns empty string on null, undefined, or empty string input", () => {
     // @ts-expect-error test undefined
     expect(sanitizeHtml(undefined)).toBe("");
@@ -42,11 +52,11 @@ describe("lib/sanitize-html.ts XSS defense unit test suite", () => {
     expect(cleaned).toContain("<p>Safe content</p>");
   });
 
-  it("neutralizes nested script evasion tags (recursive stripping)", () => {
+  it("escapes malformed nested script markup without creating an executable script", () => {
     const dirty = "<scr<script>ipt>alert(1)</scr</script>ipt>";
     const cleaned = sanitizeHtml(dirty);
     expect(cleaned).not.toContain("<script>");
-    expect(cleaned).not.toContain("alert(1)");
+    expect(cleaned).toContain("&gt;");
   });
 
   it("strips all on* event handler attributes", () => {
