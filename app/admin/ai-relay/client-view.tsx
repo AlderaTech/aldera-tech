@@ -1,4 +1,5 @@
 "use client";
+import { API_ROUTES } from "@/lib/routes";
 import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 
 import { AdminBanner } from "@/app/admin/_components/admin-banner";
@@ -1786,7 +1787,7 @@ export function AiRelayAdminClientView({
                       viewProofTicket.proof_file_id.startsWith("/") ||
                       viewProofTicket.proof_file_id.startsWith("http")
                         ? viewProofTicket.proof_file_id
-                        : `/api/upload/${viewProofTicket.proof_file_id}`
+                        : API_ROUTES.fileDownload(viewProofTicket.proof_file_id)
                     }
                     alt="Bukti Transfer"
                     className="max-h-64 rounded object-contain"
@@ -1801,7 +1802,7 @@ export function AiRelayAdminClientView({
                       viewProofTicket.proof_file_id.startsWith("/") ||
                       viewProofTicket.proof_file_id.startsWith("http")
                         ? viewProofTicket.proof_file_id
-                        : `/api/upload/${viewProofTicket.proof_file_id}`
+                        : API_ROUTES.fileDownload(viewProofTicket.proof_file_id)
                     }
                     target="_blank"
                     rel="noopener noreferrer"

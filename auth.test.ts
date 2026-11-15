@@ -6,7 +6,7 @@ describe("Auth.js account boundary", () => {
       import {mock} from "bun:test";
       globalThis.fetch=async()=>{throw Error("Network disabled");};
       let config;
-      let account={id:"fixture",name:"Fixture",email:"fixture@example.invalid",password:"fake-hash",avatar:null,roles:["ADMIN"],isActive:true,invitedAt:new Date(),phoneVerified:null};
+      let account={id:"fixture",name:"Fixture",email:"fixture@example.invalid",password:"fake-hash",avatar:null,roles:["ADMIN"],securityVersion:0,isActive:true,invitedAt:new Date(),phoneVerified:null};
       mock.module("next-auth",()=>({default:(c)=>{config=c;return{auth:async()=>null,handlers:{},signIn:async()=>{},signOut:async()=>{}};}}));
       mock.module("next-auth/providers/credentials",()=>({default:(c)=>c}));
       mock.module("bcryptjs",()=>({default:{compare:async()=>true}}));
@@ -20,7 +20,7 @@ describe("Auth.js account boundary", () => {
       const demotedRole=token.role;
       account={...account,isActive:false};
       const disabled=await config.callbacks.jwt({token});
-      account={...account,isActive:true,invitedAt:null};
+      account={...account,securityVersion:0,isActive:true,invitedAt:null};
       const unverified=await config.providers[0].authorize(credentials);
       console.log(JSON.stringify({invited:!!invited,demotedRole,disabled,unverified}));
     `;

@@ -213,9 +213,22 @@ describe("AT-L9: app/api/upload/route.ts test suite", () => {
     it("sanitizes path traversal attempts in filenames and saves file record", async () => {
       // Malicious filename with traversal attempt
       const traversalName = "../../../../../etc/passwd.png";
-      const file = new File(["valid-png-data"], traversalName, {
-        type: "image/png",
-      });
+      const file = new File(
+        [
+          await (
+            await import("sharp")
+          )
+            .default({
+              create: { width: 1, height: 1, channels: 4, background: "white" },
+            })
+            .png()
+            .toBuffer(),
+        ],
+        traversalName,
+        {
+          type: "image/png",
+        }
+      );
 
       const formData = new FormData();
       formData.set("file", file);
@@ -250,7 +263,9 @@ describe("AT-L9: app/api/upload/route.ts test suite", () => {
       const formData = new FormData();
       formData.set(
         "file",
-        new File(["fixture"], "proof.pdf", { type: "application/pdf" })
+        new File(["%PDF-1.7\nfixture"], "proof.pdf", {
+          type: "application/pdf",
+        })
       );
       const res = await POST(
         new NextRequest("http://localhost:3000/api/upload", {
@@ -291,7 +306,9 @@ describe("AT-L9: app/api/upload/route.ts test suite", () => {
         const data = new FormData();
         data.set(
           "file",
-          new File(["fixture"], "proof.pdf", { type: "application/pdf" })
+          new File(["%PDF-1.7\nfixture"], "proof.pdf", {
+            type: "application/pdf",
+          })
         );
         data.set("invoiceId", invoice.id);
         return new NextRequest("http://localhost:3000/api/upload", {
@@ -301,7 +318,9 @@ describe("AT-L9: app/api/upload/route.ts test suite", () => {
       };
       const res = await POST(makeRequest());
       expect(res.status).toBe(200);
-      expect((await res.json()).id).toBeTruthy();
+      const uploaded = await res.json();
+      expect(uploaded.id).toBeTruthy();
+      expect(uploaded.url).toMatch(/^\/api\/files\/[^?]+\?filename=.*\.pdf$/);
       currentSession = {
         user: { id: "foreign-client", role: "CLIENT", roles: ["CLIENT"] },
       };

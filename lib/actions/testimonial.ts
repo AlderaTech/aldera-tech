@@ -7,7 +7,7 @@ import {
   testimonialSchema,
   clientProjectReviewSchema,
 } from "@/lib/validations/testimonial";
-import { isStaff } from "@/lib/permissions";
+import { hasPermission, PERMISSIONS } from "@/lib/permissions";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 
 export type TestimonialActionState = {
@@ -19,7 +19,13 @@ export type TestimonialActionState = {
 
 async function requireStaffUser() {
   const session = await auth();
-  if (!session?.user || !isStaff(session.user.role)) {
+  if (
+    !session?.user ||
+    !hasPermission(
+      session.user.roles ?? session.user.role,
+      PERMISSIONS.TESTIMONIAL_MANAGE
+    )
+  ) {
     throw new Error("Forbidden");
   }
   return session.user;

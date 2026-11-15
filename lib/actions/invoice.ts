@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { InvoiceStatus } from "@prisma/client";
 import { auth } from "@/auth";
+import { changeInvoiceStatus } from "@/lib/invoice-status-transition";
 import { prisma } from "@/lib/prisma";
+import { nextDocumentNumber } from "@/lib/document-number";
 import { invoiceCreateSchema } from "@/lib/validations/invoice";
 import { sendWhatsApp } from "@/lib/whatsapp";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
@@ -20,17 +22,6 @@ async function requireAdmin() {
     throw new Error("Forbidden");
   }
   return session.user;
-}
-
-async function generateInvoiceNumber() {
-  const year = new Date().getFullYear();
-  const last = await prisma.invoice.findFirst({
-    where: { number: { startsWith: `INV-${year}-` } },
-    orderBy: { number: "desc" },
-    select: { number: true },
-  });
-  const seq = last ? Number(last.number.split("-")[2] ?? 0) + 1 : 1;
-  return `INV-${year}-${String(seq).padStart(4, "0")}`;
 }
 
 export type InvoiceActionState = {
@@ -55,6 +46,7 @@ export async function createInvoiceAction(
 
   const parsed = invoiceCreateSchema.safeParse({
     clientId: formData.get("clientId"),
+    purpose: formData.get("purpose") || "PROJECT",
     projectId: formData.get("projectId") || "",
     issueDate: formData.get("issueDate"),
     dueDate: formData.get("dueDate"),
@@ -70,36 +62,52 @@ export async function createInvoiceAction(
     };
   }
   const data = parsed.data;
+  if (data.purpose === "AI_RELAY_TOPUP" && data.projectId)
+    return {
+      ok: false,
+      message: "Tagihan saldo AI tidak dapat ditautkan ke proyek.",
+    };
+  if (
+    data.purpose === "AI_RELAY_TOPUP" &&
+    totalIsInvalid(data.items, data.taxRate)
+  )
+    return {
+      ok: false,
+      message: "Nominal top-up harus positif dan dalam Rupiah.",
+    };
 
   const { subtotal, taxAmount, total } = calculateInvoiceTotals(
     data.items,
     data.taxRate
   );
-  const number = await generateInvoiceNumber();
 
-  const invoice = await prisma.invoice.create({
-    data: {
-      number,
-      clientId: data.clientId,
-      projectId: data.projectId || null,
-      issueDate: new Date(data.issueDate),
-      dueDate: new Date(data.dueDate),
-      subtotal: subtotal.toFixed(2),
-      taxRate: data.taxRate.toString(),
-      taxAmount: taxAmount.toFixed(2),
-      total: total.toFixed(2),
-      notes: data.notes || null,
-      items: {
-        create: data.items.map((it, idx) => ({
-          description: it.description,
-          quantity: it.quantity.toString(),
-          price: it.price.toString(),
-          total: (it.quantity * it.price).toFixed(2),
-          order: idx,
-        })),
+  const invoice = await prisma.$transaction(async (tx) => {
+    const number = await nextDocumentNumber(tx, "invoice");
+    return tx.invoice.create({
+      data: {
+        number,
+        purpose: data.purpose,
+        clientId: data.clientId,
+        projectId: data.projectId || null,
+        issueDate: new Date(data.issueDate),
+        dueDate: new Date(data.dueDate),
+        subtotal: subtotal.toFixed(2),
+        taxRate: data.taxRate.toString(),
+        taxAmount: taxAmount.toFixed(2),
+        total: total.toFixed(2),
+        notes: data.notes || null,
+        items: {
+          create: data.items.map((it, idx) => ({
+            description: it.description,
+            quantity: it.quantity.toString(),
+            price: it.price.toString(),
+            total: (it.quantity * it.price).toFixed(2),
+            order: idx,
+          })),
+        },
       },
-    },
-    select: { id: true },
+      select: { id: true },
+    });
   });
 
   revalidatePath(ADMIN_ROUTES.invoices);
@@ -113,15 +121,8 @@ export async function updateInvoiceStatusAction(
   invoiceId: string,
   status: InvoiceStatus
 ) {
-  await requireAdmin();
-  const invoice = await prisma.invoice.update({
-    where: { id: invoiceId },
-    data: {
-      status,
-      paidAt: status === "PAID" ? new Date() : null,
-    },
-    select: { id: true, clientId: true },
-  });
+  const admin = await requireAdmin();
+  const [invoice] = await changeInvoiceStatus([invoiceId], status, admin.id);
   revalidatePath(ADMIN_ROUTES.invoices);
   revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
   revalidatePath(DASHBOARD_ROUTES.invoices);
@@ -242,6 +243,21 @@ export async function submitPaymentProofAction(input: {
   if (invoice.status === "PAID") {
     return { ok: false, message: "Invoice ini sudah lunas." };
   }
+
+  const proof = await prisma.file.findFirst({
+    where: {
+      url: input.proofUrl,
+      invoiceId: invoice.id,
+      scope: "INVOICE_PROOF",
+      ...(session.user.role !== "ADMIN" ? { uploaderId: session.user.id } : {}),
+    },
+    select: { id: true },
+  });
+  if (!proof && input.proofUrl !== invoice.paymentProofUrl)
+    return {
+      ok: false,
+      message: "Unggah bukti pembayaran untuk invoice ini terlebih dahulu.",
+    };
 
   const submitted = await prisma.$transaction(async (tx) => {
     const updated = await tx.invoice.updateMany({
@@ -427,4 +443,11 @@ export async function rejectPaymentProofAction(
   revalidatePath(DASHBOARD_ROUTES.invoices);
 
   return { ok: true, message: "Bukti pembayaran ditolak." };
+}
+
+function totalIsInvalid(
+  items: Array<{ quantity: number; price: number }>,
+  taxRate: number
+) {
+  return calculateInvoiceTotals(items, taxRate).total <= 0;
 }

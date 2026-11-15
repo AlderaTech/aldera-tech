@@ -3,7 +3,11 @@ import type { JWT } from "next-auth/jwt";
 import { prisma } from "@/lib/prisma";
 import { getPrimaryRole, isStaff } from "@/lib/permissions";
 
-type SessionAccount = { isActive: boolean; roles: Role[] };
+type SessionAccount = {
+  isActive: boolean;
+  roles: Role[];
+  securityVersion: number;
+};
 type AccountLookup = (id: string) => Promise<SessionAccount | null>;
 
 export function canSignInAccount(account: {
@@ -31,7 +35,7 @@ export async function refreshSessionToken(
   lookup: AccountLookup = (id) =>
     prisma.user.findUnique({
       where: { id },
-      select: { isActive: true, roles: true },
+      select: { isActive: true, roles: true, securityVersion: true },
     })
 ): Promise<JWT | null> {
   const id = typeof token.id === "string" ? token.id : token.sub;
@@ -39,11 +43,13 @@ export async function refreshSessionToken(
   try {
     const account = await lookup(id);
     if (!account?.isActive || account.roles.length === 0) return null;
+    if ((token.securityVersion ?? 0) !== account.securityVersion) return null;
     return {
       ...token,
       id,
       roles: account.roles,
       role: getPrimaryRole(account.roles),
+      securityVersion: account.securityVersion,
     };
   } catch {
     console.error("Session account verification failed; access denied.");

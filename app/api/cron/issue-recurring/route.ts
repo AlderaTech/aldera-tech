@@ -5,7 +5,7 @@
  *   0 8 * * *  curl -H "Authorization: Bearer $CRON_SECRET" https://yourdomain.com/api/cron/issue-recurring
  */
 import { NextResponse, type NextRequest } from "next/server";
-import { issueDueRecurringInvoices } from "@/lib/actions/recurring-invoice";
+import { issueDueRecurringInvoices } from "@/lib/recurring-invoice-issuer";
 import { verifyCronSecret } from "@/lib/cron";
 import { withCronLock } from "@/lib/cron-lock";
 

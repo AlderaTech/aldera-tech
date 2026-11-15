@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
+import { logAudit } from "@/lib/audit-log";
 import type { ProjectAssignmentRole } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -22,34 +22,6 @@ async function requireStaff() {
     throw new Error("Forbidden");
   }
   return session.user;
-}
-
-export async function logAudit(
-  userId: string,
-  action: string,
-  entityType: string,
-  entityId?: string,
-  metadata?: Record<string, unknown>
-) {
-  try {
-    const hdrs = await headers();
-    await prisma.auditLog.create({
-      data: {
-        userId,
-        action,
-        entityType,
-        entityId: entityId ?? null,
-        metadata: metadata ? (metadata as unknown as object) : undefined,
-        ip:
-          hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-          hdrs.get("x-real-ip") ||
-          null,
-        userAgent: hdrs.get("user-agent") || null,
-      },
-    });
-  } catch {
-    // Swallow, audit logging must not break main flow
-  }
 }
 
 export async function assignMemberAction(

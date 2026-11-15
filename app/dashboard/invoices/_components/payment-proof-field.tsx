@@ -82,6 +82,7 @@ export function PaymentProofField({
         ) : (
           <div className={styles.preview}>
             <Image
+              unoptimized
               src={payment.previewUrl}
               alt="Preview bukti transfer"
               fill

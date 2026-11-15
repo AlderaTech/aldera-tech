@@ -327,6 +327,14 @@ describe("AT-L1: lib/actions/auth.ts test suite", () => {
       const phone = `08199${Date.now().toString().slice(-6)}`;
       const normalizedPhone = `62${phone.slice(1)}`;
 
+      await prisma.user.create({
+        data: {
+          email: crypto.randomUUID() + "@otp.test",
+          name: "Cooldown",
+          password: "fake",
+          phone: normalizedPhone,
+        },
+      });
       await prisma.verificationToken.create({
         data: {
           identifier: normalizedPhone,

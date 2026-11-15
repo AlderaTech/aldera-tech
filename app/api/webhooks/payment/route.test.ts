@@ -1,4 +1,4 @@
-import { describe, it, expect, mock, beforeEach } from "bun:test";
+import { describe, it, expect, mock } from "bun:test";
 import crypto from "node:crypto";
 
 mock.module("server-only", () => ({}));
@@ -22,9 +22,14 @@ mock.module("@/lib/prisma", () => ({
 const { POST } = await import("./route");
 
 describe("AT-L8: app/api/webhooks/payment/route.ts test suite", () => {
-  const serverKey = process.env.MIDTRANS_SERVER_KEY || "dummy_midtrans_server_key";
+  const serverKey =
+    process.env.MIDTRANS_SERVER_KEY || "dummy_midtrans_server_key";
 
-  function generateSignature(orderId: string, statusCode: string, grossAmount: string): string {
+  function generateSignature(
+    orderId: string,
+    statusCode: string,
+    grossAmount: string
+  ): string {
     return crypto
       .createHash("sha512")
       .update(`${orderId}${statusCode}${grossAmount}${serverKey}`)
@@ -138,7 +143,9 @@ describe("AT-L8: app/api/webhooks/payment/route.ts test suite", () => {
       const res = await POST(req);
       expect(res.status).toBe(400);
       const json = await res.json();
-      expect(json.error).toBe("Nominal pembayaran tidak sesuai dengan total tagihan");
+      expect(json.error).toBe(
+        "Nominal pembayaran tidak sesuai dengan total tagihan"
+      );
     });
   });
 
@@ -200,18 +207,21 @@ describe("AT-L8: app/api/webhooks/payment/route.ts test suite", () => {
       expect(updatedInv?.payments[0].transactionId).toBe(transactionId);
 
       // Idempotency check: replay the exact same webhook request
-      const replayReq = new Request("http://localhost:3000/api/webhooks/payment", {
-        method: "POST",
-        body: JSON.stringify({
-          order_id: orderId,
-          status_code: "200",
-          gross_amount: grossAmount,
-          signature_key: sig,
-          transaction_status: "settlement",
-          transaction_id: transactionId,
-          payment_type: "bank_transfer",
-        }),
-      });
+      const replayReq = new Request(
+        "http://localhost:3000/api/webhooks/payment",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            order_id: orderId,
+            status_code: "200",
+            gross_amount: grossAmount,
+            signature_key: sig,
+            transaction_status: "settlement",
+            transaction_id: transactionId,
+            payment_type: "bank_transfer",
+          }),
+        }
+      );
 
       const replayRes = await POST(replayReq);
       expect(replayRes.status).toBe(200);
@@ -264,7 +274,9 @@ describe("AT-L8: app/api/webhooks/payment/route.ts test suite", () => {
         where: { invoiceId: invoice.id },
       });
       expect(payment?.status).toBe("FAILED");
-      expect(payment?.rejectionReason).toContain("Pembayaran expire via Midtrans");
+      expect(payment?.rejectionReason).toContain(
+        "Pembayaran expire via Midtrans"
+      );
     });
   });
 });

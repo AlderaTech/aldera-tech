@@ -2,6 +2,7 @@
 
 import bcrypt from "bcryptjs";
 import { randomBytes } from "node:crypto";
+import { AUTH_ROUTES } from "@/lib/routes";
 import { prisma } from "@/lib/prisma";
 import { sendWhatsApp } from "@/lib/whatsapp";
 import { waTemplates } from "@/lib/whatsapp-templates";
@@ -31,11 +32,18 @@ export async function requestPasswordResetAction(
 
   const user = await prisma.user.findUnique({
     where: { email: parsed.data.email },
-    select: { id: true, name: true, email: true, phone: true, isActive: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      phoneVerified: true,
+      isActive: true,
+    },
   });
 
   // Always respond success to prevent enumeration
-  if (!user || !user.isActive || !user.phone) {
+  if (!user || !user.isActive || !user.phone || !user.phoneVerified) {
     return {
       ok: true,
       message:
@@ -51,7 +59,7 @@ export async function requestPasswordResetAction(
   });
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const url = `${appUrl}/reset-password?token=${token}`;
+  const url = `${appUrl}${AUTH_ROUTES.resetPasswordWithToken(token)}`;
 
   try {
     const tpl = waTemplates.passwordReset({
@@ -118,16 +126,31 @@ export async function resetPasswordAction(
     return { ok: false, message: "Akun tidak aktif." };
   }
 
-  await prisma.$transaction([
-    prisma.user.update({
-      where: { id: record.user.id },
-      data: { password: await bcrypt.hash(parsed.data.password, 10) },
-    }),
-    prisma.passwordResetToken.update({
-      where: { token: parsed.data.token },
+  const hashed = await bcrypt.hash(parsed.data.password, 10);
+  const changed = await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${record.user.id} FOR UPDATE`;
+    const claimed = await tx.passwordResetToken.updateMany({
+      where: {
+        token: parsed.data.token,
+        usedAt: null,
+        expiresAt: { gt: new Date() },
+        user: { isActive: true },
+      },
       data: { usedAt: new Date() },
-    }),
-  ]);
+    });
+    if (!claimed.count) return false;
+    await tx.user.update({
+      where: { id: record.user.id },
+      data: { password: hashed, securityVersion: { increment: 1 } },
+    });
+    await tx.passwordResetToken.updateMany({
+      where: { userId: record.user.id, usedAt: null },
+      data: { usedAt: new Date() },
+    });
+    return true;
+  });
+  if (!changed)
+    return { ok: false, message: "Link tidak valid atau sudah kadaluarsa." };
 
   return { ok: true, message: "Password berhasil diperbarui." };
 }

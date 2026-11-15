@@ -44,7 +44,6 @@ import {
   getUsageLogs,
   getUsageAnalytics,
   executePlaygroundChat,
-  ensureRouterUser,
 } from "./ai-relay";
 
 import {
@@ -93,14 +92,14 @@ describe("Adversarial Stress Testing & Acceptance Verification", () => {
 
   beforeAll(async () => {
     // Seed users in aldera_router
-    const admin = await ensureRouterUser(
+    const admin = await seedRouterAccount(
       adminSession!.user.id,
       adminSession!.user.name,
       adminSession!.user.email
     );
     testAdminDbId = admin.id;
 
-    const client = await ensureRouterUser(
+    const client = await seedRouterAccount(
       clientSession!.user.id,
       clientSession!.user.name,
       clientSession!.user.email
@@ -635,3 +634,11 @@ describe("Adversarial Stress Testing & Acceptance Verification", () => {
     });
   });
 });
+
+async function seedRouterAccount(webId: string, name?: string, email?: string) {
+  const result = await queryRouter<{ id: number }>(
+    "INSERT INTO users (web_user_id, full_name, username, balance, is_active) VALUES ($1,$2,$3,0,true) ON CONFLICT (web_user_id) DO UPDATE SET updated_at=NOW() RETURNING id",
+    [webId, name ?? webId, email ?? webId]
+  );
+  return { id: Number(result.rows[0].id) };
+}

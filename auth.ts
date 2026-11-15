@@ -27,6 +27,7 @@ declare module "next-auth" {
   interface User {
     role: Role;
     roles: Role[];
+    securityVersion?: number;
   }
 }
 
@@ -63,6 +64,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             isActive: true,
             phoneVerified: true,
             invitedAt: true,
+            securityVersion: true,
           },
         });
 
@@ -80,6 +82,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           role: primaryRole,
           roles: user.roles,
           image: user.avatar ?? null,
+          securityVersion: user.securityVersion,
         };
       },
     }),
@@ -95,6 +98,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         appToken.id = user.id as string;
         appToken.roles = user.roles ?? ["CLIENT"];
         appToken.role = user.role ?? getPrimaryRole(appToken.roles);
+        appToken.securityVersion = user.securityVersion ?? 0;
         return appToken;
       }
       return refreshSessionToken(appToken);

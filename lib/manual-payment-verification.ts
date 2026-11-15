@@ -1,6 +1,10 @@
 import type { Invoice } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency } from "@/lib/utils";
+import {
+  queueInvoiceBalanceEffect,
+  processInvoiceBalanceEffects,
+} from "@/lib/invoice-balance-effects";
 
 type VerifiedInvoice = Pick<
   Invoice,
@@ -22,7 +26,7 @@ export async function verifyManualPayment(
   invoiceId: string,
   adminId: string
 ): Promise<VerificationResult> {
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction<VerificationResult>(async (tx) => {
     const invoice = await tx.invoice.findUnique({
       where: { id: invoiceId },
       select: {
@@ -34,6 +38,7 @@ export async function verifyManualPayment(
         paymentProofUrl: true,
         projectId: true,
         clientId: true,
+        purpose: true,
       },
     });
     if (!invoice) return { ok: false, message: "Invoice tidak ditemukan." };
@@ -108,6 +113,9 @@ export async function verifyManualPayment(
         },
       });
     }
-    return { ok: true, changed: true, invoice };
+    await queueInvoiceBalanceEffect(tx, invoice, "CREDIT");
+    return { ok: true as const, changed: true, invoice };
   });
+  if (result.ok) await processInvoiceBalanceEffects(invoiceId);
+  return result;
 }

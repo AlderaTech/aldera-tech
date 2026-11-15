@@ -3,10 +3,18 @@ import type { Role } from "@prisma/client";
 import { canSignInAccount, refreshSessionToken } from "./auth-session";
 
 describe("Account authorization refresh", () => {
+  it("rejects a session issued before a password reset or account security change", async () => {
+    expect(
+      await refreshSessionToken(
+        { id: "fixture", securityVersion: 0 },
+        async () => ({ isActive: true, roles: ["CLIENT"], securityVersion: 1 })
+      )
+    ).toBeNull();
+  });
   it("refreshes revoked roles instead of trusting an old ADMIN token", async () => {
     const token = await refreshSessionToken(
       { id: "fixture", role: "ADMIN", roles: ["ADMIN"] },
-      async () => ({ isActive: true, roles: ["CLIENT"] })
+      async () => ({ securityVersion: 0, isActive: true, roles: ["CLIENT"] })
     );
     expect(token?.roles).toEqual(["CLIENT"]);
     expect(token?.role).toBe("CLIENT");
@@ -14,8 +22,8 @@ describe("Account authorization refresh", () => {
   it("rejects disabled, deleted, or roleless accounts", async () => {
     for (const account of [
       null,
-      { isActive: false, roles: ["ADMIN"] as Role[] },
-      { isActive: true, roles: [] as Role[] },
+      { securityVersion: 0, isActive: false, roles: ["ADMIN"] as Role[] },
+      { securityVersion: 0, isActive: true, roles: [] as Role[] },
     ]) {
       expect(
         await refreshSessionToken({ id: "fixture" }, async () => account)
@@ -29,6 +37,7 @@ describe("Account authorization refresh", () => {
       })
     ).toBeNull();
     const lookup = mock(async () => ({
+      securityVersion: 0,
       isActive: true,
       roles: ["CLIENT"] as Role[],
     }));
@@ -39,6 +48,7 @@ describe("Account authorization refresh", () => {
     const account = {
       email: "invite@example.invalid",
       roles: ["CLIENT"] as Role[],
+      securityVersion: 0,
       isActive: true,
       invitedAt: new Date(),
       phoneVerified: null,

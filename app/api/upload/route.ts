@@ -2,7 +2,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { writeFile, mkdir, unlink } from "node:fs/promises";
 import { join, extname } from "node:path";
 import { randomUUID } from "node:crypto";
-import sharp from "sharp";
+import { validateUploadContent } from "@/lib/upload-content";
+import { API_ROUTES } from "@/lib/routes";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { authorizeUpload } from "@/lib/upload-authorization";
@@ -25,50 +26,6 @@ const ALLOWED_MIME = new Set([
   "text/plain",
   "text/csv",
 ]);
-
-// Images above this threshold get optimized; SVG is passed through untouched.
-const OPTIMIZE_THRESHOLD = 200 * 1024; // 200KB
-const MAX_WIDTH = 2400;
-
-async function optimizeImageBuffer(
-  buffer: Buffer,
-  mimeType: string
-): Promise<{ buffer: Buffer; mimeType: string; ext: string }> {
-  try {
-    const image = sharp(buffer, { failOn: "truncated" });
-    const metadata = await image.metadata();
-
-    // Downscale if too wide
-    if (metadata.width && metadata.width > MAX_WIDTH) {
-      image.resize({ width: MAX_WIDTH, withoutEnlargement: true });
-    }
-
-    // PNG with transparency → keep PNG; everything else → WebP for smaller size.
-    const hasAlpha = mimeType === "image/png" && metadata.hasAlpha === true;
-
-    if (hasAlpha) {
-      const out = await image
-        .png({ compressionLevel: 9, palette: true })
-        .toBuffer();
-      return { buffer: out, mimeType: "image/png", ext: ".png" };
-    }
-
-    const out = await image.webp({ quality: 82, effort: 4 }).toBuffer();
-    return { buffer: out, mimeType: "image/webp", ext: ".webp" };
-  } catch (err) {
-    console.warn("[upload] sharp optimize failed, using original:", err);
-    return {
-      buffer,
-      mimeType,
-      ext:
-        mimeType === "image/jpeg"
-          ? ".jpg"
-          : mimeType === "image/png"
-            ? ".png"
-            : ".bin",
-    };
-  }
-}
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -131,19 +88,30 @@ export async function POST(req: NextRequest) {
       { status: 415 }
     );
   }
-  let savedMimeType = file.type;
-  let savedExt = extname(file.name) || "";
-
-  // Run sharp for raster images above threshold. SVG is left untouched.
-  const isRasterImage =
-    file.type.startsWith("image/") && file.type !== "image/svg+xml";
-  if (isRasterImage && buffer.byteLength > OPTIMIZE_THRESHOLD) {
-    const optimized = await optimizeImageBuffer(buffer, file.type);
-    buffer = Buffer.from(optimized.buffer);
-    savedMimeType = optimized.mimeType;
-    savedExt = optimized.ext;
+  let validated: Awaited<ReturnType<typeof validateUploadContent>>;
+  try {
+    validated = await validateUploadContent(buffer, file.type);
+  } catch {
+    return NextResponse.json(
+      { error: "Isi berkas tidak sesuai format yang diizinkan." },
+      { status: 415 }
+    );
   }
-
+  buffer = Buffer.from(validated.buffer);
+  const savedMimeType = validated.mimeType;
+  const savedExt = validated.ext;
+  const invoiceId = String(formData.get("invoiceId") || "") || null;
+  const topupId = formData.get("topupId")
+    ? Number(formData.get("topupId"))
+    : null;
+  const scope = invoiceId
+    ? "INVOICE_PROOF"
+    : topupId
+      ? "TOPUP_PROOF"
+      : access.projectId
+        ? "PROJECT"
+        : "PUBLIC_MEDIA";
+  const fileId = randomUUID();
   const now = new Date();
   const year = String(now.getFullYear());
   const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -154,7 +122,12 @@ export async function POST(req: NextRequest) {
     .slice(0, 60);
   const filename = `${randomUUID()}-${safeBase}${savedExt}`;
   const relativePath = `${year}/${month}/${filename}`;
-  const dir = join(process.cwd(), "public", "uploads", year, month);
+  const root =
+    scope === "PUBLIC_MEDIA"
+      ? join(process.cwd(), "public", "uploads")
+      : process.env.PRIVATE_UPLOAD_DIR ||
+        join(process.cwd(), "storage", "private-uploads");
+  const dir = join(root, year, month);
   const fullPath = join(dir, filename);
 
   try {
@@ -165,7 +138,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to save file" }, { status: 500 });
   }
 
-  const url = `/uploads/${relativePath}`;
+  const url =
+    scope === "PUBLIC_MEDIA"
+      ? API_ROUTES.publicUpload(relativePath)
+      : API_ROUTES.fileDownload(fileId, filename);
 
   const targetProjectId = access.projectId;
 
@@ -173,6 +149,10 @@ export async function POST(req: NextRequest) {
   try {
     fileRecord = await prisma.file.create({
       data: {
+        id: fileId,
+        scope,
+        invoiceId,
+        topupId,
         filename,
         originalName: file.name,
         mimeType: savedMimeType,

@@ -6,8 +6,13 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { blogPostSchema } from "@/lib/validations/blog";
-import crypto from "crypto";
-import { isStaff, isAdmin } from "@/lib/permissions";
+import { lockAccountKey } from "@/lib/account-locks";
+import {
+  hasPermission,
+  isAdmin,
+  PERMISSIONS,
+  type Permission,
+} from "@/lib/permissions";
 import { ADMIN_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 import { sanitizeHtml } from "@/lib/sanitize-html";
 
@@ -18,9 +23,12 @@ export type BlogActionState = {
   postId?: string;
 };
 
-async function requireAdmin() {
+async function requireAdmin(permission: Permission = PERMISSIONS.BLOG_EDIT) {
   const session = await auth();
-  if (!session?.user || !isStaff(session.user.role)) {
+  if (
+    !session?.user ||
+    !hasPermission(session.user.roles ?? session.user.role, permission)
+  ) {
     throw new Error("Forbidden");
   }
   return session.user;
@@ -45,7 +53,7 @@ export async function createBlogPostAction(
   _: BlogActionState,
   formData: FormData
 ): Promise<BlogActionState> {
-  const user = await requireAdmin();
+  const user = await requireAdmin(PERMISSIONS.BLOG_CREATE);
   const parsed = blogPostSchema.safeParse(parseFormData(formData));
   if (!parsed.success) {
     const errors: Record<string, string> = {};
@@ -56,6 +64,8 @@ export async function createBlogPostAction(
   }
 
   const data = parsed.data;
+  if (data.published || data.scheduledAt)
+    await requireAdmin(PERMISSIONS.BLOG_PUBLISH);
   const existing = await prisma.blogPost.findUnique({
     where: { slug: data.slug },
     select: { id: true },
@@ -123,8 +133,17 @@ export async function updateBlogPostAction(
 
   const current = await prisma.blogPost.findUnique({
     where: { id },
-    select: { published: true, slug: true },
+    select: { published: true, slug: true, scheduledAt: true },
   });
+
+  if (!current) return { ok: false, message: "Artikel tidak ditemukan." };
+  const scheduled =
+    !data.published && data.scheduledAt ? new Date(data.scheduledAt) : null;
+  if (
+    Boolean(data.published) !== current.published ||
+    scheduled?.getTime() !== current.scheduledAt?.getTime()
+  )
+    await requireAdmin(PERMISSIONS.BLOG_PUBLISH);
 
   const post = await prisma.blogPost.update({
     where: { id },
@@ -160,7 +179,7 @@ export async function updateBlogPostAction(
 }
 
 export async function togglePublishBlogPostAction(id: string) {
-  await requireAdmin();
+  await requireAdmin(PERMISSIONS.BLOG_PUBLISH);
   const post = await prisma.blogPost.findUnique({
     where: { id },
     select: { published: true, slug: true },
@@ -184,7 +203,7 @@ export async function togglePublishBlogPostAction(id: string) {
 }
 
 export async function deleteBlogPostAction(id: string) {
-  await requireAdmin();
+  await requireAdmin(PERMISSIONS.BLOG_DELETE);
   const post = await prisma.blogPost.findUnique({
     where: { id },
     select: { slug: true },
@@ -288,10 +307,11 @@ export async function createBlogCommentAction(
   }
 
   const post = await prisma.blogPost.findFirst({
-    where: { OR: [{ id: postId }, { slug: postId }] },
+    where: { OR: [{ id: postId }, { slug: postId }], published: true },
     select: { id: true, slug: true },
   });
-  const actualPostId = post ? post.id : postId;
+  if (!post) return { ok: false, error: "Artikel tidak ditemukan." };
+  const actualPostId = post.id;
   const postSlug = post ? post.slug : postId;
 
   const comment = await prisma.blogComment.create({
@@ -301,14 +321,6 @@ export async function createBlogCommentAction(
       userId: session.user.id,
     },
   });
-
-  try {
-    await prisma.$executeRaw`
-      INSERT INTO "BlogComment" ("id", "content", "postId", "authorId", "createdAt", "updatedAt")
-      VALUES (${comment.id}, ${trimmed}, ${actualPostId}, ${session.user.id}, ${comment.createdAt}, ${comment.updatedAt})
-      ON CONFLICT ("id") DO NOTHING
-    `;
-  } catch {}
 
   revalidatePath(PUBLIC_ROUTES.blog);
   revalidatePath("/blog/[slug]");
@@ -327,73 +339,19 @@ export async function deleteBlogCommentAction(
   commentId: string
 ): Promise<{ ok: boolean; message: string }> {
   const session = await auth();
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized (401)");
-  }
-
-  const comment = await prisma.blogComment
-    .findUnique({
-      where: { id: commentId },
-      include: { post: { select: { slug: true } } },
-    })
-    .catch(() => null);
-
-  let commentAuthorId = comment?.userId;
-  let postSlug = comment?.post?.slug;
-  let commentFound = Boolean(comment);
-
-  if (!commentFound) {
-    try {
-      const raw = await prisma.$queryRaw<
-        Array<{
-          id: string;
-          authorId: string;
-          postId: string;
-          slug: string | null;
-        }>
-      >`
-        SELECT c.id, c."authorId", c."postId", p.slug
-        FROM "BlogComment" c
-        LEFT JOIN "BlogPost" p ON p.id = c."postId"
-        WHERE c.id = ${commentId}
-      `;
-      if (raw.length > 0) {
-        commentAuthorId = raw[0].authorId;
-        postSlug = raw[0].slug ?? undefined;
-        commentFound = true;
-      }
-    } catch {}
-  }
-
-  if (!commentFound) {
-    throw new Error("Comment not found");
-  }
-
-  type UserWithRoles = {
-    roles?: import("@prisma/client").Role[];
-    role?: import("@prisma/client").Role;
-  };
-  const sessionUser = session.user as unknown as UserWithRoles;
-  const userRoles = sessionUser.roles ?? sessionUser.role;
-  const isAuthor = commentAuthorId === session.user.id;
-  const isUserAdmin = isAdmin(userRoles);
-
-  if (!isAuthor && !isUserAdmin) {
+  if (!session?.user?.id) throw new Error("Unauthorized (401)");
+  const comment = await prisma.blogComment.findUnique({
+    where: { id: commentId },
+    include: { post: { select: { slug: true } } },
+  });
+  if (!comment) throw new Error("Comment not found");
+  if (
+    comment.userId !== session.user.id &&
+    !isAdmin(session.user.roles ?? session.user.role)
+  )
     throw new Error("Forbidden (403)");
-  }
-
-  await prisma.blogComment
-    .deleteMany({ where: { id: commentId } })
-    .catch(() => {});
-  try {
-    await prisma.$executeRaw`DELETE FROM "BlogComment" WHERE id = ${commentId}`;
-  } catch {}
-
-  revalidatePath("/blog/[slug]");
-  if (postSlug) {
-    revalidatePath(PUBLIC_ROUTES.blogDetail(postSlug));
-  }
-
+  await prisma.blogComment.delete({ where: { id: commentId } });
+  revalidatePath(PUBLIC_ROUTES.blogDetail(comment.post.slug));
   return { ok: true, message: "Komentar berhasil dihapus." };
 }
 
@@ -406,103 +364,36 @@ export async function toggleBlogReactionAction(
   type: "LIKE" | "DISLIKE" | null;
 }> {
   const session = await auth();
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized (401)");
-  }
-
+  if (!session?.user?.id) throw new Error("Unauthorized (401)");
+  if (type !== "LIKE" && type !== "DISLIKE")
+    throw new Error("Reaksi tidak valid.");
   const post = await prisma.blogPost.findFirst({
-    where: { OR: [{ id: postId }, { slug: postId }] },
+    where: { OR: [{ id: postId }, { slug: postId }], published: true },
     select: { id: true, slug: true },
   });
-  const actualPostId = post ? post.id : postId;
-  const postSlug = post ? post.slug : postId;
-
-  const existing = await prisma.blogReaction
-    .findUnique({
-      where: {
-        postId_userId: {
-          postId: actualPostId,
-          userId: session.user.id,
-        },
-      },
-    })
-    .catch(() => null);
-
-  let existingType: "LIKE" | "DISLIKE" | null =
-    (existing?.type as "LIKE" | "DISLIKE") ?? null;
-
-  if (!existingType) {
-    try {
-      const raw = await prisma.$queryRaw<
-        Array<{ id: string; type: "LIKE" | "DISLIKE" }>
-      >`
-        SELECT id, type::text as type FROM "BlogReaction" WHERE "postId" = ${actualPostId} AND "userId" = ${session.user.id}
-      `;
-      if (raw.length > 0) {
-        existingType = raw[0].type;
-      }
-    } catch {}
-  }
-
-  if (existingType === type) {
-    // Idempotent toggle-off
-    await prisma.blogReaction
-      .deleteMany({
-        where: { postId: actualPostId, userId: session.user.id },
-      })
-      .catch(() => {});
-    try {
-      await prisma.$executeRaw`
-        DELETE FROM "BlogReaction" WHERE "postId" = ${actualPostId} AND "userId" = ${session.user.id}
-      `;
-    } catch {}
-
-    revalidatePath("/blog/[slug]");
-    if (postSlug) revalidatePath(PUBLIC_ROUTES.blogDetail(postSlug));
-    return { ok: true, action: "removed", type: null };
-  } else if (existingType && existingType !== type) {
-    // Switch reaction type
-    await prisma.blogReaction
-      .updateMany({
-        where: { postId: actualPostId, userId: session.user.id },
-        data: { type },
-      })
-      .catch(() => {});
-    try {
-      await prisma.$executeRaw`
-        UPDATE "BlogReaction" SET "type" = ${type}::"BlogReactionType", "updatedAt" = NOW()
-        WHERE "postId" = ${actualPostId} AND "userId" = ${session.user.id}
-      `;
-    } catch {}
-
-    revalidatePath("/blog/[slug]");
-    if (postSlug) revalidatePath(PUBLIC_ROUTES.blogDetail(postSlug));
-    return { ok: true, action: "updated", type };
-  } else {
-    // Create new reaction
-    const newReaction = await prisma.blogReaction
-      .create({
-        data: {
-          postId: actualPostId,
-          userId: session.user.id,
-          type,
-        },
-      })
-      .catch(() => null);
-
-    const reactionId = newReaction?.id || `react_${crypto.randomUUID()}`;
-    try {
-      await prisma.$executeRaw`
-        INSERT INTO "BlogReaction" ("id", "type", "postId", "userId", "createdAt", "updatedAt")
-        VALUES (${reactionId}, ${type}::"BlogReactionType", ${actualPostId}, ${session.user.id}, NOW(), NOW())
-        ON CONFLICT ("postId", "userId") DO UPDATE SET "type" = EXCLUDED."type", "updatedAt" = NOW()
-      `;
-    } catch {}
-
-    revalidatePath("/blog/[slug]");
-    if (postSlug) revalidatePath(PUBLIC_ROUTES.blogDetail(postSlug));
-    return { ok: true, action: "created", type };
-  }
+  if (!post) throw new Error("Artikel tidak ditemukan.");
+  const result = await prisma.$transaction(async (tx) => {
+    await lockAccountKey(tx, "reaction:" + post.id + ":" + session.user.id);
+    const key = { postId: post.id, userId: session.user.id };
+    const existing = await tx.blogReaction.findUnique({
+      where: { postId_userId: key },
+    });
+    if (existing?.type === type) {
+      await tx.blogReaction.delete({ where: { id: existing.id } });
+      return { action: "removed" as const, type: null };
+    }
+    await tx.blogReaction.upsert({
+      where: { postId_userId: key },
+      create: { ...key, type },
+      update: { type },
+    });
+    return {
+      action: existing ? ("updated" as const) : ("created" as const),
+      type,
+    };
+  });
+  revalidatePath(PUBLIC_ROUTES.blogDetail(post.slug));
+  return { ok: true, ...result };
 }
 
 export async function togglePinBlogPostAction(

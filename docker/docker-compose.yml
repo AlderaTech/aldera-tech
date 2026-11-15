@@ -19,6 +19,7 @@ services:
       - AUTO_MIGRATE=true
       - WHATSAPP_API_URL=${WHATSAPP_API_URL:-https://api.fonnte.com/send}
       - WHATSAPP_API_KEY=${WHATSAPP_API_KEY}
+      - PRIVATE_UPLOAD_DIR=/app/storage/private-uploads
       - SHARP_IGNORE_GLOBAL_LIBVIPS=1
       - MIDTRANS_SERVER_KEY=${MIDTRANS_SERVER_KEY}
       - MIDTRANS_CLIENT_KEY=${MIDTRANS_CLIENT_KEY}
@@ -32,6 +33,7 @@ services:
       - NINE_ROUTER_API_KEY=${NINE_ROUTER_API_KEY:-}
     volumes:
       - uploads_data:/app/public/uploads
+      - private_uploads_data:/app/storage/private-uploads
     depends_on:
       db:
         condition: service_healthy
@@ -69,3 +71,6 @@ volumes:
     name: aldera_tech_postgres_data
   uploads_data:
     name: aldera_tech_uploads_data
+
+  private_uploads_data:
+    name: aldera_tech_private_uploads_data

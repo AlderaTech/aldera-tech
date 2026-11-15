@@ -1,41 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { RecurringFrequency } from "@prisma/client";
+import { issueDueRecurringInvoices as issueRecurring } from "@/lib/recurring-invoice-issuer";
 import { prisma } from "@/lib/prisma";
 import { requirePermission, PERMISSIONS } from "@/lib/permissions";
 import { ADMIN_ROUTES } from "@/lib/routes";
 import { recurringInvoiceSchema } from "@/lib/validations/recurring-invoice";
-
-function advanceDate(from: Date, frequency: RecurringFrequency): Date {
-  const d = new Date(from);
-  switch (frequency) {
-    case "WEEKLY":
-      d.setDate(d.getDate() + 7);
-      break;
-    case "MONTHLY":
-      d.setMonth(d.getMonth() + 1);
-      break;
-    case "QUARTERLY":
-      d.setMonth(d.getMonth() + 3);
-      break;
-    case "YEARLY":
-      d.setFullYear(d.getFullYear() + 1);
-      break;
-  }
-  return d;
-}
-
-async function generateInvoiceNumber() {
-  const year = new Date().getFullYear();
-  const last = await prisma.invoice.findFirst({
-    where: { number: { startsWith: `INV-${year}-` } },
-    orderBy: { number: "desc" },
-    select: { number: true },
-  });
-  const seq = last ? Number(last.number.split("-")[2] ?? 0) + 1 : 1;
-  return `INV-${year}-${String(seq).padStart(4, "0")}`;
-}
 
 export async function createRecurringTemplateAction(formData: FormData) {
   await requirePermission(PERMISSIONS.INVOICE_CREATE);
@@ -109,71 +79,10 @@ export async function deleteRecurringAction(id: string) {
 /**
  * Called by cron. Issues invoices from any due recurring template.
  */
-export async function issueDueRecurringInvoices(): Promise<{ issued: number }> {
-  const now = new Date();
-  const due = await prisma.recurringInvoiceTemplate.findMany({
-    where: { active: true, nextIssueDate: { lte: now } },
-  });
-
-  let issued = 0;
-  for (const template of due) {
-    const items = Array.isArray(template.items)
-      ? (template.items as Array<{
-          description: string;
-          quantity: number | string;
-          price: number | string;
-        }>)
-      : [];
-    if (items.length === 0) continue;
-
-    const subtotal = items.reduce(
-      (sum, it) => sum + Number(it.quantity) * Number(it.price),
-      0
-    );
-    const taxAmount = (subtotal * Number(template.taxRate)) / 100;
-    const total = subtotal + taxAmount;
-    const number = await generateInvoiceNumber();
-    const dueDate = new Date(now);
-    dueDate.setDate(dueDate.getDate() + template.dueDays);
-
-    await prisma.invoice.create({
-      data: {
-        number,
-        status: "SENT",
-        issueDate: now,
-        dueDate,
-        subtotal: subtotal.toFixed(2),
-        taxRate: template.taxRate,
-        taxAmount: taxAmount.toFixed(2),
-        total: total.toFixed(2),
-        currency: template.currency,
-        notes: template.notes,
-        clientId: template.clientId,
-        projectId: template.projectId,
-        recurringTemplateId: template.id,
-        items: {
-          create: items.map((it, idx) => ({
-            description: it.description,
-            quantity: String(it.quantity),
-            price: String(it.price),
-            total: (Number(it.quantity) * Number(it.price)).toFixed(2),
-            order: idx,
-          })),
-        },
-      },
-    });
-
-    await prisma.recurringInvoiceTemplate.update({
-      where: { id: template.id },
-      data: {
-        lastIssuedAt: now,
-        nextIssueDate: advanceDate(now, template.frequency),
-      },
-    });
-
-    issued++;
-  }
+export async function issueDueRecurringInvoices() {
+  await requirePermission(PERMISSIONS.INVOICE_CREATE);
+  const result = await issueRecurring();
   revalidatePath(ADMIN_ROUTES.invoices);
   revalidatePath(ADMIN_ROUTES.invoicesRecurring);
-  return { issued };
+  return result;
 }

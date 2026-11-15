@@ -57,12 +57,30 @@ describe("lib/telegram.ts unit tests", () => {
     expect(res.error).toBe("Invalid Telegram chat ID");
   });
 
-  it("simulates message when no token is configured in production mode", async () => {
+  it("allows a message simulation only in development/test", async () => {
     const res = await sendTelegramMessage({
       chatId: "123456",
       text: "Test simulated message",
     });
     expect(res.success).toBe(true);
     expect(res.simulated).toBe(true);
+  });
+  it("fails closed without a Telegram token in production", async () => {
+    const previous = process.env.NODE_ENV;
+    Object.assign(process.env, { NODE_ENV: "production" });
+    process.env.TELEGRAM_API_BASE_URL =
+      "https://telegram-proxy.example.invalid";
+    expect(getTelegramConfig().botToken).toBeUndefined();
+    try {
+      const result = await sendTelegramMessage({
+        chatId: "fixture-chat",
+        text: "Private fixture content",
+      });
+      expect(result.success).toBe(false);
+      expect(result.simulated).not.toBe(true);
+    } finally {
+      if (previous === undefined) delete process.env.NODE_ENV;
+      else Object.assign(process.env, { NODE_ENV: previous });
+    }
   });
 });

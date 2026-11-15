@@ -129,6 +129,7 @@ export function InvoiceProofVerifier({
             {!isPdf ? (
               <div className="relative h-48 w-full overflow-hidden rounded-md border bg-slate-50">
                 <Image
+                  unoptimized
                   src={paymentProofUrl}
                   alt={`Bukti transfer ${invoiceNumber}`}
                   fill

@@ -16,9 +16,8 @@ mock.module("@/lib/prisma", () => ({
   default: prisma,
 }));
 
-const { requestPasswordResetAction, resetPasswordAction } = await import(
-  "@/lib/actions/password-reset"
-);
+const { requestPasswordResetAction, resetPasswordAction } =
+  await import("@/lib/actions/password-reset");
 
 describe("AT-L5: lib/actions/password-reset.ts test suite", () => {
   beforeEach(() => {
@@ -56,6 +55,7 @@ describe("AT-L5: lib/actions/password-reset.ts test suite", () => {
           name: "Reset User",
           password: "hashed_dummy_password",
           phone,
+          phoneVerified: new Date(),
           isActive: true,
           roles: ["CLIENT"],
         },
@@ -173,7 +173,9 @@ describe("AT-L5: lib/actions/password-reset.ts test suite", () => {
       expect(res.message).toBe("Password berhasil diperbarui.");
 
       // Verify user's new hashed password
-      const updatedUser = await prisma.user.findUnique({ where: { id: user.id } });
+      const updatedUser = await prisma.user.findUnique({
+        where: { id: user.id },
+      });
       const passwordMatches = await bcrypt.compare(
         "BrandNewPassword123!",
         updatedUser!.password!

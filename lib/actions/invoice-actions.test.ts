@@ -285,6 +285,19 @@ describe("AT-L3: lib/actions/invoice.ts test suite", () => {
         },
       };
 
+      await prisma.file.create({
+        data: {
+          filename: "proof123.jpg",
+          originalName: "proof123.jpg",
+          path: "proof123.jpg",
+          url: "/uploads/proof123.jpg",
+          mimeType: "image/jpeg",
+          size: 10,
+          scope: "INVOICE_PROOF",
+          invoiceId: inv.id,
+          uploaderId: clientUser.id,
+        },
+      });
       const res = await submitPaymentProofAction({
         invoiceId: inv.id,
         proofUrl: "/uploads/proof123.jpg",

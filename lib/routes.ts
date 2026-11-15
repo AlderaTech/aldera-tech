@@ -248,6 +248,12 @@ export const ADMIN_ROUTES = {
 } as const;
 
 export const API_ROUTES = {
+  cronReconcileIntegrations: "/api/cron/reconcile-integrations",
+  fileDownload: (id: string, filename?: string) =>
+    `/api/files/${encodeURIComponent(id)}${filename ? `?filename=${encodeURIComponent(filename)}` : ""}`,
+  publicUpload: (path: string) => `/uploads/${path}`,
+  uploadsPattern: "/uploads/:path*",
+  legacyFilePattern: "/api/files/legacy/:path*",
   exportAnalytics: "/api/admin/export/analytics",
   exportInvoices: "/api/admin/export/invoices",
   exportProjects: "/api/admin/export/projects",

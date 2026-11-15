@@ -26,6 +26,7 @@ export const authConfig = {
         appToken.id = user.id as string;
         appToken.roles = user.roles ?? ["CLIENT"];
         appToken.role = user.role ?? getPrimaryRole(appToken.roles);
+        appToken.securityVersion = user.securityVersion ?? 0;
       }
       return appToken;
     },

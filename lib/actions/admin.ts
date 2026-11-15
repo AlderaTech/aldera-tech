@@ -7,7 +7,7 @@ import type { Role } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { unlink } from "node:fs/promises";
-import { join } from "node:path";
+import { resolve, relative, isAbsolute } from "node:path";
 import { ADMIN_ROUTES } from "@/lib/routes";
 import { isAdmin } from "@/lib/permissions";
 
@@ -119,7 +119,7 @@ export async function toggleUserActiveAction(userId: string) {
   });
   await prisma.user.update({
     where: { id: userId },
-    data: { isActive: !u?.isActive },
+    data: { isActive: !u?.isActive, securityVersion: { increment: 1 } },
   });
   revalidatePath(ADMIN_ROUTES.users);
 }
@@ -128,11 +128,20 @@ export async function deleteFileAction(fileId: string) {
   await requireAdmin();
   const file = await prisma.file.findUnique({
     where: { id: fileId },
-    select: { path: true },
+    select: { path: true, scope: true },
   });
   if (!file) return;
   try {
-    await unlink(join(process.cwd(), "public", "uploads", file.path));
+    const root = resolve(
+      file.scope === "PUBLIC_MEDIA" || file.scope === "PRIVATE_LEGACY"
+        ? "public/uploads"
+        : process.env.PRIVATE_UPLOAD_DIR || "storage/private-uploads"
+    );
+    const path = resolve(root, file.path);
+    const child = relative(root, path);
+    if (!child || child.startsWith("..") || isAbsolute(child))
+      throw new Error("Path berkas tidak valid.");
+    await unlink(path);
   } catch {
     // File might already be deleted on disk, continue.
   }
