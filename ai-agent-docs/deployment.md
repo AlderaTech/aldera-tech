@@ -278,6 +278,17 @@ Aldera Tech menerapkan isolasi lingkungan multi-stack pada server VPS produksi t
 
 ## Prasyarat integritas backend
 
+### Diagnostik staging tanpa deployment
+
+Workflow **Build and Deploy** menyediakan input manual `diagnose_staging=true`.
+Mode ini hanya membaca status container staging dan pesan startup yang telah
+difilter serta disamarkan melalui `docker/inspect-staging.sh`. Mode diagnostik
+tidak membangun image, menjalankan deployment, membaca environment container,
+atau mengubah database. Gunakan log job **Inspect Staging Startup** untuk
+membedakan kegagalan proses startup dari kegagalan layanan upstream.
+
+### Persyaratan runtime
+
 - Sinkronkan kolom nullable `User.invitedAt` sebelum menjalankan aplikasi. Migrasi aditif tersedia pada `prisma/migrations/20261115000000_admin_invitation_marker/migration.sql`; deployment dengan `AUTO_MIGRATE=true` memakai schema Prisma yang sama. Tidak ada perubahan atau backfill identitas akun lama secara otomatis.
 - Entrypoint menghentikan startup jika sinkronisasi skema yang diaktifkan gagal; aplikasi tidak dijalankan dengan skema yang tidak kompatibel.
 - Produksi memerlukan `TURNSTILE_SECRET_KEY` untuk verifikasi captcha dan `WHATSAPP_API_KEY` valid untuk OTP/notifikasi. Konfigurasi kosong menghasilkan kegagalan, bukan keberhasilan simulasi. Jangan menggunakan test key dalam produksi.
