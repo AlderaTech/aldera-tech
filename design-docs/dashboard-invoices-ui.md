@@ -1,5 +1,7 @@
 # UI Invoice & Pembayaran
 
+Status dan tampilan invoice kedua area mengikuti [konsistensi UI workspace](workspace-ui-consistency.md). Label resmi berasal dari invoiceStatusMeta; tanggal lampau tidak membuat label baru di Admin. Metadata/status minimal 12px, informasi utama 14px, dan ilustrasi empty state memakai token 120/104px.
+
 ## Cakupan dan identitas
 
 Desain berlaku hanya pada daftar `/dashboard/invoices` dan dialog pembayarannya. `getStudioDashboardSection` mengaktifkan sidebar, header, dan token studio untuk rute tepat ini. Rute detail terpisah, checkout eksternal, dan halaman lain mempertahankan tampilannya.
@@ -27,7 +29,7 @@ Ringkasan memakai seluruh hasil query, bukan sebagian kartu yang terlihat:
 - Container daftar selebar minimal 960px menggunakan tabel semantik. Nominal rata kanan; nomor invoice, proyek, tanggal terbit, jatuh tempo, status, dan tindakan tersedia.
 - Container lebih sempit menggunakan kartu putih di atas alas biru keabuan; mulai 620px tersedia dua kolom. Nominal memiliki bidang tersendiri dan nama panjang dapat membungkus. Filter `status` tetap menggunakan `ParamFilterSelect` dan mengosongkan parameter halaman ketika diganti; `DataPagination` mempertahankan `page`, total hasil filter, serta parameter URL lainnya. Pencarian dan pengurutan baru tidak ditambahkan.
 - Skeleton mengikuti tiga ringkasan dan daftar. Empty state akun tanpa invoice menautkan Proyek Saya. Hasil filter kosong menawarkan tautan reset filter; halaman kosong dengan total hasil lebih dari nol menawarkan halaman pertama sambil mempertahankan status. Ketiganya tidak menyatakan semua tagihan lunas. Penentuan kondisi hanya memakai hasil daftar/total dan parameter status valid yang sudah tersedia, tanpa query tambahan.
-- Empty state menggunakan ilustrasi teknologi 3D seragam non-kucing (`design.webp`) melalui static import. Ukuran 112px pada desktop dan 96px pada HP, dekoratif, lazy-loaded, dengan susunan vertikal rata tengah dan corak statis `EmptyStatePattern`. Kartu ringkasan dan tabel daftar invoice dirancang compact dengan padding proporsional.
+- Empty state menggunakan ilustrasi teknologi 3D seragam non-kucing (`design.webp`) melalui static import. Ukuran 120px pada desktop dan 104px pada HP, dekoratif, lazy-loaded, dengan susunan vertikal rata tengah dan corak statis `EmptyStatePattern`. Kartu ringkasan dan tabel daftar invoice dirancang compact dengan padding proporsional.
 
 ## Pembayaran dan aksesibilitas
 
@@ -59,7 +61,7 @@ Redesain memakai ulang aset dan komponen dekorasi yang tersedia. Kode pengambila
 
 ## Pemeriksaan
 
-- Test pendamping frame dan empty state mencakup batas scope, urutan maskot/teks, aset yang tersedia, reset filter, dan tautan halaman pertama; test daftar mempertahankan pagination/URL. ESLint, Prettier, Next.js typegen, TypeScript, dan pemeriksaan whitespace lulus. Suite penuh lokal tertahan pada fixture `lib/router-db-adversarial.test.ts` karena kolom `users.web_user_id` wajib di database lokal. Action invoice/pembayaran, validasi server, endpoint upload, metadata status, autentikasi, serta konstanta rute tidak berubah.
+- Test pendamping frame dan empty state mencakup batas scope, urutan maskot/teks, aset yang tersedia, reset filter, dan tautan halaman pertama; test daftar mempertahankan pagination/URL. ESLint, Prettier, Next.js typegen, TypeScript, dan pemeriksaan whitespace lulus. Suite lengkap memakai database uji sementara yang diinisialisasi sesuai CI dan lulus 812 test.web_user_id` wajib di database lokal. Action invoice/pembayaran, validasi server, endpoint upload, metadata status, autentikasi, serta konstanta rute tidak berubah.
 - Test terarah mencakup pengelompokan semua status, nol, nominal pecahan, dataset panjang, query/pembatasan pengguna, status resmi meskipun tanggal lampau, desktop/mobile, PDF/izin tindakan, skeleton/kosong/error, rekening, field, validasi, dan status pengiriman.
 - Browser terisolasi pada 320, 390, 768, 1024, 1280, dan 1440px tidak menunjukkan overflow halaman, termasuk nilai besar dan identitas panjang. Dialog transfer pada viewport 320×900px dibatasi tinggi 868px dan dapat digulir tanpa overflow horizontal. Outline fokus terlihat; Escape menutup dialog dan mengembalikan fokus ke tombol pembayaran.
 - Pemeriksaan browser memakai komponen React asli dan CSS hasil kompilasi Next.js di dalam shell lokal dengan sesi mock. Fixture hanya berada pada server preview dan memori browser, tanpa mengisi database. Kondisi loading, error, akun tanpa invoice, hasil filter kosong, serta halaman di luar hasil yang tersedia diperiksa. Ringkasan dan pemetaan nominal diperiksa terpisah dengan test.

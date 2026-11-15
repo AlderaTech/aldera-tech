@@ -132,6 +132,11 @@
   align-items: center;
   gap: 0.65rem;
 }
+.banner[data-workspace-banner] :global([data-slot="button"]) {
+  min-height: 44px;
+  border-radius: 999px;
+  font-size: var(--workspace-body-size);
+}
 .visual[data-workspace-banner-visual] {
   display: grid;
   width: 144px;

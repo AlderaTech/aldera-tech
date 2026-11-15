@@ -2,6 +2,8 @@
 
 ## Banner bersama
 
+Token kontrol, tema portal, dialog Aktivitas, status invoice, tab detail proyek dan regresi terkait mengikuti [konsistensi UI workspace](workspace-ui-consistency.md). Header kedua area setinggi 64px; offset sticky memakai token yang sama.
+
 [WorkspaceBanner](../components/dashboard/workspace-banner.tsx) dan CSS Module pendamping menjadi sumber tampilan banner di area Admin dan dashboard pengguna:
 
 - Badge di atas judul selalu memiliki ikon. AdminBanner memberi kategori dan ikon menu melalui preset bertipe; halaman pengguna menyediakan badge kontekstualnya.
@@ -24,6 +26,9 @@ Pola banner lokal yang berduplikasi dibersihkan. Aturan banner native admin dan 
 | AI Operations Admin    | 5              | Lima kolom; dua kolom dan pilihan terakhir penuh pada container menengah/kecil |
 | AI Gateway Pengguna    | 8              | Delapan kolom; empat pada container maksimal 64rem; dua pada maksimal 36rem    |
 | Pengaturan Situs Admin | 2              | Dua kolom sama lebar; label membungkus pada layar kecil                        |
+| Telegram Bot Admin     | 2              | Dua kolom sama lebar                                                           |
+| Detail proyek Pengguna | 6              | Enam/tiga/dua kolom, density compact                                           |
+| Detail proyek Admin    | 8              | Delapan/empat/dua kolom, density compact dan sticky                            |
 
 Track selalu selebar container. Default trigger minimal 44px, teks 13px dengan pembungkusan label, fokus terlihat dan indikator aktif biru. Aturan container mencegah sidebar membuat tab berhimpitan. AI Relay pengguna memakai density compact (minimum 36px, teks 12px, ikon 16px); Admin/Kalkulator tetap default. State `?tab=`, alias, pemilihan model dan callback tetap mengikuti hook asli. Helper pengungkapan tab pengguna tetap menjaga navigasi terlihat di bawah header sticky.
 
@@ -59,7 +64,7 @@ ID asli tetap digunakan sebagai key dan referensi data. Status, jumlah pelanggar
 - Browser memakai komponen asli dengan fixture dan action mock terisolasi pada 320, 824 dan 1440px. Seluruh delapan tab pengguna dan lima tab Admin diperiksa; lebar track sama dengan container, hanya satu tab aktif, URL mengikuti pilihan, aset tampil dan tidak ada overflow halaman.
 - Empty state Admin memakai tablet/dokumen biru 120/104px di atas label dan teks. Banner desktop menempatkan visual 144px pada track kanan; visual disembunyikan pada HP.
 - Perubahan runtime terbatas pada komposisi JSX, styling, preset gambar dan pemisahan toolbar presentasi. Hook profil/katalog, data fetching, rumus serta action tetap memakai implementasi asli.
-- Pengujian terarah: `bun test app/admin app/dashboard components/dashboard components/ai-relay` menghasilkan **364 pass, 0 fail**, 133 berkas. Suite lengkap `bun test` pada salinan Linux bersih menghasilkan **798 pass, 0 fail**, 173 berkas.
+- Pengujian terarah: `bun test app/admin app/dashboard components/dashboard components/ai-relay components/ui` menghasilkan **378 pass, 0 fail**, 139 berkas. Suite lengkap `bun test` pada salinan Linux bersih menghasilkan **812 pass, 0 fail**, 179 berkas.
 - Prettier terarah, Next.js typegen dan TypeScript no-emit lulus. ESLint menghasilkan 0 error dengan empat warning existing di test backend yang tidak diedit; berkas UI yang diubah tidak menambah warning.
 - Suite menggunakan database uji bersih per eksekusi. Fixture pembayaran memakai transaction ID tetap, sehingga database uji yang dipakai ulang perlu diinisialisasi bersih sebelum suite lengkap dijalankan lagi. Tidak ada perubahan kode pembayaran atau test backend.
 - Suite lengkap menggunakan salinan repository dengan lockfile yang sama di Linux dan PostgreSQL sementara. File environment lokal tidak disalin; tidak ada mutasi akun atau transaksi produksi.
@@ -172,8 +177,6 @@ Daftar berikut mencakup komponen UI, test co-located dan dokumentasi. Tidak ada 
 - `app/dashboard/projects/[id]/_components/project-header.tsx`
 - `app/dashboard/projects/_components/project-list-header.tsx`
 - `components/ai-relay/model-catalog.tsx`
-- `components/dashboard/dashboard-tabs.test.ts`
-- `components/dashboard/dashboard-tabs.ts`
 - `design-docs/admin-studio-ui.md`
 - `design-docs/dashboard-ai-relay-ui.md`
 - `design-docs/dashboard-calculator-ui.md`

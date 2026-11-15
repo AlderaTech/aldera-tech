@@ -64,7 +64,7 @@ export default async function AdminCalculatorPage({ searchParams }: Props) {
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
         category="estimates"
-        mascot={<AdminMascot pose="coding" size="header" />}
+        mascot={<AdminMascot pose="calculator" size="header" />}
       >
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">

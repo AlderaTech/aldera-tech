@@ -1,5 +1,7 @@
 # UI Ringkasan pengguna Aldera Tech
 
+Dialog Aktivitas memakai primitive Dialog Radix dengan fokus terkelola, Escape, pembatasan fokus dan pengembalian fokus. Isi lengkap tetap berasal dari log asli dan dirender ketika dialog dibuka; pratinjau mempertahankan dua item. Kontrak dan pengujian mengikuti [konsistensi UI workspace](workspace-ui-consistency.md).
+
 ## Batas tampilan
 
 Konten Ringkasan aktif pada rute tepat `/dashboard`. `OverviewShell` memakai `usePathname` untuk memberi tema lokal pada wrapper aplikasi; konten tetap dirender oleh server. Sidebar dan header memakai tema studio pada Ringkasan, daftar `/dashboard/projects`, riwayat `/dashboard/orders`, `/dashboard/calculator`, `/dashboard/ai-relay`, `/dashboard/invoices`, dan `/dashboard/profile` melalui `getStudioDashboardSection`, dengan konfigurasi navigasi bertipe `client`. Banner detail proyek mengikuti WorkspaceBanner; bagian detail dan rute lain mempertahankan susunannya masing-masing. Rincian tersedia di [UI Proyek Saya](dashboard-projects-ui.md), [UI Pesanan & Estimasi](dashboard-orders-ui.md), [UI Kalkulator](dashboard-calculator-ui.md), [UI AI Relay](dashboard-ai-relay-ui.md), [UI Invoice & Pembayaran](dashboard-invoices-ui.md), dan [UI Profil Saya](dashboard-profile-ui.md).

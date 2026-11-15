@@ -73,7 +73,7 @@ export default async function AdminUsersPage({
           {canManageUsers && (
             <InviteUserDialog>
               <button className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90">
-                <UserPlus className="size-4" /> Invite User
+                <UserPlus className="size-4" /> Undang Pengguna
               </button>
             </InviteUserDialog>
           )}

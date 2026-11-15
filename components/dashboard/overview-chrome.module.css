@@ -1,8 +1,16 @@
 .scope {
   --overview-ink: #102651;
   --overview-blue: #245fe5;
-  --overview-muted: #65748b;
-  --overview-line: #e1e8f2;
+  --overview-muted: color-mix(
+    in srgb,
+    var(--overview-ink) 72%,
+    var(--overview-paper)
+  );
+  --overview-line: color-mix(
+    in srgb,
+    var(--overview-ink) 16%,
+    var(--overview-paper)
+  );
   --overview-paper: #ffffff;
   --overview-canvas: #f5f8fd;
   --overview-sky: #e8f0ff;
@@ -10,6 +18,28 @@
   --overview-peach: #fff2e7;
   --overview-success: #18765d;
   --overview-success-soft: #edf8f2;
+  --overview-warning: var(--color-amber-800);
+  --overview-danger: var(--color-rose-700);
+  --overview-danger-soft: var(--color-rose-50);
+  --workspace-header-height: 4rem;
+  --workspace-control-height: 2.5rem;
+  --workspace-control-radius: 0.75rem;
+  --workspace-card-radius: 1.25rem;
+  --workspace-body-size: 0.875rem;
+  --workspace-caption-size: 0.75rem;
+  --workspace-empty-image-size: 120px;
+  --workspace-empty-title-size: 1.125rem;
+  --foreground: var(--overview-ink);
+  --background: var(--overview-canvas);
+  --card: var(--overview-paper);
+  --card-foreground: var(--overview-ink);
+  --popover: var(--overview-paper);
+  --popover-foreground: var(--overview-ink);
+  --muted-foreground: var(--overview-muted);
+  --accent: var(--overview-sky);
+  --accent-foreground: var(--overview-ink);
+  --border: var(--overview-line);
+  --input: var(--overview-line);
   --primary: var(--overview-blue);
   --primary-foreground: #ffffff;
   --ring: var(--overview-blue);
@@ -18,9 +48,7 @@
 }
 
 .shell {
-  background:
-    radial-gradient(ellipse at 82% 0%, var(--overview-sky), transparent 48%),
-    var(--overview-canvas);
+  background: var(--overview-canvas);
 }
 
 .shell [data-overview-sidebar] {
@@ -38,7 +66,7 @@
   border-color: var(--overview-line);
 }
 .sidebar > div:first-child {
-  height: 4rem;
+  height: var(--workspace-header-height);
   padding-inline: 1.15rem;
   border-color: var(--overview-line);
 }
@@ -95,7 +123,7 @@
 }
 
 .header {
-  height: 4rem;
+  height: var(--workspace-header-height);
   border-color: var(--overview-line);
   background: rgb(255 255 255 / 80%);
   box-shadow: none;
@@ -123,6 +151,10 @@
 }
 
 @media (max-width: 639px) {
+  .scope {
+    --workspace-control-height: 2.75rem;
+    --workspace-empty-image-size: 104px;
+  }
   .shell [data-overview-content] {
     padding: 1rem;
   }

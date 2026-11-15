@@ -35,7 +35,7 @@ Nilai profile/contact, sinkronisasi query tab, fallback tab tidak dikenal, useAc
 ## Pemeriksaan
 
 - Pemetaan test: seluruh test pada app/admin/users, app/admin/timesheet dan app/admin/settings diperiksa. Dua test UI co-located baru menguji pilihan peran serta filter tanggal; test halaman Timesheet dan SettingsForm diperbarui.
-- Pengujian terarah ketiga halaman: 18 pass, 0 fail, 9 berkas. Suite lengkap bun test pada salinan Linux dengan lockfile dan database sementara bersih: 798 pass, 0 fail, 173 berkas.
+- Pengujian terarah ketiga halaman: 18 pass, 0 fail, 9 berkas. Suite lengkap bun test pada salinan Linux dengan lockfile dan database sementara bersih: 812 pass, 0 fail, 179 berkas.
 - Browser fixture memakai komponen asli beserta tema Admin pada lebar 320, 390, 824 dan 1440px. Semua pilihan peran serta tampilan tim dapat dibuka, tab pengaturan memperbarui query tab, tanggal terkirim melalui GET, dan URL ekspor tetap membawa rentang yang diterapkan. Tidak ada overflow halaman atau gambar rusak.
 - Desktop: kedua tab Pengaturan sama lebar; kedua input tanggal dan kedua tombol Timesheet sejajar. HP: label membungkus, pilihan peran dua kolom, aksi tanggal dua kolom di bawah input.
 - Prettier, Next.js typegen dan typecheck lulus. Linter 0 error dengan empat warning existing pada test backend yang tidak diedit.

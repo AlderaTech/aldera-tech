@@ -13,11 +13,11 @@ export function OrdersEmptyState() {
       <Image
         src={emptyIllustration}
         alt=""
-        width={140}
-        height={140}
+        width={120}
+        height={120}
         aria-hidden="true"
         className={commonStyles.mascot}
-        sizes="(min-width: 640px) 140px, 112px"
+        sizes="(min-width: 640px) 120px, 104px"
         quality={90}
       />
       <div className={commonStyles.stateContent}>

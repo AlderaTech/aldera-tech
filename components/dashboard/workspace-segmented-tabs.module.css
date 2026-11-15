@@ -24,6 +24,9 @@
 .list[data-tab-count="2"] {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+.list[data-tab-count="6"] {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
 .list[data-tab-count="5"] {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
@@ -88,6 +91,9 @@
   height: 16px;
 }
 @container (max-width: 64rem) {
+  .list[data-tab-count="6"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
   .list[data-tab-count="8"] {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }

@@ -64,7 +64,7 @@ Pilihan peran, tab Pengaturan Situs dan filter tanggal memakai panel serta indik
 - Test empty state memverifikasi aset WebP dengan alpha, urutan gambar/label/judul/deskripsi/aksi, seluruh konteks, konten panjang, retry/disabled, dekorasi, serta aturan cascade tombol dan padding tabel.
 - Test halaman/tabel diperbarui untuk teks Indonesia, tanpa melonggarkan pengecekan data, rute, nominal, permission, form dan pagination.
 - Regresi tambahan mencakup tombol kategori yang dibatasi izin serta hasil audit kosong yang tidak menyatakan lulus.
-- UI gabungan: 364 pass, 0 fail pada 133 berkas. Suite lengkap Linux dengan database sementara bersih: 798 pass, 0 fail pada 173 berkas.
+- UI gabungan: 378 pass, 0 fail pada 139 berkas. Suite lengkap Linux dengan database sementara bersih: 812 pass, 0 fail pada 179 berkas.
 - Browser fixture memeriksa seluruh 10 kategori badge dan 28 konteks empty state pada desktop/HP. Aset tunggal dipakai pada semua konteks, rata tengah, tanpa gambar rusak atau overflow. Tautan invoice dan aksi preview dapat difokuskan/diklik; seluruh tab AI tetap berpindah melalui parameter URL.
 - Prettier, Next.js typegen dan typecheck lulus. Linter 0 error dengan empat warning existing di test backend yang tidak diedit.
 - Authenticated E2E, undangan nyata, publikasi, transaksi dan sinkronisasi provider produksi tidak dijalankan. Preview memakai data fixture/action mock.

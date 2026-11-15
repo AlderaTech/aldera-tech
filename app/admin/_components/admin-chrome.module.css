@@ -33,7 +33,7 @@
 }
 .shell [data-admin-sidebar] > aside > div:first-child,
 .portalScope :global([data-slot="sheet-content"] > aside > div:first-child) {
-  min-height: 4.5rem;
+  min-height: var(--workspace-header-height);
   padding-inline: 1rem;
   border-color: var(--admin-line);
 }
@@ -106,7 +106,7 @@
   color: var(--overview-ink);
 }
 .header {
-  height: 4.5rem;
+  height: var(--workspace-header-height);
   min-width: 0;
   border-color: var(--admin-line);
   background: color-mix(in srgb, var(--overview-paper) 94%, transparent);

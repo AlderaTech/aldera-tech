@@ -5,6 +5,32 @@ import { ADMIN_ROUTES } from "@/lib/routes";
 installAdminPageMocks();
 const { InvoiceTable } = await import("./invoice-table");
 describe("Empty state daftar invoice admin", () => {
+  it("mengikuti status resmi walaupun tanggal jatuh tempo sudah lewat", () => {
+    for (const [status, label] of [
+      ["SENT", "Terkirim"],
+      ["PENDING_VERIFICATION", "Menunggu Verifikasi"],
+      ["OVERDUE", "Lewat Jatuh Tempo"],
+    ] as const) {
+      const html = renderToStaticMarkup(
+        <InvoiceTable
+          invoices={[
+            {
+              id: "invoice-status",
+              number: "INV-STATUS",
+              status,
+              total: "1250000",
+              dueDate: new Date("2020-01-01T00:00:00Z"),
+              client: { name: "Klien Uji" },
+              project: null,
+            },
+          ]}
+        />
+      );
+      expect(html).toContain(label);
+      expect(html).not.toContain(">Overdue<");
+      expect(html).toContain("INV-STATUS");
+    }
+  });
   it("menampilkan ilustrasi sebelum teks dan mempertahankan struktur tabel", () => {
     const html = renderToStaticMarkup(<InvoiceTable invoices={[]} />);
     expect(html).toContain("data-admin-empty");

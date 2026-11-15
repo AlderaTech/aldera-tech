@@ -1,5 +1,7 @@
 # Antarmuka Admin Aldera Tech
 
+Kanvas, tinggi header, ukuran kontrol, badge pastel, tema portal dan corak kartu mengikuti [konsistensi UI workspace](workspace-ui-consistency.md). Corak tidak berubah mengikuti posisi kartu. Invoice dan Kalkulator memakai pose kontekstual yang sama dengan Pengguna.
+
 Area `/admin` memakai Plus Jakarta Sans, aksen biru, teks navy, kanvas abu-abu kebiruan, kartu putih, border terlihat dan bayangan halus. Tema dibatasi oleh `AdminShell`; website publik dan area pengguna mempertahankan tema masing-masing.
 
 ## Layout dan banner
@@ -39,7 +41,7 @@ Detail/editor memakai ID dan route asli: `projects/[id]`, `invoices/[id]`, `prop
 
 Lima statistik menampilkan nilai server langsung termasuk nol. Grafik menggunakan array sumber dan satuan asli; data kosong tidak menghasilkan metrik contoh. Panel Top 5 Client dan Aktivitas memiliki tepi bawah sejajar. Slot client yang tersedia tidak diberi nama atau nominal fiktif. Grafik admin memakai `animate={false}`; default pemanggil lain tetap berlaku.
 
-Navigasi Kalkulator Harga (empat tab), AI Operations (lima tab) dan Pengaturan Situs (dua tab) menggunakan `WorkspaceTabsList` / `WorkspaceTabsTrigger`. Setiap pilihan mengisi lebar track secara merata, memakai label yang dapat membungkus, tinggi minimal 44px dan indikator aktif biru. Breakpoint mengikuti lebar container. Nilai tab, callback, URL dan akses keyboard Radix tetap dipertahankan. Tab detail proyek mempertahankan navigasi aslinya.
+Navigasi Kalkulator Harga (empat tab), AI Operations (lima tab), Pengaturan Situs dan Telegram Bot (dua tab), serta detail proyek (delapan tab compact) menggunakan `WorkspaceTabsList` / `WorkspaceTabsTrigger`. Setiap pilihan mengisi lebar track secara merata, memakai label yang dapat membungkus dan indikator aktif biru. Breakpoint mengikuti lebar container. Nilai tab, callback, URL dan akses keyboard Radix tetap dipertahankan. Offset tab sticky mengikuti token tinggi header 64px.
 
 Pilihan peran Pengguna & Tim memakai panel putih, teks navy, penanda aktif biru dan badge jumlah yang kontras. Filter tanggal Timesheet berada pada panel terpisah di bawah banner, dengan input serta tindakan sejajar. Kontrak field, izin dan parameter URL tercantum pada [navigasi dan filter Admin](admin-navigation-controls-ui.md).
 

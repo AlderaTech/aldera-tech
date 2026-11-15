@@ -25,10 +25,10 @@ describe("Navigasi segmented ruang kerja", () => {
     expect(standard).not.toContain("data-density");
     expect(compact.match(/aria-selected="true"/g)).toHaveLength(1);
   });
-  for (const count of [4, 5, 8])
+  for (const count of [2, 4, 5, 6, 8])
     it("mempertahankan " + count + " tab dan satu pilihan aktif", () => {
       const html = renderToStaticMarkup(
-        <Tabs value="tab-2">
+        <Tabs value={count === 2 ? "tab-1" : "tab-2"}>
           <WorkspaceTabsList aria-label="Pilihan modul">
             {Array.from({ length: count }, (_, i) => (
               <WorkspaceTabsTrigger

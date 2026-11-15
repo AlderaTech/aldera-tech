@@ -287,3 +287,7 @@ Maskot hero Layanan memakai [aldera-cat-services.webp](../public/images/services
 4. **Optimasi LCP (Largest Contentful Paint)**:
    - Elemen gambar kandidat LCP utama (seperti gambar hero di halaman depan) wajib menggunakan `preload` pada Next.js 16.4.
    - Gambar di bawah viewport (_below the fold_) wajib menggunakan `loading="lazy"` tanpa atribut preload.
+
+## Tema workspace Admin dan Pengguna
+
+Area dashboard menggunakan token biru/navy, Plus Jakarta Sans, kanvas kebiruan dan kartu putih yang sama. Header 64px menjadi acuan offset sticky; kontrol standar 40px desktop dan 44px HP. Badge status memakai pastel semantik dan label resmi dari data. Tema portal dipasang serta dilepas bersama layout sehingga popup tetap selaras tanpa mengubah tema website publik. Rincian implementasi, batas variasi dan hasil pemeriksaan ada pada [konsistensi UI workspace](../design-docs/workspace-ui-consistency.md).

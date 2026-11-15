@@ -40,8 +40,8 @@
 .emptyIllustration {
   position: relative;
   z-index: 1;
-  width: 120px;
-  height: 120px;
+  width: var(--workspace-empty-image-size);
+  height: var(--workspace-empty-image-size);
   object-fit: contain;
   pointer-events: none;
   filter: drop-shadow(
@@ -70,7 +70,7 @@
 }
 .emptyCopy h3 {
   color: var(--overview-ink);
-  font-size: 1rem;
+  font-size: var(--workspace-empty-title-size);
   font-weight: 750;
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -117,8 +117,8 @@
     padding: 2rem 1rem;
   }
   .emptyIllustration {
-    width: 104px;
-    height: 104px;
+    width: var(--workspace-empty-image-size);
+    height: var(--workspace-empty-image-size);
   }
 }
 .mascotFrame {
