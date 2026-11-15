@@ -298,6 +298,31 @@ job deployment, bukan environment aplikasi.
 
 ### Persyaratan runtime
 
+### Pemulihan credential AI staging
+
+Input manual `inspect_staging_ai=true` bersama `diagnose_staging=true` memeriksa
+metadata konfigurasi dan schema penyimpanan upstream tanpa mencetak secret.
+Password `INITIAL_PASSWORD` adalah password dashboard 9Router, bukan bearer API.
+`NINE_ROUTER_API_KEY` harus berisi API key upstream yang aktif.
+
+Input manual `repair_staging_ai=true` menjalankan operasi pemeliharaan eksplisit
+melalui `docker/repair-staging-ai.sh`. Operasi ini hanya menargetkan container dan
+direktori compose staging, memakai key aktif yang sudah tersedia di SQLite
+upstream staging, memvalidasinya melalui GET model, mengganti satu setting pada
+`.env` secara atomik, lalu membuat ulang service web tersebut. Tidak ada key baru,
+request completion, perubahan ledger, atau perubahan konfigurasi produksi.
+Kegagalan rekreasi/health mengembalikan `.env` semula. Credential tidak dicetak
+dan tidak dikirim ke GitHub. Uji guard/rollback dengan
+`python3 -B docker/staging-relay-auth-test.py`.
+
+Konfigurasi hasil pemulihan bertahan pada deployment image biasa. Pengelola vault
+infrastruktur harus menyimpan API key staging yang sama dalam secret API khusus;
+template `NINE_ROUTER_API_KEY` tidak boleh mengambil nilai dari password awal
+dashboard. Reprovision melalui template lama dapat mengembalikan konfigurasi
+yang keliru. Jangan menyalin credential staging ke produksi atau sebaliknya.
+
+### Kompatibilitas schema
+
 - Enum database `Role` mempertahankan nilai `OWNER`, `DESIGNER`, dan `ACCOUNTANT`
   untuk kompatibilitas data yang sudah tersimpan. Nilai tersebut tidak memberi
   izin staf/admin baru; akses tetap mengikuti `STAFF_ROLES` dan matriks izin.

@@ -21,6 +21,10 @@ on:
         description: "Inspect staging AI configuration metadata without revealing secrets"
         type: boolean
         default: false
+      repair_staging_ai:
+        description: "Repair staging bearer using an existing upstream API key (no new key, no AI charge)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -33,7 +37,7 @@ env:
 jobs:
   diagnose-staging:
     name: Inspect Staging Startup
-    if: github.event_name == 'workflow_dispatch' && inputs.diagnose_staging
+    if: github.event_name == 'workflow_dispatch' && inputs.diagnose_staging && !inputs.repair_staging_ai
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -46,9 +50,24 @@ jobs:
           key: ${{ secrets.VPS_KEY }}
           script_path: ${{ inputs.inspect_staging_ai && 'docker/inspect-staging-ai.sh' || 'docker/inspect-staging.sh' }}
 
+  repair-staging-ai:
+    name: Repair Staging Upstream Authentication
+    if: github.event_name == 'workflow_dispatch' && inputs.repair_staging_ai
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          key: ${{ secrets.VPS_KEY }}
+          command_timeout: 5m
+          script_path: docker/repair-staging-ai.sh
+
   validate:
     name: Validate Code & Types
-    if: github.event_name != 'workflow_dispatch' || !inputs.diagnose_staging
+    if: github.event_name != 'workflow_dispatch' || (!inputs.diagnose_staging && !inputs.repair_staging_ai)
     runs-on: ubuntu-latest
 
     steps:
@@ -63,6 +82,9 @@ jobs:
 
       - name: Lint check
         run: bun run lint
+
+      - name: Test staging credential repair safeguards
+        run: python3 -B docker/staging-relay-auth-test.py
 
       - name: Generate Next.js types
         run: bunx next typegen
