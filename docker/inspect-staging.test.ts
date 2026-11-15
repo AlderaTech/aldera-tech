@@ -3,6 +3,22 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 describe("Read-only staging startup diagnostics", () => {
+  it("rejects a reachable login when a critical dependency is unhealthy", () => {
+    const script = fileURLToPath(
+      new URL("./inspect-staging.sh", import.meta.url)
+    );
+    const fixture = `docker() {
+      case "$*" in *API_ROUTES.health*) return 1;; esac
+      case "$1" in inspect) echo running;; exec) echo 200;; logs) return 0;; esac
+    }
+    sleep() { return 0; }
+    export VERIFY_STAGING_READY=true
+    . "$1"`;
+    const result = Bun.spawnSync(["sh", "-c", fixture, "fixture", script]);
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout.toString()).toContain("Critical dependencies failed");
+  });
+
   it("reports restart failures and redacts credentials without inspecting environment", () => {
     const script = fileURLToPath(
       new URL("./inspect-staging.sh", import.meta.url)

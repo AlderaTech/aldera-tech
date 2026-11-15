@@ -1,5 +1,7 @@
 import pathlib
 import json
+import io
+from contextlib import redirect_stdout
 import tempfile
 import unittest
 from unittest.mock import Mock, patch
@@ -31,8 +33,10 @@ class StagingRelayAuthTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             target, docker = self.fixture(root)
             recreate = Mock()
-            with patch.dict(MODULE, {"docker": docker, "recreate": recreate}):
+            output = io.StringIO()
+            with redirect_stdout(output), patch.dict(MODULE, {"docker": docker, "recreate": recreate}):
                 MODULE["main"]()
+            self.assertNotIn("fixture-existing-key", output.getvalue())
             self.assertEqual(target.read_text(), "NINE_ROUTER_API_KEY=fixture-existing-key-123456\nOTHER=unchanged\n")
             recreate.assert_called_once_with(target.parent.resolve(), "app")
 

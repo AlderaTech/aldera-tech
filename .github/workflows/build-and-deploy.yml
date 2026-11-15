@@ -239,6 +239,17 @@ jobs:
             NEXT_PUBLIC_APP_URL=${{ github.ref == 'refs/heads/staging' && (vars.NEXT_PUBLIC_APP_URL_STAGING || 'https://staging.aldera.tech') || (vars.NEXT_PUBLIC_APP_URL || 'https://aldera.tech') }}
             NEXTAUTH_URL=${{ github.ref == 'refs/heads/staging' && (vars.NEXTAUTH_URL_STAGING || 'https://staging.aldera.tech') || (vars.NEXTAUTH_URL || vars.NEXT_PUBLIC_APP_URL || 'https://aldera.tech') }}
 
+      - name: Reconcile staging upstream authentication
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/staging'
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          key: ${{ secrets.VPS_KEY }}
+          command_timeout: 5m
+          script_path: docker/repair-staging-ai.sh
+
       - name: Deploy to VPS (Staging)
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/staging'
         uses: appleboy/ssh-action@v1

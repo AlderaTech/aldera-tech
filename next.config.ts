@@ -1,8 +1,21 @@
 import { API_ROUTES } from "./lib/routes";
 import type { NextConfig } from "next";
+import { isProductionSite } from "./lib/deployment-environment";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  async headers() {
+    return isProductionSite()
+      ? []
+      : [
+          {
+            source: "/:path*",
+            headers: [
+              { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+            ],
+          },
+        ];
+  },
   images: {
     // Allow serving images from public/uploads served by Next's built-in static handling.
     // Remote patterns are empty, all images served are local for now.

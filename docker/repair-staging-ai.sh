@@ -64,8 +64,10 @@ def main():
     program = r'''
 const fs = require("fs"), path = require("path"), {DatabaseSync} = require("node:sqlite");
 (async () => {
+  const preferred = __PREFERRED_KEY__;
   const db = new DatabaseSync(path.join(process.env.DATA_DIR || "/app/data", "db/data.sqlite"), {readOnly:true});
   const keys = db.prepare('SELECT "key", "isActive" FROM "apiKeys"').all(); db.close();
+  keys.sort((a,b)=>Number(b.key===preferred)-Number(a.key===preferred));
   for (const row of keys) {
     if (![true,1,"true","1"].includes(row.isActive) || typeof row.key !== "string") continue;
     const response = await fetch("http://127.0.0.1:20128/v1/models", {headers:{Authorization:`Bearer ${row.key}`},signal:AbortSignal.timeout(4000)});
@@ -76,6 +78,7 @@ const fs = require("fs"), path = require("path"), {DatabaseSync} = require("node
   process.exitCode=1;
 })().catch(()=>{process.exitCode=1;});
 '''
+    program = program.replace("__PREFERRED_KEY__", json.dumps(environment.get("NINE_ROUTER_API_KEY", "")))
     key = docker("exec", "-i", UPSTREAM, "node", input=program.encode())
     path = directory / ".env"
     original = path.read_text()

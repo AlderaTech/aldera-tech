@@ -31,8 +31,8 @@
 
 ## Hasil pemeriksaan lokal
 
-- Workspace: **898 pengujian lulus, 0 gagal** pada 210 berkas test, menggunakan PostgreSQL aplikasi/router terisolasi dan layanan eksternal mock.
-- Pengujian fokus startup/schema/permissions: **27 lulus, 0 gagal** pada empat berkas. Hasil pemeriksaan staging dan temuan yang belum diperbaiki tercantum pada [pemeriksaan staging](staging-verification.md).
+- Workspace: **920 pengujian lulus, 0 gagal** pada 219 berkas test, menggunakan PostgreSQL aplikasi/router terisolasi dan layanan eksternal mock.
+- Pengujian fokus startup/schema/permissions: **28 lulus, 0 gagal** pada empat berkas. Lima test Python guard/rollback credential staging juga lulus. Kontrak perbaikan dan hasil runtime tercantum pada [pemeriksaan staging](staging-verification.md).
 - Typecheck dan Next.js typegen lulus. Lint: 0 error dan 0 warning.
 - Formatter berkas task dan pemeriksaan diff lulus. Sintaks entrypoint Docker lulus. Scanner konfigurasi/infrastruktur: 0 drift dan 0 kebocoran secret.
 - Probe Node native: HTML yang menyamar sebagai PNG ditolak HTTP 415, tanpa penulisan berkas. Probe Chrome offline: payload SVG/JSON-LD tidak dieksekusi.

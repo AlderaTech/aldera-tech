@@ -2,6 +2,32 @@ import { describe, it, expect } from "bun:test";
 import { toCsv, csvResponse } from "./csv";
 
 describe("lib/csv.ts unit test suite", () => {
+  it("neutralizes spreadsheet formulas in text, including whitespace and full-width prefixes", () => {
+    for (const value of [
+      "=1+1",
+      "+SUM(1,2)",
+      "-1+1",
+      "@SUM(A1)",
+      "\t=1+1",
+      " \r\n=1+1",
+      "＝1+1",
+      "＋1",
+      "－1",
+      "＠SUM(A1)",
+    ]) {
+      const csv = toCsv([{ text: value }]);
+      expect(
+        csv.split("\n").slice(1).join("\n").replace(/^"/, "").startsWith("'")
+      ).toBe(true);
+    }
+  });
+
+  it("keeps real numbers and strict financial decimal strings unchanged", () => {
+    expect(toCsv([{ amount: -1250.5, text: "-1250.50" }])).toBe(
+      "amount,text\n-1250.5,-1250.50"
+    );
+  });
+
   it("returns empty string when rows are empty and no fields provided", () => {
     expect(toCsv([])).toBe("");
   });
