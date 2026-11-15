@@ -16,6 +16,10 @@ enum Role {
   ADMIN
   DEVELOPER
   CLIENT
+  // Retained for compatibility with existing databases; no extra permissions.
+  OWNER
+  DESIGNER
+  ACCOUNTANT
 }
 
 enum ProjectStatus {

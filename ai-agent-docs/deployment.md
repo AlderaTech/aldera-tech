@@ -278,6 +278,35 @@ Aldera Tech menerapkan isolasi lingkungan multi-stack pada server VPS produksi t
 
 ## Prasyarat integritas backend
 
+### Diagnostik staging tanpa deployment
+
+Workflow **Build and Deploy** menyediakan input manual `diagnose_staging=true`.
+Mode ini hanya membaca status container staging dan pesan startup yang telah
+difilter serta disamarkan melalui `docker/inspect-staging.sh`. Mode diagnostik
+tidak membangun image, menjalankan deployment, membaca environment container,
+atau mengubah database. Gunakan log job **Inspect Staging Startup** untuk
+membedakan kegagalan proses startup dari kegagalan layanan upstream.
+
+Setelah deployment staging, skrip yang sama dijalankan dengan
+`VERIFY_STAGING_READY=true` pada job CI. Pemeriksaan mensyaratkan container
+`running` dan tiga respons HTTP 200 berturut-turut dari halaman Login. Jika
+aplikasi tetap restart atau halaman tidak dapat dilayani, workflow gagal meskipun
+`update.sh` mengembalikan exit code 0. Pemeriksaan ini terpisah dari `/api/health`,
+yang tetap melaporkan kegagalan upstream secara jujur; HTTP 200 pada Login tidak
+berarti seluruh integrasi sehat. Input diagnostik dan flag verifikasi hanya untuk
+job deployment, bukan environment aplikasi.
+
+### Persyaratan runtime
+
+- Enum database `Role` mempertahankan nilai `OWNER`, `DESIGNER`, dan `ACCOUNTANT`
+  untuk kompatibilitas data yang sudah tersimpan. Nilai tersebut tidak memberi
+  izin staf/admin baru; akses tetap mengikuti `STAFF_ROLES` dan matriks izin.
+  Migrasi `20261116010000_preserve_legacy_role_values` bersifat aditif dan dapat
+  diterapkan ulang. Sinkronisasi startup tidak menggunakan `--accept-data-loss`
+  maupun reset database.
+- Image runner menggunakan `node_modules` dari stage builder setelah Prisma
+  client dibuat. Build memverifikasi konstruksi client tanpa koneksi database.
+
 - Sinkronkan kolom nullable `User.invitedAt` sebelum menjalankan aplikasi. Migrasi aditif tersedia pada `prisma/migrations/20261115000000_admin_invitation_marker/migration.sql`; deployment dengan `AUTO_MIGRATE=true` memakai schema Prisma yang sama. Tidak ada perubahan atau backfill identitas akun lama secara otomatis.
 - Entrypoint menghentikan startup jika sinkronisasi skema yang diaktifkan gagal; aplikasi tidak dijalankan dengan skema yang tidak kompatibel.
 - Produksi memerlukan `TURNSTILE_SECRET_KEY` untuk verifikasi captcha dan `WHATSAPP_API_KEY` valid untuk OTP/notifikasi. Konfigurasi kosong menghasilkan kegagalan, bukan keberhasilan simulasi. Jangan menggunakan test key dalam produksi.

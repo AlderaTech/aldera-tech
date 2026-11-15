@@ -123,6 +123,12 @@ roles:
 
 ### 1.1 Arsitektur Multi-Role per User
 
+Enum penyimpanan mempertahankan `OWNER`, `DESIGNER`, dan `ACCOUNTANT` agar data
+database yang sudah ada tidak dihapus saat sinkronisasi skema. Ketiganya adalah
+nilai kompatibilitas, bukan peran staf aktif: tidak memberi izin tambahan dan
+tidak ditambahkan ke pilihan peran pada UI. Akun dengan kombinasi peran tetap
+memperoleh izin dari peran aktifnya (`ADMIN`/`DEVELOPER`/`CLIENT`).
+
 Sistem mengadopsi model **Multi-Role**: setiap akun pengguna (`User`) dapat memiliki **satu atau lebih role** secara simultan (`roles: Role[]`), misalnya kombinasi `["ADMIN", "DEVELOPER"]`.
 
 - **Evaluasi Hak Akses (Union Permissions)**: Pengguna memiliki seluruh izin (_permissions_) yang merupakan gabungan (_union_) dari seluruh peran yang diembannya (`getEffectivePermissions(roles)`).

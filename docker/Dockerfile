@@ -48,7 +48,8 @@ RUN apk add --no-cache curl su-exec busybox nodejs
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
 
-COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
+# Include the Prisma client generated from the deployed schema in the builder.
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
@@ -57,6 +58,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
 COPY --from=builder --chown=nextjs:nodejs /app/lib ./lib
 COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+# Fail the image build if the generated client or its runtime dependencies are missing.
+# Constructing the client is lazy and does not connect to a database.
+RUN node -e 'const { PrismaClient } = require("@prisma/client"); const { PrismaPg } = require("@prisma/adapter-pg"); new PrismaClient({ adapter: new PrismaPg({ connectionString: "" }) });'
 
 # Copy container entrypoint & crontab
 COPY docker/entrypoint.sh /app/docker-entrypoint.sh
