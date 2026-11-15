@@ -32,7 +32,7 @@ describe("Read-only staging startup diagnostics", () => {
       "utf8"
     );
     expect(workflow).toContain("diagnose_staging:");
-    expect(workflow).toContain("script_path: docker/inspect-staging.sh");
+    expect(workflow).toContain("'docker/inspect-staging.sh'");
     expect(workflow).toContain("!inputs.diagnose_staging");
   });
 

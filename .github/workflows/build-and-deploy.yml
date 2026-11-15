@@ -17,6 +17,10 @@ on:
         description: "Read-only staging container diagnostics (no build or deploy)"
         type: boolean
         default: false
+      inspect_staging_ai:
+        description: "Inspect staging AI configuration metadata without revealing secrets"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -40,7 +44,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           port: ${{ secrets.VPS_SSH_PORT }}
           key: ${{ secrets.VPS_KEY }}
-          script_path: docker/inspect-staging.sh
+          script_path: ${{ inputs.inspect_staging_ai && 'docker/inspect-staging-ai.sh' || 'docker/inspect-staging.sh' }}
 
   validate:
     name: Validate Code & Types
