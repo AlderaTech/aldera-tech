@@ -30,10 +30,10 @@
 
 ## Hasil pemeriksaan lokal
 
-- Workspace: **888 pengujian lulus, 0 gagal** pada 207 berkas test, menggunakan PostgreSQL aplikasi/router terisolasi dan layanan eksternal mock.
-- Snapshot perubahan backend tanpa 59 perubahan UI sebelumnya: **874 pengujian lulus, 0 gagal**, pada 201 berkas test.
+- Workspace: **889 pengujian lulus, 0 gagal** pada 208 berkas test, menggunakan PostgreSQL aplikasi/router terisolasi dan layanan eksternal mock.
+- Snapshot perubahan backend tanpa 59 perubahan UI sebelumnya: **875 pengujian lulus, 0 gagal**, pada 202 berkas test.
 - Typecheck dan Next.js typegen lulus. Lint: 0 error; satu warning impor tidak terpakai yang sudah ada pada `lib/cron-lock.test.ts`.
-- Formatter berkas task dan pemeriksaan diff lulus. Sintaks entrypoint Docker lulus.
+- Formatter berkas task dan pemeriksaan diff lulus. Sintaks entrypoint Docker lulus. Scanner konfigurasi/infrastruktur: 0 drift dan 0 kebocoran secret.
 - Probe Node native: HTML yang menyamar sebagai PNG ditolak HTTP 415, tanpa penulisan berkas. Probe Chrome offline: payload SVG/JSON-LD tidak dieksekusi.
 - Rute login/register tersedia HTTP 200; file tidak dikenal HTTP 404; cron tanpa secret HTTP 401; dashboard tanpa sesi mengarah ke Login.
 - Schema tambahan diterapkan pada database development loopback secara aditif. Tidak ada perubahan data akun atau transaksi. 59 perubahan UI yang sudah ada tetap terjaga.
@@ -47,7 +47,6 @@ Manifest berkas di bawah mencakup perubahan backend dan pengujian pendukung; per
 | Status | Berkas                                                                               |
 | ------ | ------------------------------------------------------------------------------------ |
 | Diubah | `.dockerignore`                                                                      |
-| Diubah | `.env.example`                                                                       |
 | Diubah | `.gitignore`                                                                         |
 | Diubah | `ai-agent-docs/backend-integrity.md`                                                 |
 | Dibuat | `ai-agent-docs/backend-security-verification.md`                                     |
@@ -149,6 +148,8 @@ Manifest berkas di bawah mencakup perubahan backend dan pengujian pendukung; per
 | Diubah | `lib/telegram.ts`                                                                    |
 | Dibuat | `lib/upload-content.test.ts`                                                         |
 | Dibuat | `lib/upload-content.ts`                                                              |
+| Dibuat | `lib/upload-storage.test.ts`                                                         |
+| Dibuat | `lib/upload-storage.ts`                                                              |
 | Dibuat | `lib/validations/bot-settings.ts`                                                    |
 | Diubah | `lib/validations/invoice.ts`                                                         |
 | Dibuat | `lib/validations/order-request.ts`                                                   |

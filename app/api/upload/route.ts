@@ -6,6 +6,7 @@ import { validateUploadContent } from "@/lib/upload-content";
 import { API_ROUTES } from "@/lib/routes";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getUploadRoot } from "@/lib/upload-storage";
 import { authorizeUpload } from "@/lib/upload-authorization";
 import { notify } from "@/lib/notifications";
 
@@ -122,11 +123,7 @@ export async function POST(req: NextRequest) {
     .slice(0, 60);
   const filename = `${randomUUID()}-${safeBase}${savedExt}`;
   const relativePath = `${year}/${month}/${filename}`;
-  const root =
-    scope === "PUBLIC_MEDIA"
-      ? join(process.cwd(), "public", "uploads")
-      : process.env.PRIVATE_UPLOAD_DIR ||
-        join(process.cwd(), "storage", "private-uploads");
+  const root = getUploadRoot(scope);
   const dir = join(root, year, month);
   const fullPath = join(dir, filename);
 

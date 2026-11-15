@@ -19,7 +19,6 @@ services:
       - AUTO_MIGRATE=true
       - WHATSAPP_API_URL=${WHATSAPP_API_URL:-https://api.fonnte.com/send}
       - WHATSAPP_API_KEY=${WHATSAPP_API_KEY}
-      - PRIVATE_UPLOAD_DIR=/app/storage/private-uploads
       - SHARP_IGNORE_GLOBAL_LIBVIPS=1
       - MIDTRANS_SERVER_KEY=${MIDTRANS_SERVER_KEY}
       - MIDTRANS_CLIENT_KEY=${MIDTRANS_CLIENT_KEY}

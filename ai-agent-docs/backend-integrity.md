@@ -28,7 +28,7 @@ Endpoint tetap `API_ROUTES.upload`; kirim `file` bersama tepat satu konteks:
 - Unggahan tanpa konteks hanya tersedia bagi staf untuk alur konten yang sudah ada.
 - Bukti pembayaran menerima PNG, JPEG, WebP, atau PDF; batas berkas tetap 10 MB.
 - Metadata berkas wajib berhasil disimpan. Kegagalan database menghasilkan HTTP 500, tanpa URL sukses, dan menghapus berkas yang baru ditulis. Kegagalan otorisasi karena layanan database tidak tersedia menghasilkan HTTP 503.
-- Media konten staf menggunakan scope `PUBLIC_MEDIA`. Berkas proyek dan bukti pembayaran disimpan di `PRIVATE_UPLOAD_DIR`, di luar `public/`, dengan URL `API_ROUTES.fileDownload(id)` yang memeriksa sesi dan kepemilikan. URL lama `/uploads/` melewati rewrite sebelum static-file serving; media lama hanya publik bila dirujuk konten publik. Bukti transfer memakai `private, no-store` dan `nosniff`.
+- Media konten staf menggunakan scope `PUBLIC_MEDIA`. Berkas proyek dan bukti pembayaran disimpan di `storage/private-uploads`, di luar `public/`, dengan URL `API_ROUTES.fileDownload(id)` yang memeriksa sesi dan kepemilikan. URL lama `/uploads/` melewati rewrite sebelum static-file serving; media lama hanya publik bila dirujuk konten publik. Bukti transfer memakai `private, no-store` dan `nosniff`.
 - Semua gambar didekode dan dikodekan ulang, termasuk berkas kecil; ekstensi ditentukan server. PDF/Office/ZIP memerlukan signature berkas yang sesuai. HTML bertipe MIME gambar ditolak.
 
 ## OTP dan integrasi produksi

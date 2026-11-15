@@ -6,6 +6,7 @@ import { randomBytes } from "node:crypto";
 import type { Role } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getUploadRoot } from "@/lib/upload-storage";
 import { unlink } from "node:fs/promises";
 import { resolve, relative, isAbsolute } from "node:path";
 import { ADMIN_ROUTES } from "@/lib/routes";
@@ -132,11 +133,7 @@ export async function deleteFileAction(fileId: string) {
   });
   if (!file) return;
   try {
-    const root = resolve(
-      file.scope === "PUBLIC_MEDIA" || file.scope === "PRIVATE_LEGACY"
-        ? "public/uploads"
-        : process.env.PRIVATE_UPLOAD_DIR || "storage/private-uploads"
-    );
+    const root = getUploadRoot(file.scope);
     const path = resolve(root, file.path);
     const child = relative(root, path);
     if (!child || child.startsWith("..") || isAbsolute(child))

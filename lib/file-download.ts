@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { isAdmin, isStaff } from "@/lib/permissions";
 import { queryRouter } from "@/lib/router-db";
+import { getUploadRoot } from "@/lib/upload-storage";
 import { isPublicUploadReference } from "@/lib/public-upload-classification";
 
 export async function canReadFile(
@@ -57,11 +58,7 @@ export async function downloadFile(where: { id: string } | { path: string }) {
     const session = file.scope === "PUBLIC_MEDIA" ? null : await auth();
     if (!(await canReadFile(file, session?.user ?? null)))
       return new Response("Forbidden", { status: 403 });
-    const root = resolve(
-      file.scope === "PUBLIC_MEDIA" || file.scope === "PRIVATE_LEGACY"
-        ? "public/uploads"
-        : process.env.PRIVATE_UPLOAD_DIR || "storage/private-uploads"
-    );
+    const root = getUploadRoot(file.scope);
     const path = resolve(root, file.path);
     const actualRoot = await realpath(root);
     const actualPath = await realpath(path);
