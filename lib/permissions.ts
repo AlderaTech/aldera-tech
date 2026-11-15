@@ -1,9 +1,9 @@
 import type { Role } from "@prisma/client";
 
 /**
- * Roles that have access to /admin (non-client roles).
- * CLIENT is the only public-facing role; everyone else has admin access
- * with varying permission levels (see ROLE_PERMISSIONS).
+ * Explicit roles that have access to /admin.
+ * Legacy database enum values are retained for storage compatibility only;
+ * they do not grant access unless an active staff role is also assigned.
  */
 export const STAFF_ROLES = [
   "ADMIN",
@@ -167,6 +167,9 @@ export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
     PERMISSIONS.TEAM_VIEW,
   ],
   CLIENT: [],
+  OWNER: [],
+  DESIGNER: [],
+  ACCOUNTANT: [],
 };
 
 export function hasPermission(
@@ -213,6 +216,9 @@ export const ROLE_LABELS: Record<Role, string> = {
   ADMIN: "Admin",
   DEVELOPER: "Developer",
   CLIENT: "Client",
+  OWNER: "Owner (legacy)",
+  DESIGNER: "Designer (legacy)",
+  ACCOUNTANT: "Accountant (legacy)",
 };
 
 export type SessionUser = {

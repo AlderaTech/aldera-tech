@@ -226,6 +226,20 @@ jobs:
             cd /opt/docker-stack/applications/aldera-tech-staging
             ./update.sh
 
+      - name: Verify staging application startup
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/staging'
+        uses: appleboy/ssh-action@v1
+        env:
+          VERIFY_STAGING_READY: "true"
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          key: ${{ secrets.VPS_KEY }}
+          envs: VERIFY_STAGING_READY
+          command_timeout: 3m
+          script_path: docker/inspect-staging.sh
+
       - name: Deploy to VPS (Production)
         if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
         uses: appleboy/ssh-action@v1

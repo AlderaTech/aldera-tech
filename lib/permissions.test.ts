@@ -17,6 +17,19 @@ import {
 
 describe("Permissions Matrix & Role Guard Verification", () => {
   describe("Role checks", () => {
+    it("retains legacy role storage without granting staff or admin permissions", () => {
+      for (const role of ["OWNER", "DESIGNER", "ACCOUNTANT"] as const) {
+        expect(isStaff(role)).toBe(false);
+        expect(isAdmin(role)).toBe(false);
+        expect(canAccessAiRelayAdmin(role)).toBe(false);
+        expect(getEffectivePermissions(role)).toEqual([]);
+        expect(hasPermission(role, PERMISSIONS.USER_MANAGE)).toBe(false);
+        expect(hasPermission([role, "ADMIN"], PERMISSIONS.USER_MANAGE)).toBe(
+          true
+        );
+      }
+    });
+
     it("identifies ADMIN as staff and admin", () => {
       expect(isStaff("ADMIN")).toBe(true);
       expect(isAdmin("ADMIN")).toBe(true);

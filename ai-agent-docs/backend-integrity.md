@@ -47,6 +47,8 @@ Endpoint tetap `API_ROUTES.upload`; kirim `file` bersama tepat satu konteks:
 - `lib/actions/auth-actions.test.ts`, `lib/whatsapp.test.ts`, `lib/turnstile.test.ts`: provider gagal, respons sukses palsu, simulasi, konfigurasi produksi.
 - `lib/payment-proof-upload.test.ts` dan tes hook/komponen pendamping: konteks invoice/top-up serta navigasi pemulihan OTP.
 - `docker/entrypoint.test.ts`: startup dihentikan jika sinkronisasi schema gagal; skrip menggunakan line ending LF yang ditetapkan di `.gitattributes`.
+- `docker/schema-compatibility.test.ts`: mereproduksi enum peran lama pada schema PostgreSQL terisolasi, memastikan sinkronisasi tanpa flag destruktif berhasil, migrasi aditif dapat diulang, dan seluruh data pengguna tetap sama.
+- `docker/inspect-staging.test.ts`: diagnostik menyamarkan URL/kredensial; verifikasi deployment menolak container restart dan hanya menerima halaman Login yang benar-benar dapat dilayani.
 
 Tes integrasi memerlukan database aplikasi dan router yang terisolasi. Jangan menjalankannya terhadap database produksi atau memakai layanan pengiriman/pembayaran asli.
 
