@@ -4,8 +4,6 @@ set -eu
 # Only staging container metadata and data-schema names are emitted, never keys.
 python3 - <<'PY'
 import json
-import pathlib
-import sqlite3
 import subprocess
 
 def inspect(name):
@@ -25,29 +23,18 @@ result = {
     "webKeyMatchesDashboardPassword": bool(key and initial and key == initial),
     "upstreamImage": upstream["Config"]["Image"],
 }
-data_dir = upstream_env.get("DATA_DIR", "/app/data")
-for mount in upstream.get("Mounts", []):
-    if mount["Destination"] != data_dir:
-        continue
-    root = pathlib.Path(mount["Source"])
-    for relative in ["db.json", "db/data.sqlite"]:
-        path = root / relative
-        if not path.is_file():
-            continue
-        result["dataFormat"] = relative
-        if relative.endswith(".json"):
-            data = json.loads(path.read_text())
-            result["dataFields"] = list(data)
-            keys = data.get("apiKeys", [])
-            result["apiKeyCount"] = len(keys)
-            result["apiKeyFields"] = list(keys[0]) if keys else []
-        else:
-            database = sqlite3.connect(path.as_uri() + "?mode=ro", uri=True)
-            tables = [row[0] for row in database.execute("SELECT name FROM sqlite_master WHERE type='table'")]
-            result["tableNames"] = tables
-            if "api_keys" in tables:
-                result["apiKeyFields"] = [row[1] for row in database.execute("PRAGMA table_info(api_keys)")]
-                result["apiKeyCount"] = database.execute("SELECT count(*) FROM api_keys").fetchone()[0]
-            database.close()
 print(json.dumps(result))
+program = r'''
+const fs = require("fs"), path = require("path");
+const directory = process.env.DATA_DIR || "/app/data";
+const filename = path.join(directory, "db.json");
+if (fs.existsSync(filename)) {
+  const data = JSON.parse(fs.readFileSync(filename, "utf8"));
+  const keys = Array.isArray(data.apiKeys) ? data.apiKeys : [];
+  console.log(JSON.stringify({dataFormat:"db.json",dataFields:Object.keys(data),apiKeyCount:keys.length,apiKeyFields:keys[0] ? Object.keys(keys[0]) : []}));
+} else {
+  console.log(JSON.stringify({dataFormat:fs.existsSync(path.join(directory,"db/data.sqlite")) ? "sqlite" : "unknown"}));
+}
+'''
+subprocess.run(["docker", "exec", "-i", "aldera-router-staging-9router", "node"], input=program.encode(), check=True)
 PY
