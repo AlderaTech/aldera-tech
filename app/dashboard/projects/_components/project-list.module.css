@@ -47,7 +47,7 @@
 .eyebrow {
   margin: 0 0 0.45rem;
   color: var(--overview-muted);
-  font-size: 0.65rem;
+  font-size: var(--workspace-caption-size);
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -117,13 +117,13 @@
   border-radius: 0.5rem;
   background: var(--overview-paper);
   color: var(--overview-muted);
-  font-size: 0.67rem;
+  font-size: var(--workspace-caption-size);
   font-variant-numeric: tabular-nums;
 }
 .listBar p {
   margin: 0;
   color: var(--overview-muted);
-  font-size: 0.69rem;
+  font-size: var(--workspace-caption-size);
 }
 .grid {
   display: grid;
@@ -196,7 +196,7 @@
   border-radius: 999px;
   background: var(--status-fill);
   color: var(--status-ink);
-  font-size: 0.65rem;
+  font-size: var(--workspace-caption-size);
   font-weight: 700;
 }
 .card .status[data-status="IN_PROGRESS"] {
@@ -251,7 +251,7 @@
   gap: 0.75rem;
   margin-bottom: 0.55rem;
   color: var(--overview-muted);
-  font-size: 0.7rem;
+  font-size: var(--workspace-caption-size);
 }
 .progressLabel strong {
   color: var(--overview-ink);
@@ -275,7 +275,7 @@
   align-items: center;
   gap: 0.35rem;
   color: var(--overview-muted);
-  font-size: 0.67rem;
+  font-size: var(--workspace-caption-size);
 }
 .dates dt svg {
   width: 0.8rem;
@@ -283,7 +283,7 @@
 }
 .dates dd {
   margin: 0;
-  font-size: 0.68rem;
+  font-size: var(--workspace-caption-size);
   font-weight: 600;
   line-height: 1.6;
 }
@@ -296,7 +296,7 @@
   padding-top: 1rem;
   border-top: 1px solid var(--overview-line);
   color: var(--overview-blue);
-  font-size: 0.73rem;
+  font-size: var(--workspace-caption-size);
   font-weight: 700;
 }
 .cardFooter svg {
@@ -352,7 +352,7 @@
 }
 .stateContent h2 {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: var(--workspace-empty-title-size);
   font-weight: 800;
   line-height: 1.4;
   letter-spacing: -0.035em;
@@ -368,9 +368,9 @@
   margin-top: 1.2rem;
 }
 .mascot {
-  width: 8.75rem;
+  width: var(--workspace-empty-image-size);
   max-width: 100%;
-  height: 8.75rem;
+  height: var(--workspace-empty-image-size);
   flex-shrink: 0;
   object-fit: contain;
   filter: drop-shadow(0 8px 8px rgb(16 38 81 / 12%));
@@ -435,8 +435,8 @@
     margin-inline: auto;
   }
   .mascot {
-    width: 7rem;
-    height: 7rem;
+    width: var(--workspace-empty-image-size);
+    height: var(--workspace-empty-image-size);
   }
   .errorIcon {
     margin-inline: auto;

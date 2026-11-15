@@ -3,6 +3,14 @@ import { cn } from "@/lib/utils";
 import styles from "./admin-common.module.css";
 
 export const ADMIN_MASCOT_POSES = {
+  invoice: {
+    src: "/images/dashboard/banners/aldera-cat-invoice.webp",
+    aspect: "portrait",
+  },
+  calculator: {
+    src: "/images/dashboard/banners/aldera-cat-calculator.webp",
+    aspect: "portrait",
+  },
   guide: {
     src: "/images/dashboard/profile/aldera-profile-guide.webp",
     aspect: "portrait",

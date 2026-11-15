@@ -91,7 +91,7 @@ export default async function AdminInvoicesPage({
         data-admin-page-header
         className="flex flex-wrap items-center justify-between gap-4"
         category="billing"
-        mascot={<AdminMascot pose="services" size="header" />}
+        mascot={<AdminMascot pose="invoice" size="header" />}
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Invoice</h1>

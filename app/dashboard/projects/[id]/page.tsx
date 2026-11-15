@@ -3,11 +3,12 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { MessagesTab } from "@/components/dashboard/messages-tab";
 import { ProjectTaskBoard } from "@/components/dashboard/project-task-board";
+
+import { TabsContent } from "@/components/ui/tabs";
 import {
-  dashboardTabsListClass,
-  dashboardTabsTriggerClass,
-} from "@/components/dashboard/dashboard-tabs";
-import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  WorkspaceTabsList as TabsList,
+  WorkspaceTabsTrigger as TabsTrigger,
+} from "@/components/dashboard/workspace-segmented-tabs";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { DASHBOARD_ROUTES } from "@/lib/routes";
@@ -95,24 +96,20 @@ export default async function UserProjectDetail({
       )}
 
       <ProjectTabs initialTab={resolvedParams?.tab}>
-        <TabsList className={dashboardTabsListClass}>
-          <TabsTrigger value="timeline" className={dashboardTabsTriggerClass}>
-            Timeline
+        <TabsList density="compact" aria-label="Bagian proyek">
+          <TabsTrigger value="timeline">Linimasa</TabsTrigger>
+          <TabsTrigger value="tasks">
+            Tugas ({project.tasks.length})
           </TabsTrigger>
-          <TabsTrigger value="tasks" className={dashboardTabsTriggerClass}>
-            Tasks ({project.tasks.length})
-          </TabsTrigger>
-          <TabsTrigger value="activity" className={dashboardTabsTriggerClass}>
-            Activity
-          </TabsTrigger>
-          <TabsTrigger value="messages" className={dashboardTabsTriggerClass}>
+          <TabsTrigger value="activity">Aktivitas</TabsTrigger>
+          <TabsTrigger value="messages">
             Diskusi ({project.messages.filter((m) => !m.deletedAt).length})
           </TabsTrigger>
-          <TabsTrigger value="files" className={dashboardTabsTriggerClass}>
-            Files ({project.files.length})
+          <TabsTrigger value="files">
+            Berkas ({project.files.length})
           </TabsTrigger>
-          <TabsTrigger value="invoices" className={dashboardTabsTriggerClass}>
-            Invoices ({project.invoices.length})
+          <TabsTrigger value="invoices">
+            Invoice ({project.invoices.length})
           </TabsTrigger>
         </TabsList>
 

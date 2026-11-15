@@ -28,7 +28,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import {
+  WorkspaceTabsList as TabsList,
+  WorkspaceTabsTrigger as TabsTrigger,
+} from "@/components/dashboard/workspace-segmented-tabs";
 import { useUrlState } from "@/lib/hooks/use-url-state";
 import {
   Card,
@@ -387,7 +391,7 @@ export function TelegramBotAdminClientView({
         onValueChange={(val) => setParam("tab", val)}
         className="space-y-6"
       >
-        <TabsList className="bg-slate-200/60 p-1">
+        <TabsList aria-label="Pengaturan Telegram dan pembayaran">
           <TabsTrigger
             value="bot-cms"
             className="flex items-center gap-2 text-sm"

@@ -70,7 +70,7 @@
   align-items: center;
   gap: 0.4rem;
   color: var(--overview-blue);
-  font-size: 0.625rem;
+  font-size: var(--workspace-caption-size);
   font-weight: 750;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -206,14 +206,14 @@
   justify-content: space-between;
   gap: 0.5rem;
   color: var(--overview-muted);
-  font-size: 0.68rem;
+  font-size: var(--workspace-caption-size);
 }
 .summaryTop > span:last-child {
   padding: 0.15rem 0.5rem;
   border: 1px solid var(--overview-line);
   border-radius: 999px;
   background: var(--overview-paper);
-  font-size: 0.625rem;
+  font-size: var(--workspace-caption-size);
   font-weight: 650;
 }
 .summaryIcon {
@@ -232,7 +232,7 @@
 .summaryCard h2 {
   margin-top: 0.5rem;
   color: var(--overview-ink);
-  font-size: 0.72rem;
+  font-size: var(--workspace-caption-size);
   font-weight: 650;
 }
 .summaryAmount {
@@ -248,7 +248,7 @@
 .summaryHint {
   margin-top: 0.2rem;
   color: var(--overview-muted);
-  font-size: 0.65rem;
+  font-size: var(--workspace-caption-size);
   line-height: 1.45;
 }
 .listPanel {
@@ -287,7 +287,7 @@
 }
 .stateEyebrow {
   color: var(--overview-muted);
-  font-size: 0.58rem;
+  font-size: var(--workspace-caption-size);
   font-weight: 700;
   letter-spacing: 0.11em;
   text-transform: uppercase;
@@ -310,12 +310,12 @@
   border-radius: 7px;
   background: var(--overview-sky);
   color: var(--overview-blue);
-  font-size: 0.64rem;
+  font-size: var(--workspace-caption-size);
 }
 .listHeader > p,
 .listFootnote {
   color: var(--overview-muted);
-  font-size: 0.67rem;
+  font-size: var(--workspace-caption-size);
   line-height: 1.5;
 }
 .statusFilter {
@@ -329,7 +329,7 @@
   align-items: center;
   gap: 0.35rem;
   color: var(--overview-muted);
-  font-size: 0.68rem;
+  font-size: var(--workspace-caption-size);
   font-weight: 650;
   white-space: nowrap;
 }
@@ -346,7 +346,7 @@
   border-radius: 999px;
   background: var(--overview-paper);
   color: var(--overview-ink);
-  font-size: 0.7rem;
+  font-size: var(--workspace-caption-size);
   box-shadow: 0 2px 5px color-mix(in srgb, var(--overview-ink) 3%, transparent);
 }
 .pagination {
@@ -385,7 +385,7 @@
 }
 .desktopTable thead th {
   color: var(--overview-muted);
-  font-size: 0.625rem;
+  font-size: var(--workspace-caption-size);
   font-weight: 750;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -424,13 +424,13 @@
   box-shadow: inset 3px 0 var(--color-rose-500);
 }
 .desktopTable tbody td {
-  font-size: 0.72rem;
+  font-size: var(--workspace-body-size);
   color: var(--overview-muted);
 }
 .invoiceNumber {
   display: block;
   color: var(--overview-ink);
-  font-size: 0.76rem;
+  font-size: var(--workspace-body-size);
   font-weight: 750;
   overflow-wrap: anywhere;
 }
@@ -438,7 +438,7 @@
   display: block;
   margin-top: 0.15rem;
   color: var(--overview-muted);
-  font-size: 0.67rem;
+  font-size: var(--workspace-caption-size);
   font-weight: 400;
   line-height: 1.45;
   overflow-wrap: anywhere;
@@ -447,7 +447,7 @@
   text-align: right;
 }
 .desktopTable tbody .amountColumn {
-  font-size: 0.78rem;
+  font-size: var(--workspace-body-size);
   font-weight: 750;
   color: var(--overview-ink);
   font-variant-numeric: tabular-nums;
@@ -463,7 +463,7 @@
   border: 1px solid var(--overview-line);
   border-radius: 999px;
   padding: 0.25rem 0.55rem;
-  font-size: 0.625rem;
+  font-size: var(--workspace-caption-size);
   line-height: 1.35;
   font-weight: 600;
   white-space: normal;
@@ -510,11 +510,11 @@
 .paymentAction,
 .secondaryAction,
 .pdfAction {
-  min-height: 32px;
+  min-height: var(--workspace-control-height);
   height: auto;
   padding: 0.35rem 0.6rem;
   border-radius: 999px;
-  font-size: 0.68rem;
+  font-size: var(--workspace-caption-size);
   gap: 0.3rem;
 }
 .actions svg {
@@ -578,12 +578,12 @@
 }
 .mobileDetails dt {
   color: var(--overview-muted);
-  font-size: 0.6rem;
+  font-size: var(--workspace-caption-size);
 }
 .mobileDetails dd {
   margin-top: 0.2rem;
   color: var(--overview-ink);
-  font-size: 0.7rem;
+  font-size: var(--workspace-caption-size);
   font-weight: 600;
   overflow-wrap: anywhere;
 }
@@ -627,8 +627,8 @@
 }
 .emptyState .emptyMascot {
   flex-shrink: 0;
-  width: 112px;
-  height: 112px;
+  width: var(--workspace-empty-image-size);
+  height: var(--workspace-empty-image-size);
   object-fit: contain;
   filter: drop-shadow(
     0 10px 12px color-mix(in srgb, var(--overview-blue) 13%, transparent)
@@ -643,7 +643,7 @@
 .emptyState h3 {
   margin-top: 0.35rem;
   color: var(--overview-ink);
-  font-size: 0.98rem;
+  font-size: var(--workspace-empty-title-size);
   font-weight: 750;
 }
 .emptyCopy > p:not(.stateEyebrow),
@@ -665,7 +665,7 @@
   border-radius: 999px;
   background: var(--overview-paper);
   color: var(--overview-blue);
-  font-size: 0.72rem;
+  font-size: var(--workspace-caption-size);
   font-weight: 650;
 }
 .emptyState a:hover {
@@ -766,8 +766,8 @@
     padding: 1.4rem 1rem;
   }
   .emptyState .emptyMascot {
-    width: 96px;
-    height: 96px;
+    width: var(--workspace-empty-image-size);
+    height: var(--workspace-empty-image-size);
   }
   .mobileCards {
     padding: 0.65rem;

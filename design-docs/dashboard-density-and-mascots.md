@@ -1,5 +1,7 @@
 # Kepadatan dashboard dan pose maskot kontekstual
 
+Mode compact juga digunakan pada detail proyek kedua area. Tema portal, ukuran kontrol standar dan token empty state mengikuti [konsistensi UI workspace](workspace-ui-consistency.md). Pose Invoice/Kalkulator tersedia bagi banner Admin dan Pengguna.
+
 ## Profil Saya
 
 Header halaman Profil berupa badge berikon, judul Profil Saya dan deskripsi langsung di atas latar halaman. Header tidak mempunyai kartu, grid, bayangan atau maskot. Kartu identitas tetap menjadi satu-satunya panel atas bercorak dan bermaskot.
@@ -41,8 +43,8 @@ Header Kalkulator memakai Button dengan `asChild` dan Link ke `DASHBOARD_ROUTES.
 
 ## Verifikasi
 
-- UI gabungan Admin, dashboard, komponen dashboard dan katalog: **364 pass, 0 fail**, 133 berkas.
-- Suite lengkap Linux dengan database sementara bersih: **798 pass, 0 fail**, 173 berkas. Provider, pembayaran dan email tidak dikirim ke produksi.
+- UI gabungan Admin, dashboard, komponen dashboard dan katalog: **378 pass, 0 fail**, 139 berkas.
+- Suite lengkap Linux dengan database sementara bersih: **812 pass, 0 fail**, 179 berkas. Provider, pembayaran dan email tidak dikirim ke produksi.
 - Browser fixture memakai komponen asli pada desktop sekitar 1440px, tablet sekitar 824px dan HP 390/320px. Profil memiliki tepat satu gambar maskot. Invoice, Kalkulator dan Riwayat menampilkan pose berbeda di header sekaligus gambar empty state asli.
 - Pengukuran: kategori 30px, input 36px, toolbar desktop 58px. Trigger tab sekitar 36–46px mengikuti pembungkusan label; track desktop sekitar 54px. Tidak ada overflow halaman atau gambar gagal dimuat.
 - Pencarian ID menghasilkan satu model, kategori Budget satu model, dan query tidak cocok menampilkan empty state. Seluruh delapan tab memperbarui tab aktif dan URL. Interaksi memakai mock, bukan provider atau transaksi sungguhan.

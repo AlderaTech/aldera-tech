@@ -25,7 +25,7 @@ export default async function AdminSettingsPage() {
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Settings Website
+            Pengaturan Situs
           </h1>
           <p className="text-muted-foreground">
             Kelola informasi situs, kontak, media sosial, dan pengaturan

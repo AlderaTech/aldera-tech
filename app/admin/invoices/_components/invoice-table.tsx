@@ -151,10 +151,6 @@ export function InvoiceTable({
           ) : (
             invoices.map((inv) => {
               const m = invoiceStatusMeta[inv.status];
-              const overdue =
-                inv.status !== "PAID" &&
-                inv.status !== "CANCELLED" &&
-                inv.dueDate < new Date();
               return (
                 <TableRow
                   key={inv.id}
@@ -178,9 +174,7 @@ export function InvoiceTable({
                     {formatCurrency(Number(inv.total))}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={overdue ? "destructive" : m.variant}>
-                      {overdue ? "Overdue" : m.label}
-                    </Badge>
+                    <Badge variant={m.variant}>{m.label}</Badge>
                   </TableCell>
                   <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
                     {formatDate(inv.dueDate)}

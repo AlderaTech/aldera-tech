@@ -63,9 +63,9 @@ describe("Empty state Proyek Saya", () => {
     expect(image.props.src).toBe(emptyIllustration);
     expect(image.props.alt).toBe("");
     expect(image.props["aria-hidden"]).toBe("true");
-    expect(image.props.width).toBe(140);
-    expect(image.props.height).toBe(140);
-    expect(image.props.sizes).toBe("(min-width: 640px) 140px, 112px");
+    expect(image.props.width).toBe(120);
+    expect(image.props.height).toBe(120);
+    expect(image.props.sizes).toBe("(min-width: 640px) 120px, 104px");
 
     const html = renderToStaticMarkup(
       <>

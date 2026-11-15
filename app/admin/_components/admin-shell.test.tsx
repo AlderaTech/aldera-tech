@@ -18,9 +18,10 @@ describe("Scope admin", () => {
       new URL("./admin-shell.tsx", import.meta.url),
       "utf8"
     );
-    expect(source).toContain('body.getAttribute("data-admin-studio")');
-    expect(source).toContain('body.removeAttribute("data-admin-studio")');
-    expect(source).toContain("body.classList.remove(...addedClasses)");
+    expect(source).toContain(
+      'useWorkspacePortalTheme(portalClasses, "data-admin-studio")'
+    );
+    expect(source).toContain("controls.scope");
     const theme = readFileSync(
       new URL("./admin-surfaces.module.css", import.meta.url),
       "utf8"

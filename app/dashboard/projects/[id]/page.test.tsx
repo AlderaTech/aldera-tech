@@ -131,8 +131,8 @@ describe("Dashboard Project Detail - Tab Deep-Linking & URL Param State", () => 
       expect(html).toContain("Ruang Kolaborasi Proyek");
       expect(html).toContain("Timeline &amp; Milestone Proyek");
       expect(html).toContain("Timeline");
-      expect(html).toContain("Tasks (1)");
-      expect(html).toContain("Invoices (0)");
+      expect(html).toContain("Tugas (1)");
+      expect(html).toContain("Invoice (0)");
     });
 
     it("renders page and forwards resolved tab parameter when searchParams is provided", async () => {
@@ -144,7 +144,7 @@ describe("Dashboard Project Detail - Tab Deep-Linking & URL Param State", () => 
 
       const html = renderToStaticMarkup(pageJsx);
       expect(html).toContain("Aplikasi Mobile E-Commerce");
-      expect(html).toContain("Tasks (1)");
+      expect(html).toContain("Tugas (1)");
     });
   });
 

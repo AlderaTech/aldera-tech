@@ -6,7 +6,7 @@ const { default: Page } = await import("./page");
 describe("Antarmuka admin settings", () => {
   it("merender judul dan kontrol asli dengan sumber data pengujian terisolasi", async () => {
     const html = renderToStaticMarkup(await Page());
-    expect(html).toContain("Settings Website");
+    expect(html).toContain("Pengaturan Situs");
     expect(html).toContain("data-admin-page-header");
     expect(html).not.toContain("undefined");
   });

@@ -1,8 +1,27 @@
 import { describe, expect, it } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
+import {
+  Children,
+  isValidElement,
+  type ComponentProps,
+  type ReactNode,
+} from "react";
 import { DASHBOARD_ROUTES } from "@/lib/routes";
 import { OverviewActivity } from "./overview-activity";
+import { OverviewActivityDialog } from "./overview-activity-dialog";
 import { recent } from "./_fixtures/overview";
+
+function findDialog(
+  node: ReactNode
+): ComponentProps<typeof OverviewActivityDialog> | undefined {
+  if (!isValidElement<{ children?: ReactNode }>(node)) return;
+  if (node.type === OverviewActivityDialog)
+    return node.props as ComponentProps<typeof OverviewActivityDialog>;
+  for (const child of Children.toArray(node.props.children)) {
+    const found = findDialog(child);
+    if (found) return found;
+  }
+}
 
 describe("Aktivitas Ringkasan", () => {
   it("mempertahankan CTA proyek pada keadaan kosong tanpa tombol modal", () => {
@@ -21,11 +40,13 @@ describe("Aktivitas Ringkasan", () => {
     }));
     const html = renderToStaticMarkup(<OverviewActivity recent={logs} />);
     expect(html).toContain("Lihat lebih lanjut");
-    expect(html).toContain('id="activity-modal-dialog"');
-    expect(html).toContain("Detail Aktivitas Terbaru");
-    expect(html).toContain("6 aktivitas terbaru");
-    // 2 preview items in card + 6 full items in modal = 8 <time> tags
-    expect(html.match(/<time\b/g)).toHaveLength(8);
+    expect(html).not.toContain('role="dialog"');
+    expect(html.match(/<time\b/g)).toHaveLength(2);
+    const dialog = findDialog(OverviewActivity({ recent: logs }));
+    expect(dialog?.count).toBe(6);
+    const details = renderToStaticMarkup(<>{dialog?.children}</>);
+    expect(details.match(/<time\b/g)).toHaveLength(6);
+    expect(details).toContain(description);
     expect(html).toContain(description);
     expect(html).toContain(recent[0].project!.title);
     expect(html).toMatch(/datetime="2026-10-21T08:30:00.000Z"/i);

@@ -205,7 +205,7 @@ export default async function AnalyticsPage() {
       >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Revenue & Profitability
+            Pendapatan & Profitabilitas
           </h1>
           <p className="text-sm text-muted-foreground">
             Analisis performa bisnis Aldera Tech
@@ -214,7 +214,7 @@ export default async function AnalyticsPage() {
         <div className="flex flex-wrap items-center gap-3">
           <Button asChild variant="outline" size="sm">
             <a href={API_ROUTES.exportAnalytics} download>
-              <Download className="size-3.5" /> Export CSV
+              <Download className="size-3.5" /> Unduh CSV
             </a>
           </Button>
         </div>
@@ -223,15 +223,15 @@ export default async function AnalyticsPage() {
       {/* Summary cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <AdminStatCard
-          label="Total Revenue"
+          label="Total Pendapatan"
           value={formatCurrency(data.totalRevenue)}
-          helper="Seluruh invoice berstatus paid"
+          helper="Seluruh invoice berstatus lunas"
           icon={DollarSign}
           artwork="service-seo"
           toneClassName="border-emerald-200 bg-emerald-50 text-emerald-700"
         />
         <AdminStatCard
-          label="Collection Rate"
+          label="Rasio Pelunasan"
           value={`${data.collectionRate}%`}
           helper="Rasio pelunasan tagihan"
           icon={Percent}
@@ -239,7 +239,7 @@ export default async function AnalyticsPage() {
           toneClassName="border-primary/20 bg-primary/10 text-primary"
         />
         <AdminStatCard
-          label="Avg. Durasi Proyek"
+          label="Rata-rata Durasi Proyek"
           value={`${data.avgDurationDays} hari`}
           helper="Rata-rata waktu penyelesaian"
           icon={BarChart3}
