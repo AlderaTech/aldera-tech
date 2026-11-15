@@ -122,3 +122,8 @@ Pengujian pendamping:
 - Konfigurasi bot dan metode pembayaran memakai `IntegrationSyncState`: mutasi utama dan antrean disimpan satu transaksi, lalu perubahan entitas yang sama direkonsiliasi ke router. Data router lain tidak dihapus. Kegagalan sinkronisasi ditampilkan sebagai tertunda.
 - Cron `API_ROUTES.cronReconcileIntegrations` mencoba ulang efek PENDING dan konfigurasi yang belum sinkron setiap lima menit. Efek REVIEW memerlukan tindakan admin. Token cron wajib. Telegram produksi tanpa token mengembalikan kegagalan tanpa simulasi atau log isi pesan.
 - Pemetaan file dan regresi lengkap: [Verifikasi keamanan backend](backend-security-verification.md).
+
+## Koneksi router dan isolasi tes
+
+- Guard query transaksi menggunakan proxy yang tidak mengubah koneksi asli. Setelah koneksi dikembalikan ke pool, metode query asli tetap utuh; SQL audit yang melewati koneksi langsung tetap ditolak trigger database, sementara aksi aplikasi tetap dilindungi guard.
+- Tes UI yang mengganti modul halaman, filesystem, atau dependensi bersama berjalan dalam proses Bun terisolasi agar mock tidak memengaruhi halaman maupun integrasi lain. Regresi koneksi pool diuji pada `lib/router-db.test.ts`.

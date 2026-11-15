@@ -9,6 +9,25 @@ import {
 } from "./router-db";
 
 describe("Router Database Client & Invariants (`aldera_router`)", () => {
+  it("does not leave a query wrapper on a released pooled connection", async () => {
+    const pool = getRouterPool();
+    const raw = await pool.connect();
+    const original = raw.query;
+    raw.release();
+    await transactionRouter(async (client) => {
+      await expect(
+        client.query("UPDATE balance_transactions SET amount=0 WHERE false")
+      ).rejects.toThrow("Audit immutability violation");
+      await client.query("SELECT 1");
+    });
+    expect(raw.query).toBe(original);
+    const recycled = await pool.connect();
+    try {
+      expect(recycled.query).toBe(original);
+    } finally {
+      recycled.release();
+    }
+  });
   afterAll(async () => {
     await closeRouterPool();
   });

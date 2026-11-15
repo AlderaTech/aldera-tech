@@ -11,6 +11,7 @@
 | AI                | Respons/usage valid, bearer upstream, tanpa debit saat gagal, tanpa katalog buatan | `lib/relay-upstream.test.ts`, `lib/backend-security.test.ts`                                                         |
 | Konten            | Sanitasi parser, pembatas JSON-LD, kegagalan write diteruskan                      | `lib/sanitize-html.test.ts`, `components/seo/json-ld.test.tsx`, `lib/backend-security.test.ts`                       |
 | Unggahan          | Dekode isi, ekstensi kanonik, scope privat, otorisasi URL lama/baru                | `lib/upload-content.test.ts`, `lib/file-download.test.ts`, `lib/backend-security.test.ts`, tes rute API files/upload |
+| Koneksi router    | Proxy guard tidak memodifikasi koneksi pool; trigger audit tetap aktif             | `lib/router-db.test.ts`, `lib/router-db-adversarial.test.ts`                                                         |
 | Bot & konfigurasi | Antrean sinkronisasi per entitas; gagal utama tidak memutasi router                | `lib/integration-sync.test.ts`, `lib/backend-security.test.ts`, tes aksi Telegram                                    |
 
 ## Cara menjalankan
@@ -30,8 +31,8 @@
 
 ## Hasil pemeriksaan lokal
 
-- Workspace: **889 pengujian lulus, 0 gagal** pada 208 berkas test, menggunakan PostgreSQL aplikasi/router terisolasi dan layanan eksternal mock.
-- Snapshot perubahan backend tanpa 59 perubahan UI sebelumnya: **875 pengujian lulus, 0 gagal**, pada 202 berkas test.
+- Workspace: **890 pengujian lulus, 0 gagal** pada 208 berkas test, menggunakan PostgreSQL aplikasi/router terisolasi dan layanan eksternal mock.
+- Snapshot backend diperiksa melalui arsip Git secara terpisah dari 59 perubahan UI sebelumnya; hasil lengkap dicatat pada Pull Request.
 - Typecheck dan Next.js typegen lulus. Lint: 0 error; satu warning impor tidak terpakai yang sudah ada pada `lib/cron-lock.test.ts`.
 - Formatter berkas task dan pemeriksaan diff lulus. Sintaks entrypoint Docker lulus. Scanner konfigurasi/infrastruktur: 0 drift dan 0 kebocoran secret.
 - Probe Node native: HTML yang menyamar sebagai PNG ditolak HTTP 415, tanpa penulisan berkas. Probe Chrome offline: payload SVG/JSON-LD tidak dieksekusi.
@@ -139,6 +140,8 @@ Manifest berkas di bawah mencakup perubahan backend dan pengujian pendukung; per
 | Dibuat | `lib/recurring-invoice-issuer.ts`                                                    |
 | Dibuat | `lib/relay-upstream.test.ts`                                                         |
 | Dibuat | `lib/relay-upstream.ts`                                                              |
+| Diubah | `lib/router-db.test.ts`                                                              |
+| Diubah | `lib/router-db.ts`                                                                   |
 | Diubah | `lib/routes-query.test.ts`                                                           |
 | Diubah | `lib/routes.ts`                                                                      |
 | Diubah | `lib/sanitize-html.test.ts`                                                          |
