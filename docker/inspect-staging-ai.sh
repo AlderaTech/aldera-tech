@@ -33,7 +33,19 @@ if (fs.existsSync(filename)) {
   const keys = Array.isArray(data.apiKeys) ? data.apiKeys : [];
   console.log(JSON.stringify({dataFormat:"db.json",dataFields:Object.keys(data),apiKeyCount:keys.length,apiKeyFields:keys[0] ? Object.keys(keys[0]) : []}));
 } else {
-  console.log(JSON.stringify({dataFormat:fs.existsSync(path.join(directory,"db/data.sqlite")) ? "sqlite" : "unknown"}));
+  const filename = path.join(directory,"db/data.sqlite");
+  if (fs.existsSync(filename)) {
+    const { DatabaseSync } = require("node:sqlite");
+    const db = new DatabaseSync(filename, {readOnly:true});
+    const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all().map(row=>row.name);
+    const result = {dataFormat:"sqlite",tableNames:tables};
+    for (const table of ["api_keys","apiKeys","keys"]) {
+      if (!tables.includes(table)) continue;
+      result.apiKeyFields = db.prepare(`PRAGMA table_info("${table}")`).all().map(row=>row.name);
+      result.apiKeyCount = db.prepare(`SELECT count(*) AS count FROM "${table}"`).get().count;
+    }
+    db.close();console.log(JSON.stringify(result));
+  } else console.log(JSON.stringify({dataFormat:"unknown"}));
 }
 '''
 subprocess.run(["docker", "exec", "-i", "aldera-router-staging-9router", "node"], input=program.encode(), check=True)
