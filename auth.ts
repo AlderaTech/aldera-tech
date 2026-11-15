@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import type { Role } from "@prisma/client";
+import { canSignInAccount, refreshSessionToken } from "@/lib/auth-session";
 import {
   getPrimaryRole,
   isStaff,
@@ -61,22 +62,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             avatar: true,
             isActive: true,
             phoneVerified: true,
+            invitedAt: true,
           },
         });
 
-        if (!user || !user.isActive) return null;
-
-        // Reject credentials login if phone is unverified (unless seeded staff)
-        const isSeededStaff =
-          isStaff(user.roles) &&
-          (user.email.endsWith("@aldera.tech") ||
-            user.email === "gading@gmail.com" ||
-            user.email === "dery@gmail.com" ||
-            user.email === "rafli@gmail.com");
-
-        if (!user.phoneVerified && !isSeededStaff) {
-          return null;
-        }
+        if (!user || !canSignInAccount(user)) return null;
 
         const ok = await bcrypt.compare(password, user.password);
         if (!ok) return null;
@@ -105,8 +95,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         appToken.id = user.id as string;
         appToken.roles = user.roles ?? ["CLIENT"];
         appToken.role = user.role ?? getPrimaryRole(appToken.roles);
+        return appToken;
       }
-      return appToken;
+      return refreshSessionToken(appToken);
     },
     async session({ session, token }) {
       const appToken = token as typeof token & {

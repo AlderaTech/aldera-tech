@@ -30,10 +30,17 @@ export async function sendWhatsApp({
   const apiUrl = process.env.WHATSAPP_API_URL || API_URL;
 
   if (!apiUrl || !apiKey) {
-    console.log("[WhatsApp] No API configured. Message:", {
-      to: phone,
-      message,
-    });
+    if (
+      process.env.NODE_ENV !== "development" &&
+      process.env.NODE_ENV !== "test"
+    ) {
+      return {
+        success: false,
+        code: "NOT_CONFIGURED",
+        error: "Layanan WhatsApp belum dikonfigurasi.",
+      };
+    }
+    console.info("[WhatsApp] Delivery simulated; message content omitted.");
     return { success: true, simulated: true };
   }
 
@@ -61,6 +68,19 @@ export async function sendWhatsApp({
       };
     }
 
+    const payload: unknown = await res.json();
+    if (
+      !payload ||
+      typeof payload !== "object" ||
+      !("status" in payload) ||
+      payload.status !== true
+    ) {
+      return {
+        success: false,
+        code: "PROVIDER_REJECTED",
+        error: "Provider WhatsApp menolak pengiriman pesan.",
+      };
+    }
     return { success: true };
   } catch (err) {
     const hasCode = typeof err === "object" && err !== null && "code" in err;

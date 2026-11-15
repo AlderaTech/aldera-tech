@@ -49,6 +49,7 @@ describe("lib/whatsapp.ts unit test suite", () => {
     });
 
     it("falls back to simulated mode when WHATSAPP_API_KEY is not configured", async () => {
+      process.env.NODE_ENV = "test";
       delete process.env.WHATSAPP_API_KEY;
 
       const result = await sendWhatsApp({
@@ -60,6 +61,34 @@ describe("lib/whatsapp.ts unit test suite", () => {
       expect(result.simulated).toBe(true);
     });
 
+    it("does not simulate delivery in production without a key", async () => {
+      process.env.NODE_ENV = "production";
+      delete process.env.WHATSAPP_API_KEY;
+      const result = await sendWhatsApp({
+        to: "081234567890",
+        message: "fixture",
+      });
+      expect(result.success).toBe(false);
+      expect(result.code).toBe("NOT_CONFIGURED");
+    });
+
+    it("rejects an HTTP 200 response whose provider status is false", async () => {
+      process.env.WHATSAPP_API_KEY = "fixture-key";
+      const originalFetch = globalThis.fetch;
+      globalThis.fetch = (async () =>
+        Response.json({ status: false })) as typeof fetch;
+      try {
+        const result = await sendWhatsApp({
+          to: "081234567890",
+          message: "fixture",
+        });
+        expect(result.success).toBe(false);
+        expect(result.code).toBe("PROVIDER_REJECTED");
+      } finally {
+        globalThis.fetch = originalFetch;
+      }
+    });
+
     it("dispatches successful POST request when API key is configured", async () => {
       process.env.WHATSAPP_API_KEY = "test-fonnte-key";
       process.env.WHATSAPP_API_URL = "https://mock.fonnte.local/send";
@@ -68,11 +97,15 @@ describe("lib/whatsapp.ts unit test suite", () => {
       let capturedPayload: unknown = null;
       let capturedHeaders: HeadersInit | undefined;
 
-      globalThis.fetch = mock(async (_input: RequestInfo | URL, init?: RequestInit) => {
-        capturedPayload = JSON.parse(init?.body as string);
-        capturedHeaders = init?.headers;
-        return new Response(JSON.stringify({ status: true }), { status: 200 });
-      }) as unknown as typeof fetch;
+      globalThis.fetch = mock(
+        async (_input: RequestInfo | URL, init?: RequestInit) => {
+          capturedPayload = JSON.parse(init?.body as string);
+          capturedHeaders = init?.headers;
+          return new Response(JSON.stringify({ status: true }), {
+            status: 200,
+          });
+        }
+      ) as unknown as typeof fetch;
 
       try {
         const result = await sendWhatsApp({
@@ -85,9 +118,9 @@ describe("lib/whatsapp.ts unit test suite", () => {
           target: "6281234567890",
           message: "Hello Aldera Client!",
         });
-        expect((capturedHeaders as Record<string, string>)["Authorization"]).toBe(
-          "test-fonnte-key"
-        );
+        expect(
+          (capturedHeaders as Record<string, string>)["Authorization"]
+        ).toBe("test-fonnte-key");
       } finally {
         globalThis.fetch = originalFetch;
       }

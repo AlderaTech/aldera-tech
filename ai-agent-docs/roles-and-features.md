@@ -455,3 +455,10 @@ Format deterministik untuk transisi status antar entitas sistem:
 | `Template: active = true`<br/>`nextIssueDate <= now` | Cron Job (`/api/cron/issue-recurring`)  | Eksekusi terjadwal harian | `Invoice` baru terbuat dengan nomor faktur urut | `Invoice: SENT`<br/>Template diperbarui ke `nextIssueDate` baru. |
 | `Invoice: SENT`<br/>`now > dueDate`                  | Cron Job (`/api/cron/invoice-reminder`) | Pindai tagihan overdue    | Notifikasi WA pengingat pembayaran              | `Invoice: OVERDUE`<br/>`lastReminderSentAt` diperbarui.          |
 | Pembayaran diterima                                  |                 `ADMIN`                 | Klik "Mark as Paid"       | Konfirmasi pelunasan                            | `Invoice: PAID`<br/>`paidAt = now`<br/>Metrik revenue bertambah. |
+
+### Integritas akun dan transaksi
+
+- Sesi server memeriksa status aktif dan peran akun terbaru; perubahan harga dibatasi oleh `settings.manage`.
+- Akun undangan administrator memiliki penanda `User.invitedAt`, terpisah dari verifikasi telepon.
+- Verifikasi pembayaran manual bersifat idempoten; unggah bukti memverifikasi kepemilikan invoice atau tiket top-up.
+- Kontrak dan pemetaan tes lengkap: [Integritas Backend](backend-integrity.md).

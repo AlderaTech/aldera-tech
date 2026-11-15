@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { API_ROUTES } from "@/lib/routes";
+import { createPaymentProofUpload } from "@/lib/payment-proof-upload";
 import {
   AlertCircle,
   ArrowDownRight,
@@ -144,9 +146,10 @@ export function BalanceTopupCard({
     }
     setIsUploadingProof(true);
     try {
-      const formData = new FormData();
-      formData.append("file", proofFile);
-      const res = await fetch("/api/upload", {
+      const formData = createPaymentProofUpload(proofFile, {
+        topupId: createdTopup.id,
+      });
+      const res = await fetch(API_ROUTES.upload, {
         method: "POST",
         body: formData,
       });

@@ -48,6 +48,7 @@ export async function inviteUserAction(
       email,
       name,
       roles,
+      invitedAt: new Date(),
       password: await bcrypt.hash(tempPassword, 10),
     },
   });

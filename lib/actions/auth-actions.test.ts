@@ -172,6 +172,59 @@ describe("AT-L1: lib/actions/auth.ts test suite", () => {
     });
   });
 
+  describe("OTP provider failures", () => {
+    for (const delivery of ["rejected", "simulated", "thrown"] as const) {
+      it(
+        "keeps the account recoverable without claiming delivery: " + delivery,
+        async () => {
+          if (delivery === "thrown")
+            mockSendWhatsApp.mockRejectedValueOnce(
+              new Error("fixture provider unavailable")
+            );
+          else
+            mockSendWhatsApp.mockResolvedValueOnce({
+              success: delivery === "simulated",
+              simulated: delivery === "simulated",
+            });
+          const phone = "0819" + Date.now().toString().slice(-8);
+          const email = crypto.randomUUID() + "@example.invalid";
+          const result = await registerAction({
+            name: "OTP Fixture",
+            email,
+            phone,
+            password: "FixturePassword123!",
+            confirmPassword: "FixturePassword123!",
+          });
+          expect(result.ok).toBe(false);
+          expect(result.success).toBe(false);
+          expect(result.requiresVerification).toBe(true);
+          expect(result.phone).toBe("62" + phone.slice(1));
+          expect(
+            await prisma.user.findUnique({ where: { email } })
+          ).not.toBeNull();
+          expect(
+            await prisma.verificationToken.count({
+              where: { identifier: result.phone },
+            })
+          ).toBe(0);
+          mockSendWhatsApp.mockResolvedValueOnce({ success: true });
+          const retried = await resendOtpAction({ phone });
+          expect(retried.ok).toBe(true);
+        }
+      );
+    }
+    it("does not claim successful resend when the provider rejects it", async () => {
+      const phone = "0818" + Date.now().toString().slice(-8);
+      mockSendWhatsApp.mockResolvedValueOnce({ success: false });
+      const result = await resendOtpAction({ phone });
+      expect(result.ok).toBe(false);
+      expect(
+        await prisma.verificationToken.count({
+          where: { identifier: "62" + phone.slice(1) },
+        })
+      ).toBe(0);
+    });
+  });
   describe("verifyOtpAction & Lockout Defense", () => {
     it("rejects malformed or empty token", async () => {
       const res = await verifyOtpAction({
@@ -257,7 +310,10 @@ describe("AT-L1: lib/actions/auth.ts test suite", () => {
         },
       });
 
-      const res = await verifyOtpAction({ identifier: phone, token: correctOtp });
+      const res = await verifyOtpAction({
+        identifier: phone,
+        token: correctOtp,
+      });
       expect(res.ok).toBe(true);
       expect(res.verified).toBe(true);
 

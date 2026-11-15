@@ -29,11 +29,12 @@ mock.module("@/lib/notifications", () => ({
 
 const mockWriteFile = mock(async () => {});
 const mockMkdir = mock(async () => {});
+const mockUnlink = mock(async () => {});
 
 mock.module("node:fs/promises", () => ({
   writeFile: mockWriteFile,
   mkdir: mockMkdir,
-  unlink: mock(async () => {}),
+  unlink: mockUnlink,
 }));
 
 import { getTestPrisma } from "@/lib/test-prisma";
@@ -51,6 +52,7 @@ describe("AT-L9: app/api/upload/route.ts test suite", () => {
   beforeEach(async () => {
     mockWriteFile.mockReset();
     mockMkdir.mockReset();
+    mockUnlink.mockClear();
 
     await prisma.user.upsert({
       where: { id: staffUserId },
@@ -100,7 +102,10 @@ describe("AT-L9: app/api/upload/route.ts test suite", () => {
       };
 
       const formData = new FormData();
-      formData.set("file", new File(["test content"], "doc.pdf", { type: "application/pdf" }));
+      formData.set(
+        "file",
+        new File(["test content"], "doc.pdf", { type: "application/pdf" })
+      );
 
       const req = new NextRequest("http://localhost:3000/api/upload", {
         method: "POST",
@@ -143,7 +148,10 @@ describe("AT-L9: app/api/upload/route.ts test suite", () => {
       };
 
       const formData = new FormData();
-      formData.set("file", new File(["file content"], "doc.pdf", { type: "application/pdf" }));
+      formData.set(
+        "file",
+        new File(["file content"], "doc.pdf", { type: "application/pdf" })
+      );
       formData.set("projectId", project.id);
 
       const req = new NextRequest("http://localhost:3000/api/upload", {
@@ -161,8 +169,12 @@ describe("AT-L9: app/api/upload/route.ts test suite", () => {
   describe("File Limits, MIME Types & Path Traversal Sanitization", () => {
     it("returns 413 when file size exceeds 10MB limit", async () => {
       // 11MB file
-      const largeBlob = new Blob([new Uint8Array(11 * 1024 * 1024)], { type: "application/pdf" });
-      const largeFile = new File([largeBlob], "huge.pdf", { type: "application/pdf" });
+      const largeBlob = new Blob([new Uint8Array(11 * 1024 * 1024)], {
+        type: "application/pdf",
+      });
+      const largeFile = new File([largeBlob], "huge.pdf", {
+        type: "application/pdf",
+      });
 
       const formData = new FormData();
       formData.set("file", largeFile);
@@ -180,7 +192,12 @@ describe("AT-L9: app/api/upload/route.ts test suite", () => {
 
     it("returns 415 for unsupported MIME types (e.g. text/html, application/x-sh)", async () => {
       const formData = new FormData();
-      formData.set("file", new File(["<script>alert(1)</script>"], "evil.html", { type: "text/html" }));
+      formData.set(
+        "file",
+        new File(["<script>alert(1)</script>"], "evil.html", {
+          type: "text/html",
+        })
+      );
 
       const req = new NextRequest("http://localhost:3000/api/upload", {
         method: "POST",
@@ -196,7 +213,9 @@ describe("AT-L9: app/api/upload/route.ts test suite", () => {
     it("sanitizes path traversal attempts in filenames and saves file record", async () => {
       // Malicious filename with traversal attempt
       const traversalName = "../../../../../etc/passwd.png";
-      const file = new File(["valid-png-data"], traversalName, { type: "image/png" });
+      const file = new File(["valid-png-data"], traversalName, {
+        type: "image/png",
+      });
 
       const formData = new FormData();
       formData.set("file", file);
@@ -217,6 +236,88 @@ describe("AT-L9: app/api/upload/route.ts test suite", () => {
       expect(dbFile).not.toBeNull();
       expect(dbFile?.filename).not.toContain("../");
       expect(dbFile?.originalName).toBe(traversalName);
+    });
+  });
+  describe("Upload persistence regression", () => {
+    it("returns 500 and removes the written file if metadata cannot be saved", async () => {
+      currentSession = {
+        user: {
+          id: "nonexistent-metadata-uploader",
+          role: "ADMIN",
+          roles: ["ADMIN"],
+        },
+      };
+      const formData = new FormData();
+      formData.set(
+        "file",
+        new File(["fixture"], "proof.pdf", { type: "application/pdf" })
+      );
+      const res = await POST(
+        new NextRequest("http://localhost:3000/api/upload", {
+          method: "POST",
+          body: formData,
+        })
+      );
+      expect(res.status).toBe(500);
+      const data = await res.json();
+      expect(data.url).toBeUndefined();
+      expect(mockWriteFile).toHaveBeenCalledTimes(1);
+      expect(mockUnlink).toHaveBeenCalledTimes(1);
+    });
+    it("accepts an owned invoice without requiring an unrelated project", async () => {
+      const user = await prisma.user.create({
+        data: {
+          email: crypto.randomUUID() + "@example.invalid",
+          name: "Upload Fixture",
+          password: "fixture",
+          roles: ["CLIENT"],
+        },
+      });
+      const invoice = await prisma.invoice.create({
+        data: {
+          number: "UPLOAD-" + crypto.randomUUID(),
+          clientId: user.id,
+          issueDate: new Date(),
+          dueDate: new Date(),
+          subtotal: 100000,
+          total: 100000,
+          status: "SENT",
+        },
+      });
+      currentSession = {
+        user: { id: user.id, role: "CLIENT", roles: ["CLIENT"] },
+      };
+      const makeRequest = () => {
+        const data = new FormData();
+        data.set(
+          "file",
+          new File(["fixture"], "proof.pdf", { type: "application/pdf" })
+        );
+        data.set("invoiceId", invoice.id);
+        return new NextRequest("http://localhost:3000/api/upload", {
+          method: "POST",
+          body: data,
+        });
+      };
+      const res = await POST(makeRequest());
+      expect(res.status).toBe(200);
+      expect((await res.json()).id).toBeTruthy();
+      currentSession = {
+        user: { id: "foreign-client", role: "CLIENT", roles: ["CLIENT"] },
+      };
+      expect((await POST(makeRequest())).status).toBe(403);
+      currentSession = {
+        user: { id: staffUserId, role: "DEVELOPER", roles: ["DEVELOPER"] },
+      };
+      expect((await POST(makeRequest())).status).toBe(403);
+      currentSession = {
+        user: { id: user.id, role: "CLIENT", roles: ["CLIENT"] },
+      };
+      await prisma.invoice.update({
+        where: { id: invoice.id },
+        data: { status: "PAID" },
+      });
+      expect((await POST(makeRequest())).status).toBe(400);
     });
   });
 });

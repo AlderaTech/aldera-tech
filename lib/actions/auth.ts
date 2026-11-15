@@ -2,13 +2,13 @@
 
 import { AuthError } from "next-auth";
 import bcrypt from "bcryptjs";
+import { randomInt } from "node:crypto";
 import type { Role } from "@prisma/client";
 import { signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { loginSchema, registerSchema } from "@/lib/validations/auth";
 import { getPrimaryRole } from "@/lib/permissions";
-import { sendWhatsApp } from "@/lib/whatsapp";
-import { waTemplates } from "@/lib/whatsapp-templates";
+import { deliverVerificationOtp } from "@/lib/otp-delivery";
 
 export type ActionState = {
   ok: boolean;
@@ -189,7 +189,7 @@ export async function registerAction(
   });
 
   // Generate 6-digit numeric OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const otp = randomInt(100000, 1000000).toString();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
 
   // Remove duplicate unverified tokens for this identifier to prevent unique constraint conflict
@@ -210,11 +210,17 @@ export async function registerAction(
     },
   });
 
-  const otpTpl = waTemplates.verificationOtp({ code: otp, ttlMinutes: 10 });
-  await sendWhatsApp({
-    to: phone,
-    message: otpTpl.message,
-  });
+  if (!(await deliverVerificationOtp(phone, normalizedPhone, otp))) {
+    return {
+      ok: false,
+      success: false,
+      requiresVerification: true,
+      phone: normalizedPhone,
+      email,
+      message:
+        "Akun berhasil dibuat, tetapi kode OTP belum berhasil dikirim. Silakan kirim ulang kode di halaman verifikasi.",
+    };
+  }
 
   return {
     ok: true,
@@ -450,7 +456,7 @@ export async function resendOtpAction(
   }
 
   // Issues fresh 6-digit OTP, updates/creates token, calls sendWhatsApp.
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const otp = randomInt(100000, 1000000).toString();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
   // Ensure unique constraint [identifier, token] doesn't conflict
@@ -471,11 +477,15 @@ export async function resendOtpAction(
     },
   });
 
-  const otpTpl = waTemplates.verificationOtp({ code: otp, ttlMinutes: 10 });
-  await sendWhatsApp({
-    to: phone,
-    message: otpTpl.message,
-  });
+  if (!(await deliverVerificationOtp(phone, normalizedPhone, otp))) {
+    return {
+      ok: false,
+      success: false,
+      phone: normalizedPhone,
+      message:
+        "Kode OTP belum berhasil dikirim. Silakan coba lagi beberapa saat.",
+    };
+  }
 
   return {
     ok: true,
