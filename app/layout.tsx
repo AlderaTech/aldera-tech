@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "sonner";
 import { SessionProvider } from "@/components/shared/session-provider";
 import { getSiteSettings } from "@/lib/public-settings";
+import { isProductionSite } from "@/lib/deployment-environment";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -81,8 +82,8 @@ export async function generateMetadata(): Promise<Metadata> {
       apple: "/logo/logo-transparent.png",
     },
     robots: {
-      index: true,
-      follow: true,
+      index: isProductionSite(appUrl),
+      follow: isProductionSite(appUrl),
     },
   };
 }

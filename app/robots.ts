@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { isProductionSite } from "@/lib/deployment-environment";
 import {
   PUBLIC_ROUTES,
   ADMIN_ROUTES,
@@ -8,6 +9,8 @@ import {
 
 export default function robots(): MetadataRoute.Robots {
   const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  if (!isProductionSite(base))
+    return { rules: [{ userAgent: "*", disallow: PUBLIC_ROUTES.home }] };
   return {
     rules: [
       {

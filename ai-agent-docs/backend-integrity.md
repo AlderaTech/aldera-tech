@@ -40,6 +40,11 @@ Endpoint tetap `API_ROUTES.upload`; kirim `file` bersama tepat satu konteks:
 
 ## Pemetaan tes
 
+- `lib/csv.test.ts`: netralisasi teks formula spreadsheet dengan angka dan string desimal keuangan tetap utuh.
+- `lib/validations/export-range.test.ts`, test route ekspor timesheet: penolakan tanggal/rentang invalid sebelum query dan respons kegagalan layanan.
+- Test route search, hook dan komponen command palette: hasil kosong berbeda dari error 503, retry aksesibel, abort tidak memperbarui hasil lama.
+- `lib/deployment-environment.test.ts`, test robots/layout/preset IDE: isolasi endpoint publik staging/produksi dan noindex khusus lingkungan nonproduksi.
+
 - `auth.test.ts`, `lib/auth-session.test.ts`: callback autentikasi, pencabutan peran, akun nonaktif/hilang, gangguan database, akun undangan versus registrasi mandiri.
 - `lib/actions/calculator-permissions.test.ts`: seluruh mutasi harga, developer ditolak, administrator diizinkan.
 - `lib/manual-payment-verification.test.ts`: permintaan berulang dan bersamaan, status tidak memenuhi syarat, rollback kegagalan pembayaran.

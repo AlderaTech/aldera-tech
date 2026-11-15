@@ -291,12 +291,47 @@ Setelah deployment staging, skrip yang sama dijalankan dengan
 `VERIFY_STAGING_READY=true` pada job CI. Pemeriksaan mensyaratkan container
 `running` dan tiga respons HTTP 200 berturut-turut dari halaman Login. Jika
 aplikasi tetap restart atau halaman tidak dapat dilayani, workflow gagal meskipun
-`update.sh` mengembalikan exit code 0. Pemeriksaan ini terpisah dari `/api/health`,
-yang tetap melaporkan kegagalan upstream secara jujur; HTTP 200 pada Login tidak
-berarti seluruh integrasi sehat. Input diagnostik dan flag verifikasi hanya untuk
+`update.sh` mengembalikan exit code 0. Setelah Login stabil, pemeriksaan mewajibkan
+HTTP 200 dari `/api/health`; kegagalan database/storage/upstream menggagalkan
+deployment. Input diagnostik dan flag verifikasi hanya untuk
 job deployment, bukan environment aplikasi.
 
-### Persyaratan runtime
+### Pemulihan credential AI staging
+
+Input manual `inspect_staging_ai=true` bersama `diagnose_staging=true` memeriksa
+metadata konfigurasi dan schema penyimpanan upstream tanpa mencetak secret.
+Password `INITIAL_PASSWORD` adalah password dashboard 9Router, bukan bearer API.
+`NINE_ROUTER_API_KEY` harus berisi API key upstream yang aktif.
+
+Input manual `repair_staging_ai=true` menjalankan operasi pemeliharaan eksplisit
+melalui `docker/repair-staging-ai.sh`. Operasi ini hanya menargetkan container dan
+direktori compose staging, memakai key aktif yang sudah tersedia di SQLite
+upstream staging, memvalidasinya melalui GET model, mengganti satu setting pada
+`.env` secara atomik, lalu membuat ulang service web tersebut. Tidak ada key baru,
+request completion, perubahan ledger, atau perubahan konfigurasi produksi.
+Kegagalan rekreasi/health mengembalikan `.env` semula. Credential tidak dicetak
+dan tidak dikirim ke GitHub. Uji guard/rollback dengan
+`python3 -B docker/staging-relay-auth-test.py`.
+
+Workflow deployment staging menjalankan rekonsiliasi yang sama sebelum update
+image. Credential runtime yang sudah valid diprioritaskan; operasi idempoten
+tidak membuat ulang service bila file environment dan runtime sudah sesuai.
+
+Endpoint publik AI berasal dari origin aplikasi: produksi memakai
+`https://api.aldera.tech`, staging memakai `https://api-staging.aldera.tech`.
+Keduanya merupakan endpoint billing proxy; password/API key upstream tidak boleh
+dimasukkan ke konfigurasi IDE pengguna. IDE tetap menggunakan key akun pengguna.
+Nilai endpoint dan origin disentralisasi pada `lib/routes.ts`; tidak ada variabel
+environment publik baru. Staging menggunakan robots noindex pada metadata dan
+header respons; origin produksi mempertahankan pengindeksan.
+
+Konfigurasi hasil pemulihan bertahan pada deployment image biasa. Pengelola vault
+infrastruktur harus menyimpan API key staging yang sama dalam secret API khusus;
+template `NINE_ROUTER_API_KEY` tidak boleh mengambil nilai dari password awal
+dashboard. Reprovision melalui template lama dapat mengembalikan konfigurasi
+yang keliru. Jangan menyalin credential staging ke produksi atau sebaliknya.
+
+### Kompatibilitas schema
 
 - Enum database `Role` mempertahankan nilai `OWNER`, `DESIGNER`, dan `ACCOUNTANT`
   untuk kompatibilitas data yang sudah tersimpan. Nilai tersebut tidak memberi

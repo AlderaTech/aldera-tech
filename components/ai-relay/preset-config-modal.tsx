@@ -28,6 +28,7 @@ import {
 } from "@/lib/ai-relay-utils";
 
 import { IDE_TARGETS } from "./_data/ide-targets";
+import { getRelayApiBaseUrl } from "@/lib/deployment-environment";
 
 interface PresetConfigModalProps {
   illustration?: ReactNode;
@@ -44,7 +45,7 @@ export function PresetConfigModal({
   onClose,
   modelId,
   activeApiKeys,
-  baseUrl = "https://api.aldera.tech",
+  baseUrl = getRelayApiBaseUrl(),
 }: PresetConfigModalProps) {
   const [selectedTarget, setSelectedTarget] = useState<IdeTarget>("cursor");
   const [selectedKeyPrefix, setSelectedKeyPrefix] = useState<string>(

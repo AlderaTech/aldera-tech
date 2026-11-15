@@ -33,6 +33,11 @@ if [ "${VERIFY_STAGING_READY:-false}" = "true" ]; then
       successes=$((successes + 1))
       if [ "$successes" -ge 3 ]; then
         echo '[Staging] Login is serving HTTP 200; application startup verified.'
+        if ! docker exec "$staging_container" bun --eval 'import { API_ROUTES } from "./lib/routes"; const response = await fetch(`http://127.0.0.1:3000${API_ROUTES.health}`, { signal: AbortSignal.timeout(4000) }); if (response.status !== 200) process.exit(1);' 2>/dev/null; then
+          echo '[Staging] ERROR: Critical dependencies failed full health verification.'
+          exit 1
+        fi
+        echo '[Staging] Full dependency health is HTTP 200.'
         show_staging_status
         exit 0
       fi

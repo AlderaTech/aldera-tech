@@ -248,6 +248,7 @@ export const ADMIN_ROUTES = {
 } as const;
 
 export const API_ROUTES = {
+  health: "/api/health",
   cronReconcileIntegrations: "/api/cron/reconcile-integrations",
   fileDownload: (id: string, filename?: string) =>
     `/api/files/${encodeURIComponent(id)}${filename ? `?filename=${encodeURIComponent(filename)}` : ""}`,
@@ -268,6 +269,16 @@ export const API_ROUTES = {
   cronInvoiceReminder: "/api/cron/invoice-reminder",
   cronIssueRecurring: "/api/cron/issue-recurring",
   cronPublishScheduled: "/api/cron/publish-scheduled",
+} as const;
+
+export const SITE_ORIGINS = {
+  production: "https://aldera.tech",
+  staging: "https://staging.aldera.tech",
+} as const;
+
+export const RELAY_ORIGINS = {
+  production: "https://api.aldera.tech",
+  staging: "https://api-staging.aldera.tech",
 } as const;
 
 /**

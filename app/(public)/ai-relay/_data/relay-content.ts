@@ -1,7 +1,8 @@
 import type { IdeTarget, ModelCategory } from "@/lib/ai-relay-utils";
+import { getRelayApiBaseUrl } from "@/lib/deployment-environment";
 
 // The existing public configuration endpoint, shared by the preview and presets.
-export const RELAY_BASE_URL = "https://aldera.tech/api/relay";
+export const RELAY_BASE_URL = getRelayApiBaseUrl();
 
 export const CATEGORY_TABS: { label: string; value: ModelCategory }[] = [
   { label: "Semua", value: "All" },
