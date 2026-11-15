@@ -13,7 +13,7 @@ show_staging_startup() {
     sed -E \
       -e 's#(postgres(ql)?|https?)://[^[:space:]"<>]+#[REDACTED_URL]#g' \
       -e 's/([A-Za-z_]*(SECRET|TOKEN|PASSWORD|KEY)[A-Za-z_]*[=:])[[:space:]]*[^[:space:]]+/\1[REDACTED]/g' |
-    grep -Ei 'Entrypoint|Error:|P[0-9]{4}|Prisma|Cannot find|not found|data loss|non-interactive|constraint|column|index|unique|You are|ReferenceError|TypeError|schema push|Bun v|Next.js|Node.js' || true
+    grep -Ei 'Entrypoint|Error:|P[0-9]{4}|Prisma|Cannot find|not found|data loss|non-interactive|constraint|column|index|unique|enum|removed|drop|cast|changed|You are|ReferenceError|TypeError|schema push|Bun v|Next.js|Node.js' || true
 }
 
 show_staging_status
