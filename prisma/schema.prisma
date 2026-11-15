@@ -150,6 +150,7 @@ model User {
   avatar        String?
   phone         String?
   phoneVerified DateTime?
+  invitedAt     DateTime?
   isActive      Boolean   @default(true)
   emailVerified DateTime?
   createdAt     DateTime  @default(now())

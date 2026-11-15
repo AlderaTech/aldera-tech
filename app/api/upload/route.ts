@@ -1,11 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { writeFile, mkdir } from "node:fs/promises";
+import { writeFile, mkdir, unlink } from "node:fs/promises";
 import { join, extname } from "node:path";
 import { randomUUID } from "node:crypto";
 import sharp from "sharp";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { isStaff } from "@/lib/permissions";
+import { authorizeUpload } from "@/lib/upload-authorization";
 import { notify } from "@/lib/notifications";
 
 export const runtime = "nodejs";
@@ -84,30 +84,26 @@ export async function POST(req: NextRequest) {
   }
 
   const file = formData.get("file");
-  const projectId = formData.get("projectId");
 
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "No file provided" }, { status: 400 });
   }
 
-  // Non-staff users must provide a valid projectId that they own
-  const userIsStaff = isStaff(session.user.roles ?? session.user.role);
-  if (!userIsStaff) {
-    if (typeof projectId !== "string" || !projectId.trim()) {
-      return NextResponse.json(
-        { error: "ProjectId wajib disertakan untuk pengguna non-staff" },
-        { status: 400 }
-      );
-    }
-
-    const project = await prisma.project.findUnique({
-      where: { id: projectId.trim() },
-      select: { clientId: true },
-    });
-    if (!project || project.clientId !== session.user.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+  let access: Awaited<ReturnType<typeof authorizeUpload>>;
+  try {
+    access = await authorizeUpload(formData, session.user);
+  } catch (error) {
+    console.error("Upload authorization failed:", error);
+    return NextResponse.json(
+      { error: "Gagal memverifikasi akses unggahan." },
+      { status: 503 }
+    );
   }
+  if (!access.ok)
+    return NextResponse.json(
+      { error: access.error },
+      { status: access.status }
+    );
 
   if (file.size > MAX_SIZE) {
     return NextResponse.json(
@@ -124,6 +120,17 @@ export async function POST(req: NextRequest) {
   }
 
   let buffer: Buffer = Buffer.from(await file.arrayBuffer());
+  if (
+    access.proof &&
+    !["image/png", "image/jpeg", "image/webp", "application/pdf"].includes(
+      file.type
+    )
+  ) {
+    return NextResponse.json(
+      { error: "Bukti transfer harus berupa PNG, JPEG, WebP, atau PDF." },
+      { status: 415 }
+    );
+  }
   let savedMimeType = file.type;
   let savedExt = extname(file.name) || "";
 
@@ -160,8 +167,7 @@ export async function POST(req: NextRequest) {
 
   const url = `/uploads/${relativePath}`;
 
-  const targetProjectId =
-    typeof projectId === "string" && projectId.trim() ? projectId.trim() : null;
+  const targetProjectId = access.projectId;
 
   let fileRecord: { id: string } | null = null;
   try {
@@ -180,6 +186,15 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error("Upload DB error:", err);
+    try {
+      await unlink(fullPath);
+    } catch (cleanupError) {
+      console.error("Upload rollback failed:", cleanupError);
+    }
+    return NextResponse.json(
+      { error: "Gagal menyimpan data berkas. Silakan unggah ulang." },
+      { status: 500 }
+    );
   }
 
   // Log ActivityAction.FILE_UPLOADED and call notify() on upload

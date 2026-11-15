@@ -5,16 +5,29 @@ import type { Prisma } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
-import { isStaff } from "@/lib/permissions";
+import { hasPermission, isAdmin, PERMISSIONS } from "@/lib/permissions";
 import { calculateOrderTotal } from "@/lib/calculator-utils";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 
 // --- Helpers ---
 async function requireAdmin() {
   const session = await auth();
-  if (!session?.user || !isStaff(session.user.role))
+  if (!session?.user || !isAdmin(session.user.roles ?? session.user.role))
     throw new Error("Unauthorized");
   return session;
+}
+
+async function requireCalculatorPermission() {
+  const session = await auth();
+  if (
+    !session?.user ||
+    !hasPermission(
+      session.user.roles ?? session.user.role,
+      PERMISSIONS.SETTINGS_MANAGE
+    )
+  ) {
+    throw new Error("Forbidden");
+  }
 }
 
 function revalidateCalculator() {
@@ -36,7 +49,7 @@ export async function upsertProjectType(
     active: boolean;
   }
 ) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   const payload = { ...data, dependentFields: data.dependentFields };
   if (id) {
     await prisma.projectType.update({ where: { id }, data: payload });
@@ -47,7 +60,7 @@ export async function upsertProjectType(
 }
 
 export async function deleteProjectType(id: string) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   await prisma.projectType.delete({ where: { id } });
   revalidateCalculator();
 }
@@ -66,7 +79,7 @@ export async function upsertFeatureOption(
     active: boolean;
   }
 ) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   if (id) {
     await prisma.featureOption.update({ where: { id }, data });
   } else {
@@ -76,7 +89,7 @@ export async function upsertFeatureOption(
 }
 
 export async function deleteFeatureOption(id: string) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   await prisma.featureOption.delete({ where: { id } });
   revalidateCalculator();
 }
@@ -95,7 +108,7 @@ export async function upsertAddOnOption(
     active: boolean;
   }
 ) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   if (id) {
     await prisma.addOnOption.update({ where: { id }, data });
   } else {
@@ -105,7 +118,7 @@ export async function upsertAddOnOption(
 }
 
 export async function deleteAddOnOption(id: string) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   await prisma.addOnOption.delete({ where: { id } });
   revalidateCalculator();
 }
@@ -120,7 +133,7 @@ export async function updateCalculatorConfig(data: {
   urgencyThresholdDays: number;
   dpPercentage: number;
 }) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   await prisma.calculatorConfig.upsert({
     where: { id: "calculator" },
     update: data,

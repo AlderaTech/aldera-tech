@@ -16,7 +16,8 @@ if [ "${AUTO_MIGRATE}" = "true" ]; then
   if bunx prisma db push; then
     echo "[Entrypoint] Database schema push succeeded."
   else
-    echo "[Entrypoint] WARNING: Database push failed. Continuing with startup..."
+    echo "[Entrypoint] ERROR: Required database schema sync failed. Startup aborted."
+    exit 1
   fi
 fi
 

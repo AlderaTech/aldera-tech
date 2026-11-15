@@ -32,10 +32,10 @@ export function useRegisterForm() {
     startTransition(async () => {
       const result = await registerAction(formState, formData);
       setFormState(result);
-      if (result.ok || result.success) {
-        toast.success(
-          result.message ?? "Kode verifikasi telah dikirim via WhatsApp."
-        );
+      if (result.ok || result.success || result.requiresVerification) {
+        const notify =
+          result.ok || result.success ? toast.success : toast.error;
+        notify(result.message ?? "Kode verifikasi telah dikirim via WhatsApp.");
         const phoneParam =
           result.phone || (formData.get("phone") as string) || "";
         const emailParam =
