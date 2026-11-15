@@ -33,7 +33,7 @@
 
 - Workspace: **890 pengujian lulus, 0 gagal** pada 208 berkas test, menggunakan PostgreSQL aplikasi/router terisolasi dan layanan eksternal mock.
 - Snapshot backend diperiksa melalui arsip Git secara terpisah dari 59 perubahan UI sebelumnya; hasil lengkap dicatat pada Pull Request.
-- Typecheck dan Next.js typegen lulus. Lint: 0 error; satu warning impor tidak terpakai yang sudah ada pada `lib/cron-lock.test.ts`.
+- Typecheck dan Next.js typegen lulus. Lint: 0 error dan 0 warning.
 - Formatter berkas task dan pemeriksaan diff lulus. Sintaks entrypoint Docker lulus. Scanner konfigurasi/infrastruktur: 0 drift dan 0 kebocoran secret.
 - Probe Node native: HTML yang menyamar sebagai PNG ditolak HTTP 415, tanpa penulisan berkas. Probe Chrome offline: payload SVG/JSON-LD tidak dieksekusi.
 - Rute login/register tersedia HTTP 200; file tidak dikenal HTTP 404; cron tanpa secret HTTP 401; dashboard tanpa sesi mengarah ke Login.
@@ -126,6 +126,7 @@ Manifest berkas di bawah mencakup perubahan backend dan pengujian pendukung; per
 | Diubah | `lib/auth-session.test.ts`                                                           |
 | Diubah | `lib/auth-session.ts`                                                                |
 | Dibuat | `lib/backend-security.test.ts`                                                       |
+| Diubah | `lib/cron-lock.test.ts`                                                              |
 | Dibuat | `lib/document-number.ts`                                                             |
 | Dibuat | `lib/file-download.test.ts`                                                          |
 | Dibuat | `lib/file-download.ts`                                                               |
