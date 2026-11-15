@@ -12,8 +12,8 @@ echo "[Entrypoint] Initializing Aldera Tech application..."
 
 # 1. Run database migration if AUTO_MIGRATE=true
 if [ "${AUTO_MIGRATE}" = "true" ]; then
-  echo "[Entrypoint] AUTO_MIGRATE is enabled. Running prisma db push..."
-  if bunx prisma db push; then
+  echo "[Entrypoint] AUTO_MIGRATE is enabled. Running prisma db push --accept-data-loss..."
+  if bunx prisma db push --accept-data-loss; then
     echo "[Entrypoint] Database schema push succeeded."
   else
     echo "[Entrypoint] ERROR: Required database schema sync failed. Startup aborted."

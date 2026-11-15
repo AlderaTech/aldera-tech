@@ -58,13 +58,13 @@ docker/
 
 ### Rincian Fungsi Berkas
 
-| Berkas                      | Fungsi Utama                                                                                                                                                                                 |
-| :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `docker/Dockerfile`         | Blueprint image container Next.js multi-stage build dengan Alpine Linux.                                                                                                                     |
-| `docker/docker-compose.yml` | Konfigurasi orkestrasi service aplikasi dan database PostgreSQL lokal.                                                                                                                       |
-| `docker/entrypoint.sh`      | Shell script yang dieksekusi saat container start. Mengatur permission, memulai `crond`, menjalankan `prisma db push` (opsional jika `AUTO_MIGRATE=true`), dan mengeksekusi `bun server.js`. |
-| `docker/crontab`            | Berkas referensi jadwal berkala pemanggilan cron internal.                                                                                                                                   |
-| `docker/.dockerignore`      | Mengabaikan `node_modules`, `.next`, `.git`, dan file sementara dari context build.                                                                                                          |
+| Berkas                      | Fungsi Utama                                                                                                                                                                                                                                 |
+| :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docker/Dockerfile`         | Blueprint image container Next.js multi-stage build dengan Alpine Linux.                                                                                                                                                                     |
+| `docker/docker-compose.yml` | Konfigurasi orkestrasi service aplikasi dan database PostgreSQL lokal.                                                                                                                                                                       |
+| `docker/entrypoint.sh`      | Shell script yang dieksekusi saat container start. Mengatur permission, memulai `crond`, menjalankan `prisma db push --accept-data-loss` saat `AUTO_MIGRATE=true` (dan menghentikan startup bila gagal), serta mengeksekusi `bun server.js`. |
+| `docker/crontab`            | Berkas referensi jadwal berkala pemanggilan cron internal.                                                                                                                                                                                   |
+| `docker/.dockerignore`      | Mengabaikan `node_modules`, `.next`, `.git`, dan file sementara dari context build.                                                                                                                                                          |
 
 ---
 
@@ -279,7 +279,7 @@ Aldera Tech menerapkan isolasi lingkungan multi-stack pada server VPS produksi t
 ## Prasyarat integritas backend
 
 - Sinkronkan kolom nullable `User.invitedAt` sebelum menjalankan aplikasi. Migrasi aditif tersedia pada `prisma/migrations/20261115000000_admin_invitation_marker/migration.sql`; deployment dengan `AUTO_MIGRATE=true` memakai schema Prisma yang sama. Tidak ada perubahan atau backfill identitas akun lama secara otomatis.
-- Entrypoint menghentikan startup jika sinkronisasi skema yang diaktifkan gagal; aplikasi tidak dijalankan dengan skema yang tidak kompatibel.
+- Entrypoint menjalankan sinkronisasi skema non-interaktif (`bunx prisma db push --accept-data-loss` saat `AUTO_MIGRATE=true`) dan menghentikan startup jika sinkronisasi skema yang diaktifkan gagal; aplikasi tidak dijalankan dengan skema yang tidak kompatibel.
 - Produksi memerlukan `TURNSTILE_SECRET_KEY` untuk verifikasi captcha dan `WHATSAPP_API_KEY` valid untuk OTP/notifikasi. Konfigurasi kosong menghasilkan kegagalan, bukan keberhasilan simulasi. Jangan menggunakan test key dalam produksi.
 - Upstream AI Relay harus tersedia pada `NINE_ROUTER_BASE_URL` dari jaringan container. HTTP 503 pada health check akibat upstream down harus diperbaiki melalui layanan/config upstream; jangan mengganti hasilnya dengan status sukses buatan.
 - Gunakan lockfile yang disertakan: Next.js `16.4.3`, NextAuth `5.0.0-beta.32`. Validasi alur login, undangan, upload bukti, dan persetujuan pembayaran di staging sebelum Release PR.

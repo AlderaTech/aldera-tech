@@ -46,7 +46,7 @@ Endpoint tetap `API_ROUTES.upload`; kirim `file` bersama tepat satu konteks:
 - `app/api/upload/route.test.ts`, `lib/upload-authorization.test.ts`: kepemilikan invoice/top-up, status tiket, konteks ambigu, kegagalan metadata dan pembersihan berkas.
 - `lib/actions/auth-actions.test.ts`, `lib/whatsapp.test.ts`, `lib/turnstile.test.ts`: provider gagal, respons sukses palsu, simulasi, konfigurasi produksi.
 - `lib/payment-proof-upload.test.ts` dan tes hook/komponen pendamping: konteks invoice/top-up serta navigasi pemulihan OTP.
-- `docker/entrypoint.test.ts`: startup dihentikan jika sinkronisasi schema gagal; skrip menggunakan line ending LF yang ditetapkan di `.gitattributes`.
+- `docker/entrypoint.test.ts`: memverifikasi sinkronisasi skema non-interaktif (`bunx prisma db push --accept-data-loss` saat `AUTO_MIGRATE=true`) dan penghentian startup jika sinkronisasi schema gagal; skrip menggunakan line ending LF yang ditetapkan di `.gitattributes`.
 
 Tes integrasi memerlukan database aplikasi dan router yang terisolasi. Jangan menjalankannya terhadap database produksi atau memakai layanan pengiriman/pembayaran asli.
 
@@ -65,6 +65,7 @@ Implementasi dan konfigurasi:
 - `auth.ts`
 - `bun.lock`
 - `components/ai-relay/balance-topup-card.tsx`
+- `docker/Dockerfile`
 - `docker/entrypoint.sh`
 - `lib/actions/admin.ts`
 - `lib/actions/auth.ts`
