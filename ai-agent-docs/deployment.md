@@ -259,6 +259,13 @@ Aldera Tech menerapkan isolasi lingkungan multi-stack pada server VPS produksi t
 
 ### 7.2 Alur Otomatisasi CI/CD GitHub Actions
 
+Pemeriksaan dipisahkan ke runner lint, typecheck, konfigurasi, unit, UI, dan
+integration. Lane lint/unit/UI/integration menggunakan matrix dinamis yang
+menambah shard pada pipeline berikutnya bila durasi job sebelumnya melebihi
+tujuh menit. Build dan deploy menunggu seluruh gerbang serta verifikasi manifest
+file test lulus. Rincian pemetaan, artifact, dan batas sharding tersedia pada
+[panduan CI testing](ci-testing.md).
+
 1. **Push ke `staging`**:
    - Memvalidasi linter dan typecheck Next.js.
    - Mem-build image dengan tag `:staging` dan tag `sha-<hash>` ke GitHub Container Registry (`ghcr.io`).

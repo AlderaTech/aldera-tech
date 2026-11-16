@@ -54,3 +54,5 @@ next-env.d.ts
 
 
 /storage/private-uploads/
+/.ci-reports/
+/ci-test-plan.json
