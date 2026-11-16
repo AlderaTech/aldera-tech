@@ -43,3 +43,15 @@ describe("Snap invoice concurrency regressions", () => {
     expect(result.exitCode).toBe(0);
   }, 20_000);
 });
+
+it("does not finalize an obsolete attempt after a creation lease has expired", () => {
+  const script = `import assert from'node:assert/strict';const{prisma}=await import('./lib/prisma.ts');const{reserveInvoiceSnap,finalizeInvoiceSnap}=await import('./lib/invoice-snap-session.ts');const user=await prisma.user.create({data:{name:'Fixture lease',email:crypto.randomUUID()+'@example.test',password:'not-live'}});const inv=await prisma.invoice.create({data:{number:crypto.randomUUID(),clientId:user.id,status:'SENT',subtotal:100,total:100,dueDate:new Date()}});
+ try{const old=await reserveInvoiceSnap(inv.id,user);assert.equal(old.kind,'reserved');await prisma.payment.update({where:{id:old.paymentId},data:{gatewayResponse:{state:'CREATING',orderId:old.orderId,createdAt:new Date(Date.now()-180000).toISOString()}}});const retry=await reserveInvoiceSnap(inv.id,user);assert.equal(retry.kind,'reserved');assert.equal(await finalizeInvoiceSnap(old,{token:'obsolete',redirectUrl:'https://example.test/obsolete'}),false);assert.equal(await finalizeInvoiceSnap(retry,{token:'current',redirectUrl:'https://example.test/current'}),true);assert.equal(await prisma.payment.count({where:{invoiceId:inv.id,status:'PENDING'}}),1);}
+ finally{await prisma.user.delete({where:{id:user.id}});await prisma.$disconnect();}`;
+  const result = Bun.spawnSync(
+    [process.execPath, "--no-env-file", "-e", script],
+    { stdout: "pipe", stderr: "pipe" }
+  );
+  if (result.exitCode) throw Error(result.stderr.toString());
+  expect(result.exitCode).toBe(0);
+}, 20000);

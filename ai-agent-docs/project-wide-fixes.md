@@ -10,7 +10,7 @@
 
 | Pemeriksaan                   | Hasil                                                                                            |
 | ----------------------------- | ------------------------------------------------------------------------------------------------ |
-| Suite Bun terisolasi          | **1.014 pass, 0 fail**, 290 berkas; 75.979 assertion                                             |
+| Suite Bun terisolasi          | **1.016 pass, 0 fail**, 290 berkas; 75.981 assertion                                             |
 | Guard/rollback staging Python | **5 pass**                                                                                       |
 | Dependency audit              | Tidak ada advisori pada hasil `bun audit --json`                                                 |
 | Frozen install Linux          | Berhasil di image `oven/bun:1.4.4-alpine`, tanpa postinstall dan tanpa file environment aplikasi |

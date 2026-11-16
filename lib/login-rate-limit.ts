@@ -63,5 +63,5 @@ export async function clearLoginAttempts(email: string) {
 }
 
 export async function cleanupLoginAttempts() {
-  await prisma.$executeRaw`DELETE FROM "AuthRateLimit" WHERE "key" IN (SELECT "key" FROM "AuthRateLimit" WHERE "resetAt" < NOW() ORDER BY "resetAt" LIMIT 1000)`;
+  await prisma.$executeRaw`DELETE FROM "AuthRateLimit" WHERE "resetAt" < NOW() AND "key" IN (SELECT "key" FROM "AuthRateLimit" WHERE "resetAt" < NOW() ORDER BY "resetAt" LIMIT 1000)`;
 }

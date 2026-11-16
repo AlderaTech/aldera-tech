@@ -32,3 +32,15 @@ it("applies the additive login migration repeatedly without losing counters", ()
   if (result.exitCode) throw new Error(result.stderr.toString());
   expect(result.exitCode).toBe(0);
 }, 20_000);
+
+it("does not delete a refreshed counter while cleanup waits for its row lock", () => {
+  const script = `import assert from'node:assert/strict';import{Client}from'pg';const{prisma}=await import('./lib/prisma.ts');const{cleanupLoginAttempts}=await import('./lib/login-rate-limit.ts');const db=new Client({connectionString:process.env.DATABASE_URL});await db.connect();const key='cleanup-fixture-'+crypto.randomUUID();let job;
+ try{await db.query('INSERT INTO "AuthRateLimit" (key,attempts,"resetAt","updatedAt") VALUES ($1,2,NOW()-make_interval(hours=>1),NOW())',[key]);await db.query('BEGIN');await db.query('UPDATE "AuthRateLimit" SET "resetAt"=NOW()+make_interval(hours=>1) WHERE key=$1',[key]);job=cleanupLoginAttempts();let blocked=false;for(let i=0;i<100;i++){await db.query('SELECT pg_stat_clear_snapshot()');const r=await db.query("SELECT 1 FROM pg_stat_activity WHERE pid<>pg_backend_pid() AND wait_event_type='Lock' AND query LIKE 'DELETE FROM %AuthRateLimit%'");if(r.rowCount){blocked=true;break;}await Bun.sleep(10);}assert.ok(blocked);await db.query('COMMIT');await job;const result=await db.query('SELECT attempts FROM "AuthRateLimit" WHERE key=$1',[key]);assert.equal(result.rows[0]?.attempts,2);}
+ finally{await db.query('ROLLBACK');if(job)await job;await db.query('DELETE FROM "AuthRateLimit" WHERE key=$1',[key]);await db.end();await prisma.$disconnect();}`;
+  const result = Bun.spawnSync(
+    [process.execPath, "--no-env-file", "-e", script],
+    { stdout: "pipe", stderr: "pipe" }
+  );
+  if (result.exitCode) throw Error(result.stderr.toString());
+  expect(result.exitCode).toBe(0);
+}, 20000);

@@ -84,6 +84,16 @@ export async function reserveInvoiceSnap(
         token: response.token,
         redirectUrl: response.redirectUrl,
       };
+    // A response from an expired attempt must not become payable after its retry.
+    if (pending && response.state === "CREATING") {
+      await tx.payment.updateMany({
+        where: { id: pending.id, status: "PENDING", transactionId: null },
+        data: {
+          status: "FAILED",
+          notes: "Reservasi kedaluwarsa dan digantikan percobaan baru.",
+        },
+      });
+    }
     // The numeric suffix preserves the existing webhook invoice resolver.
     const orderId = `${invoice.number}-${Date.now()}${String(randomInt(100_000_000)).padStart(8, "0")}`;
     const payment = await tx.payment.create({
