@@ -6,7 +6,7 @@ describe("Read-only staging startup diagnostics", () => {
   it("rejects a reachable login when a critical dependency is unhealthy", () => {
     const script = fileURLToPath(
       new URL("./inspect-staging.sh", import.meta.url)
-    );
+    ).replaceAll("\\\\", "/");
     const fixture = `docker() {
       case "$*" in *API_ROUTES.health*) return 1;; esac
       case "$1" in inspect) echo running;; exec) echo 200;; logs) return 0;; esac
@@ -22,7 +22,7 @@ describe("Read-only staging startup diagnostics", () => {
   it("reports restart failures and redacts credentials without inspecting environment", () => {
     const script = fileURLToPath(
       new URL("./inspect-staging.sh", import.meta.url)
-    );
+    ).replaceAll("\\\\", "/");
     const fixture = `docker() {
       case "$1" in
         inspect) printf 'state=restarting health=unhealthy restarts=4 exit=1\n';;
@@ -56,7 +56,7 @@ describe("Read-only staging startup diagnostics", () => {
     it(`checks real login readiness when the container is ${state}`, () => {
       const script = fileURLToPath(
         new URL("./inspect-staging.sh", import.meta.url)
-      );
+      ).replaceAll("\\\\", "/");
       const fixture = `docker() {
         case "$1" in
           inspect) printf '%s\\n' '${state}';;

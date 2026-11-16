@@ -11,9 +11,11 @@ describe("Auth.js account boundary", () => {
       mock.module("next-auth/providers/credentials",()=>({default:(c)=>c}));
       mock.module("bcryptjs",()=>({default:{compare:async()=>true}}));
       mock.module("@/lib/prisma",()=>({prisma:{user:{findUnique:async()=>account}}}));
+      mock.module("@/lib/login-rate-limit",()=>({consumeLoginAttempt:async()=>true,clearLoginAttempts:async()=>{}}));
       await import("./auth.ts");
       const credentials={email:account.email,password:"fixture-password"};
-      const invited=await config.providers[0].authorize(credentials);
+      const request=new Request("http://localhost/api/auth/callback/credentials");
+      const invited=await config.providers[0].authorize(credentials,request);
       let token=await config.callbacks.jwt({token:{},user:invited});
       account={...account,roles:["CLIENT"]};
       token=await config.callbacks.jwt({token});
@@ -21,7 +23,7 @@ describe("Auth.js account boundary", () => {
       account={...account,isActive:false};
       const disabled=await config.callbacks.jwt({token});
       account={...account,securityVersion:0,isActive:true,invitedAt:null};
-      const unverified=await config.providers[0].authorize(credentials);
+      const unverified=await config.providers[0].authorize(credentials,request);
       console.log(JSON.stringify({invited:!!invited,demotedRole,disabled,unverified}));
     `;
     const child = Bun.spawnSync([process.execPath, "-e", script], {

@@ -338,6 +338,7 @@ model Invoice {
   @@index([projectId])
   @@index([status])
   @@index([dueDate])
+  @@index([status, paidAt])
 }
 
 enum InvoicePurpose {
@@ -793,6 +794,15 @@ model ProposalItem {
   proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
 
   @@index([proposalId])
+}
+
+model AuthRateLimit {
+  key       String   @id
+  attempts  Int      @default(1)
+  resetAt   DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([resetAt])
 }
 
 model PasswordResetToken {

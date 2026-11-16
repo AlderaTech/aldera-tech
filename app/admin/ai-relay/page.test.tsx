@@ -28,7 +28,7 @@ if (process.env.ALDERA_UI_BOUNDARY_TEST_ISOLATED === "1") {
   const { default: Page, metadata } = await import("./page");
   describe("Admin AI reconciliation entry point", () => {
     it("preserves operational content and adds the real pending review queue", async () => {
-      expect(metadata.title).toContain("AI Operations");
+      expect(metadata.title).toContain("Operasional AI Gateway");
       expect(renderToStaticMarkup(await Page())).toContain("Operations");
       rows = [
         {

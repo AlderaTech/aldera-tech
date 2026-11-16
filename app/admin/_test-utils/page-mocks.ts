@@ -47,12 +47,15 @@ export function installAdminPageMocks(pathname: string = ADMIN_ROUTES.home) {
     {},
     {
       get: (_target, model) =>
-        new Proxy<Record<string, unknown>>(
-          {},
-          {
-            get: (_model, operation) => query(String(model), String(operation)),
-          }
-        ),
+        model === "$queryRaw"
+          ? query("$raw", "query")
+          : new Proxy<Record<string, unknown>>(
+              {},
+              {
+                get: (_model, operation) =>
+                  query(String(model), String(operation)),
+              }
+            ),
     }
   );
   mock.module("@/lib/prisma", () => ({ prisma }));

@@ -48,7 +48,7 @@ export function getOverviewStatCards(stats: AdminOverviewStats) {
     },
     {
       icon: DollarSign,
-      label: "Total Revenue",
+      label: "Total Pendapatan",
       value: stats.revenue,
       helper: "Invoice berstatus paid",
       color: "text-emerald-700 bg-emerald-50 border-emerald-200",

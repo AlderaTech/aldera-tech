@@ -9,6 +9,7 @@ import { OverviewProjects } from "./_components/overview-projects";
 import { OverviewActivity } from "./_components/overview-activity";
 import { OverviewLayout } from "./_components/overview-layout";
 import type { Metadata } from "next";
+import { getOverviewAnalytics } from "./_data/overview-analytics";
 
 export const metadata: Metadata = {
   title: "Ringkasan",
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
 export default async function DashboardHome() {
   const session = await auth();
   const userId = session!.user.id;
+  const analytics = await getOverviewAnalytics(userId);
 
   const stats = await safeDb(
     async () => {
@@ -86,9 +88,9 @@ export default async function DashboardHome() {
       charts={
         <OverviewCharts
           active={stats.active}
-          pending={stats.pending}
           spent={stats.spent}
-          projects={stats.projects}
+          work={analytics.work}
+          payments={analytics.payments}
         />
       }
       projects={<OverviewProjects projects={stats.projects} />}

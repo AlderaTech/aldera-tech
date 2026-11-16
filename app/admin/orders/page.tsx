@@ -1,3 +1,4 @@
+import { parsePage } from "@/lib/pagination";
 import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { redirect } from "next/navigation";
@@ -53,7 +54,7 @@ export default async function AdminOrdersPage({
   }
 
   const sp = await searchParams;
-  const page = Math.max(1, Number(sp?.page) || 1);
+  const page = parsePage(sp?.page);
   const PAGE_SIZE = 10;
   const q = sp?.q?.trim();
   const rawStatus = sp?.status?.trim()?.toUpperCase();
@@ -102,7 +103,9 @@ export default async function AdminOrdersPage({
         mascot={<AdminMascot pose="activity" size="header" />}
       >
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Order Requests</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Permohonan Pesanan
+          </h1>
           <p className="text-muted-foreground">
             Estimasi proyek yang diajukan klien dari kalkulator harga.
           </p>

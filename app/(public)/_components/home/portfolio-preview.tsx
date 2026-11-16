@@ -10,10 +10,7 @@ import {
 } from "@/components/shared/motion";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
-import {
-  publicCaseStudies,
-  resolveCaseStudyImage,
-} from "@/lib/public-fallbacks";
+import { resolveCaseStudyImage } from "@/lib/public-fallbacks";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
 import styles from "../studio.module.css";
@@ -26,14 +23,6 @@ type HomeCaseStudy = {
   industry: string;
   featuredImage: string | null;
 };
-
-const fallback: HomeCaseStudy[] = publicCaseStudies.slice(0, 3).map((item) => ({
-  slug: item.slug,
-  title: item.title,
-  client: item.client,
-  industry: item.industry,
-  featuredImage: item.featuredImage,
-}));
 
 export async function PortfolioPreview() {
   const items = await safeDb<HomeCaseStudy[]>(async () => {
@@ -49,13 +38,11 @@ export async function PortfolioPreview() {
         featuredImage: true,
       },
     });
-    return data.length
-      ? data.map((item) => ({
-          ...item,
-          featuredImage: resolveCaseStudyImage(item.slug, item.featuredImage),
-        }))
-      : fallback;
-  }, fallback);
+    return data.map((item) => ({
+      ...item,
+      featuredImage: resolveCaseStudyImage(item.slug, item.featuredImage),
+    }));
+  }, []);
 
   return (
     <section className={portfolioStyles.section}>
@@ -77,6 +64,27 @@ export async function PortfolioPreview() {
           </p>
         </FadeUp>
 
+        {items.length === 0 && (
+          <div className="rounded-3xl border border-brand-divider bg-white px-6 py-10 text-center text-slate-600">
+            <PanelsTopLeft
+              className="mx-auto mb-3 size-8 text-brand-cyan-ink"
+              aria-hidden="true"
+            />
+            <h3 className="font-semibold text-brand-navy">
+              Studi kasus segera hadir
+            </h3>
+            <p className="mx-auto mt-2 max-w-md text-sm">
+              Belum ada studi kasus yang dipublikasikan. Diskusikan kebutuhan
+              proyek Anda bersama kami.
+            </p>
+            <Link
+              href={PUBLIC_ROUTES.contact}
+              className="mt-4 inline-block font-semibold text-brand-cyan-ink underline underline-offset-4"
+            >
+              Diskusikan proyek
+            </Link>
+          </div>
+        )}
         <StaggerContainer className={portfolioStyles.caseGrid}>
           {items.map((item, index) => (
             <StaggerItem

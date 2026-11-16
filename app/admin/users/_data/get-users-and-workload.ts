@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
-import { safeDb } from "@/lib/safe-db";
+import { getWorkloadPage } from "./workload-page";
 import { STAFF_ROLES } from "@/lib/permissions";
-import type { Role } from "@prisma/client";
+import type { Prisma, Role } from "@prisma/client";
 
 export const WEEKLY_CAPACITY_HOURS = 40;
 
@@ -28,82 +28,52 @@ export type StaffWorkloadItem = {
   capacityPct: number;
 };
 
-export async function getUsersAndWorkloadData() {
-  const weekAgo = new Date();
-  weekAgo.setDate(weekAgo.getDate() - 7);
-
-  const [users, staffWorkload] = await Promise.all([
-    safeDb(
-      async () =>
-        await prisma.user.findMany({
-          orderBy: { createdAt: "desc" },
-          include: {
-            _count: { select: { projects: true, invoices: true } },
-          },
-        }),
-      [] as UserListItem[]
-    ),
-    safeDb(async () => {
-      const staff = await prisma.user.findMany({
-        where: { roles: { hasSome: [...STAFF_ROLES] }, isActive: true },
-        select: {
-          id: true,
-          name: true,
-          roles: true,
-          avatar: true,
-          assignedTasks: {
-            where: { status: { notIn: ["DONE"] } },
-            select: { id: true, priority: true },
-          },
-          projectAssignments: {
-            select: { project: { select: { id: true, status: true } } },
-          },
-          timeEntries: {
-            where: { startedAt: { gte: weekAgo } },
-            select: { durationSec: true },
-          },
-        },
-      });
-
-      return staff
-        .map((u) => {
-          const hoursThisWeek = +(
-            u.timeEntries.reduce((s, e) => s + e.durationSec, 0) / 3600
-          ).toFixed(1);
-          const activeProjects = u.projectAssignments.filter(
-            (a) =>
-              a.project.status === "IN_PROGRESS" ||
-              a.project.status === "REVIEW"
-          ).length;
-          const urgentTasks = u.assignedTasks.filter(
-            (t) => t.priority === "URGENT" || t.priority === "HIGH"
-          ).length;
-
-          return {
-            id: u.id,
-            name: u.name,
-            roles: u.roles,
-            avatar: u.avatar,
-            activeTasks: u.assignedTasks.length,
-            urgentTasks,
-            activeProjects,
-            hoursThisWeek,
-            capacityPct: Math.min(
-              100,
-              Math.round((hoursThisWeek / WEEKLY_CAPACITY_HOURS) * 100)
-            ),
-          };
-        })
-        .sort((a, b) => b.capacityPct - a.capacityPct);
-    }, [] as StaffWorkloadItem[]),
-  ]);
-
-  const counts = {
-    all: users.length,
-    admin: users.filter((u) => u.roles.includes("ADMIN")).length,
-    developer: users.filter((u) => u.roles.includes("DEVELOPER")).length,
-    client: users.filter((u) => u.roles.includes("CLIENT")).length,
+export async function getUsersAndWorkloadData({
+  page = 1,
+  role = "ALL",
+  workload = false,
+}: { page?: number; role?: string; workload?: boolean } = {}) {
+  const pageSize = 20;
+  const where: Prisma.UserWhereInput =
+    role === "ALL" ? {} : { roles: { has: role as Role } };
+  const staffWhere: Prisma.UserWhereInput = {
+    roles: { hasSome: [...STAFF_ROLES] },
+    isActive: true,
   };
-
-  return { users, staffWorkload, counts };
+  const [all, admin, developer, client, totalCount, users, staffWorkload] =
+    await Promise.all([
+      prisma.user.count(),
+      prisma.user.count({ where: { roles: { has: "ADMIN" } } }),
+      prisma.user.count({ where: { roles: { has: "DEVELOPER" } } }),
+      prisma.user.count({ where: { roles: { has: "CLIENT" } } }),
+      prisma.user.count({ where: workload ? staffWhere : where }),
+      workload
+        ? Promise.resolve([] as UserListItem[])
+        : prisma.user.findMany({
+            where,
+            orderBy: [{ createdAt: "desc" }, { id: "asc" }],
+            skip: (page - 1) * pageSize,
+            take: pageSize,
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              avatar: true,
+              roles: true,
+              isActive: true,
+              createdAt: true,
+              _count: { select: { projects: true, invoices: true } },
+            },
+          }),
+      workload
+        ? getWorkloadPage(page, pageSize)
+        : Promise.resolve([] as StaffWorkloadItem[]),
+    ]);
+  return {
+    users,
+    staffWorkload,
+    counts: { all, admin, developer, client },
+    totalCount,
+    pageSize,
+  };
 }

@@ -4,6 +4,7 @@ import {
   type QueryResult,
   type QueryResultRow,
 } from "pg";
+import { assertTestDatabaseUrl } from "@/lib/test-database-url";
 
 /**
  * Secondary PostgreSQL Database Client for Aldera AI API Relay (`aldera_router`).
@@ -69,10 +70,14 @@ export function assertAuditTableImmutability(sql: string): void {
  * Returns the singleton `pg.Pool` instance connected to `process.env.ROUTER_DATABASE_URL`.
  */
 export function getRouterPool(): Pool {
+  if (process.env.NODE_ENV === "test")
+    assertTestDatabaseUrl(process.env.ROUTER_DATABASE_URL);
   if (!globalForRouterDb.routerPool) {
     const connectionString =
       process.env.ROUTER_DATABASE_URL ||
       "postgresql://postgres:postgres@localhost:5432/aldera_router";
+    if (process.env.NODE_ENV === "test")
+      assertTestDatabaseUrl(connectionString);
 
     globalForRouterDb.routerPool = new Pool({
       connectionString,

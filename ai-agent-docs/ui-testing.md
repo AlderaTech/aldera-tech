@@ -27,10 +27,10 @@ Dokumen ini merupakan panduan operasional standar (_Standard Operating Procedure
 - Runner ini cepat, mendukung TypeScript dan JSX/TSX secara instan tanpa konfigurasi bundler tambahan:
   ```bash
   # Menjalankan pengujian UI spesifik
-  bun test app/(public)/ai-relay/page.test.tsx
+  bun run test app/(public)/ai-relay/page.test.tsx
 
   # Menjalankan seluruh pengujian UI komponen
-  bun test components/dashboard/sidebar.test.ts
+  bun run test components/dashboard/sidebar.test.ts
 
   # Menjalankan seluruh test suite repositori
   bun test
@@ -246,3 +246,7 @@ Sebelum menyatakan tugas antarmuka pengguna selesai, AI Agent **WAJIB** memverif
     - [ ] Menjalankan bun test <file-ui.test.tsx> dan lulus 100%.
     - [ ] Menjalankan bun test menyeluruh dan memastikan 0 fail.
 ```
+
+## Eksekusi terisolasi
+
+Gunakan `bun run test` untuk menyiapkan database sementara dan menjalankan `bun test --isolate`. Bun minimal 1.4.4 wajib tersedia. Menjalankan `bun test` langsung hanya diperbolehkan pada environment test yang telah disiapkan, misalnya CI; guard database menolak nama database aplikasi. Lihat [TEST_INFRA.md](../TEST_INFRA.md).

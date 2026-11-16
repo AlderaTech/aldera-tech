@@ -10,6 +10,7 @@ import {
 
 export interface BindingStatusResult {
   isBound: boolean;
+  error?: string;
   telegramId?: string | number | null;
   telegramUsername?: string | null;
   balance?: number;
@@ -158,7 +159,10 @@ export async function getBindingStatusAction(): Promise<BindingStatusResult> {
     return { isBound: false, activeToken: null };
   } catch (error) {
     console.error("[getBindingStatusAction] Error:", error);
-    return { isBound: false };
+    return {
+      isBound: false,
+      error: "Status Telegram belum dapat dimuat. Silakan coba kembali.",
+    };
   }
 }
 

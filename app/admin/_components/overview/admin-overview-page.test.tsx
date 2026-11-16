@@ -24,9 +24,9 @@ describe("Susunan dashboard operasional", () => {
     );
     for (const label of [
       "Dashboard operasional",
-      "Revenue 12 Bulan",
+      "Pendapatan 12 Bulan",
       "Status Proyek",
-      "Top 5 Client",
+      "5 Klien",
       "Aktivitas Terbaru",
       "Panel Operasional",
     ])

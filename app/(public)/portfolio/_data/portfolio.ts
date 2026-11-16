@@ -1,7 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import {
-  getFallbackCaseStudy,
-  publicCaseStudies,
   resolveCaseStudyImage,
   type PublicCaseStudy,
 } from "@/lib/public-fallbacks";
@@ -15,18 +13,6 @@ export type PortfolioItem = Pick<
 };
 
 export type PortfolioDetail = PublicCaseStudy;
-
-const fallbackPortfolioItems: PortfolioItem[] = publicCaseStudies.map(
-  (item) => ({
-    slug: item.slug,
-    title: item.title,
-    client: item.client,
-    industry: item.industry,
-    summary: item.summary,
-    featuredImage: item.featuredImage,
-    techStack: item.techStack,
-  })
-);
 
 export async function getPortfolioItems() {
   return safeDb<PortfolioItem[]>(async () => {
@@ -44,13 +30,11 @@ export async function getPortfolioItems() {
       },
     });
 
-    return data.length
-      ? data.map((item) => ({
-          ...item,
-          featuredImage: resolveCaseStudyImage(item.slug, item.featuredImage),
-        }))
-      : fallbackPortfolioItems;
-  }, fallbackPortfolioItems);
+    return data.map((item) => ({
+      ...item,
+      featuredImage: resolveCaseStudyImage(item.slug, item.featuredImage),
+    }));
+  }, []);
 }
 
 export async function getPortfolioItem(slug: string) {
@@ -58,8 +42,8 @@ export async function getPortfolioItem(slug: string) {
     const item = await prisma.caseStudy.findFirst({
       where: { slug, published: true },
     });
-    return item ?? getFallbackCaseStudy(slug);
-  }, getFallbackCaseStudy(slug));
+    return item;
+  }, null);
 }
 
 export async function getPortfolioStaticParams() {
@@ -69,11 +53,8 @@ export async function getPortfolioStaticParams() {
         where: { published: true },
         select: { slug: true },
       }),
-    publicCaseStudies.map((item) => ({ slug: item.slug }))
+    []
   );
-  const slugs = new Set([
-    ...publicCaseStudies.map((item) => item.slug),
-    ...items.map((item) => item.slug),
-  ]);
+  const slugs = new Set([...items.map((item) => item.slug)]);
   return [...slugs].map((slug) => ({ slug }));
 }

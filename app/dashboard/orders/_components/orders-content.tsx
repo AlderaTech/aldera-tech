@@ -1,3 +1,4 @@
+import { parsePage } from "@/lib/pagination";
 import type { OrderRequestStatus, Prisma } from "@prisma/client";
 import Link from "next/link";
 import { RotateCcw } from "lucide-react";
@@ -39,7 +40,7 @@ export async function OrdersContent({ searchParams }: OrdersContentProps = {}) {
   const userId = session!.user.id;
 
   const rawStatus = searchParams?.status?.trim().toUpperCase();
-  const page = Math.max(1, parseInt(searchParams?.page || "1", 10) || 1);
+  const page = parsePage(searchParams?.page);
 
   const statusFilter =
     rawStatus && VALID_ORDER_STATUSES.includes(rawStatus as OrderRequestStatus)
@@ -54,19 +55,23 @@ export async function OrdersContent({ searchParams }: OrdersContentProps = {}) {
   const result = await safeDb<{
     total: number;
     items: OrderWithProjectType[];
-  } | null>(async () => {
-    const [total, items] = await Promise.all([
-      prisma.orderRequest.count({ where }),
-      prisma.orderRequest.findMany({
-        where,
-        orderBy: { createdAt: "desc" },
-        skip: (page - 1) * ORDERS_PER_PAGE,
-        take: ORDERS_PER_PAGE,
-        include: { projectType: { select: { name: true } } },
-      }),
-    ]);
-    return { total, items };
-  }, null);
+  } | null>(
+    async () => {
+      const [total, items] = await Promise.all([
+        prisma.orderRequest.count({ where }),
+        prisma.orderRequest.findMany({
+          where,
+          orderBy: { createdAt: "desc" },
+          skip: (page - 1) * ORDERS_PER_PAGE,
+          take: ORDERS_PER_PAGE,
+          include: { projectType: { select: { name: true } } },
+        }),
+      ]);
+      return { total, items };
+    },
+    null,
+    { errorFallback: true }
+  );
 
   if (result === null) return <OrdersLoadError />;
 

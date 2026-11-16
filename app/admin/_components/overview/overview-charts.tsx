@@ -20,7 +20,7 @@ export function OverviewCharts({
         <CardHeader className="border-b border-slate-100 bg-slate-50/50 px-5 py-3.5">
           <CardTitle className="flex items-center gap-2 text-sm font-semibold tracking-tight text-slate-900">
             <TrendingUp className="size-4 text-primary" />
-            Revenue 12 Bulan Terakhir
+            Pendapatan 12 Bulan Terakhir
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4.5">

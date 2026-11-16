@@ -1,0 +1,184 @@
+import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { assertTestDatabaseUrl } from "../lib/test-database-url";
+import { testEnvironment } from "./test-environment";
+
+const [major, minor, patch] = Bun.version.split(".").map(Number);
+if (major < 1 || (major === 1 && (minor < 4 || (minor === 4 && patch < 4)))) {
+  throw new Error(
+    "Pengujian membutuhkan Bun 1.4.4 atau lebih baru untuk isolasi mock dan lockfile v3."
+  );
+}
+
+const container = `aldera-test-${randomUUID()}`;
+const schemaRevision = "d75d14412b5277d174618602e7a8d7649cc2f02c";
+const schemaFiles = [
+  "init.sql",
+  "migrations/001_initial_schema.sql",
+  "migrations/002_account_binding.sql",
+  "migrations/003_bot_cms_and_payment_settings.sql",
+  "seeds/001_initial_pricing.sql",
+];
+const args = process.argv.slice(2);
+const schemaDirectory = args
+  .find((arg) => arg.startsWith("--router-schema="))
+  ?.split("=")
+  .slice(1)
+  .join("=");
+const testArgs = args.filter((arg) => !arg.startsWith("--router-schema="));
+
+async function docker(args: string[], input?: string) {
+  const child = Bun.spawn(["docker", ...args], {
+    stdin: input === undefined ? "ignore" : "pipe",
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  if (input !== undefined && child.stdin) {
+    child.stdin.write(input);
+    child.stdin.end();
+  }
+  const [code, stdout, stderr] = await Promise.all([
+    child.exited,
+    new Response(child.stdout).text(),
+    new Response(child.stderr).text(),
+  ]);
+  if (code !== 0)
+    throw new Error(`Docker ${args[0]} gagal: ${stderr.slice(-700)}`);
+  return stdout.trim();
+}
+
+async function cleanup() {
+  try {
+    await docker(["stop", container]);
+  } catch {
+    /* The owned container may already have exited. */
+  }
+}
+for (const signal of ["SIGINT", "SIGTERM"] as const)
+  process.once(signal, () => {
+    void cleanup().finally(() => process.exit(130));
+  });
+
+try {
+  console.log(
+    "Menyiapkan PostgreSQL sementara; database aplikasi tidak digunakan."
+  );
+  await docker([
+    "run",
+    "-d",
+    "--rm",
+    "--name",
+    container,
+    "--tmpfs",
+    "/var/lib/postgresql/data",
+    "-p",
+    "127.0.0.1::5432",
+    "-e",
+    "POSTGRES_PASSWORD=isolated_test_only",
+    "-e",
+    "POSTGRES_DB=aldera_test",
+    "postgres:17",
+  ]);
+  let ready = false;
+  for (let attempt = 0; attempt < 60; attempt++) {
+    try {
+      await docker([
+        "exec",
+        container,
+        "pg_isready",
+        "-h",
+        "127.0.0.1",
+        "-U",
+        "postgres",
+      ]);
+      ready = true;
+      break;
+    } catch {
+      await Bun.sleep(500);
+    }
+  }
+  if (!ready) throw new Error("Database uji tidak siap.");
+  await docker([
+    "exec",
+    container,
+    "createdb",
+    "-U",
+    "postgres",
+    "aldera_router_test",
+  ]);
+  for (const file of schemaFiles) {
+    let sql: string;
+    if (schemaDirectory)
+      sql = await readFile(resolve(schemaDirectory, file), "utf8");
+    else {
+      const response = await fetch(
+        `https://raw.githubusercontent.com/Alfian57/server-infrastructure/${schemaRevision}/roles/applications/aldera-router-setup/files/${file}`,
+        { signal: AbortSignal.timeout(20_000) }
+      );
+      if (!response.ok)
+        throw new Error(
+          "Schema router uji tidak tersedia. Gunakan --router-schema=<direktori-schema> untuk sumber lokal."
+        );
+      sql = await response.text();
+    }
+    await docker(
+      [
+        "exec",
+        "-i",
+        container,
+        "psql",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-U",
+        "postgres",
+        "-d",
+        "aldera_router_test",
+      ],
+      sql
+    );
+  }
+  await docker(
+    [
+      "exec",
+      "-i",
+      container,
+      "psql",
+      "-v",
+      "ON_ERROR_STOP=1",
+      "-U",
+      "postgres",
+      "-d",
+      "aldera_router_test",
+    ],
+    "CREATE TABLE IF NOT EXISTS user_alert_cooldowns (id BIGSERIAL PRIMARY KEY,user_id BIGINT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,last_low_balance_alert_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),alert_count INT NOT NULL DEFAULT 1,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW());"
+  );
+  const port = (await docker(["port", container, "5432/tcp"]))
+    .split(":")
+    .at(-1);
+  if (!port || !/^\d+$/.test(port))
+    throw new Error("Port database uji tidak valid.");
+  const databaseUrl = `postgresql://postgres:isolated_test_only@127.0.0.1:${port}/aldera_test?schema=public`;
+  const routerUrl = `postgresql://postgres:isolated_test_only@127.0.0.1:${port}/aldera_router_test`;
+  assertTestDatabaseUrl(databaseUrl);
+  assertTestDatabaseUrl(routerUrl);
+  const env = testEnvironment(databaseUrl, routerUrl);
+  const schema = Bun.spawn(
+    [process.execPath, "--no-env-file", "x", "prisma", "db", "push"],
+    { env, stdout: "inherit", stderr: "inherit" }
+  );
+  if ((await schema.exited) !== 0)
+    throw new Error("Penerapan schema uji gagal; test tidak dijalankan.");
+  const tests = Bun.spawn(
+    [process.execPath, "--no-env-file", "test", "--isolate", ...testArgs],
+    { env, stdout: "inherit", stderr: "inherit" }
+  );
+  process.exitCode = await tests.exited;
+} catch (error) {
+  console.error(
+    error instanceof Error ? error.message : "Pengujian terisolasi gagal."
+  );
+  process.exitCode = 1;
+} finally {
+  await cleanup();
+}

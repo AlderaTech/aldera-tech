@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { isStaff } from "@/lib/permissions";
 import { ADMIN_ROUTES } from "@/lib/routes";
+import { manualTimeEntrySchema } from "@/lib/validations/time-entry";
 
 async function requireStaff() {
   const session = await auth();
@@ -19,36 +20,48 @@ export async function addManualEntryAction(
   formData: FormData
 ) {
   const user = await requireStaff();
-  const description = String(formData.get("description") ?? "").trim();
-  const minutes = Number(formData.get("minutes") ?? 0);
-  const billable = formData.get("billable") !== "false";
-  if (!description || minutes <= 0) {
-    return { ok: false, error: "Deskripsi dan menit wajib" };
-  }
+  const parsed = manualTimeEntrySchema.safeParse({
+    description: formData.get("description"),
+    minutes: formData.get("minutes"),
+    billable: formData.get("billable") !== "false",
+  });
+  if (!parsed.success)
+    return {
+      ok: false,
+      error: parsed.error.issues[0]?.message ?? "Periksa durasi dan deskripsi.",
+    };
+  const { description, minutes, billable } = parsed.data;
   const durationSec = Math.floor(minutes * 60);
   const now = new Date();
   const startedAt = new Date(now.getTime() - durationSec * 1000);
 
-  await prisma.timeEntry.create({
-    data: {
-      projectId,
-      userId: user.id,
-      description,
-      startedAt,
-      endedAt: now,
-      durationSec,
-      billable,
-    },
-  });
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.timeEntry.create({
+        data: {
+          projectId,
+          userId: user.id,
+          description,
+          startedAt,
+          endedAt: now,
+          durationSec,
+          billable,
+        },
+      });
 
-  await prisma.activityLog.create({
-    data: {
-      projectId,
-      userId: user.id,
-      action: "TIME_LOGGED",
-      description: `Waktu tercatat: ${minutes} menit (${description}).`,
-    },
-  });
+      await tx.activityLog.create({
+        data: {
+          projectId,
+          userId: user.id,
+          action: "TIME_LOGGED",
+          description: `Waktu tercatat: ${minutes} menit (${description}).`,
+        },
+      });
+    });
+  } catch {
+    console.error("Pencatatan waktu gagal; transaksi dibatalkan.");
+    return { ok: false, error: "Waktu belum tersimpan. Silakan coba kembali." };
+  }
 
   revalidatePath(ADMIN_ROUTES.projectDetail(projectId));
   return { ok: true };

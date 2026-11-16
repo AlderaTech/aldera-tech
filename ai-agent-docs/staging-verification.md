@@ -43,6 +43,6 @@
 - Visual publik desktop/390 px, 37 tampilan privat dan seluruh tab Relay pengguna/Admin telah diperiksa melalui browser; akun dan detail privat memakai fixture lokal. Fokus keyboard menyeluruh, akun privat di VPS, pengiriman WhatsApp/Telegram/email, Turnstile riil, dan sandbox gateway belum diuji live.
 - Ketahanan volume privat terhadap penghapusan stack penuh belum diuji. Probe hanya membuktikan akses storage pada saat pemeriksaan.
 
-## Temuan terbuka
+## Cakupan perbaikan menyeluruh
 
-Health dan kelulusan suite bukan pernyataan seluruh sistem bebas bug. [Audit menyeluruh aktif](project-wide-audit.md) memuat reproduksi masalah pembayaran Snap, transisi proposal, timesheet, grafik Ringkasan, fallback/error, validasi query, advisori dependensi, dan sisa ketidakkonsistenan UI. Pemindaian formatter seluruh repo masih menemukan lima berkas baseline yang perlu dirapikan. Audit tersebut belum mengubah kode aplikasi atau deployment.
+[Audit dan kontrak aktif](project-wide-audit.md) serta [hasil pengujian perbaikan](project-wide-fixes.md) menjelaskan perubahan pembayaran Snap, proposal, waktu, grafik, error, pagination, dependensi dan konsistensi UI. Status image aktif mengikuti hasil deployment pada GitHub Actions. Verifikasi E2E staging diperlukan sesudah deployment dan sebelum promosi main.

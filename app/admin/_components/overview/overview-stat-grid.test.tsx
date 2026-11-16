@@ -24,7 +24,7 @@ describe("Lima statistik operasional", () => {
         "Proyek Aktif",
         "Invoice Pending",
         "Order Pending",
-        "Total Revenue",
+        "Total Pendapatan",
       ])
         expect(html).toContain(title);
       expect(html).toContain(formatCurrency(revenue).replaceAll("&", "&amp;"));

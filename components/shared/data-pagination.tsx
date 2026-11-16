@@ -10,6 +10,7 @@ export interface DataPaginationProps {
   pageSize: number;
   onPageChange?: (page: number) => void;
   className?: string;
+  pageParam?: string;
 }
 
 export function DataPagination({
@@ -18,6 +19,7 @@ export function DataPagination({
   pageSize,
   onPageChange,
   className = "",
+  pageParam = "page",
 }: DataPaginationProps) {
   const { setParam, isPending } = useUrlState();
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
@@ -34,7 +36,7 @@ export function DataPagination({
     if (onPageChange) {
       onPageChange(page);
     } else {
-      setParam("page", page === 1 ? null : String(page));
+      setParam(pageParam, page === 1 ? null : String(page));
     }
   }
 

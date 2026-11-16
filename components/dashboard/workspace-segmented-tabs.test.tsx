@@ -6,6 +6,18 @@ import {
   WorkspaceTabsTrigger,
 } from "./workspace-segmented-tabs";
 describe("Navigasi segmented ruang kerja", () => {
+  it("uses one scrollable track only when requested without changing tab state", () => {
+    const html = renderToStaticMarkup(
+      <Tabs value="last">
+        <WorkspaceTabsList overflow="scroll" density="compact">
+          <WorkspaceTabsTrigger value="first">Pertama</WorkspaceTabsTrigger>
+          <WorkspaceTabsTrigger value="last">Terakhir</WorkspaceTabsTrigger>
+        </WorkspaceTabsList>
+      </Tabs>
+    );
+    expect(html).toContain('data-overflow="scroll"');
+    expect(html.match(/aria-selected="true"/g)).toHaveLength(1);
+  });
   it("membatasi kepadatan compact pada pemanggil yang memintanya", () => {
     const compact = renderToStaticMarkup(
       <Tabs value="catalog">

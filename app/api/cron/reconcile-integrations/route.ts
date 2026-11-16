@@ -3,6 +3,7 @@ import { verifyCronSecret } from "@/lib/cron";
 import { withCronLock } from "@/lib/cron-lock";
 import { processInvoiceBalanceEffects } from "@/lib/invoice-balance-effects";
 import { retryIntegrationSettings } from "@/lib/integration-sync";
+import { cleanupLoginAttempts } from "@/lib/login-rate-limit";
 export const runtime = "nodejs";
 export async function GET(request: NextRequest) {
   if (!verifyCronSecret(request).authorized)
@@ -10,6 +11,7 @@ export async function GET(request: NextRequest) {
   const result = await withCronLock("reconcile-integrations", async () => {
     await processInvoiceBalanceEffects();
     await retryIntegrationSettings();
+    await cleanupLoginAttempts();
     return { ok: true };
   });
   if (result.error)

@@ -74,7 +74,7 @@ describe("AdminOrdersPage", () => {
     });
 
     const html = renderToStaticMarkup(pageElement);
-    expect(html).toContain("Order Requests");
+    expect(html).toContain("Permohonan Pesanan");
     expect(html).toContain("Budi Santoso");
     expect(html).toContain("budi@example.com");
     expect(html).toContain("Web Application");

@@ -1,3 +1,4 @@
+import { parsePage } from "@/lib/pagination";
 import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { Download, File as FileIcon, ImageIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -40,7 +41,7 @@ export default async function AdminFilesPage({
   searchParams,
 }: AdminFilesPageProps) {
   const sp = await searchParams;
-  const page = Math.max(1, Number(sp?.page) || 1);
+  const page = parsePage(sp?.page);
   const PAGE_SIZE = 12;
   const q = sp?.q?.trim();
   const rawType = sp?.type?.trim()?.toUpperCase();
@@ -95,7 +96,7 @@ export default async function AdminFilesPage({
         mascot={<AdminMascot pose="guide" size="header" />}
       >
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">File Manager</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Manajer Berkas</h1>
           <p className="text-muted-foreground">
             Kelola dan telusuri seluruh berkas yang diunggah ke platform.
           </p>

@@ -40,7 +40,7 @@ export function ContactHero({ responseTime }: { responseTime: string }) {
                 alt=""
                 fill
                 sizes="(min-width: 1024px) 450px, (min-width: 640px) 340px, 260px"
-                quality={85}
+                quality={90}
                 className={styles.mascot}
                 preload
               />

@@ -1,3 +1,4 @@
+import { parsePage } from "@/lib/pagination";
 import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import Link from "next/link";
 import { Plus, Download, Repeat } from "lucide-react";
@@ -34,7 +35,7 @@ export default async function AdminInvoicesPage({
   searchParams,
 }: AdminInvoicesPageProps) {
   const sp = await searchParams;
-  const page = Math.max(1, Number(sp?.page) || 1);
+  const page = parsePage(sp?.page);
   const PAGE_SIZE = 10;
   const q = sp?.q?.trim();
   const rawStatus = sp?.status?.trim()?.toUpperCase();
@@ -100,12 +101,12 @@ export default async function AdminInvoicesPage({
         <div className="flex flex-wrap items-center gap-2.5">
           <Button asChild variant="outline">
             <Link href={ADMIN_ROUTES.invoicesRecurring}>
-              <Repeat className="size-4" /> Recurring
+              <Repeat className="size-4" /> Tagihan Berkala
             </Link>
           </Button>
           <Button asChild variant="outline">
             <a href={API_ROUTES.exportInvoices} download>
-              <Download className="size-4" /> Export CSV
+              <Download className="size-4" /> Ekspor CSV
             </a>
           </Button>
           <Button asChild>

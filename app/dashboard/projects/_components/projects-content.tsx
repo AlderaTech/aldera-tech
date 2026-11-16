@@ -1,3 +1,4 @@
+import { parsePage } from "@/lib/pagination";
 import type { Prisma, Project, ProjectStatus } from "@prisma/client";
 import Link from "next/link";
 import { RotateCcw } from "lucide-react";
@@ -39,7 +40,7 @@ export async function ProjectsContent({
 
   const query = searchParams?.q?.trim();
   const rawStatus = searchParams?.status?.trim().toUpperCase();
-  const page = Math.max(1, parseInt(searchParams?.page || "1", 10) || 1);
+  const page = parsePage(searchParams?.page);
 
   const statusFilter =
     rawStatus && VALID_PROJECT_STATUSES.includes(rawStatus as ProjectStatus)
@@ -74,7 +75,8 @@ export async function ProjectsContent({
       ]);
       return { total, items };
     },
-    null
+    null,
+    { errorFallback: true }
   );
 
   if (result === null) return <ProjectsLoadError />;

@@ -82,7 +82,10 @@ export function ResetFormContent() {
               htmlFor="password"
               className="text-sm font-semibold text-[#0F263A]"
             >
-              Password baru
+              Password baru{" "}
+              <span className="text-destructive" aria-hidden="true">
+                *
+              </span>
             </Label>
             <PasswordInput
               id="password"
@@ -106,7 +109,10 @@ export function ResetFormContent() {
               htmlFor="confirmPassword"
               className="text-sm font-semibold text-[#0F263A]"
             >
-              Konfirmasi password
+              Konfirmasi password{" "}
+              <span className="text-destructive" aria-hidden="true">
+                *
+              </span>
             </Label>
             <Input
               id="confirmPassword"
