@@ -10,9 +10,11 @@ import { UserRoleTabs } from "./_components/user-role-tabs";
 import { UserTable } from "./_components/user-table";
 import { TeamWorkloadGrid } from "./_components/team-workload-grid";
 import { getUsersAndWorkloadData } from "./_data/get-users-and-workload";
+import { parsePage } from "@/lib/pagination";
+import { DataPagination } from "@/components/shared/data-pagination";
 
 type AdminUsersPageProps = {
-  searchParams: Promise<{ role?: string; view?: string }>;
+  searchParams: Promise<{ role?: string; view?: string; page?: string }>;
 };
 
 export default async function AdminUsersPage({
@@ -45,7 +47,13 @@ export default async function AdminUsersPage({
         : "workload"
       : "table";
 
-  const { users, staffWorkload, counts } = await getUsersAndWorkloadData();
+  const page = parsePage(params.page);
+  const { users, staffWorkload, counts, totalCount, pageSize } =
+    await getUsersAndWorkloadData({
+      page,
+      role: activeRole,
+      workload: activeView === "workload",
+    });
 
   const filteredUsers =
     activeRole === "ALL"
@@ -92,6 +100,11 @@ export default async function AdminUsersPage({
       ) : (
         <UserTable users={filteredUsers} canManageUsers={canManageUsers} />
       )}
+      <DataPagination
+        currentPage={page}
+        totalItems={totalCount}
+        pageSize={pageSize}
+      />
     </div>
   );
 }

@@ -125,7 +125,7 @@ const adminQuickNav: QuickNavItem[] = [
     permission: PERMISSIONS.BLOG_CREATE,
   },
   {
-    label: "File Manager",
+    label: "Manajer Berkas",
     href: ADMIN_ROUTES.files,
     icon: FolderClosed,
     permission: PERMISSIONS.FILE_MANAGE,

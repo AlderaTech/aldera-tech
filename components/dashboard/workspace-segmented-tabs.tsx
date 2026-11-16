@@ -9,8 +9,12 @@ export function WorkspaceTabsList({
   children,
   className,
   density,
+  overflow = "wrap",
   ...props
-}: ComponentProps<typeof TabsList> & { density?: "compact" }) {
+}: ComponentProps<typeof TabsList> & {
+  density?: "compact";
+  overflow?: "wrap" | "scroll";
+}) {
   return (
     <div className={styles.viewport} data-workspace-tabs>
       <TabsList
@@ -18,6 +22,7 @@ export function WorkspaceTabsList({
         className={cn(styles.list, className)}
         data-workspace-tab-nav
         data-density={density}
+        data-overflow={overflow}
         data-tab-count={Children.count(children)}
       >
         {children}

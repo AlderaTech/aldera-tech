@@ -76,6 +76,8 @@ jobs:
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -112,7 +114,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: aldera_tech
+          POSTGRES_DB: aldera_tech_test
         ports:
           - 5432:5432
         options: >-
@@ -123,15 +125,15 @@ jobs:
 
     env:
       NODE_ENV: test
-      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/aldera_tech?schema=public"
-      ROUTER_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/aldera_router"
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/aldera_tech_test?schema=public"
+      ROUTER_DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/aldera_router_test"
       AUTH_SECRET: "ci-test-auth-secret-minimum-32-chars-long-123456"
       NEXTAUTH_URL: "http://localhost:3000"
       NEXT_PUBLIC_APP_URL: "http://localhost:3000"
       CRON_SECRET: "ci-test-cron-secret-12345"
       SEED_ADMIN_EMAIL: "admin@aldera.tech"
       SEED_ADMIN_PASSWORD: "password"
-      WHATSAPP_API_URL: "https://api.fonnte.com/send"
+      WHATSAPP_API_URL: "http://127.0.0.1:1"
       WHATSAPP_API_KEY: "test-ci-key"
       SHARP_IGNORE_GLOBAL_LIBVIPS: "1"
       MIDTRANS_SERVER_KEY: "SB-Mid-server-ci-test-key"
@@ -150,10 +152,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Alfian57/server-infrastructure
+          ref: d75d14412b5277d174618602e7a8d7649cc2f02c
           path: .server-infra
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -161,25 +166,26 @@ jobs:
       - name: Setup PostgreSQL Test Databases
         run: |
           # Create secondary router database
-          PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE aldera_router;"
+          PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE aldera_router_test;"
 
           # Initialize aldera_tech schema via Prisma
-          bunx prisma db push --accept-data-loss
+          bunx prisma db push
 
           # Initialize aldera_router schema, migrations & seed
           ROUTER_DIR=".server-infra/roles/applications/aldera-router-setup/files"
+          test -d "$ROUTER_DIR" || { echo "Router test schema is missing" >&2; exit 1; }
           if [ -d "$ROUTER_DIR" ]; then
-            PGPASSWORD=postgres psql -h localhost -U postgres -d aldera_router -f "$ROUTER_DIR/init.sql"
+            PGPASSWORD=postgres psql -h localhost -U postgres -v ON_ERROR_STOP=1 -d aldera_router_test -f "$ROUTER_DIR/init.sql"
             for f in "$ROUTER_DIR"/migrations/*.sql; do
-              [ -e "$f" ] && PGPASSWORD=postgres psql -h localhost -U postgres -d aldera_router -f "$f" || true
+              if [ -e "$f" ]; then PGPASSWORD=postgres psql -h localhost -U postgres -v ON_ERROR_STOP=1 -d aldera_router_test -f "$f"; fi
             done
             for s in "$ROUTER_DIR"/seeds/*.sql; do
-              [ -e "$s" ] && PGPASSWORD=postgres psql -h localhost -U postgres -d aldera_router -f "$s" || true
+              if [ -e "$s" ]; then PGPASSWORD=postgres psql -h localhost -U postgres -v ON_ERROR_STOP=1 -d aldera_router_test -f "$s"; fi
             done
           fi
 
           # Ensure user_alert_cooldowns table exists in aldera_router
-          PGPASSWORD=postgres psql -h localhost -U postgres -d aldera_router -c "
+          PGPASSWORD=postgres psql -h localhost -U postgres -v ON_ERROR_STOP=1 -d aldera_router_test -c "
             CREATE TABLE IF NOT EXISTS user_alert_cooldowns (
               id BIGSERIAL PRIMARY KEY,
               user_id BIGINT NOT NULL UNIQUE,
@@ -191,7 +197,7 @@ jobs:
           "
 
       - name: Run Test Suite
-        run: bun test
+        run: bun test --isolate
 
   docker:
     name: Build and Publish Docker Image

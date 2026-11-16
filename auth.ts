@@ -3,6 +3,10 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import {
+  consumeLoginAttempt,
+  clearLoginAttempts,
+} from "@/lib/login-rate-limit";
 import type { Role } from "@prisma/client";
 import { canSignInAccount, refreshSessionToken } from "@/lib/auth-session";
 import {
@@ -47,11 +51,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const parsed = credentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
         const { email, password } = parsed.data;
+        try {
+          const ip = request.headers.get("x-real-ip")?.slice(0, 64) ?? null;
+          if (!(await consumeLoginAttempt(email, ip))) return null;
+        } catch {
+          console.error("Login temporarily unavailable.");
+          return null;
+        }
         const user = await prisma.user.findUnique({
           where: { email: email.toLowerCase() },
           select: {
@@ -72,6 +83,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const ok = await bcrypt.compare(password, user.password);
         if (!ok) return null;
+        await clearLoginAttempts(email);
 
         const primaryRole = getPrimaryRole(user.roles);
 

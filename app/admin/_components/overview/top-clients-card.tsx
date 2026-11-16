@@ -24,8 +24,8 @@ export function TopClientsCard({
         <div className="flex items-center justify-between gap-3">
           <div>
             <CardTitle className="flex items-center gap-2 text-sm font-semibold tracking-tight text-slate-900">
-              <Users className="size-4 text-primary" />
-              Top 5 Client by Revenue
+              <Users className="size-4 text-primary" />5 Klien dengan Pendapatan
+              Tertinggi
             </CardTitle>
             <p className="mt-0.5 text-xs text-muted-foreground">
               Peringkat klien berdasarkan invoice berstatus lunas.

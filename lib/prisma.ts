@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { assertTestDatabaseUrl } from "@/lib/test-database-url";
 
 /**
  * PrismaClient singleton. Prisma 7 requires a driver adapter, we use
@@ -10,9 +11,12 @@ import { PrismaPg } from "@prisma/adapter-pg";
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
+if (process.env.NODE_ENV === "test")
+  assertTestDatabaseUrl(process.env.DATABASE_URL);
 
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL ?? "";
+  if (process.env.NODE_ENV === "test") assertTestDatabaseUrl(connectionString);
   const adapter = new PrismaPg({ connectionString });
   return new PrismaClient({
     adapter,

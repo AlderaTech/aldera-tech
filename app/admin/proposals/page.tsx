@@ -1,3 +1,4 @@
+import { parsePage } from "@/lib/pagination";
 import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import Link from "next/link";
@@ -47,7 +48,7 @@ export default async function AdminProposalsPage({
   searchParams,
 }: AdminProposalsPageProps) {
   const sp = await searchParams;
-  const page = Math.max(1, Number(sp?.page) || 1);
+  const page = parsePage(sp?.page);
   const PAGE_SIZE = 10;
   const q = sp?.q?.trim();
   const rawStatus = sp?.status?.trim()?.toUpperCase();

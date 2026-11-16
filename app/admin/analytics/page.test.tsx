@@ -6,7 +6,7 @@ const { default: Page } = await import("./page");
 describe("Antarmuka admin analytics", () => {
   it("merender judul dan kontrol asli dengan sumber data pengujian terisolasi", async () => {
     const html = renderToStaticMarkup(await Page());
-    expect(html).toContain("Revenue");
+    expect(html).toContain("Pendapatan");
     expect(html).toContain("data-admin-page-header");
     expect(html).not.toContain("undefined");
   });

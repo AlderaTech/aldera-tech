@@ -4,7 +4,9 @@ import { readFileSync } from "node:fs";
 
 describe("Container schema readiness", () => {
   it("starts after a safe schema sync without accepting destructive changes", () => {
-    const path = fileURLToPath(new URL("./entrypoint.sh", import.meta.url));
+    const path = fileURLToPath(
+      new URL("./entrypoint.sh", import.meta.url)
+    ).replaceAll("\\\\", "/");
     const script = `bunx() { printf 'BUNX:%s\\n' "$*"; return 0; }
       mkdir() { return 0; }
       id() { echo 1001; }
@@ -36,7 +38,9 @@ describe("Container schema readiness", () => {
 
   it("does not start the application after an enabled schema sync fails", () => {
     // The integration suite runs inside the Linux test container, like deployment.
-    const path = fileURLToPath(new URL("./entrypoint.sh", import.meta.url));
+    const path = fileURLToPath(
+      new URL("./entrypoint.sh", import.meta.url)
+    ).replaceAll("\\\\", "/");
     const script = `bunx() { return 1; }
       export AUTO_MIGRATE=true ENABLE_CRON=false
       . "$1"`;

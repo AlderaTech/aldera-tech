@@ -6,12 +6,13 @@ import {
   WorkspaceTabsTrigger as TabsTrigger,
 } from "@/components/dashboard/workspace-segmented-tabs";
 import { RELAY_SECTIONS } from "../_data/relay-sections";
-import { getRelayTabScrollLeft } from "../_utils/relay-tab-scroll";
 import styles from "./relay-workspace.module.css";
+import { useRevealActiveTab } from "@/lib/hooks/use-reveal-active-tab";
 
 export function RelayTabs({ activeTab }: { activeTab: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const previousTab = useRef(activeTab);
+  useRevealActiveTab(scrollRef, activeTab);
 
   useEffect(() => {
     const track = scrollRef.current;
@@ -25,30 +26,11 @@ export function RelayTabs({ activeTab }: { activeTab: string }) {
       }
     }
     previousTab.current = activeTab;
-    const revealActiveTab = () => {
-      const active = track.querySelector<HTMLElement>('[data-state="active"]');
-      if (!active) return;
-      const trackRect = track.getBoundingClientRect();
-      const tabRect = active.getBoundingClientRect();
-      const left = getRelayTabScrollLeft({
-        scrollLeft: track.scrollLeft,
-        viewportWidth: track.clientWidth,
-        scrollWidth: track.scrollWidth,
-        tabLeft: tabRect.left - trackRect.left + track.scrollLeft,
-        tabWidth: tabRect.width,
-      });
-      if (Math.abs(track.scrollLeft - left) > 1) track.scrollTo({ left });
-    };
-    revealActiveTab();
-    const observer = new ResizeObserver(revealActiveTab);
-    observer.observe(track);
-    if (track.firstElementChild) observer.observe(track.firstElementChild);
-    return () => observer.disconnect();
   }, [activeTab]);
 
   return (
     <div ref={scrollRef} className={styles.tabScroll}>
-      <TabsList aria-label="Fitur AI Relay" density="compact">
+      <TabsList aria-label="Fitur AI Relay" density="compact" overflow="scroll">
         {RELAY_SECTIONS.map(({ value, label, icon: Icon }) => (
           <TabsTrigger key={value} value={value}>
             <Icon className="size-4" aria-hidden="true" />

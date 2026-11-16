@@ -17,7 +17,7 @@ describe("Header workspace AI Relay", () => {
       expect(html).toContain(formatCurrency(balance));
       expect(html.match(/<button\b/g)).toHaveLength(1);
       expect(html).toContain("Top-up Saldo");
-      expect(html).not.toMatch(/Online|100%/);
+      expect(html.replace(/<[^>]*>/g, "")).not.toMatch(/Online|100%/);
     }
   });
 

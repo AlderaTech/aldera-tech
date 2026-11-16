@@ -67,7 +67,7 @@ describe("AdminFilesPage", () => {
     });
 
     const html = renderToStaticMarkup(pageElement);
-    expect(html).toContain("File Manager");
+    expect(html).toContain("Manajer Berkas");
     expect(html).toContain("logo-aldera.png");
     expect(html).toContain("Branding Aldera");
     expect(html).toContain("Cari nama file...");

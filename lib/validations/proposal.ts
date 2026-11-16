@@ -15,7 +15,10 @@ export const proposalCreateSchema = z.object({
   clientPhone: z.string().trim().max(30).optional().or(z.literal("")),
   taxRate: z.coerce.number().min(0).max(100).default(0),
   expiresAt: z.string().optional().or(z.literal("")),
-  items: z.array(proposalItemSchema).min(1, "Minimal 1 item"),
+  items: z
+    .array(proposalItemSchema)
+    .min(1, "Minimal 1 item")
+    .max(200, "Maksimal 200 item per proposal."),
 });
 
 export const signatureSchema = z.object({

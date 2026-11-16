@@ -90,6 +90,17 @@
   width: 16px;
   height: 16px;
 }
+.list[data-overflow="scroll"] {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scroll-padding-inline: 0.4rem;
+}
+.list[data-overflow="scroll"] .trigger {
+  width: auto;
+  flex: 1 0 auto;
+  white-space: nowrap;
+}
 @container (max-width: 64rem) {
   .list[data-tab-count="6"] {
     grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -134,3 +134,12 @@ Pengujian pendamping:
 
 - Guard query transaksi menggunakan proxy yang tidak mengubah koneksi asli. Setelah koneksi dikembalikan ke pool, metode query asli tetap utuh; SQL audit yang melewati koneksi langsung tetap ditolak trigger database, sementara aksi aplikasi tetap dilindungi guard.
 - Tes UI yang mengganti modul halaman, filesystem, atau dependensi bersama berjalan dalam proses Bun terisolasi agar mock tidak memengaruhi halaman maupun integrasi lain. Regresi koneksi pool diuji pada `lib/router-db.test.ts`.
+
+## Integritas sesi pembayaran, proposal, dan waktu
+
+- Snap hanya menerima invoice SENT/OVERDUE. Reservasi payment dilakukan dengan row lock, provider dipanggil di luar transaksi, lalu status/versi/nominal diperiksa ulang sebelum token dikembalikan. Request bersamaan tidak membuat sesi provider baru selama lease aktif.
+- Tanda tangan dan penolakan proposal memakai update bersyarat pada status saat ini; konflik menghasilkan error dan tidak menimpa keputusan yang lebih dahulu tersimpan.
+- Durasi manual divalidasi melalui `lib/validations/time-entry.ts`. TimeEntry dan ActivityLog berada dalam satu transaksi sehingga kegagalan aktivitas membatalkan pencatatan waktu.
+- Kegagalan query runtime tidak boleh menjadi data bisnis kosong. `safeDb` melempar error generik; fallback nullable eksplisit hanya dipakai oleh panel yang memang menampilkan error. Branding situs dapat memakai fallback statis.
+- Daftar Blog/Portfolio dan status publikasi bersumber pada database. `lib/public-fallbacks.ts` hanya memetakan aset gambar, tanpa artikel atau proyek contoh.
+- Regresi utama berada pada invoice-snap-session, proposal-transitions, time actions, login-rate-limit, safe-db, public-publication dan admin-aggregates tests.

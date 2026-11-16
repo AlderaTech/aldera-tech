@@ -6,23 +6,60 @@ import {
   verifyOtpSchema,
   INDONESIAN_PHONE_REGEX,
 } from "@/lib/validations/auth";
-import { invoiceCreateSchema, invoiceItemSchema } from "@/lib/validations/invoice";
-import { projectCreateSchema, milestoneSchema } from "@/lib/validations/project";
-import { proposalCreateSchema, signatureSchema } from "@/lib/validations/proposal";
-import { requestResetSchema, resetPasswordSchema } from "@/lib/validations/password-reset";
+import {
+  invoiceCreateSchema,
+  invoiceItemSchema,
+} from "@/lib/validations/invoice";
+import {
+  projectCreateSchema,
+  milestoneSchema,
+} from "@/lib/validations/project";
+import {
+  proposalCreateSchema,
+  signatureSchema,
+} from "@/lib/validations/proposal";
+import {
+  requestResetSchema,
+  resetPasswordSchema,
+} from "@/lib/validations/password-reset";
 import { recurringInvoiceSchema } from "@/lib/validations/recurring-invoice";
 import { siteSettingsSchema } from "@/lib/validations/settings";
 import { contactSchema } from "@/lib/validations/contact";
 
 describe("AT-L7: lib/validations/ comprehensive schema tests", () => {
+  it("bounds invoice and proposal item arrays before business processing", () => {
+    const item = { description: "Fixture item", quantity: 1, price: 1000 };
+    for (const schema of [
+      invoiceCreateSchema.shape.items,
+      proposalCreateSchema.shape.items,
+    ]) {
+      expect(
+        schema.safeParse(Array.from({ length: 200 }, () => item)).success
+      ).toBe(true);
+      expect(
+        schema.safeParse(Array.from({ length: 201 }, () => item)).success
+      ).toBe(false);
+    }
+  });
   describe("Auth & Indonesian Phone Validations", () => {
     it("validates Indonesian phone number formats", () => {
-      const validPhones = ["08123456789", "081234567890", "+628123456789", "6285712345678"];
+      const validPhones = [
+        "08123456789",
+        "081234567890",
+        "+628123456789",
+        "6285712345678",
+      ];
       for (const p of validPhones) {
         expect(INDONESIAN_PHONE_REGEX.test(p)).toBe(true);
       }
 
-      const invalidPhones = ["021123456", "12345", "0812abc", "+123456789", "0800123456"];
+      const invalidPhones = [
+        "021123456",
+        "12345",
+        "0812abc",
+        "+123456789",
+        "0800123456",
+      ];
       for (const p of invalidPhones) {
         expect(INDONESIAN_PHONE_REGEX.test(p)).toBe(false);
       }
@@ -63,9 +100,22 @@ describe("AT-L7: lib/validations/ comprehensive schema tests", () => {
     });
 
     it("validates verifyOtpSchema 6-digit numeric constraint", () => {
-      expect(verifyOtpSchema.safeParse({ identifier: "08123456789", token: "123456" }).success).toBe(true);
-      expect(verifyOtpSchema.safeParse({ identifier: "08123456789", token: "12345" }).success).toBe(false);
-      expect(verifyOtpSchema.safeParse({ identifier: "08123456789", token: "12345a" }).success).toBe(false);
+      expect(
+        verifyOtpSchema.safeParse({
+          identifier: "08123456789",
+          token: "123456",
+        }).success
+      ).toBe(true);
+      expect(
+        verifyOtpSchema.safeParse({ identifier: "08123456789", token: "12345" })
+          .success
+      ).toBe(false);
+      expect(
+        verifyOtpSchema.safeParse({
+          identifier: "08123456789",
+          token: "12345a",
+        }).success
+      ).toBe(false);
     });
   });
 
@@ -151,8 +201,12 @@ describe("AT-L7: lib/validations/ comprehensive schema tests", () => {
 
   describe("Password Reset Schemas", () => {
     it("validates requestResetSchema email format", () => {
-      expect(requestResetSchema.safeParse({ email: "user@aldera.test" }).success).toBe(true);
-      expect(requestResetSchema.safeParse({ email: "invalid-email" }).success).toBe(false);
+      expect(
+        requestResetSchema.safeParse({ email: "user@aldera.test" }).success
+      ).toBe(true);
+      expect(
+        requestResetSchema.safeParse({ email: "invalid-email" }).success
+      ).toBe(false);
     });
 
     it("enforces password confirmation match in resetPasswordSchema", () => {
@@ -180,7 +234,9 @@ describe("AT-L7: lib/validations/ comprehensive schema tests", () => {
         frequency: "MONTHLY",
         nextIssueDate: "2026-11-01",
         taxRate: 11,
-        items: [{ description: "Monthly Retainer", quantity: 1, price: 15000000 }],
+        items: [
+          { description: "Monthly Retainer", quantity: 1, price: 15000000 },
+        ],
       });
       expect(valid.success).toBe(true);
 
@@ -197,10 +253,12 @@ describe("AT-L7: lib/validations/ comprehensive schema tests", () => {
     it("validates site settings schema", () => {
       const valid = siteSettingsSchema.safeParse({
         brandName: "PT Aldera Solusi Teknologi",
-        footerDescription: "Perusahaan IT Solution & AI Automation terpercaya di Indonesia.",
+        footerDescription:
+          "Perusahaan IT Solution & AI Automation terpercaya di Indonesia.",
         responseTime: "Kurang dari 24 jam",
         seoTitle: "Aldera Tech — IT Solutions & AI Automation",
-        seoDescription: "Penyedia layanan perangkat lunak, sistem AI relay, dan arsitektur enterprise.",
+        seoDescription:
+          "Penyedia layanan perangkat lunak, sistem AI relay, dan arsitektur enterprise.",
         email: "hello@aldera.tech",
         phone: "08123456789",
       });

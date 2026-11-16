@@ -40,7 +40,8 @@ mock.module("@/lib/midtrans", () => ({
   createMidtransSnapTransaction: mockCreateMidtransSnapTransaction,
 }));
 
-const { createInvoicePaymentSnapAction } = await import("@/lib/actions/payment");
+const { createInvoicePaymentSnapAction } =
+  await import("@/lib/actions/payment");
 
 describe("AT-L4: lib/actions/payment.ts test suite", () => {
   let clientUser: { id: string; email: string };
@@ -108,7 +109,9 @@ describe("AT-L4: lib/actions/payment.ts test suite", () => {
 
       const res = await createInvoicePaymentSnapAction(inv.id);
       expect(res.ok).toBe(false);
-      expect(res.message).toBe("Anda tidak memiliki hak akses untuk membayar tagihan ini.");
+      expect(res.message).toBe(
+        "Anda tidak memiliki hak akses untuk membayar tagihan ini."
+      );
     });
 
     it("rejects payment if invoice is already PAID or CANCELLED", async () => {
@@ -150,22 +153,35 @@ describe("AT-L4: lib/actions/payment.ts test suite", () => {
           clientId: clientUser.id,
           issueDate: new Date(),
           dueDate: new Date(),
-          subtotal: 99999.50,
+          subtotal: 99999.5,
           taxRate: 11,
           taxAmount: 10999.945,
           total: 110999.445,
           status: "SENT",
           items: {
             create: [
-              { description: "Product A", quantity: 1, price: 50000, total: 50000, order: 0 },
-              { description: "Product B", quantity: 1, price: 49999.50, total: 49999.50, order: 1 },
+              {
+                description: "Product A",
+                quantity: 1,
+                price: 50000,
+                total: 50000,
+                order: 0,
+              },
+              {
+                description: "Product B",
+                quantity: 1,
+                price: 49999.5,
+                total: 49999.5,
+                order: 1,
+              },
             ],
           },
         },
       });
 
       const mockToken = "snap-token-xyz-12345";
-      const mockRedirectUrl = "https://app.midtrans.com/snap/v2/vtweb/snap-token-xyz-12345";
+      const mockRedirectUrl =
+        "https://app.midtrans.com/snap/v2/vtweb/snap-token-xyz-12345";
       mockCreateMidtransSnapTransaction.mockResolvedValueOnce({
         token: mockToken,
         redirectUrl: mockRedirectUrl,
@@ -181,7 +197,8 @@ describe("AT-L4: lib/actions/payment.ts test suite", () => {
       const snapCallArgs = mockCreateMidtransSnapTransaction.mock.calls[0][0];
       const targetGross = snapCallArgs.grossAmount;
       const itemsSum = snapCallArgs.items.reduce(
-        (sum: number, it: { price: number; quantity: number }) => sum + it.price * it.quantity,
+        (sum: number, it: { price: number; quantity: number }) =>
+          sum + it.price * it.quantity,
         0
       );
       expect(itemsSum).toBe(targetGross);

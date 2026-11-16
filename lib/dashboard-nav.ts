@@ -62,7 +62,7 @@ export const clientNavConfig: DashboardNavConfig = {
       ],
     },
     {
-      label: "Project Conventional",
+      label: "Proyek & Operasional",
       items: [
         {
           href: DASHBOARD_ROUTES.projects,
@@ -91,7 +91,7 @@ export const clientNavConfig: DashboardNavConfig = {
       ],
     },
     {
-      label: "Router (AI Gateway)",
+      label: "AI Gateway",
       items: [
         {
           href: DASHBOARD_ROUTES.aiRelay,
@@ -117,7 +117,7 @@ const adminNavGroups: DashboardNavGroup[] = [
     ],
   },
   {
-    label: "Project Conventional",
+    label: "Proyek & Operasional",
     items: [
       {
         href: ADMIN_ROUTES.projects,
@@ -171,7 +171,7 @@ const adminNavGroups: DashboardNavGroup[] = [
     ],
   },
   {
-    label: "Router (AI Gateway)",
+    label: "AI Gateway",
     items: [
       {
         href: ADMIN_ROUTES.aiRelay,

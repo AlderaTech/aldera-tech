@@ -18,7 +18,7 @@ Aldera Tech dibangun di atas arsitektur container modern dan efisien:
 │   └──────────┬──────────┘                                     │
 │              │ Proxy http://127.0.0.1:3000                    │
 │   ┌──────────▼────────────────────────────────────────────┐   │
-│   │ Container: aldera_tech_app (oven/bun:1-alpine)         │   │
+│   │ Container: aldera_tech_app (oven/bun:1.4.4-alpine)         │   │
 │   │                                                       │   │
 │   │   ├── Next.js 16 Standalone (bun server.js :3000)     │   │
 │   │   ├── Background crond (BusyBox Cron Runner)          │   │
@@ -357,3 +357,11 @@ yang keliru. Jangan menyalin credential staging ke produksi atau sebaliknya.
 - Cron terautentikasi `/api/cron/reconcile-integrations` berjalan setiap lima menit pada `docker/crontab` dan crontab entrypoint. Pantau `InvoiceBalanceEffect` berstatus PENDING/REVIEW dan `IntegrationSyncState.lastError`; jangan mengubah ledger secara langsung.
 - Refund bersaldo kurang memblokir konsumsi AI pada akun router. Lakukan verifikasi ledger dan proses top-up resmi bila diperlukan, retry refund, lalu buka akses secara eksplisit melalui panel admin. Integrasi proxy/router eksternal harus menghormati `users.is_active`; verifikasi perilakunya di VPS staging.
 - Uji staging dengan sandbox gateway, upstream AI mock dan kanal pesan pengujian: duplikasi webhook, refund setelah saldo dipakai, pemulihan setelah router terputus, unduhan privat, serta reset password dan pencabutan sesi. Promosi produksi hanya setelah E2E staging terverifikasi.
+
+## Runtime dan migrasi pemeriksaan integritas
+
+- Docker dan CI dipin pada Bun 1.4.4. Lockfile v3 serta override berbasis rentang versi membutuhkan Bun minimal 1.4.4; gunakan `bun install --frozen-lockfile`. Jangan meregenerasi lockfile memakai Bun lama.
+- Terapkan migrasi aditif `prisma/migrations/20261116010000_auth_login_limits/migration.sql` sebelum image baru melayani login. Migrasi membuat `AuthRateLimit` dan indeks Invoice(status, paidAt), tanpa mengubah saldo, invoice atau identitas. Entrypoint dengan `AUTO_MIGRATE=true` menyinkronkan schema dan menghentikan startup jika gagal.
+- Cron `reconcile-integrations` yang sudah berjalan setiap lima menit juga membersihkan maksimal 1.000 counter login kedaluwarsa per eksekusi. Tidak ada cron, port, volume atau environment variable baru. Counter tidak menyimpan email/IP mentah.
+- Login dibatasi 10 percobaan per akun dan 120 per jaringan dalam jendela 15 menit di database bersama. Proxy harus menimpa header IP dari klien; limiter akun tetap bekerja tanpa header jaringan. Keberhasilan login menghapus counter akun.
+- Verifikasi login, penolakan percobaan berlebih, pemulihan setelah jendela berakhir, pembayaran sandbox dan provider mock di VPS staging sebelum Release PR. Bukti lokal tidak menggantikan verifikasi E2E staging.

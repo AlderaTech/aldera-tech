@@ -1,3 +1,4 @@
+import { parsePage } from "@/lib/pagination";
 import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { redirect } from "next/navigation";
@@ -50,7 +51,7 @@ export default async function AuditLogPage({
   }
 
   const sp = await searchParams;
-  const page = Math.max(1, Number(sp?.page) || 1);
+  const page = parsePage(sp?.page);
   const PAGE_SIZE = 20;
   const q = sp?.q?.trim();
   const rawAction = sp?.action?.trim();

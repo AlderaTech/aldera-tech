@@ -254,8 +254,12 @@ export async function signProposalAction(
     null;
   const ua = hdrs.get("user-agent") || null;
 
-  await prisma.proposal.update({
-    where: { id: proposal.id },
+  const changed = await prisma.proposal.updateMany({
+    where: {
+      id: proposal.id,
+      status: proposal.status,
+      OR: [{ expiresAt: null }, { expiresAt: { gte: new Date() } }],
+    },
     data: {
       status: "SIGNED",
       signedAt: new Date(),
@@ -265,6 +269,11 @@ export async function signProposalAction(
       signatureUserAgent: ua,
     },
   });
+  if (!changed.count)
+    return {
+      ok: false,
+      message: "Status proposal telah berubah. Silakan muat ulang.",
+    };
 
   revalidatePath(ADMIN_ROUTES.proposalDetail(proposal.id));
   revalidatePath(PROPOSAL_ROUTES.publicDetail(token));
@@ -282,10 +291,17 @@ export async function rejectProposalAction(
   if (proposal.status === "SIGNED" || proposal.status === "CONVERTED") {
     return { ok: false, message: "Proposal sudah ditandatangani." };
   }
-  await prisma.proposal.update({
-    where: { id: proposal.id },
+  if (proposal.status === "REJECTED")
+    return { ok: true, message: "Proposal sudah ditolak." };
+  const changed = await prisma.proposal.updateMany({
+    where: { id: proposal.id, status: proposal.status },
     data: { status: "REJECTED", rejectedAt: new Date() },
   });
+  if (!changed.count)
+    return {
+      ok: false,
+      message: "Status proposal telah berubah. Silakan muat ulang.",
+    };
   revalidatePath(ADMIN_ROUTES.proposalDetail(proposal.id));
   revalidatePath(PROPOSAL_ROUTES.publicDetail(token));
   return { ok: true, message: "Proposal ditolak." };

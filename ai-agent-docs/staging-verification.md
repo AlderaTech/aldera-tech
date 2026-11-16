@@ -3,7 +3,7 @@
 ## Cakupan
 
 - Lingkungan: `https://staging.aldera.tech`; pemeriksaan 16 November 2026 (WIB).
-- Pemeriksaan HTTP mencakup 73 kasus rute/API, 88 aset, proteksi anonim, cookie CSRF, serta health database/storage/upstream.
+- Pemeriksaan HTTP tanpa mutasi mencakup 71 kasus rute/API, 89 aset, proteksi anonim, serta health database/storage/upstream. Pemeriksaan sesi/CSRF dan mutasi memakai fixture terisolasi.
 - Pengujian mutasi memakai database aplikasi/router terisolasi dan provider mock; tidak ada completion berbayar, transaksi, OTP, atau pesan sungguhan.
 - Pemulihan credential menggunakan API key upstream staging aktif yang sudah tersedia, tanpa membuat key atau mengubah ledger. [Hasil pemulihan](https://github.com/AlderaTech/aldera-tech/actions/runs/43773038895).
 
@@ -40,5 +40,9 @@
 
 - Katalog/health HTTP 200 tidak membuktikan completion, streaming, atau tagihan provider; AI berbayar tidak diuji.
 - Belum ada E2E browser dengan akun pengujian Client/Admin di VPS. Redirect anonim dan fixture izin bukan penggantinya.
-- Visual desktop/mobile, fokus keyboard browser aktual, detail ber-ID/slug nyata, pengiriman WhatsApp/Telegram/email, Turnstile riil, dan sandbox gateway belum diuji live.
+- Visual publik desktop/390 px, 37 tampilan privat dan seluruh tab Relay pengguna/Admin telah diperiksa melalui browser; akun dan detail privat memakai fixture lokal. Fokus keyboard menyeluruh, akun privat di VPS, pengiriman WhatsApp/Telegram/email, Turnstile riil, dan sandbox gateway belum diuji live.
 - Ketahanan volume privat terhadap penghapusan stack penuh belum diuji. Probe hanya membuktikan akses storage pada saat pemeriksaan.
+
+## Cakupan perbaikan menyeluruh
+
+[Audit dan kontrak aktif](project-wide-audit.md) serta [hasil pengujian perbaikan](project-wide-fixes.md) menjelaskan perubahan pembayaran Snap, proposal, waktu, grafik, error, pagination, dependensi dan konsistensi UI. Status image aktif mengikuti hasil deployment pada GitHub Actions. Verifikasi E2E staging diperlukan sesudah deployment dan sebelum promosi main.

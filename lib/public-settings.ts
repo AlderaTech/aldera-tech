@@ -122,28 +122,32 @@ function normalize(value: string | null | undefined) {
 }
 
 export const getSiteSettings = cache(async (): Promise<PublicSiteSettings> => {
-  return safeDb(async () => {
-    const settings = await prisma.siteSetting.findUnique({
-      where: { id: SITE_SETTING_ID },
-    });
-    if (!settings) return defaultSiteSettings;
-    return {
-      brandName: settings.brandName,
-      footerDescription: settings.footerDescription,
-      email: normalize(settings.email),
-      phone: normalize(settings.phone),
-      whatsapp: normalize(settings.whatsapp),
-      address: normalize(settings.address),
-      mapsUrl: normalize(settings.mapsUrl),
-      operatingHours: normalize(settings.operatingHours),
-      responseTime: settings.responseTime,
-      githubUrl: normalize(settings.githubUrl),
-      linkedinUrl: normalize(settings.linkedinUrl),
-      instagramUrl: normalize(settings.instagramUrl),
-      seoTitle: settings.seoTitle,
-      seoDescription: settings.seoDescription,
-    };
-  }, defaultSiteSettings);
+  return safeDb(
+    async () => {
+      const settings = await prisma.siteSetting.findUnique({
+        where: { id: SITE_SETTING_ID },
+      });
+      if (!settings) return defaultSiteSettings;
+      return {
+        brandName: settings.brandName,
+        footerDescription: settings.footerDescription,
+        email: normalize(settings.email),
+        phone: normalize(settings.phone),
+        whatsapp: normalize(settings.whatsapp),
+        address: normalize(settings.address),
+        mapsUrl: normalize(settings.mapsUrl),
+        operatingHours: normalize(settings.operatingHours),
+        responseTime: settings.responseTime,
+        githubUrl: normalize(settings.githubUrl),
+        linkedinUrl: normalize(settings.linkedinUrl),
+        instagramUrl: normalize(settings.instagramUrl),
+        seoTitle: settings.seoTitle,
+        seoDescription: settings.seoDescription,
+      };
+    },
+    defaultSiteSettings,
+    { brandingFallback: true }
+  );
 });
 
 export const getPricingPlans = cache(async (): Promise<PublicPricingPlan[]> => {

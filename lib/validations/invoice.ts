@@ -14,7 +14,10 @@ export const invoiceCreateSchema = z.object({
   dueDate: z.string(),
   taxRate: z.coerce.number().min(0).max(100).default(0),
   notes: z.string().trim().max(2000).optional().or(z.literal("")),
-  items: z.array(invoiceItemSchema).min(1, "Minimal 1 item"),
+  items: z
+    .array(invoiceItemSchema)
+    .min(1, "Minimal 1 item")
+    .max(200, "Maksimal 200 item per invoice."),
 });
 
 export const invoiceStatusUpdateSchema = z.object({

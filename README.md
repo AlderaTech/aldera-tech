@@ -196,7 +196,7 @@ docker compose -f docker/docker-compose.yml logs -f app
 ### Menjalankan Mandiri (Bare Metal VPS)
 
 1. **Server prep**: Node.js 20+, PostgreSQL 16
-2. **Install**: `bun install` (atau `npm ci`)
+2. **Install**: `bun install --frozen-lockfile` menggunakan Bun >= 1.4.4
 3. **Database**: `bun run db:push`
 4. **Build & Start**: `bun run build && bun run start` (atau kelola via PM2)
 5. **Reverse proxy**: Nginx / Caddy pointing to `127.0.0.1:3000` dengan SSL Let's Encrypt
@@ -225,3 +225,5 @@ This project uses Next.js 16, which introduces several breaking changes from v15
 2. **Async Request APIs**: `params` and `searchParams` are awaited
 3. **Turbopack default**: no more `--turbopack` flag
 4. **No `next lint`**: use `eslint` directly
+
+Pengujian aman: gunakan `bun run test`; runner menyiapkan database sementara. Lihat [TEST_INFRA.md](TEST_INFRA.md).

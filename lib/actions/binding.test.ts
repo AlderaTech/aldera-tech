@@ -12,6 +12,14 @@ type MockSession = {
 
 let mockSession: MockSession = null;
 
+// Exercise persistence against the isolated router DB without external messages.
+mock.module("@/lib/telegram", () => ({
+  sendTelegramMessage: mock(async () => ({ success: true, simulated: true })),
+}));
+mock.module("@/lib/whatsapp", () => ({
+  sendWhatsApp: mock(async () => ({ success: true, simulated: true })),
+}));
+
 mock.module("@/auth", () => ({
   auth: mock(async () => mockSession),
   handlers: {},

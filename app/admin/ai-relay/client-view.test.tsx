@@ -302,12 +302,12 @@ describe("Feature F11: Sync Button States & Transitions", () => {
       { searchParams: "tab=sync" }
     );
 
-    expect(html).toContain("Sync 9router");
+    expect(html).toContain("Sinkronkan 9Router");
     expect(html).not.toContain("Menghubungi 9router...");
 
     // Header button is enabled and has static refresh icon without animate-spin
     const headerBtnMatch = html.match(
-      /<button[^>]*>[\s\S]*?Sync 9router<\/button>/
+      /<button[^>]*>[\s\S]*?Sinkronkan 9Router<\/button>/
     );
     expect(headerBtnMatch).not.toBeNull();
     const headerBtnHtml = headerBtnMatch![0];
@@ -323,7 +323,7 @@ describe("Feature F11: Sync Button States & Transitions", () => {
     );
 
     expect(html).toContain("Menghubungi 9router...");
-    expect(html).not.toContain(">Sync 9router<");
+    expect(html).not.toContain(">Sinkronkan 9Router<");
 
     // Header button has disabled attribute and animate-spin class
     const headerBtnMatch = html.match(
@@ -580,7 +580,7 @@ describe("Feature F12: Error Toast & Upstream Failure Fallback UI", () => {
     const auditHtml = renderWithInjectedState(failedSyncState, {
       searchParams: "tab=audit",
     });
-    expect(auditHtml).toContain("Live Database Invariant Audit Runner");
+    expect(auditHtml).toContain("Pemeriksaan Integritas Buku Besar");
     expect(auditHtml).toContain("Inv balance non negative");
     expect(auditHtml).toContain("PASS");
   });

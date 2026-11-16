@@ -6,6 +6,7 @@ import { PUBLIC_ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import styles from "./public-shell.module.css";
 import footerStyles from "@/components/shared/studio-footer.module.css";
+import { usesStudioPublicChrome } from "@/lib/studio-public-routes";
 
 export function PublicShell({
   children,
@@ -17,7 +18,6 @@ export function PublicShell({
   footer: ReactNode;
 }) {
   const pathname = usePathname();
-  const isServicesPage = pathname === PUBLIC_ROUTES.services;
   const isAiRelayPage = pathname === PUBLIC_ROUTES.aiRelay;
   const isPricingPage = pathname === PUBLIC_ROUTES.pricing;
   const isContactPage = pathname === PUBLIC_ROUTES.contact;
@@ -27,15 +27,7 @@ export function PublicShell({
   const isPortfolioPage =
     pathname === PUBLIC_ROUTES.portfolio ||
     pathname.startsWith(`${PUBLIC_ROUTES.portfolio}/`);
-  const usesStudioChrome =
-    pathname === PUBLIC_ROUTES.home ||
-    pathname === PUBLIC_ROUTES.about ||
-    isServicesPage ||
-    isPortfolioPage ||
-    isAiRelayPage ||
-    isPricingPage ||
-    isBlogPage ||
-    isContactPage;
+  const usesStudioChrome = usesStudioPublicChrome(pathname);
 
   return (
     <div

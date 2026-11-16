@@ -21,6 +21,7 @@ import {
 import { AUTH_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import studioStyles from "./studio-navbar.module.css";
+import { usesStudioPublicChrome } from "@/lib/studio-public-routes";
 
 export function Navbar({ session }: { session: Session | null }) {
   const pathname = usePathname();
@@ -37,15 +38,7 @@ export function Navbar({ session }: { session: Session | null }) {
   const isPortfolioPage =
     pathname === PUBLIC_ROUTES.portfolio ||
     pathname.startsWith(`${PUBLIC_ROUTES.portfolio}/`);
-  const usesStudioChrome =
-    pathname === PUBLIC_ROUTES.home ||
-    pathname === PUBLIC_ROUTES.about ||
-    isServicesPage ||
-    isPortfolioPage ||
-    isAiRelayPage ||
-    isPricingPage ||
-    isBlogPage ||
-    isContactPage;
+  const usesStudioChrome = usesStudioPublicChrome(pathname);
   const transparent = usesStudioChrome && !scrolled;
 
   React.useEffect(() => {

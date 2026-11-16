@@ -1,4 +1,6 @@
 "use client";
+
+import { parsePage } from "@/lib/pagination";
 import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 
 import * as React from "react";
@@ -37,7 +39,7 @@ export function TestimonialTable({
   const { getParam, setParam } = useUrlState();
   const search = getParam("q", "");
   const statusFilter = getParam("status", "all").toLowerCase();
-  const currentPage = Math.max(1, Number(getParam("page", "1")) || 1);
+  const currentPage = parsePage(getParam("page", "1"));
   const PAGE_SIZE = 10;
 
   const [pendingToggleId, setPendingToggleId] = React.useState<string | null>(

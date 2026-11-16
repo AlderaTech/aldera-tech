@@ -20,7 +20,8 @@ export async function ProfileContent({ userId }: { userId: string }) {
           createdAt: true,
         },
       }),
-    null
+    null,
+    { errorFallback: true }
   );
 
   if (!user) return <ProfileUnavailable />;

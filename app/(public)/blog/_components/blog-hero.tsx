@@ -28,7 +28,7 @@ export function BlogHero() {
             src={mascot}
             alt=""
             sizes="(min-width: 1024px) 190px, (min-width: 640px) 155px, 105px"
-            quality={88}
+            quality={90}
             loading="eager"
             className={styles.mascot}
             aria-hidden="true"
