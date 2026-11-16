@@ -8,18 +8,22 @@
 
 ## Hasil pemeriksaan
 
-| Pemeriksaan                   | Hasil                                                                                            |
-| ----------------------------- | ------------------------------------------------------------------------------------------------ |
-| Suite Bun terisolasi          | **1.016 pass, 0 fail**, 290 berkas; 75.981 assertion                                             |
-| Guard/rollback staging Python | **5 pass**                                                                                       |
-| Dependency audit              | Tidak ada advisori pada hasil `bun audit --json`                                                 |
-| Frozen install Linux          | Berhasil di image `oven/bun:1.4.4-alpine`, tanpa postinstall dan tanpa file environment aplikasi |
-| Lint                          | Lulus tanpa error/warning                                                                        |
-| Next typegen dan TypeScript   | Lulus                                                                                            |
-| Formatter                     | Seluruh repo diformat; pemeriksaan akhir wajib tetap lulus                                       |
-| Visual browser fixture        | 32 kombinasi halaman/viewport terukur, tanpa overflow; desktop, 752 px tablet, dan 390 px HP     |
+| Pemeriksaan                   | Hasil                                                                                                                     |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Suite Bun terisolasi          | **1.016 pass, 0 fail**, 290 berkas; 75.981 assertion                                                                      |
+| Guard/rollback staging Python | **5 pass**                                                                                                                |
+| Dependency audit              | Tidak ada advisori pada hasil `bun audit --json`                                                                          |
+| Frozen install Linux          | Berhasil di image `oven/bun:1.4.4-alpine`, tanpa postinstall dan tanpa file environment aplikasi                          |
+| Lint                          | Lulus tanpa error/warning                                                                                                 |
+| Next typegen dan TypeScript   | Lulus                                                                                                                     |
+| Formatter                     | Seluruh repo diformat; pemeriksaan akhir wajib tetap lulus                                                                |
+| Staging deployment            | [CI/CD lulus](https://github.com/AlderaTech/aldera-tech/actions/runs/43864422018); health HTTP 200 dan enam dependency up |
+| Browser publik staging        | Menu mobile dan accordion FAQ dapat dibuka pada 390 px; tanpa overflow dan rute tetap utuh                                |
+| Visual browser fixture        | 32 kombinasi halaman/viewport terukur, tanpa overflow; desktop, 752 px tablet, dan 390 px HP                              |
 
 ## Batas verifikasi browser
+
+Menu dan accordion publik di staging telah diuji melalui browser baca-saja sesudah deployment. Pemeriksaan privat dengan akun nyata tetap belum termasuk bukti ini.
 
 - FAQ, Testimoni, Login, Reset Password dan OTP memakai sans-serif, header jelas, serta aset yang tersedia.
 - Dashboard memakai agregasi nyata. Seluruh delapan tab Relay pengguna dan lima tab Admin dapat dirender dari URL.

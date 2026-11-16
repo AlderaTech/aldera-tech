@@ -2,7 +2,7 @@
 
 ## Cakupan
 
-- Lingkungan: `https://staging.aldera.tech`; pemeriksaan 16 November 2026 (WIB).
+- Lingkungan: `https://staging.aldera.tech`; aplikasi memuat kontrak perbaikan pada [PR #32](https://github.com/AlderaTech/aldera-tech/pull/32).
 - Pemeriksaan HTTP tanpa mutasi mencakup 71 kasus rute/API, 89 aset, proteksi anonim, serta health database/storage/upstream. Pemeriksaan sesi/CSRF dan mutasi memakai fixture terisolasi.
 - Pengujian mutasi memakai database aplikasi/router terisolasi dan provider mock; tidak ada completion berbayar, transaksi, OTP, atau pesan sungguhan.
 - Pemulihan credential menggunakan API key upstream staging aktif yang sudah tersedia, tanpa membuat key atau mengubah ledger. [Hasil pemulihan](https://github.com/AlderaTech/aldera-tech/actions/runs/43773038895).
@@ -20,6 +20,9 @@
 
 ## Runtime dan deployment
 
+- [Pipeline staging](https://github.com/AlderaTech/aldera-tech/actions/runs/43864422018) lulus validasi, test Linux, build/publish image, deploy VPS dan pemeriksaan startup. Health HTTP 200 dengan keenam dependency berstatus up; perubahan hero FAQ dapat ditemukan pada respons aplikasi.
+- Menu mobile dan accordion FAQ diuji melalui browser pada viewport 390 px: keduanya dapat dibuka, tautan navigasi mempertahankan rute asli, sans-serif studio aktif, dan tidak ada overflow. Pemeriksaan ini hanya memakai GET/HEAD melalui proxy lokal baca-saja tanpa sesi pengguna.
+
 - Container web staging berjalan tanpa restart berulang. Database utama, database router, storage yang diprobing, dan upstream berstatus `up` pada health staging.
 - Kelima cron menolak request tanpa secret; API privat menolak request tanpa sesi. Seluruh 32 halaman statis Dashboard/Admin yang diperiksa mempertahankan redirect Login beserta callback.
 - Sesi anonim tidak mengandung identitas. Cookie yang diperiksa memakai Secure, HttpOnly dan SameSite=Lax; token tidak dicatat.
@@ -29,7 +32,7 @@
 
 ## Pengujian
 
-- `bun test`: **920 pass, 0 fail**, 219 berkas, menggunakan PostgreSQL aplikasi/router terisolasi.
+- `bun test`: **1.016 pass, 0 fail**, 290 berkas, menggunakan PostgreSQL aplikasi/router terisolasi.
 - Fokus startup/schema/permissions: **28 pass, 0 fail**, empat berkas.
 - `python3 -B docker/staging-relay-auth-test.py`: **5 test lulus**, mencakup isolasi staging, format key, penulisan atomik, idempotensi, dan rollback.
 - Lint, Next typegen, TypeScript, formatter berkas task, dan pemeriksaan diff lulus.
