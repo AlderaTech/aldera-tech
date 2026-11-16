@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { assertTestDatabaseUrl } from "../lib/test-database-url";
 import { testEnvironment } from "./test-environment";
+import { MAX_SHARDS, TEST_SUITES, type TestSuite } from "./ci/test-sharding";
 
 const [major, minor, patch] = Bun.version.split(".").map(Number);
 if (major < 1 || (major === 1 && (minor < 4 || (minor === 4 && patch < 4)))) {
@@ -21,12 +22,39 @@ const schemaFiles = [
   "seeds/001_initial_pricing.sql",
 ];
 const args = process.argv.slice(2);
+const ciSuiteArg = args.find((arg) => arg.startsWith("--ci-suite="));
+const ciSuite = ciSuiteArg?.slice(11);
+const ciShard = (
+  args.find((arg) => arg.startsWith("--ci-shard="))?.slice(11) ?? "1/1"
+).split("/");
+if (ciSuiteArg !== undefined && !TEST_SUITES.includes(ciSuite as TestSuite)) {
+  throw new Error("CI suite harus unit, ui, atau integration.");
+}
+if (args.some((arg) => arg.startsWith("--ci-shard=")) && !ciSuite) {
+  throw new Error("Pilih CI suite sebelum menentukan shard.");
+}
+if (
+  ciSuite &&
+  (ciShard.length !== 2 ||
+    ciShard.some((value) => !/^[1-8]$/.test(value)) ||
+    Number(ciShard[0]) > Number(ciShard[1]) ||
+    Number(ciShard[1]) > MAX_SHARDS)
+) {
+  throw new Error("CI shard harus berformat indeks/jumlah yang valid.");
+}
 const schemaDirectory = args
   .find((arg) => arg.startsWith("--router-schema="))
   ?.split("=")
   .slice(1)
   .join("=");
-const testArgs = args.filter((arg) => !arg.startsWith("--router-schema="));
+const testArgs = args.filter(
+  (arg) =>
+    !["--router-schema=", "--ci-suite=", "--ci-shard="].some((prefix) =>
+      arg.startsWith(prefix)
+    )
+);
+if (ciSuite && testArgs.length)
+  throw new Error("CI suite tidak menerima filter test tambahan.");
 
 async function docker(args: string[], input?: string) {
   const child = Bun.spawn(["docker", ...args], {
@@ -170,7 +198,15 @@ try {
   if ((await schema.exited) !== 0)
     throw new Error("Penerapan schema uji gagal; test tidak dijalankan.");
   const tests = Bun.spawn(
-    [process.execPath, "--no-env-file", "test", "--isolate", ...testArgs],
+    ciSuite
+      ? [
+          process.execPath,
+          "--no-env-file",
+          "scripts/ci/run-tests.ts",
+          ciSuite,
+          ...ciShard,
+        ]
+      : [process.execPath, "--no-env-file", "test", "--isolate", ...testArgs],
     { env, stdout: "inherit", stderr: "inherit" }
   );
   process.exitCode = await tests.exited;

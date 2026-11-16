@@ -28,3 +28,22 @@ it("never reuses port 5432 or suppresses schema failures", () => {
   expect(script).toContain("finally");
   expect(script).toContain("--no-env-file");
 });
+
+it("rejects invalid CI suite/shard selections before creating a database", () => {
+  for (const args of [
+    ["--ci-suite="],
+    ["--ci-suite=unknown"],
+    ["--ci-shard=1/2"],
+    ["--ci-suite=integration", "--ci-shard=0/2"],
+    ["--ci-suite=integration", "--ci-shard=3/2"],
+    ["--ci-suite=integration", "--ci-shard=1/9"],
+  ]) {
+    const child = Bun.spawnSync(
+      [process.execPath, "--no-env-file", "scripts/run-tests.ts", ...args],
+      { stdout: "pipe", stderr: "pipe" }
+    );
+    expect(child.exitCode).not.toBe(0);
+    expect(child.stdout.toString()).not.toContain("Menyiapkan PostgreSQL");
+    expect(child.stderr.toString()).toContain("CI");
+  }
+});
