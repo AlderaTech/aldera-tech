@@ -1,7 +1,7 @@
 import { describe, it, expect } from "bun:test";
 import { NextRequest } from "next/server";
 import type { Role } from "@prisma/client";
-import middleware from "../middleware";
+import proxy from "../proxy";
 import {
   isStaff,
   isAdmin,
@@ -291,10 +291,10 @@ describe("Permissions Matrix & Role Guard Verification", () => {
       );
     });
 
-    it("verifies middleware normalizes consecutive slashes in callbackUrl redirects", async () => {
+    it("verifies proxy normalizes consecutive slashes in callbackUrl redirects", async () => {
       const req = new NextRequest("http://localhost:3000/admin//ai-relay");
       const res = await (
-        middleware as unknown as (r: NextRequest) => Promise<Response | null>
+        proxy as unknown as (r: NextRequest) => Promise<Response | null>
       )(req);
       expect(res?.status).toBe(307);
       const location = res?.headers?.get("location");
