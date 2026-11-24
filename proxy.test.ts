@@ -1,7 +1,7 @@
 import { describe, it, expect } from "bun:test";
-import { middlewareHandler } from "./middleware";
+import { middlewareHandler } from "./proxy";
 
-describe("middleware.ts route security & guard unit test suite", () => {
+describe("proxy.ts route security & guard unit test suite", () => {
   const baseUrl = "http://localhost:3000";
 
   describe("1. URL Path Normalization & Double Slash Bypass Prevention", () => {
