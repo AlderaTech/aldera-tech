@@ -226,4 +226,4 @@ This project uses Next.js 16, which introduces several breaking changes from v15
 3. **Turbopack default**: no more `--turbopack` flag
 4. **No `next lint`**: use `eslint` directly
 
-Pengujian aman: gunakan `bun run test`; runner menyiapkan database sementara. Lihat [TEST_INFRA.md](TEST_INFRA.md).
+Pengujian aman: gunakan `bun run test`; runner menyiapkan database sementara. Lihat [panduan infrastruktur pengujian](ai-agent-docs/testing-infrastructure.md).

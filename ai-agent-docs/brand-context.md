@@ -154,140 +154,22 @@ Mengadopsi hierarki tipografi sans-serif modern dengan headline tegas dan keterb
 
 ---
 
-## 8. Bahasa Bentuk, Kontainer & Kartu Organik (Shape & Organic Container Language)
+## 8. Bahasa visual lintas halaman
 
-Bahasa visual Aldera Tech terinspirasi dari referensi desain visual modern:
+- Gunakan sudut kartu yang lapang, aksen cyan seperlunya, dan CTA yang jelas; pertahankan kontras teks dan hierarki yang konsisten.
+- Ikuti token warna dan tipografi pada bagian sebelumnya. Jangan membuat token global untuk kebutuhan satu halaman.
+- Area dashboard memakai tema navy/biru, kanvas kebiruan, kartu putih, dan tipografi workspace yang telah ditetapkan.
+- Detail layout dan responsive behavior mengikuti implementasi halaman yang aktif; panduan brand ini menyimpan aturan visual yang berlaku lintas halaman.
 
-1. **Sudut Membulat Lebar (Organic Broad Radii)**:
-   - Kartu utama Beranda menggunakan radius 16–24px; panel CTA memakai 24px. Border slate tipis dan shadow lembut menjaga hierarki tanpa efek gelap berlebihan.
-2. **Aksen Garis Pil Horizontal (Horizontal Cyan Pill Accent)**:
-   - Penanda aksen horizontal berukuran `w-12 h-1.5 bg-[#00B1E1] rounded-full` diletakkan di atas atau di samping judul section sebagai pemandu visual pengunjung.
-3. **Tombol Berbentuk Pil (Pill CTA Buttons)**:
-   - Tombol aksi utama menggunakan bentuk pil penuh (`rounded-full`) dengan padding nyaman (`px-8 py-3.5`).
-4. **Halaman Autentikasi**:
-   - Halaman Login memakai komposisi dua kolom: panel branding bergradasi dengan [maskot khusus Login](../design-docs/login-mascot.md) berpose membawa kartu akses, dan panel formulir terang. Maskot besar menjadi fokus panel kiri; headline ringkas “Ide Anda. Kita wujudkan bersama.” berada di bawah ilustrasi pada desktop. Tampilannya memakai palet biru, slate, putih, dan cyan serta font Plus Jakarta Sans. Pada HP, branding diringkas menjadi logo agar formulir segera terlihat; ukuran teks input 16px dan tombol visibilitas password berukuran 44px. Judul utama berada pada formulir, pesan kesalahan sistem ditampilkan di dekat input, dan animasi maskot mengikuti pengaturan reduced motion. Styling lokal Login tidak mengubah layout autentikasi bersama.
-   - Halaman Register mengikuti komposisi dan stylesheet Login melalui impor read-only, dengan maskot khusus membawa kartu akun, judul formulir yang jelas, serta lima field asli. Password dan konfirmasinya memiliki tombol visibilitas mandiri berukuran 44px. Branding diringkas menjadi logo pada HP; formulir tetap mengalir mengikuti tinggi konten. Validasi server, pembuatan akun, OTP WhatsApp, dan redirect dipertahankan. Struktur komponen, aset, dan prompt tersedia di [Panduan UI Register](../design-docs/register-ui.md).
-   - Halaman Lupa Password mengikuti layout Login/Register dengan maskot pembawa kunci, panel gradasi terang, dan formulir email ringkas. Pesan sukses serta error memakai respons sistem, tanpa membuka status pendaftaran email; mekanisme aktif mengirim tautan reset melalui WhatsApp berdasarkan email akun. Styling lokal dan impor read-only stylesheet Login menjaga halaman lain tetap sama. Rincian implementasi dan aset tersedia di [Panduan UI Lupa Password](../design-docs/forgot-password-ui.md).
-   - Halaman Reset Password dan Verifikasi OTP memakai kartu autentikasi bersama di atas canvas `#F8FAFC`, dengan formulir minimalis dan panel visual rekayasa cloud berlatar Deep Navy `#0F263A`.
-5. **Navigasi & Footer Beranda, Tentang, Layanan, Portofolio, AI Relay, dan Harga**:
-   - `PublicShell` menerima navbar dan footer sebagai slot React dari layout publik; `usePathname` hanya menentukan wrapper visual aktif. Fetch session dan pengaturan footer tetap berjalan di server.
-   - Navbar kaca studio memakai container 1280px, tombol Masuk, dan tombol Konsultasi biru. `NavbarLinks` merender urutan yang sama pada desktop dan HP, yaitu Beranda, Tentang, Layanan, Portfolio, Harga, AI Relay, Blog, dan Kontak. Teks menu desktop berukuran 13px dengan garis bawah aktif. Menu HP berukuran 15px dalam panel navigasi. Latar di belakang navbar mengikuti awal hero.
-   - Footer Beranda, Tentang, Layanan, Portofolio, AI Relay, dan Harga memakai panel ringkas selebar halaman dengan gradasi biru muda ke abu-abu dari token `--home-sky`, `--home-ice`, dan `--home-slate`, selaras dengan banner konsultasi serta bagian terang halaman. Sudut atas footer tetap membulat; wash slate di kiri dan glow biru di kanan beropacity rendah membantu membedakan footer dari area putih di atasnya. Isi tiap baris memakai container 1280px dengan gutter 20px/32px yang sejajar dengan konten utama. Baris pengenal studio diikuti deskripsi brand 14px serta kelompok Perusahaan, Sumber Daya, dan Kontak yang sejajar tanpa padding kartu terpisah. Heading dan logo memakai navy, teks sekunder memakai navy transparan, garis tipis, serta tombol konsultasi biru berikon panah membentuk hierarki visual. Padding vertikal dan jarak antartautan rapat; area sentuh menyesuaikan perangkat pointer kasar. Wordmark dekoratif maksimal 72px memakai `brandName` dari pengaturan situs; copyright dan keterangan Indonesia berada pada baris penutup tersendiri. Ikon sosial memakai permukaan putih transparan dengan hover lebih terang; fokus keyboard memakai outline biru. Seluruh tautan/kontak/sosial aktual dipertahankan. Styling berada pada `studio-footer.module.css` dan diaktifkan hanya melalui class `scope` pada wrapper footer `PublicShell`. Elemen studio tambahan disembunyikan pada rute lain. Query, fallback, penyaringan sosial, serta pembentukan URL email/WhatsApp mengikuti implementasi footer yang sama.
-6. **Komposisi Beranda**:
-   - Section setelah Hero mengikuti tinggi konten dan padding masing-masing. `home-sections.module.css` memakai garis horizontal 1px dari token `--home-line` pada pergantian section.
-   - Hero menampilkan wordmark dekoratif ALDERA TECH, tepat satu maskot transparan di tengah, kartu teknologi di kiri, tumpukan mockup di kanan, tiga badge layanan, dan garis koneksi tipis.
-   - Hero memiliki tinggi minimum `100dvh` dari tepi atas viewport. Navbar sticky berada di atas latar Hero dan ruang untuk navbar dihitung di dalam komposisi. Ukuran ilustrasi mengikuti ruang yang tersedia agar headline, deskripsi, dan tautan Mulai Proyek terlihat pada tampilan awal.
-   - Ringkasan studio diikuti pengenalan layanan, daftar layanan, bento tantangan, portofolio, dan testimoni. Panel konsultasi berada sebelum footer.
-   - Bagian Tantangan & Solusi memakai headline dua tingkat, pengantar dua kolom, latar kisi teknis berkontras rendah, serta empat kartu bento pada grid 12 kolom. Kartu Siklus Rilis memakai gradasi biru es ke slate, kartu Transparansi Biaya memakai aksen biru muda, sedangkan kartu Arsitektur dan Kualitas memakai permukaan putih lembut. Ikon, nomor urut, daftar cek, dan panel deliverables mengikuti token biru/navy. Semua gaya berada di `home/features-section.module.css`; hover halus dinonaktifkan untuk `prefers-reduced-motion`.
-   - `ServicesIntro` memakai gradasi biru muda/putih selebar bagian yang memudar ke bagian putih di sekitarnya. Pada desktop, ilustrasi produk berada di kiri dan copy/CTA di kanan; pada tablet kecil dan mobile, urutan kembali menjadi teks lalu gambar. Layout tidak memakai panel inset, border, atau permukaan kartu. Badge kompas "Dirancang untuk langkah berikutnya", judul sentence case beraksen biru pada kata pertumbuhan, serta deskripsi asli dengan penekanan strategi, desain, dan rekayasa dipertahankan. Tombol Jelajahi Layanan menuju `PUBLIC_ROUTES.services`; Lihat Portfolio menuju `PUBLIC_ROUTES.portfolio` dengan tampilan tautan sekunder berikon panah.
-   - `ServicesShowcase` memakai ilustrasi 3D laptop, smartphone, dan panel desain/kode dari `public/images/home/aldera-digital-products.webp`. Aset WebP transparan 1200 × 800 dibuat dengan tool bawaan imagegen; prompt dan spesifikasi tersimpan di [services-artwork.md](../design-docs/services-artwork.md). Ini merupakan ilustrasi layanan, bukan bukti dashboard atau metrik klien. Tiga badge kaca Web Development, UI/UX Design, dan Mobile Apps merupakan elemen HTML. Gambar memakai static import, object-contain, kualitas 90, lazy loading, dan `sizes` responsif. Bayangan lembut membantu kedalaman tanpa bingkai gambar. Semua styling dibatasi pada `services-intro.module.css`. Ilustrasi dan badge tampil statis.
-   - Panel konsultasi memakai gradasi `--home-sky`, `--home-ice`, dan `--home-slate`. Ajakan diskusi dan tautan estimasi harga berdampingan dengan kartu agenda berilustrasi globe. Di bawah 768px, kartu agenda berada di bawah tombol. Animasi cahaya mengikuti pengaturan reduced motion.
-   - `ServicesPreview` menampilkan judul "Enam Jalur Layanan, Satu Standar Rekayasa." dengan aksen biru, deskripsi asli, dan tautan Lihat Semua Layanan di atas grid. Header memakai hierarki editorial: di desktop, deskripsi dan tautan diletakkan lebih rendah dari label Keahlian studio agar sejajar dengan area judul, dengan offset tambahan setengah rem; keduanya dipisahkan dari judul oleh garis tipis. Pada layar kecil susunan menjadi vertikal dengan pemisah horizontal. Enam kartu bergambar tersusun tiga kolom pada layar desktop umum, dua tablet, dan satu HP; mulai 1280px komposisi kartu menjadi mozaik lebar dengan pola 5/4/3 kolom dan tinggi ilustrasi bervariasi. Empat standar pengerjaan berada pada baris ringkas di bawah grid. Ilustrasi layanan memakai WebP transparan 1200 × 800 yang sama dengan halaman Layanan. Pemetaan berdasarkan slug berada pada `lib/service-artwork.ts`, sehingga urutan data dapat berubah tanpa menukar gambar; slug lain memakai ikon asli. `ServicePreviewCard` mempertahankan judul/ringkasan serta tautan `PUBLIC_ROUTES.contactWithService(slug)`. Query aktif, urutan, batas enam item, resolver ikon, dan fallback tetap berjalan di `ServicesPreview`. Gradasi putih/biru, hover lembut, dan fokus keyboard dibatasi pada `services-preview.module.css`; reduced motion menonaktifkan gerakan. Prompt dan spesifikasi aset tersedia di [service-cards-artwork.md](../design-docs/service-cards-artwork.md).
-   - `PortfolioPreview` mengangkat studi kasus pertama sebagai kartu editorial lebar dengan gambar dan detail berdampingan, lalu menampilkan studi lainnya dalam kartu pendamping. Badge industri, klien, tautan detail, dan metadata berasal dari data aktual/fallback yang sama. Layout menumpuk pada mobile; hover/fokus dan pengurangan gerak ditangani di `portfolio-preview.module.css`.
-   - Bagian testimoni diawali panel ringkas tentang kepercayaan klien dengan headline beraksen biru dan alur Scope, Sprint, dan Rilis. Kartu testimoni memakai gradasi biru-es, rating, dan identitas klien. Garis kisi pada latar section dibuat transparan di belakang carousel agar transisi kartu yang masuk dan keluar terasa lebih bersih. Kartu bergerak terus-menerus dalam loop otomatis; navigasi manual dan indikator slide tidak ditampilkan. Tersedia kontrol jeda/putar, gerakan berhenti saat pointer berada di atas kartu, dan pengguna dengan `prefers-reduced-motion` melihat kartu statis dalam grid. Query Prisma, fallback, dan konten testimoni tetap dipertahankan; styling terlokalisasi pada `testimonials.module.css`.
-7. **Responsivitas & Gerakan**:
-   - Container maksimum 1280px, padding horizontal 20px pada mobile dan 32px mulai tablet. Heading memakai bobot 800, tracking rapat, dan ukuran responsif.
-   - Pada mobile, kartu samping dan tumpukan mockup Hero disembunyikan. Pada layar landscape yang pendek, visual dan teks Hero tersusun berdampingan. Pengenalan layanan dan ringkasan tersusun vertikal pada mobile.
-   - Label hero Beranda, Layanan, Portfolio, Harga, Blog, Kontak, dan AI Relay memakai tipografi kecil tanpa wadah. Maskot, mockup, dan globe tampil statis di halaman publik. Animasi masuk pada bagian lain mengikuti reduced motion.
+## 9. Ikon dan maskot
 
-8. **Komposisi Tentang**:
-   - Hero memakai panel dua kolom dengan sudut membulat, judul sentence case yang seimbang, deskripsi terukur, serta satu maskot pembawa laptop dengan gestur tangan terbuka. Gradasi, garis tipis, dan badge transparan mengikuti bahasa visual Beranda.
-   - Foto studio ditempatkan pada bagian cerita yang dibagi menjadi tiga blok: tantangan, prinsip, dan perjalanan bersama mitra. Visi dan tiga misi bersumber dari bagian 2 dokumen ini dan ditampilkan dalam dua kartu. Nilai perusahaan tampil dalam kartu terang; kartu Craft yang serius, kategori Frontend, dan CTA penutup memakai gradasi biru-es ke abu-abu dengan teks navy agar selaras dengan panel Visi. Daftar teknologi memakai kategori dan data Prisma yang sudah ada.
-   - CTA kontak dan portfolio memakai konstanta rute. Konten cerita, daftar nilai, query teknologi, fallback, serta tujuan tombol dipertahankan.
-   - Container, heading, tombol, dan section memakai stylesheet bersama `app/(public)/_components/studio.module.css`. Gaya khusus Tentang berada di `about/_components/about.module.css`.
-   - Maskot Tentang: [aldera-cat-about.webp](../public/images/about/aldera-cat-about.webp), 1024x1536, 207.612 byte, WebP kualitas 90 dan alpha kualitas 100. Pose membawa laptop dan gestur perkenalan mempertahankan identitas kucing, headphone, kacamata, hoodie, celana pendek, dan sneakers. Aset dibuat dengan tool bawaan imagegen dan dikompresi dengan Sharp. Gambar memakai static import, preload, dan sizes responsif.
+- Gunakan ikon Lucide yang mewakili fungsi; jangan memakai emoji Unicode sebagai pengganti ikon status.
+- Jangan memakai robot atau gimmick visual AI. Visual AI harus merujuk pada sistem atau layanan nyata.
+- Maskot utama adalah kucing putih 3D dengan hoodie putih beraksen merah-biru, headphone gelap, kacamata hitam, dan sneakers. Gunakan hanya variasi aset yang disetujui dan cocok dengan konteks; jangan memaksakan maskot pada setiap halaman.
+- Gunakan varian aset yang tersedia di `public/images`. Jangan menyimpan prompt atau riwayat pembuatan aset dalam panduan brand.
 
-9. **Komposisi Portofolio**:
-   - Halaman daftar `/portfolio` memakai hero terpusat dengan judul asli, deskripsi asli, dan maskot kucing putih di depan judul besar, serta dua panel proyek di sisi kiri dan kanan. Tubuh maskot terlihat utuh tanpa panel di depannya. Panel memuat gambar studi kasus dari data terpublikasi sebagai elemen HTML terpisah; grid mempertahankan semua item, klien, industri, ringkasan, teknologi, dan tautan detail dari query/fallback yang sudah ada. Latar halaman, navbar kaca, footer, jarak, kartu, dan fokus keyboard mengikuti token studio. Rincian aset, responsivitas, dan sumber data tersedia di [portfolio-ui.md](../design-docs/portfolio-ui.md).
-   - Detail `/portfolio/[slug]` memakai navbar serta footer studio yang sama, hero dua kolom dengan gambar utuh, kartu Tantangan/Solusi/Hasil, panel teknologi, serta CTA biru es ke slate. Judul, klien, industri, ringkasan, cerita, dan teknologi tetap bersumber dari data studi kasus. Pada layar kecil seluruh konten tersusun vertikal; gaya khusus detail berada di `portfolio-detail.module.css`.
+## 10. Performa aset gambar
 
----
-
-## Ringkasan pengguna
-
-Header bersama halaman pengguna tidak menampilkan breadcrumb `Workspace / nama halaman`. Judul konten tetap berada di halaman masing-masing; tombol sidebar mobile, pencarian, notifikasi, dan menu akun mempertahankan fungsi yang tersedia.
-
-Rute `/dashboard` memakai workspace terang dengan aksen biru elektrik, kartu pastel, dan tipografi Plus Jakarta Sans. Sidebar ringkas dengan jarak antar grup menu yang proporsional serta penanda pill dipakai pada Ringkasan, daftar `/dashboard/projects`, riwayat `/dashboard/orders`, `/dashboard/calculator`, `/dashboard/ai-relay`, `/dashboard/invoices`, dan `/dashboard/profile`; rute lain mempertahankan tampilannya masing-masing. Menu dan halaman Pengaturan telah dihapus sepenuhnya. Sambutan mengambil identitas sesi dengan ilustrasi maskot kucing 3D menyapa (`aldera-cat-greeting.webp`), tiga kartu statistik memakai query asli, onboarding ditampilkan sebagai Floating Action Button (FAB) di pojok kanan bawah yang membuka modal checklist lengkap, dan aktivitas memakai timeline. Detail batas perubahan dan sumber data tersedia di [Panduan UI Ringkasan pengguna](../design-docs/dashboard-overview-ui.md).
-
-Profil Saya menempatkan identitas akun selebar konten di atas, dengan avatar asli/inisial, data nama/peran/email/telepon/tanggal, maskot 3D guide di sisi kanan, serta kartu formulir Informasi Profil langsung di bawahnya untuk memperbarui nama lengkap dan telepon/WhatsApp tanpa kartu dummy/demo. Corak titik/orbit dibatasi pada kartu identitas Profil. Warna tetap navy/biru dengan kartu putih, border jelas, dan radius 24px. CSS privat tidak mengubah halaman lain. Rincian tersedia di [Panduan UI Profil Saya](../design-docs/dashboard-profile-ui.md).
-
-Ringkasan memakai latar abu-abu kebiruan yang rata, panel putih solid, border yang jelas, dan teks sekunder berkontras. Sambutan dan tiga statistik terintegrasi dengan ilustrasi maskot kucing 3D menyapa, diikuti oleh panel visualisasi data dua kolom (Donut/Pie Chart distribusi status milestone & tugas serta Bar Chart ringkasan pembayaran invoice). Onboarding disajikan melalui Floating Action Button (FAB) di pojok kanan bawah yang memicu modal dialog interaktif berisi donat pie chart progres dan daftar 4 langkah onboarding. Proyek Terbaru dan Aktivitas sejajar rata di bagian atas dan bawah (`align-items: stretch`): kartu Proyek Terbaru menampilkan item proyek yang ringkas, sedangkan kartu Aktivitas menampilkan pratinjau aktivitas terbaru dengan tombol "Lihat lebih lanjut" yang membuka pop-up modal Detail Aktivitas Terbaru. Pastel dibatasi pada ikon dan scope perubahan latar berlaku hanya pada rute tepat `/dashboard`. Query, perhitungan statistik, langkah/progres onboarding, serta tautan mengikuti sumber asli. Corak orbit/sirkuit pada sambutan, lingkaran kecil pada statistik, dan garis diagonal pada sudut panel ditata melalui scope lokal Ringkasan; lapisan dekorasi statis berada di belakang informasi dan disederhanakan pada HP.
-
-Invoice & Pembayaran memakai header dokumen ringkas, kartu ringkasan kompak (Menunggu pembayaran, Dalam verifikasi, Telah dibayar), tabel desktop dan kartu mobile yang lebih compact, serta empty state seragam berilustrasi teknologi 3D non-kucing. Border 18% navy serta teks sekunder 72% navy dibatasi pada rute invoice dan dialognya. Filter status, pagination, nominal, sumber data, dan pembayaran tetap mengikuti mekanisme asli. Rincian tersedia di [Panduan UI Invoice & Pembayaran](../design-docs/dashboard-invoices-ui.md).
-
-Pengaturan telah dihapus sepenuhnya dari portal dashboard pengguna (fitur profil dan preferensi disatukan di rute Profil Saya).
-
-Daftar Proyek Saya (`/dashboard/projects`) dan halaman detail proyek (`/dashboard/projects/[id]`) memakai tema Studio yang seragam dengan Ringkasan (termasuk warna sidebar aktif biru elektrik, tipografi Plus Jakarta Sans, kartu header putih, dan ke-6 tab detail proyek: Timeline, Tasks, Activity, Diskusi, Files, Invoices). Daftar proyek memakai grid kartu responsif, kolom pencarian dengan latar putih dan border tegas, serta filter pill dengan teks putih saat aktif. Empty state menggunakan ilustrasi desain/teknologi 3D seragam non-kucing; loading lokal serta pesan kegagalan memuat data dibedakan dari proyek kosong. Rincian komponen dan pemeriksaan tersedia di [Panduan UI Proyek Saya](../design-docs/dashboard-projects-ui.md).
-
-Pesanan & Estimasi memakai kartu riwayat dengan jenis proyek dan status di kiri, nominal estimasi di kanan, filter pill dengan teks putih kontras saat aktif, serta header seragam tanpa breadcrumb redundan. Empty state memakai ilustrasi teknologi 3D seragam non-kucing. Query, nominal, jumlah fitur, status, dan alur kalkulator tetap mengikuti sumber asli. Rincian tersedia di [Panduan UI Pesanan & Estimasi](../design-docs/dashboard-orders-ui.md).
-
-Kalkulator dashboard memakai konfigurasi lima tahap dalam kartu putih dan ringkasan biaya di sebelah kanan dengan header seragam (tanpa breadcrumb dan badge redundan). Empty state estimasi biaya memakai ilustrasi teknologi 3D seragam non-kucing sebelum jenis proyek dipilih. Rincian tersedia di [Panduan UI Kalkulator](../design-docs/dashboard-calculator-ui.md).
-
-AI Gateway / Relay dashboard memakai desain ringkas dengan header compact, maskot kucing 3D berpose memunculkan hologram dompet biru di sebelah panel Saldo Aktif (`aldera-cat-relay-balance.webp`), dan navigasi tab berbasis pill-bar seragam yang konsisten di seluruh dashboard. Tab aktif tetap terlihat saat dipilih atau ukuran layar berubah. Detail tersedia di [UI dashboard AI Relay](../design-docs/dashboard-ai-relay-ui.md).
-
-## 9. Maskot Brand & Ikon Antarmuka
-
-Harga, Blog, dan Kontak memakai `StudioIllustratedHero` dengan tipografi dan tata letak yang sama. Maskot mendampingi panel berisi faktor estimasi, tautan artikel, atau informasi layanan sesuai halaman. Panel berada di sisi teks pada desktop dan di bawah tombol pada HP. Halaman Harga memakai aset Visi pada hero, data paket asli, dan penanda unggulan berdasarkan `featured`. Kalkulator memakai `appearance="studio"` pada Harga dan `appearance="dashboard"` dalam dashboard. Struktur komponen dan batas fungsi tersedia di [Panduan UI Harga](../design-docs/pricing-ui.md).
-
-Halaman publik AI Relay memakai navbar dan footer studio yang sama melalui pemeriksaan rute khusus di `PublicShell` dan `Navbar`. Latar hero menyatu dengan gradasi di belakang navbar. Katalog model dinamis, preset IDE, salin konfigurasi, kalkulator, dan tautan akun dipertahankan. Dua mini maskot dekoratif menjadi aksen pada panel koneksi dan konfigurasi; satu disembunyikan pada layar kecil. Struktur, batas fungsi, aset, serta prompt final tersedia di [Panduan UI AI Relay](../design-docs/ai-relay-ui.md).
-
-Halaman Blog dan detail artikel memakai tema studio yang sama pada rute `/blog` dan `/blog/[slug]`. Hero Blog menampilkan maskot membaca dan tombol menuju daftar artikel. Daftar memakai kartu responsif, kategori, pencarian GET, dan pagination dari data asli. Detail artikel memakai area baca terukur, daftar isi, serta gaya konten kaya. Rincian tampilan, batas fungsi, dan aset tersedia di [Panduan UI Blog](../design-docs/blog-ui.md).
-
-Untuk menjaga reputasi Aldera Tech sebagai konsultan rekayasa perangkat lunak papan atas bagi klien enterprise dan startup bertumbuh:
-
-Hero menampilkan tepat satu maskot kucing putih 3D: hoodie dan celana pendek putih bergaris merah-biru, headphone hitam besar beraksen biru, kacamata hitam, serta sneakers futuristik. Karakter berdiri dengan satu tangan menyapa dan menyatu dengan kanvas terang melalui alpha transparan.
-
-- **Aset aktif**: [aldera-cat-hero.webp](../public/images/hero/aldera-cat-hero.webp), 1024×1536, 208.078 byte, WebP kualitas 90 dengan alpha kualitas 100. Resolusi sumber dipertahankan untuk layar berkerapatan piksel tinggi.
-- **Pembuatan**: tool bawaan `imagegen`; konversi dan kompresi WebP menggunakan Sharp.
-- **Penyajian**: static import menghasilkan nama aset berbasis konten untuk invalidasi cache; `next/image` memakai `quality={90}`, `preload`, dan `sizes` sesuai lebar aktual maskot. Gambar layanan dan screenshot portofolio memakai ukuran responsif serta pemuatan lazy; maskot Hero Portofolio memakai preload dan kualitas 90.
-- **Badge HTML**: Web Development, Mobile Apps, dan UI/UX Design. Teks tidak dibakar ke gambar.
-- **Dekorasi**: garis koneksi SVG dan titik bercahaya, kartu teknologi Lucide, serta mockup dari aset proyek. Kedua globe memakai drop-shadow navy/biru dan bayangan elips lembut di bawahnya. Kartu insight Hero memakai permukaan putih 28%, border putih 45%, serta backdrop blur 8px; transparansi diterapkan pada permukaan agar teks tetap utuh dan terbaca. Globe pada cekungan CTA memakai aset WebP transparan melalui `next/image`; CSS mengatur ukuran, bayangan, dan floating.
-- **Aset globe**: [aldera-tech-globe.webp](../public/images/hero/aldera-tech-globe.webp), 512×512, 88.582 byte, WebP kualitas 90 dengan alpha kualitas 100. Dibuat melalui tool bawaan `imagegen`, lalu dikompresi dengan Sharp. Aset dipakai pada kartu agenda konsultasi dan kartu insight Hero. Gambar dimuat lazy melalui static import. Lebar globe pada agenda berkisar 56–80px, sedangkan kartu insight Hero memakai 64px.
-
-<details>
-<summary>Prompt sumber maskot</summary>
-
-```text
-Use case: precise-object-edit. Asset type: premium production website hero mascot cutout for Aldera Tech. Input image: edit target, preserve this single cat's identity. Primary request: refine this exact white 3D cat into a sharper, more polished high-resolution studio render for a professional software engineering company. Keep the same face, white fur, black sunglasses, large black headphones with subtle blue trim, white sporty hoodie with thin red/blue sleeve stripes, one raised welcoming paw, tail, and white sneakers. Replace long trousers with neatly tailored white sporty knee-length shorts matching the hoodie, keeping body proportions natural. Improve clean edge antialiasing, fine fur and fabric detail, crisp headphone surfaces and controlled reflections on glasses. Lighting: large soft studio key and gentle cool fill, white clothing with subtle neutral slate shading and no blown highlights; premium restrained materials. Composition: centered full body, preserve the familiar three-quarter pose and expression, ears and sneakers entirely inside frame with 5 percent clear padding. Portrait 2:3 canvas, at least 1024x1536 if possible, native fine detail suitable for retina screens. Output must have genuine transparent alpha, including around fur and between legs, no background color or checkerboard baked in. Exactly ONE cat, no lettering, no logos, no watermark, no floating badges, no props, no floor plane, no added environment. Keep reference character recognizable and professional, no exaggerated neon effects.
-```
-
-</details>
-
-<details>
-<summary>Prompt sumber globe banner konsultasi</summary>
-
-```text
-Use case: stylized-concept. Asset type: production transparent 3D technology globe cutout for the Aldera Tech software studio website consultation banner. Create exactly ONE premium 3D globe sphere, centered, entire sphere visible, circular silhouette filling approximately 90 percent of a square canvas. Subject: a refined sapphire and electric blue glass globe, subtle recognizable translucent world continents on its surface, elegant thin latitude/longitude meridian lines wrapping naturally around the sphere, and a small number of glowing white/cyan connection nodes with delicate connecting arcs. It should feel sophisticated and dimensional like a high-end product render, not a flat vector icon. Color palette: electric royal blue #245FE5, deep navy #102651, pale ice blue and soft white highlights. Materials: polished translucent blue glass with controlled reflections, subtle depth, crisp fine detail. Lighting: large soft studio key from upper left, gentle blue rim, clear readable silhouette, premium restrained glow. Composition: spherical globe with a slight axis tilt, no stand, no pedestal, no external rings, no extra objects. It must integrate into a white semicircular notch on a navy website panel, so use genuinely transparent alpha outside the object with no opaque backdrop, no ground plane, no baked background shadow. No text, no lettering, no logo, no watermark, no website screenshot. Render at high native resolution, sharp enough for retina display at small UI size.
-```
-
-</details>
-
-Prompt dan spesifikasi maskot Tentang terdapat di [Panduan UI Tentang](../design-docs/about-ui.md).
-
-Maskot hero Layanan memakai [aldera-cat-services.webp](../public/images/services/aldera-cat-services.webp), variasi karakter yang sama dengan laptop terbuka dan gestur menjelaskan panel antarmuka. Aset WebP transparan 1024 × 1536 memakai kualitas 90, static import, dan `sizes` responsif. Badge HTML diatur menghindari wajah dan properti laptop. Referensi identitas, prompt, dan spesifikasi tersedia di [Maskot halaman Layanan](../design-docs/services-mascot.md).
-
-1. **Larangan Penggunaan Emoji Unicode (Zero Unicode Emojis)**:
-   - Dilarang keras menaruh karakter emoji unicode (seperti `👋`, `🎉`, `⏳`, `✓`, `✗`) di antarmuka web, judul halaman, badge status, email template, maupun notifikasi toast.
-   - Seluruh indikator status wajib menggunakan **ikon Lucide semantik** (seperti `Clock`, `CheckCircle2`, `Check`, `X`, `Layers`, `ShieldCheck`).
-2. **Larangan Maskot Robot AI & Gimmick AI Logo**:
-   - Dilarang menampilkan maskot kartun 3D robot AI atau ikon gimmick seperti `Sparkles` untuk merepresentasikan sistem.
-   - Seluruh visualisasi teknis wajib merefleksikan rekayasa sistem nyata: topologi arsitektur cloud, mikroservis terdistribusi, telemetri real-time, terminal log, dan dashboard metrik performa.
-
----
-
-## 10. Standar Format & Performa Aset Gambar (Asset Performance & LCP Optimization)
-
-1. **Format Wajib**: Seluruh aset gambar fotografi, render mockup, dan studi kasus disimpan dalam format **WebP** terkompresi (kualitas 80–85% untuk aset umum, 90% untuk maskot Hero dan globe 3D dengan detail halus) atau format vektor **SVG**.
-2. **Batas Ukuran Berkas**:
-   - Gambar Hero & Showcase: Maksimal `< 100 KB` per berkas.
-   - Maskot Hero beresolusi tinggi dengan alpha: maksimal `< 250 KB` untuk menjaga detail pada layar berkerapatan tinggi; respons browser tetap dioptimasi melalui `next/image`.
-   - Thumbnail Portfolio & Blog: Maksimal `< 70 KB` per berkas.
-   - Ikon & Vektor: Maksimal `< 20 KB` per berkas.
-3. **Larangan Berkas PNG Raksasa**: Dilarang menyimpan atau meng-commit gambar PNG uncompressed berukuran megabyte ke dalam repositori publik.
-4. **Optimasi LCP (Largest Contentful Paint)**:
-   - Elemen gambar kandidat LCP utama (seperti gambar hero di halaman depan) wajib menggunakan `preload` pada Next.js 16.4.
-   - Gambar di bawah viewport (_below the fold_) wajib menggunakan `loading="lazy"` tanpa atribut preload.
-
-## Tema workspace Admin dan Pengguna
-
-Area dashboard menggunakan token biru/navy, Plus Jakarta Sans, kanvas kebiruan dan kartu putih yang sama. Header 64px menjadi acuan offset sticky; kontrol standar 40px desktop dan 44px HP. Badge status memakai pastel semantik dan label resmi dari data. Tema portal dipasang serta dilepas bersama layout sehingga popup tetap selaras tanpa mengubah tema website publik. Rincian implementasi, batas variasi dan hasil pemeriksaan ada pada [konsistensi UI workspace](../design-docs/workspace-ui-consistency.md).
+- Pilih WebP untuk foto/render dan SVG untuk ikon atau ilustrasi vektor jika sesuai.
+- Hindari gambar PNG besar tanpa kompresi. Gunakan optimasi gambar Next.js, ukuran responsif, dan lazy loading untuk aset di bawah viewport.
+- Gambar LCP mengikuti panduan Next.js yang berlaku dan implementasi halaman; jangan menyalin nilai preload atau ukuran file ke catatan brand.
