@@ -1,6 +1,6 @@
 # Standar Kualitas Kode & Arsitektur Modular (Code Quality Standards)
 
-Dokumen ini merupakan panduan arsitektur dan kualitas kode resmi untuk repositori **Aldera Tech**. Seluruh AI Agent dan pengembang **WAJIB** mematuhi 18 prinsip berikut saat menulis, memodifikasi, atau merefaktor kode.
+Dokumen ini adalah sumber utama standar arsitektur dan kualitas kode. Alur kerja ada di [agent-workflow.md](agent-workflow.md), standar UX di [ai-guidelines.md](ai-guidelines.md), dan test UI di [ui-testing.md](ui-testing.md).
 
 ---
 
@@ -20,10 +20,7 @@ Dokumen ini merupakan panduan arsitektur dan kualitas kode resmi untuk repositor
 12. [Konvensi Penamaan Terstandarisasi (Naming Conventions)](#12-konvensi-penamaan-terstandarisasi-naming-conventions)
 13. [Sentralisasi Rute & Anti-Hardcoded Navigation (Zero Hardcoded Routes)](#13-sentralisasi-rute--anti-hardcoded-navigation-zero-hardcoded-routes)
 14. [Sinkronisasi State ke URL Parameters (Shareable Deep-Linking)](#14-sinkronisasi-state-ke-url-parameters-shareable-deep-linking)
-15. [Standar Penanganan 4 UI States & Input Form Hygiene](#15-standar-penanganan-4-ui-states--input-form-hygiene)
-16. [Integritas Pengetesan & Sinkronisasi Test Suite (Test Mapping & Maintenance)](#16-integritas-pengetesan--sinkronisasi-test-suite-test-mapping--maintenance)
-17. [Disiplin Git Branching Model: main <- staging <- feat/* (Dilarang Commit/PR Langsung ke Main)](#17-disiplin-git-branching-model-main---staging---feat-fix-dilarang-commitpr-langsung-ke-main)
-18. [Kewajiban Pengujian UI untuk Setiap Komponen & Halaman (Mandatory UI Testing)](#18-kewajiban-pengujian-ui-untuk-setiap-komponen--halaman-mandatory-ui-testing)
+15. [State data dan input](#15-state-data-dan-input)
 
 ---
 
@@ -352,111 +349,10 @@ Seluruh state interaktif yang mengubah filter, kata kunci pencarian, urutan data
 
 ---
 
-## 15. Standar Penanganan 4 UI States & Input Form Hygiene
+## 15. State data dan input
 
-### 1. Penanganan 4 Kondisi Antarmuka (4 UI States)
-
-Setiap komponen penyaji data (tabel/grid/kartu) wajib menangani 4 kondisi:
-
-1. **Loading State**: Wajib menggunakan `Skeleton` (`@/components/ui/skeleton`) yang meniru tata letak asli komponen (dilarang spinner polos atau layar putih kosong).
-2. **Empty State**: Ketika data berjumlah 0 (`data.length === 0`), tampilkan ikon visual, pesan ramah informatif, dan tombol Call-to-Action (CTA) seperti "Reset Filter" atau "Tambah Data Baru".
-3. **Error State**: Tampilkan kartu pesan error dengan tombol "Coba Lagi" (_Retry_) dan notifikasi toast `sonner`.
-4. **Large Dataset State**: Wajib menerapkan paginasi atau virtualized scrolling jika data berjumlah ratusan/ribuan baris; sertakan info ringkasan jumlah data.
-
-### 2. Standarisasi Input Form
-
-- **Placeholder Wajib**: Setiap input teks, textarea, dan select trigger wajib memiliki placeholder kontekstual yang memberikan contoh nilai nyata (misal: `placeholder="Contoh: PT Teknologi Maju Indonesia"`).
-- **Indikator Wajib (_Required_)**: Label field wajib menyertakan tanda bintang merah (`<span className="text-red-500">*</span>`).
-- **Indikator Opsional (_Optional_)**: Label field opsional wajib secara eksplisit mencantumkan keterangan `(Opsional)` (`<span className="text-xs font-normal text-slate-500">(Opsional)</span>`).
-
----
-
-## 16. Integritas Pengetesan & Sinkronisasi Test Suite (Test Mapping & Maintenance)
-
-### Prinsip
-
-Setiap modifikasi kode (fitur baru, perbaikan bug, atau refactoring) wajib diverifikasi dan dipayungi oleh unit test yang relevan. Dilarang mengubah kode tanpa memverifikasi test terkait.
-
-### Aturan Operasional
-
-1. **Pencarian Test Terkait (_Test Mapping_)**: Sebelum atau sesaat setelah mengedit berkas kode, cari file test yang menguji fungsi/modul tersebut menggunakan `find . -name "*.test.*"` atau `grep -rn "namaFungsi" lib/ tests/ app/`.
-2. **Pembaruan Skenario Test**:
-   - Jika kontrak fungsi atau logika bisnis dimodifikasi, **wajib memperbarui nilai ekspektasi test** agar sinkron.
-   - Jika memperbaiki bug, **wajib menambahkan kasus uji regresi (_regression test_)** untuk menjamin bug tidak akan muncul kembali di masa depan.
-   - Jika membuat modul/Server Action baru, **wajib menambahkan berkas test baru** (`*.test.ts`) dengan cakupan _happy path_ dan _edge cases_.
-3. **Verifikasi Mandiri 100% PASS**: Jalankan `bun test <file.test.ts>` dan pastikan seluruh test suite `bun test` berstatus 0 fail sebelum menyatakan tugas selesai.
-
----
-
-## 17. Disiplin Git Branching Model: `main` <- `staging` <- `feat/*`, `fix/*` (Dilarang Commit/PR Langsung ke Main)
-
-### Prinsip
-
-Repositori menerapkan model percabangan 3-tingkat: `main` (Production) $\leftarrow$ `staging` (Staging) $\leftarrow$ `feat/*`, `fix/*`. Branch `main` dan `staging` diproteksi. Dilarang keras melakukan commit langsung ke `main` maupun `staging`.
-
-### Aturan Operasional
-
-1. **Wajib Buat Branch Baru dari `origin/staging`**: Setiap penanganan issue/task harus dimulai dengan mencabangkan branch baru dari `origin/staging`:
-   ```bash
-   git fetch origin
-   git checkout -b feat/<fitur-singkat> origin/staging
-   ```
-   Prefix penamaan:
-   - `feat/<fitur-singkat>` untuk fitur baru
-   - `fix/<deskripsi-bug>` untuk perbaikan bug
-   - `refactor/<komponen>` untuk refactoring kode
-   - `docs/<topik>` untuk dokumentasi
-   - `chore/<tugas>` untuk dependensi dan konfigurasi
-2. **Commit Terstruktur pada Branch**: Lakukan commit pada branch kerja menggunakan format Conventional Commits (`feat: ...`, `fix: ...`).
-3. **Pull Request & Squash and Merge ke `staging`**:
-   - Ajukan Pull Request (PR) dari branch kerja menuju branch **`staging`** (`base: staging`, `compare: feat/...`).
-   - Penggabungan ke branch `staging` **WAJIB menggunakan strategi Squash and Merge**. Merge ke `staging` memicu otomatisasi CI/CD deploy ke VPS Staging (`staging.aldera.tech`).
-   - Penggabungan dari `staging` ke `main` hanya dilakukan melalui Release PR terverifikasi setelah lulus pengujian di staging. Dilarang PR langsung dari branch fitur ke `main`.
-
----
-
-## 18. Kewajiban Pengujian UI untuk Setiap Komponen & Halaman (Mandatory UI Testing)
-
-### Prinsip
-
-Seluruh komponen visual, formulir interaktif, dialog modal, dan halaman rute Next.js (`page.tsx`) **WAJIB** memiliki file pengujian UI (`*.test.tsx` atau `*.test.ts`) pendamping. Dilarang merilis atau memodifikasi antarmuka pengguna tanpa pengujian otomatis yang memverifikasi perilakunya.
-
-### Aturan Operasional
-
-1. **Pola Co-location Wajib**: File pengujian UI wajib diletakkan tepat di direktori yang sama dengan komponen/halaman yang diuji (contoh: `app/(public)/ai-relay/page.test.tsx` di samping `page.tsx`, `components/dashboard/sidebar.test.ts` di samping `sidebar.tsx`).
-2. **Cakupan Pengujian Wajib**:
-   - **Rendering & Prop Initialization**: Memastikan fungsi komponen (RSC maupun RCC) menghasilkan elemen JSX yang valid dan tidak mengalami null-pointer crash.
-   - **SEO Metadata Verification**: Pada halaman publik (`page.tsx`), verifikasi ekspor objek `metadata` (judul, deskripsi berbahasa Indonesia, dan canonical URL).
-   - **Zero Hardcoded Routes**: Verifikasi bahwa seluruh tombol, link, dan pengalihan rute mengimpor konstanta resmi dari `lib/routes.ts`.
-   - **Penanganan 4 UI States**: Uji kondisi Loading (Skeleton), Empty State (ikon + CTA), Error State (kartu error + retry), dan Large Dataset (paginasi URL).
-   - **Standarisasi Input Form**: Verifikasi kehadiran placeholder kontekstual di setiap input, tanda bintang merah (`*`) untuk field required, dan label `(Opsional)` untuk field optional.
-   - **Sinkronisasi URL Param State**: Uji integrasi state tab aktif (`?tab=`), filter/pencarian (`?q=`), dan paginasi (`?page=`).
-   - **Modal Dialog & Interaktivitas**: Verifikasi pelarangan `window.confirm()` dan pastikan menggunakan `<ConfirmDialog>` serta notifikasi toast `sonner`.
-3. **Eksekusi Test Runner**: Seluruh UI test dijalankan menggunakan `bun test` dan wajib lulus 100% tanpa error sebelum kode digabung. Panduan lengkap tersedia di [`ai-agent-docs/ui-testing.md`](ui-testing.md).
-
----
-
-## Checklist Audit Mandiri (Self-Audit Checklist)
-
-Sebelum menyelesaikan task pembuatan/modifikasi fitur, pastikan:
-
-- [ ] Bekerja pada branch kerja terpisah (`feat/...`, `fix/...`) yang dicabangkan dari `origin/staging`, BUKAN langsung di branch `main` atau `staging`, dan PR ditargetkan ke `staging`.
-- [ ] Telah mencari file test terkait (`find . -name "*.test.*"` atau grep).
-- [ ] Memperbarui skenario test yang ada atau menambahkan test baru untuk setiap perubahan logika/bugfix.
-- [ ] Setiap komponen UI, form, modal, atau halaman rute memiliki file pengujian UI (`*.test.tsx` / `*.test.ts`) yang lolos 100% (`bun test`).
-- [ ] Seluruh unit test & UI test lulus 100% tanpa kegagalan (`bun test`).
-- [ ] Tidak ada file komponen yang membengkak melebihi batas wajar (~200–250 baris).
-- [ ] Logika state/form kompleks telah dipisahkan ke dalam custom hook.
-- [ ] Tidak ada penggunaan tipe `any`.
-- [ ] Data form/action divalidasi dengan skema Zod di `lib/validations/`.
-- [ ] Props yang dioper dari RSC ke RCC adalah _plain objects_.
-- [ ] Mutasi dilengkapi feedback toast (`sonner`) dan loading state (`useTransition`).
-- [ ] Styling menggunakan kelas Tailwind semantic dan fungsi `cn()`.
-- [ ] Penamaan file, folder, dan simbol mengikuti standar konvensi.
-- [ ] Seluruh tautan, navigasi, redirect, dan API call menggunakan konstanta terpusat dari `lib/routes.ts` (Zero Hardcoded Routes).
-- [ ] Searching, filtering, sorting, pagination, dan navigasi tab tersinkronisasi ke URL search parameters (Deep-linking & Shareable State).
-- [ ] Menangani 4 kondisi antarmuka: Loading Skeleton, Empty State informatif + CTA, Error State + Retry, dan Large Dataset pagination.
-- [ ] Seluruh field input memiliki placeholder kontekstual, label field required bertanda bintang merah (`*`), dan field optional bertuliskan `(Opsional)`.
-- [ ] Kode telah diformat menggunakan Prettier (`bun run format`) dan urutan utility class Tailwind tertata otomatis.
-- [ ] Tidak ada URI/path absolut mesin (`file:///...`, `/home/...`) yang tersimpan di dalam berkas repositori (Portability Check).
-- [ ] Siap diajukan Pull Request (PR) ke `staging` dengan strategi Squash and Merge (promosi ke `main` via Release PR teruji).
+- Data view menangani status yang memang didukungnya: loading, hasil kosong, dan kegagalan query harus dapat dibedakan. Koleksi besar menggunakan batas halaman atau strategi virtualisasi yang sesuai.
+- Filter, pencarian, sorting, tab, dan pagination yang mengubah hasil dapat direpresentasikan melalui URL query.
+- Validasi data bisnis ditempatkan di schema bersama, bukan hanya di komponen presentasi.
+- Label, placeholder, dan status required/optional harus jelas dan konsisten dengan [panduan UX](ai-guidelines.md).
+- Cakupan test mengikuti perilaku yang diubah. Gunakan [panduan UI testing](ui-testing.md) dan [alur kerja](agent-workflow.md); detail branch, command test, serta checklist task tidak diulang di sini.
