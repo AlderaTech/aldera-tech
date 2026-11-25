@@ -13,12 +13,13 @@ if (major < 1 || (major === 1 && (minor < 4 || (minor === 4 && patch < 4)))) {
 }
 
 const container = `aldera-test-${randomUUID()}`;
-const schemaRevision = "d75d14412b5277d174618602e7a8d7649cc2f02c";
+const schemaRevision = "b6c89b69f39ea5d6f5fbcba2dcb6bb9b22ee0c0e";
 const schemaFiles = [
   "init.sql",
   "migrations/001_initial_schema.sql",
   "migrations/002_account_binding.sql",
   "migrations/003_bot_cms_and_payment_settings.sql",
+  "migrations/004_service_availability.sql",
   "seeds/001_initial_pricing.sql",
 ];
 const args = process.argv.slice(2);
