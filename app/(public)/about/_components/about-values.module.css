@@ -284,22 +284,8 @@
     box-shadow: 0 12px 26px color-mix(in srgb, var(--home-blue) 7%, transparent);
   }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .visualObject {
-    animation: values-float 8s ease-in-out infinite;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   .card {
     transition: none;
-  }
-}
-@keyframes values-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
   }
 }

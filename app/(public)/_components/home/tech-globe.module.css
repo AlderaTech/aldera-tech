@@ -1,8 +1,9 @@
 .globe {
+  position: relative;
   isolation: isolate;
-  width: 9rem;
+  width: clamp(3.5rem, 7vw, 5rem);
   aspect-ratio: 1;
-  animation: float 7s ease-in-out infinite;
+  flex-shrink: 0;
 }
 
 .globe::after {
@@ -26,18 +27,4 @@
       0 12px 12px color-mix(in srgb, var(--home-ink) 24%, transparent)
     )
     drop-shadow(0 4px 6px color-mix(in srgb, var(--home-blue) 12%, transparent));
-}
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .globe {
-    animation: none;
-  }
 }

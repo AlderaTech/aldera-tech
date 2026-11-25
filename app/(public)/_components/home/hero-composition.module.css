@@ -1,16 +1,29 @@
 .hero {
   position: relative;
   isolation: isolate;
-  padding-top: 0.75rem;
-  padding-bottom: 5rem;
+  display: grid;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-block: calc(var(--home-navbar-height, 0px) + 1rem) 2rem;
+  padding-block: calc(
+      var(--home-navbar-height, 0px) + clamp(0.625rem, 2dvh, 1.25rem)
+    )
+    clamp(1.25rem, 4dvh, 3rem);
   overflow: hidden;
   text-align: center;
+}
+
+.heroLayout {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: clamp(0.5rem, 1.5dvh, 1rem);
 }
 
 .backdrop {
   position: absolute;
   z-index: -1;
-  inset: 0 0 1rem;
+  inset: 0 0 0.5rem;
   background: linear-gradient(var(--home-sky), var(--home-soft));
   border-radius: 0 0 50% 50% / 0 0 9% 9%;
 }
@@ -28,27 +41,18 @@
   content: "";
 }
 
-.kicker {
-  margin-block: 1.25rem 0;
-  color: var(--home-muted);
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-
 .scene {
   position: relative;
-  height: 36rem;
-  margin-top: 2rem;
   isolation: isolate;
+  min-height: clamp(11rem, 40dvh, 22rem);
+  flex: 1 0 auto;
 }
 
 .wordmark {
   position: absolute;
-  inset: 1rem -0.5rem auto;
+  inset: clamp(0.5rem, 4%, 1.5rem) -0.5rem auto;
   color: var(--home-blue);
-  font-size: clamp(4rem, 13.7vw, 11.5rem);
+  font-size: clamp(3.25rem, min(13.7vw, 22dvh), 11.5rem);
   line-height: 0.9;
   font-weight: 800;
   letter-spacing: -0.075em;
@@ -58,16 +62,14 @@
 .mascot {
   position: absolute;
   z-index: 3;
-  top: 1.25rem;
+  inset-block: clamp(0.75rem, 4%, 1.25rem) 0;
   left: 50%;
   width: 25rem;
-  height: 35.5rem;
-  margin-left: -12.5rem;
+  translate: -50% 0;
   filter: drop-shadow(
     0 18px 18px color-mix(in srgb, var(--home-ink) 11%, transparent)
   );
   mask-image: linear-gradient(black 89%, transparent);
-  animation: float 8s ease-in-out infinite;
 }
 
 .connections {
@@ -92,7 +94,7 @@
 
 .insight {
   position: absolute;
-  top: 15.5rem;
+  top: 44%;
   left: 2%;
   width: 14.5rem;
   padding: 1.25rem;
@@ -149,11 +151,10 @@
 
 .mockupStack {
   position: absolute;
-  top: 15rem;
+  top: 43%;
   right: 0;
   width: 16.5rem;
   rotate: 7deg;
-  animation: float 9s ease-in-out -3s infinite;
 }
 
 .mockupBack {
@@ -231,15 +232,15 @@
   color: var(--home-blue);
 }
 .webBadge {
-  top: 11rem;
+  top: 34%;
   left: 14%;
 }
 .mobileBadge {
-  bottom: 3.75rem;
+  bottom: 11%;
   left: 23%;
 }
 .designBadge {
-  top: 12.25rem;
+  top: 33%;
   right: 10%;
 }
 .badgeDot {
@@ -252,102 +253,67 @@
 .heroCopy {
   position: relative;
   z-index: 5;
+  display: grid;
   max-width: 60rem;
-  margin: -0.25rem auto 0;
+  justify-items: center;
+  gap: clamp(0.5rem, 1.35dvh, 0.875rem);
+  margin-inline: auto;
 }
 
 .startButton {
-  min-height: 2.5rem !important;
-  padding: 0.625rem 1rem !important;
+  min-height: 2.25rem !important;
+  padding: 0.5rem 0.875rem !important;
   font-size: 0.6875rem !important;
 }
 
 .heroCopy h1 {
-  margin-top: 1.5rem;
   color: var(--home-ink);
-  font-size: clamp(2rem, 4.4vw, 3.75rem);
+  font-size: clamp(1.875rem, min(4.4vw, 7dvh), 3.5rem);
   font-weight: 800;
   line-height: 1.08;
   letter-spacing: -0.05em;
 }
 
 .heroCopy > p {
-  margin-top: 1.25rem;
   color: var(--home-muted);
   font-size: 0.875rem;
   line-height: 1.7;
 }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-7px);
-  }
-}
-
 @media (max-width: 1023px) {
-  .scene {
-    height: 32rem;
-  }
   .mascot {
     width: 22rem;
-    height: 32rem;
-    margin-left: -11rem;
   }
   .insight {
     left: 0;
-    top: 13rem;
     width: 11rem;
     padding: 1rem;
   }
   .mockupStack {
-    top: 15rem;
     width: 12rem;
   }
   .webBadge {
     left: 3%;
-    top: 10rem;
   }
   .designBadge {
     right: 1%;
-    top: 11rem;
   }
   .mobileBadge {
     left: 4%;
-    bottom: 1rem;
   }
 }
 
 @media (max-width: 639px) {
-  .hero {
-    padding-bottom: 3.5rem;
-  }
   .backdrop {
     border-radius: 0 0 50% 50% / 0 0 5% 5%;
   }
-  .kicker {
-    margin-top: 0.5rem;
-    font-size: 0.5rem;
-    letter-spacing: 0.12em;
-  }
-  .scene {
-    height: 26rem;
-    margin-top: 1.75rem;
-  }
   .wordmark {
-    inset: 0 -0.5rem auto;
+    inset-block-start: 0.35rem;
     font-size: 13.4vw;
   }
   .mascot {
-    top: 1rem;
     width: 78vw;
     max-width: 20rem;
-    height: 26rem;
-    margin-left: 0;
-    translate: -50% 0;
   }
   .connections {
     opacity: 0.5;
@@ -366,22 +332,17 @@
     height: 0.75rem;
   }
   .webBadge {
-    top: 9rem;
     left: 0;
   }
   .designBadge {
-    top: 15.5rem;
+    top: 57%;
     right: 0;
   }
   .mobileBadge {
-    bottom: 1.5rem;
     left: 0;
   }
-  .heroCopy {
-    margin-top: 0.5rem;
-  }
   .heroCopy h1 {
-    font-size: clamp(1.75rem, 7.1vw, 2.75rem);
+    font-size: clamp(1.5rem, min(7.1vw, 5.2dvh), 2.55rem);
   }
   .heroCopy > p {
     max-width: 18rem;
@@ -390,9 +351,30 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .mascot,
-  .mockupStack {
-    animation: none;
+@media (max-height: 500px) and (min-width: 640px) {
+  .heroLayout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto 1fr;
+    align-items: center;
+    gap: 0.5rem 1.25rem;
+  }
+  .kicker {
+    grid-column: 1 / -1;
+  }
+  .scene {
+    min-height: 7rem;
+    align-self: stretch;
+  }
+  .wordmark {
+    font-size: clamp(2.25rem, min(7.3vw, 16dvh), 5rem);
+  }
+  .insight,
+  .mockupStack,
+  .serviceBadge {
+    display: none;
+  }
+  .heroCopy h1 {
+    font-size: clamp(1.375rem, 6dvh, 1.875rem);
   }
 }

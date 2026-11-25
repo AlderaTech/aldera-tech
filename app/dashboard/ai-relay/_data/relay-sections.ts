@@ -43,7 +43,7 @@ export const RELAY_SECTIONS = [
   {
     value: "telegram",
     label: "Telegram Bot",
-    description: "Hubungkan akun Telegram Anda dengan layanan Aldera AI Relay.",
+    description: "Kelola tautan akun Telegram Anda.",
     icon: Send,
   },
   {

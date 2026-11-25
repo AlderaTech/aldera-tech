@@ -279,7 +279,7 @@ export function FeaturesTab({
                   <Input
                     id="feat-disclaimer"
                     name="disclaimer"
-                    placeholder="Contoh: Memerlukan akun merchant Midtrans / Xendit aktif..."
+                    placeholder="Contoh: Memerlukan akun merchant Midtrans aktif"
                     defaultValue={editing?.disclaimer ?? ""}
                     key={editing?.id + "-dis"}
                   />

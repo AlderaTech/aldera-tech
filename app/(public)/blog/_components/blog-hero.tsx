@@ -1,40 +1,63 @@
-import Image from "next/image";
-import { FadeUp } from "@/components/shared/motion";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { ArrowDown, ArrowUpRight, Search } from "lucide-react";
+import { PUBLIC_ROUTES } from "@/lib/routes";
 import mascot from "@/public/images/blog/aldera-cat-reading.webp";
+import { StudioIllustratedHero } from "../../_components/studio-illustrated-hero";
+import heroStyles from "../../_components/studio-illustrated-hero.module.css";
 import shared from "../../_components/studio.module.css";
-import styles from "./blog.module.css";
+import type { BlogListItem } from "../_data/blog-list";
 
-export function BlogHero() {
+export function BlogHero({
+  article,
+}: {
+  article?: Pick<BlogListItem, "slug" | "title" | "isPinned">;
+}) {
   return (
-    <section className={styles.hero} aria-labelledby="blog-heading">
-      <div className={cn(shared.container, styles.heroGrid)}>
-        <FadeUp className={styles.heroCopy}>
-          <p className={styles.eyebrow}>
-            <span aria-hidden="true" />
-            Blog / Aldera Tech
-          </p>
-          <h1 id="blog-heading">
-            Wawasan & <span>cerita</span> dari tim kami
-          </h1>
-          <p className={styles.heroDescription}>
-            Artikel tentang pengembangan, desain, dan strategi digital untuk
-            bisnis modern.
-          </p>
-        </FadeUp>
-        <FadeUp delay={0.08} className={styles.heroVisual}>
-          <span className={styles.visualOrbit} aria-hidden="true" />
-          <Image
-            src={mascot}
-            alt=""
-            sizes="(min-width: 1024px) 190px, (min-width: 640px) 155px, 105px"
-            quality={90}
-            loading="eager"
-            className={styles.mascot}
-            aria-hidden="true"
-          />
-        </FadeUp>
-      </div>
-    </section>
+    <StudioIllustratedHero
+      headingId="blog-heading"
+      label="Blog / Aldera Tech"
+      title={
+        <>
+          Wawasan & <span>cerita</span> dari tim kami
+        </>
+      }
+      description="Artikel tentang pengembangan, desain, dan strategi digital untuk bisnis modern."
+      illustration={mascot}
+      panelTitle={
+        article
+          ? article.isPinned
+            ? "Artikel disematkan"
+            : "Mulai membaca"
+          : "Punya topik tertentu?"
+      }
+      panel={
+        article ? (
+          <>
+            <p className={heroStyles.articleTitle}>{article.title}</p>
+            <Link
+              href={PUBLIC_ROUTES.blogPost(article.slug)}
+              className={heroStyles.panelLink}
+              aria-label={`Baca ${article.title}`}
+            >
+              Baca artikel <ArrowUpRight aria-hidden="true" />
+            </Link>
+          </>
+        ) : (
+          <>
+            <p className={heroStyles.panelText}>
+              Temukan bacaan berdasarkan judul atau kata kunci.
+            </p>
+            <a href="#blog-search" className={heroStyles.panelLink}>
+              Cari artikel <Search aria-hidden="true" />
+            </a>
+          </>
+        )
+      }
+    >
+      <a href="#blog-list-heading" className={shared.blueButton}>
+        Jelajahi Artikel
+        <ArrowDown className="size-4" aria-hidden="true" />
+      </a>
+    </StudioIllustratedHero>
   );
 }

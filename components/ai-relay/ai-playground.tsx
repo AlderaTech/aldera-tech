@@ -29,6 +29,7 @@ import type { ModelCatalogItem } from "@/lib/ai-relay-utils";
 import { useAiPlayground } from "./_hooks/use-ai-playground";
 import { PlaygroundMessages } from "./_components/playground-messages";
 import { PlaygroundTelemetry } from "./_components/playground-telemetry";
+import { RelayPauseCard } from "./relay-pause-card";
 
 interface AiPlaygroundProps {
   emptyIllustration?: ReactNode;
@@ -54,6 +55,7 @@ export function AiPlayground({
     prompt,
     setPrompt,
     isLoading,
+    paused,
     messages,
     lastUsage,
     lastDuration,
@@ -64,6 +66,8 @@ export function AiPlayground({
     handleClearHistory,
   } = useAiPlayground({ models, userBalance, onBalanceChange });
   const InstructionIcon = emptyIllustration ? SlidersHorizontal : Sparkles;
+
+  if (paused) return <RelayPauseCard view="playground" />;
 
   return (
     <div

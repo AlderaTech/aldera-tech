@@ -15,8 +15,9 @@ import {
 } from "./relay-model-actions";
 import styles from "./relay-catalog.module.css";
 
-export type RelayModelsProps = Omit<RelayModelActionsProps, "id"> & {
+export type RelayModelsProps = Omit<RelayModelActionsProps, "id" | "onUse"> & {
   models: ModelCatalogItem[];
+  onUse?: RelayModelActionsProps["onUse"];
 };
 
 export function RelayModelTable({ models, ...actions }: RelayModelsProps) {
@@ -34,9 +35,11 @@ export function RelayModelTable({ models, ...actions }: RelayModelsProps) {
             <TableHead>Input / 1M</TableHead>
             <TableHead>Output / 1M</TableHead>
             <TableHead>Kegunaan</TableHead>
-            <TableHead>
-              <span className="sr-only">Aksi</span>
-            </TableHead>
+            {actions.onUse && (
+              <TableHead>
+                <span className="sr-only">Aksi</span>
+              </TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -62,9 +65,11 @@ export function RelayModelTable({ models, ...actions }: RelayModelsProps) {
                 {formatCurrency(model.outputPricePerM)}
               </TableCell>
               <TableCell className={styles.bestFor}>{model.bestFor}</TableCell>
-              <TableCell>
-                <RelayUseModel id={model.id} onUse={actions.onUse} />
-              </TableCell>
+              {actions.onUse && (
+                <TableCell>
+                  <RelayUseModel id={model.id} onUse={actions.onUse} />
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>
@@ -98,7 +103,9 @@ export function RelayModelCards({ models, ...actions }: RelayModelsProps) {
             <strong>{model.contextWindow.toLocaleString("id-ID")} token</strong>
           </p>
           <p className={styles.bestFor}>{model.bestFor}</p>
-          <RelayUseModel id={model.id} onUse={actions.onUse} />
+          {actions.onUse && (
+            <RelayUseModel id={model.id} onUse={actions.onUse} />
+          )}
         </article>
       ))}
     </div>

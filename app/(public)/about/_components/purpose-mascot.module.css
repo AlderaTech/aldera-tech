@@ -132,17 +132,3 @@
     font-size: 0.625rem;
   }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .portrait {
-    animation: purpose-float 7s ease-in-out infinite;
-  }
-}
-@keyframes purpose-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}

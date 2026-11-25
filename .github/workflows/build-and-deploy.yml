@@ -175,7 +175,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Alfian57/server-infrastructure
-          ref: d75d14412b5277d174618602e7a8d7649cc2f02c
+          ref: b6c89b69f39ea5d6f5fbcba2dcb6bb9b22ee0c0e
           path: .server-infra
       - uses: oven-sh/setup-bun@v2
         with:

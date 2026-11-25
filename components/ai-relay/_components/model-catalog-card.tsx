@@ -23,12 +23,14 @@ export function ModelCatalogCard({
   onCopy,
   onConfigure,
   onPlayground,
+  routerEnabled = true,
 }: {
   model: ModelCatalogItem;
   copied: boolean;
   onCopy: (id: string) => void;
   onConfigure: (id: string) => void;
   onPlayground?: (id: string) => void;
+  routerEnabled?: boolean;
 }) {
   return (
     <Card
@@ -114,7 +116,7 @@ export function ModelCatalogCard({
           className="h-7.5 flex-1 gap-1 border-indigo-200 text-xs text-indigo-700 hover:bg-indigo-50"
         >
           <Code2 className="h-3.5 w-3.5" />
-          Gunakan di IDE
+          {routerEnabled ? "Gunakan di IDE" : "Siapkan konfigurasi IDE"}
         </Button>
         {onPlayground && (
           <Button

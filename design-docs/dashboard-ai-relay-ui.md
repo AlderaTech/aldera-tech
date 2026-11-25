@@ -53,7 +53,7 @@ Aset memiliki alpha transparan, ukuran intrinsik 512 × 512, static import, dan 
 
 ## Integritas fungsi
 
-Halaman server, autentikasi, query data, hooks workspace/katalog/chat/simulator, dan seluruh action AI Relay tidak termasuk perubahan presentasi ini. Model ID, urutan katalog, tarif, batas konteks, saldo, token, kode unik, nominal transfer, status, serta perhitungan tetap berasal dari implementasi yang tersedia.
+Tab Playground dan Telegram mempertahankan tautan langsungnya selama jeda layanan. Playground menampilkan kartu ketersediaan dengan tautan ke katalog. Telegram mengarahkan pengguna ke saldo atau dukungan dan tetap menyediakan kontrol putus tautan bagi akun yang terhubung. Katalog, API key, saldo, top-up, dan riwayat tetap dapat diakses selama jeda router.
 
 Query `tab` tetap disinkronkan ke URL oleh hook workspace. Pencarian dan kategori katalog mempertahankan state lokalnya. Tidak ada endpoint, metode autentikasi, dependensi, variabel lingkungan, atau kebutuhan Docker baru.
 
@@ -72,6 +72,6 @@ Test co-located mencakup header dengan saldo nol/panjang, aset, delapan tab, URL
 | `_utils/relay-tab-scroll.ts`, `relay-tab-scroll.test.ts`                                                                                       | Perhitungan posisi gulir tab aktif beserta batas track, tanpa perubahan state navigasi.                                                                              |
 | `client-view.test.tsx`, `_components/relay-header.test.tsx`, `relay-tabs.test.tsx`, `relay-section-heading.test.tsx`, `relay-loading.test.tsx` | Rendering, data/URL, aset, skeleton, dan regresi pembatasan layout. Test hook yang tersedia di `_hooks/use-relay-workspace.test.ts` juga dijalankan tanpa perubahan. |
 
-Tidak ada aset yang ditambah atau dihapus. Komponen fitur bersama dan AI Relay publik tidak diedit.
+Kartu jeda memakai kembali ilustrasi maskot AI Relay dan komponen tombol dashboard.
 
 Spesifikasi compact dan hasil verifikasi aktif tersedia di [kepadatan dashboard dan maskot](dashboard-density-and-mascots.md).

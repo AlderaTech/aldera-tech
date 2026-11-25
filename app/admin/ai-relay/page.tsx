@@ -7,6 +7,7 @@ import {
   runLedgerAudit,
 } from "@/lib/actions/admin-ai-relay";
 import { AiRelayAdminClientView } from "./client-view";
+import { ServiceAvailabilityControl } from "../_components/service-availability-control";
 
 export const metadata = {
   title: "Operasional AI Gateway — Aldera Tech",
@@ -48,6 +49,7 @@ export default async function AdminAiRelayPage() {
         initialMetrics={financialMetrics}
         initialPendingTopups={pendingTopups}
         initialAuditResults={auditResults}
+        serviceControl={<ServiceAvailabilityControl service="ai_router" />}
       />
     </>
   );

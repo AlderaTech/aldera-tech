@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { requestRelayCompletion } from "@/lib/relay-upstream";
 import { generateApiKey as generateCryptoApiKey } from "@/lib/ai-relay-auth";
 import { queryRouter, transactionRouter } from "@/lib/router-db";
+import { getServiceAvailability } from "@/lib/service-availability";
 import {
   calculateTokenCost,
   generateUniqueCode,
@@ -110,23 +111,27 @@ async function resolveCurrentUser(allowInactive = false): Promise<{
   balance: number;
   webUserId: string;
 }> {
-  const session = await auth();
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized: Anda harus login untuk mengakses AI Relay.");
-  }
-
+  const user = await requireRelayUser();
   const routerUser = await ensureRouterAccount(
-    session.user.id,
-    session.user.name ?? undefined,
-    session.user.email ?? undefined,
+    user.id,
+    user.name ?? undefined,
+    user.email ?? undefined,
     allowInactive
   );
 
   return {
     id: routerUser.id,
     balance: routerUser.balance,
-    webUserId: session.user.id,
+    webUserId: user.id,
   };
+}
+
+async function requireRelayUser() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized: Anda harus login untuk mengakses AI Relay.");
+  }
+  return session.user;
 }
 
 // ============================================================================
@@ -517,7 +522,7 @@ export async function executePlaygroundChat(params: {
   model: string;
   prompt: string;
   systemPrompt?: string;
-}): Promise<PlaygroundChatResult> {
+}): Promise<PlaygroundChatResult | { success: false; code: "router_paused" }> {
   const { model, prompt, systemPrompt } = params;
   if (!prompt || !prompt.trim()) {
     throw new Error("Prompt tidak boleh kosong.");
@@ -526,7 +531,15 @@ export async function executePlaygroundChat(params: {
     throw new Error("Model harus dipilih.");
   }
 
-  const user = await resolveCurrentUser();
+  const webUser = await requireRelayUser();
+  if (!(await getServiceAvailability("ai_router"))) {
+    return { success: false, code: "router_paused" };
+  }
+  const user = await ensureRouterAccount(
+    webUser.id,
+    webUser.name ?? undefined,
+    webUser.email ?? undefined
+  );
 
   // 1. Fetch model pricing
   const pricingRes = await queryRouter<{

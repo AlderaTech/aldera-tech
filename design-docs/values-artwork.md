@@ -6,7 +6,7 @@
 - Format: WebP transparan 768×768, 72.634 byte, kualitas 90 dan alpha kualitas 100. Gambar sumber disimpan oleh tool; aplikasi memakai salinan aset portabel di dalam proyek.
 - Pembuatan: tool bawaan `imagegen`, dengan satu prompt generasi baru. Konversi dan kompresi menggunakan Sharp.
 - Rendering: `next/image`, static import, lazy loading, kualitas 90, `sizes` responsif, dan `alt=""` karena ilustrasi dekoratif. Gambar tidak berisi teks atau angka; empat nilai asli dirender sebagai elemen HTML. Jumlah nilai dekoratif diambil dari data yang ditampilkan.
-- Animasi: float ringan pada ilustrasi hanya aktif ketika reduced motion tidak diaktifkan; ring dan bayangan menggunakan CSS.
+- Ring dan bayangan statis memakai CSS.
 
 ## Prompt final
 

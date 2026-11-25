@@ -47,10 +47,7 @@ export function RelayHero({ models }: { models: ModelCatalogItem[] }) {
       <div className={shared.container}>
         <div className={styles.heroGrid}>
           <FadeUp className={styles.heroCopy}>
-            <p className={base.eyebrow}>
-              <span aria-hidden="true" />
-              AI Relay / Aldera Tech
-            </p>
+            <p className={shared.heroKicker}>AI Relay / Aldera Tech</p>
             <h1 id="relay-heading">
               Akses model AI dunia.
               <br />

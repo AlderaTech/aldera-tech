@@ -1,5 +1,15 @@
 import { z } from "zod";
 
+export const serviceAvailabilitySchema = z.object({
+  service: z.enum(["ai_router", "telegram_bot"]),
+  enabled: z.boolean(),
+});
+
+export const telegramFileSchema = z.object({
+  ok: z.literal(true),
+  result: z.object({ file_path: z.string() }),
+});
+
 export const relayCompletionSchema = z.object({
   choices: z
     .array(

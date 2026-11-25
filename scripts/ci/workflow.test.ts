@@ -33,7 +33,7 @@ describe("Parallel CI runners", () => {
     expect(workflow).toContain(
       "matrix.suite == 'integration' && 'postgres:16-alpine' || ''"
     );
-    expect(workflow).toContain("ref: d75d14412b5277d174618602e7a8d7649cc2f02c");
+    expect(workflow).toContain("ref: b6c89b69f39ea5d6f5fbcba2dcb6bb9b22ee0c0e");
     const runner = readFileSync("scripts/ci/run-tests.ts", "utf8");
     expect(runner).toContain("assertTestDatabaseUrl(database)");
     expect(runner).toContain("env: testEnvironment(database, router)");

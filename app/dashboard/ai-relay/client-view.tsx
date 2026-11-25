@@ -10,6 +10,7 @@ import { ModelCatalog } from "@/components/ai-relay/model-catalog";
 import { ModelHealthMonitor } from "@/components/ai-relay/model-health-monitor";
 import { CostSimulator } from "@/components/ai-relay/cost-simulator";
 import { AccountBindingCard } from "@/components/ai-relay/account-binding-card";
+import { RelayPauseCard } from "@/components/ai-relay/relay-pause-card";
 import {
   type ApiKeyRecord,
   type BalanceTransactionRecord,
@@ -37,6 +38,7 @@ interface ClientViewProps {
   initialLogs: UsageLogRecord[];
   catalog: ModelCatalogItem[];
   healthMetrics: ModelHealthStatus[];
+  routerEnabled?: boolean;
 }
 
 function AiRelayClientViewInner({
@@ -47,6 +49,7 @@ function AiRelayClientViewInner({
   initialLogs,
   catalog,
   healthMetrics,
+  routerEnabled = true,
 }: ClientViewProps) {
   const { isPending } = useUrlState();
   const {
@@ -80,25 +83,42 @@ function AiRelayClientViewInner({
 
         {/* Tab 1: Model Catalog */}
         <TabsContent value="catalog" className={styles.sectionPanel}>
-          <RelaySectionHeading tab="catalog" />
+          <RelaySectionHeading
+            tab="catalog"
+            description={
+              routerEnabled
+                ? undefined
+                : "Bandingkan model, tarif, dan batas konteks selama akses AI dijeda."
+            }
+          />
           <ModelCatalog
             catalog={catalog}
             ideIllustration={<RelayMascot pose="coding" />}
             apiKeys={initialKeys}
-            onSelectPlaygroundModel={handleSelectPlaygroundModel}
+            onSelectPlaygroundModel={
+              routerEnabled ? handleSelectPlaygroundModel : undefined
+            }
+            routerEnabled={routerEnabled}
           />
         </TabsContent>
 
         {/* Tab 2: Playground */}
         <TabsContent value="playground" className={styles.sectionPanel}>
-          <RelaySectionHeading tab="playground" />
-          <AiPlayground
-            key={selectedPlaygroundModel || "default"}
-            models={playgroundModels}
-            emptyIllustration={<RelayMascot pose="assistant" />}
-            userBalance={currentBalance}
-            onBalanceChange={setCurrentBalance}
+          <RelaySectionHeading
+            tab="playground"
+            description={routerEnabled ? undefined : ""}
           />
+          {routerEnabled ? (
+            <AiPlayground
+              key={selectedPlaygroundModel || "default"}
+              models={playgroundModels}
+              emptyIllustration={<RelayMascot pose="assistant" />}
+              userBalance={currentBalance}
+              onBalanceChange={setCurrentBalance}
+            />
+          ) : (
+            <RelayPauseCard view="playground" />
+          )}
         </TabsContent>
 
         {/* Tab 3: API Key Manager */}

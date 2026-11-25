@@ -4,7 +4,7 @@ Halaman daftar `/blog` dan detail `/blog/[slug]` memakai tema studio Aldera Tech
 
 ## Daftar artikel
 
-Hero dua kolom memuat judul dan deskripsi asli di kiri serta mini maskot membaca di kanan. Tinggi hero dibuat ringkas agar daftar artikel segera terlihat. Pada HP, maskot berukuran kecil berada setelah copy tanpa menutupi teks. Bagian daftar memakai judul, filter kategori, dan formulir pencarian GET dengan parameter `q`; kategori aktif mempertahankan kata kunci saat berpindah filter. Pagination mempertahankan parameter kategori dan pencarian, serta muncul ketika tersedia tautan sebelum atau berikutnya.
+Hero memakai `StudioIllustratedHero` bersama Harga dan Kontak. Tombol Jelajahi Artikel menuju daftar. Panel di samping maskot menampilkan artikel pertama dari hasil yang terlihat. Jika hasil kosong, panel memberi tautan ke kolom pencarian. Pada HP, panel dan maskot berada di bawah tombol. Bagian daftar memakai filter kategori, formulir pencarian GET dengan parameter `q`, dan pagination yang mempertahankan filter.
 
 Artikel tetap berasal dari `getBlogList`, dalam urutan `publishedAt` menurun. Filter presentasional memastikan artikel fallback yang tidak cocok dengan kategori atau kata kunci tidak tampil sebagai hasil pencarian. Sumber data Blog tidak memiliki penanda artikel unggulan, sehingga seluruh item memakai kartu setara tanpa label popularitas. Kartu menampilkan gambar, kategori, judul, ringkasan, penulis, tanggal, waktu baca, dan tautan detail dari data asli. Thumbnail memakai rasio 16:10, `next/image`, ukuran responsif, dan lazy loading. Jika gambar kosong, kartu menampilkan ilustrasi buku berbasis CSS/ikon. Jika daftar kosong, tautan kembali ke semua artikel tersedia.
 
@@ -14,7 +14,7 @@ Halaman detail memakai heading sans-serif dengan ukuran responsif, ringkasan, me
 
 `loading.tsx` pada daftar dan detail menyediakan skeleton saat navigasi. `not-found.tsx` pada detail memberi jalan kembali ke Blog ketika slug tidak tersedia. Metadata SEO, JSON-LD, penghitung tampilan, pemilihan data, dan mekanisme pencarian server tidak diubah.
 
-## Aset mini maskot
+## Aset maskot hero
 
 [aldera-cat-reading.webp](../public/images/blog/aldera-cat-reading.webp) adalah WebP transparan 450 × 675 piksel, 65.226 byte. Aset dibuat memakai tool bawaan **imagegen** dengan [maskot Tentang](../public/images/about/aldera-cat-about.webp) dan [mini maskot AI Relay](../public/images/ai-relay/aldera-cat-relay-connect.webp) sebagai referensi identitas, lalu diperkecil dan dikompresi menggunakan Sharp. Gambar dekoratif memakai alt kosong, `aria-hidden`, dan static import.
 

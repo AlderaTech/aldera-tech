@@ -53,7 +53,7 @@ Aldera Tech implements an isolated multi-stack environment operating side-by-sid
 | 14  | `R6.2-USERS-TEAM-MERGE`   | Merge `/admin/team` workload cards into `/admin/users` tabs; delete `/admin/team`          | M3        | ORIGINAL_REQUEST §R6.2     |
 | 15  | `R6.3-STOPWATCH-REMOVAL`  | Delete `timer-bar.tsx` & `use-time-tracker.ts`; preserve pure manual timesheet logging     | M3        | ORIGINAL_REQUEST §R6.3     |
 | 16  | `R6.4-PUBLIC-CALCULATOR`  | Move calculator wizard to public `/pricing` (or `/calculator`), remove from sidebar        | M3        | ORIGINAL_REQUEST §R6.4     |
-| 17  | `R7.1-PAYMENT-GATEWAY`    | Payment gateway sandbox (Midtrans/Xendit), webhook & invoice proof upload                  | M4        | ORIGINAL_REQUEST §R7.1     |
+| 17  | `R7.1-PAYMENT-GATEWAY`    | Midtrans sandbox, payment webhook, and invoice proof upload                                | M4        | ORIGINAL_REQUEST §R7.1     |
 | 18  | `R7.2-ADMIN-CMS`          | Admin CRUD CMS for Portfolio (`/admin/portfolio`) and Testimonials (`/admin/testimonials`) | M4        | ORIGINAL_REQUEST §R7.2     |
 | 19  | `R7.3-TESTIMONIAL-PROMPT` | Automated rating & review prompt on `/dashboard/projects/[id]` upon `COMPLETED`            | M4        | ORIGINAL_REQUEST §R7.3     |
 | 20  | `R7.4-ANTI-SPAM-WA`       | Rate-limiting (`lib/rate-limit.ts`), Turnstile, and WhatsApp notifications                 | M4        | ORIGINAL_REQUEST §R7.4     |

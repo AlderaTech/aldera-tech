@@ -20,7 +20,7 @@ Karakter mempertahankan bulu putih, bentuk wajah dan proporsi, kacamata hitam, h
 - `next/image` memakai static import, `fill`, `object-fit: contain`, preload, kualitas 90, dan `sizes` responsif 400px/360px/75vw.
 - Ukuran panggung yang sudah ditetapkan menjaga layout tetap stabil saat gambar dimuat.
 - Badge Web Development, UI/UX Design, dan Mobile Apps tetap berupa elemen HTML; posisinya menghindari wajah dan panel laptop, dengan susunan lebih rendah pada mobile.
-- Bayangan, garis koneksi, dan animasi floating memakai CSS halaman Layanan; `prefers-reduced-motion: reduce` menonaktifkan floating.
+- Bayangan dan garis koneksi statis memakai CSS halaman Layanan.
 - Perubahan aset dan styling dibatasi pada hero Layanan. Tujuan CTA serta data layanan memakai integrasi yang sudah tersedia.
 
 ## Prompt final

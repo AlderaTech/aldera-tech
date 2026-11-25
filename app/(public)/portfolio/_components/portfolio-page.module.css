@@ -43,31 +43,6 @@
   text-align: center;
 }
 
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.45rem 0.85rem;
-  border: 1px solid color-mix(in srgb, var(--home-blue) 20%, var(--home-line));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--home-paper) 72%, transparent);
-  color: var(--home-blue-hover);
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  box-shadow: 0 5px 18px color-mix(in srgb, var(--home-blue) 5%, transparent);
-}
-
-.eyebrow > span {
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 50%;
-  background: var(--home-blue);
-  box-shadow: 0 0 0 0.23rem
-    color-mix(in srgb, var(--home-blue) 12%, transparent);
-}
-
 .heroTitle {
   position: absolute;
   z-index: 0;

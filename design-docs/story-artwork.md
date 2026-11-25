@@ -8,7 +8,7 @@
 - Aset `public/images/about/about-studio.webp` tetap tersedia untuk kompatibilitas URL gambar publik. Komponen cerita menggunakan `aldera-story-workflow.webp` sebagai ilustrasi aktif.
 - Pembuatan: tool bawaan `imagegen`, melalui satu prompt generasi baru. Konversi dan kompresi menggunakan Sharp.
 - Rendering: `next/image`, static import, lazy loading, kualitas 90, dan `sizes` responsif. Ilustrasi serta penanda ringkasnya bersifat dekoratif (`aria-hidden`, `alt=""`) karena maknanya sudah tersedia dalam cerita.
-- Animasi: float ringan hanya aktif jika reduced motion tidak diaktifkan. Orbit, latar, serta bayangan memakai CSS.
+- Orbit, latar, dan bayangan statis memakai CSS.
 
 ## Prompt final
 

@@ -214,23 +214,3 @@
     left: 0;
   }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .artwork {
-    animation: showcase-float 8s ease-in-out infinite;
-  }
-  .serviceBadge {
-    animation: showcase-float 7s ease-in-out -2s infinite;
-  }
-  .mobileBadge {
-    animation-delay: -4s;
-  }
-}
-@keyframes showcase-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}

@@ -20,7 +20,7 @@ Garis biru keabu-abuan setebal 1px dengan ujung memudar memisahkan hero, katalog
 
 ## Batas fungsi dan komponen
 
-`page.tsx`, metadata, `getModelCatalog`, sumber data/fallback, autentikasi, pembayaran, router, serta integrasi upstream tidak diubah. Tidak ada dependensi, endpoint, atau variabel lingkungan baru.
+`page.tsx` membaca ketersediaan akses AI saat halaman diminta. Saat dijeda, kartu **Akses AI sedang dijeda** menggantikan hero, dengan maskot serta tautan ke katalog dan portal. Pencarian katalog dan simulasi biaya tetap tersedia. Tombol penggunaan model, panduan konfigurasi, serta CTA daftar disembunyikan selama jeda.
 
 `client-view.tsx` menyusun komponen dalam `_components/`. State dan handler halaman dipisahkan ke `_hooks/use-relay-showcase.ts` dengan nama, nilai awal, perhitungan, dan efek penyalinan yang sama. `_data/relay-content.ts` menyimpan kategori, nama IDE, dan base URL konfigurasi; URL ini tidak digunakan untuk request baru. ID `catalog-section` dan `quickstart-guide` dipertahankan. Navigasi Gunakan di IDE menghormati reduced motion.
 
@@ -35,7 +35,7 @@ Dua variasi dibuat memakai tool bawaan **imagegen**, dengan [maskot Beranda](../
 | [aldera-cat-relay-peek.webp](../public/images/ai-relay/aldera-cat-relay-peek.webp)       | 443 × 480 | 54.420 byte | Mengintip pada sudut panel koneksi, lebar 104px desktop / 88px mobile                           |
 | [aldera-cat-relay-connect.webp](../public/images/ai-relay/aldera-cat-relay-connect.webp) | 300 × 480 | 44.648 byte | Duduk membawa simbol koneksi pada sidebar konfigurasi, lebar 84px, disembunyikan di bawah 900px |
 
-Keduanya menggunakan static import dan `next/image` dengan dimensi intrinsik, sizes, kualitas 90, alpha transparan, dan pemuatan lazy. Gambar dekoratif memakai alt kosong, pembungkus `aria-hidden`, serta `pointer-events: none`. Animasi ringan dihentikan pada `prefers-reduced-motion`; gambar tidak menutupi tombol, judul, maupun catatan hero.
+Keduanya memakai static import dan `next/image` dengan `sizes` responsif, kualitas 90, dan pemuatan lazy. Maskot tampil statis dengan alt kosong, pembungkus `aria-hidden`, dan `pointer-events: none`.
 
 ## Prompt final aset
 
