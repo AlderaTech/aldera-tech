@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import styles from "./studio-page-hero.module.css";
+import styles from "./studio-centered-hero.module.css";
 
 export function StudioPageHero({
   label,

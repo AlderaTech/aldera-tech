@@ -11,12 +11,14 @@ interface ModelCatalogProps {
   apiKeys: ApiKeyRecord[];
   onSelectPlaygroundModel?: (modelId: string) => void;
   ideIllustration?: ReactNode;
+  routerEnabled?: boolean;
 }
 export function ModelCatalog({
   catalog,
   apiKeys,
   onSelectPlaygroundModel,
   ideIllustration,
+  routerEnabled = true,
 }: ModelCatalogProps) {
   const {
     selectedCategory,
@@ -60,6 +62,7 @@ export function ModelCatalog({
               onCopy={handleCopyModelId}
               onConfigure={setPresetModalModelId}
               onPlayground={onSelectPlaygroundModel}
+              routerEnabled={routerEnabled}
             />
           ))}
         </div>

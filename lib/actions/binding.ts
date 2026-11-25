@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { queryRouter } from "@/lib/router-db";
+import { getServiceAvailability } from "@/lib/service-availability";
 import { ensureRouterUser } from "@/lib/actions/ai-relay";
 import {
   generateBindingToken,
@@ -10,6 +11,7 @@ import {
 
 export interface BindingStatusResult {
   isBound: boolean;
+  availability?: "paused";
   error?: string;
   telegramId?: string | number | null;
   telegramUsername?: string | null;
@@ -24,6 +26,7 @@ export interface BindingStatusResult {
 
 export interface GenerateBindingResult {
   success: boolean;
+  availability?: "paused";
   token?: string;
   code?: string;
   deepLink?: string;
@@ -56,6 +59,9 @@ export async function generateBindingTokenAction(): Promise<GenerateBindingResul
         success: false,
         error: "Unauthorized: Silakan login terlebih dahulu.",
       };
+    }
+    if (!(await getServiceAvailability("telegram_bot"))) {
+      return { success: false, availability: "paused" };
     }
     const webUserId = session.user.id;
     await ensureRouterUser(
@@ -106,27 +112,33 @@ export async function getBindingStatusAction(): Promise<BindingStatusResult> {
     const webUserId = session.user.id;
 
     // Check user table in aldera_router
-    const userRes = await queryRouter<{
-      id: string | number;
-      telegram_id: string | number | null;
-      username: string | null;
-      balance: string | number;
-    }>(
-      `SELECT id, telegram_id, username, balance
+    const [enabled, userRes] = await Promise.all([
+      getServiceAvailability("telegram_bot"),
+      queryRouter<{
+        id: string | number;
+        telegram_id: string | number | null;
+        username: string | null;
+        balance: string | number;
+      }>(
+        `SELECT id, telegram_id, username, balance
        FROM users
        WHERE web_user_id = $1
        LIMIT 1;`,
-      [webUserId]
-    );
+        [webUserId]
+      ),
+    ]);
 
     if (userRes.rows.length > 0 && userRes.rows[0].telegram_id) {
       return {
         isBound: true,
+        ...(enabled ? {} : { availability: "paused" as const }),
         telegramId: userRes.rows[0].telegram_id,
         telegramUsername: userRes.rows[0].username,
         balance: Number(userRes.rows[0].balance),
       };
     }
+
+    if (!enabled) return { isBound: false, availability: "paused" };
 
     // Check if there is an active (unused and unexpired) token
     const tokenRes = await queryRouter<{

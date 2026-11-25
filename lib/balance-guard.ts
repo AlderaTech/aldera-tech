@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { sendWhatsApp } from "@/lib/whatsapp";
 import { waTemplates } from "@/lib/whatsapp-templates";
 import { sendTelegramMessage } from "@/lib/telegram";
+import { getServiceAvailability } from "@/lib/service-availability";
 import {
   evaluateLowBalanceAlert,
   type LowBalanceAlertCheck,
@@ -72,6 +73,15 @@ export async function runBalanceGuard(
   now = new Date()
 ): Promise<BalanceGuardRunSummary> {
   await ensureAlertCooldownsTable();
+  const telegramEnabled = await getServiceAvailability("telegram_bot").catch(
+    (error) => {
+      console.error(
+        "[runBalanceGuard] Could not check Telegram availability",
+        error
+      );
+      return false;
+    }
+  );
 
   // Query candidate users who have balance below threshold
   const candidatesRes = await queryRouter<{
@@ -170,7 +180,7 @@ export async function runBalanceGuard(
     let alertSent = false;
 
     // 1. Telegram Dispatch
-    if (telegramId) {
+    if (telegramId && telegramEnabled) {
       const formattedBalance = `Rp ${balance.toLocaleString("id-ID")}`;
       const safeClientName = escapeTelegramHtml(clientName);
       const tgText =

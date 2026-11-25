@@ -15,7 +15,11 @@ export default async function ContactPage() {
   const settings = await getSiteSettings();
   return (
     <>
-      <ContactHero responseTime={settings.responseTime} />
+      <ContactHero
+        responseTime={settings.responseTime}
+        operatingHours={settings.operatingHours}
+        whatsapp={settings.whatsapp}
+      />
       <ContactSection settings={settings} />
     </>
   );

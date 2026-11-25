@@ -6,7 +6,7 @@
 - Pose: berdiri dengan langkah percaya diri, satu tangan di pinggang, dan satu tangan menunjuk ke arah depan/atas. Tidak membawa laptop. Pakaian, warna, bulu, headphone, serta kacamata mengikuti aset referensi.
 - Format: WebP transparan, 1024×1536, 215.638 byte, kualitas 90 dan alpha kualitas 100. Sumber generasi disimpan oleh tool; aplikasi memakai salinan aset portabel di dalam proyek.
 - Pembuatan: mode edit pada tool bawaan `imagegen`, memakai aset asli sebagai referensi. Konversi ke WebP menggunakan Sharp; aset referensi tidak ditimpa.
-- Rendering: `next/image`, static import, lazy loading, kualitas 90, `sizes` responsif, serta alt text yang menjelaskan pose. Shadow dan orbit dibuat dengan CSS; animasi float menghormati `prefers-reduced-motion`.
+- Gambar memakai `next/image`, static import, lazy loading, kualitas 90, `sizes` responsif, dan alt text yang menjelaskan pose. Bayangan dan orbit statis dibuat dengan CSS.
 
 ## Prompt final
 

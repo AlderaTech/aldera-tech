@@ -257,6 +257,19 @@ Aldera Tech menerapkan isolasi lingkungan multi-stack pada server VPS produksi t
 | **Router Docker Tag**      | `:staging` (`router-telegram-bot:staging`, etc.)       | `:latest`                                      |
 | **CI/CD Auto-Deploy**      | Push ke branch `staging`                               | Push ke branch `main`                          |
 
+#### Ketersediaan AI Relay dan Telegram
+
+Toggle layanan memakai tabel `service_availability` di database router setiap
+lingkungan. Untuk database yang sudah berjalan, terapkan `database/migrations/004_service_availability.sql`
+dari repositori `router-billing-proxy` sebelum menjalankan versi gateway, bot,
+dan web yang membaca tabel tersebut. Bootstrap database baru sudah membuat tabel
+dan mengaktifkan kedua layanan. Setelah migrasi, perbarui gateway dan bot sebelum
+merilis kontrol admin di web. Set `PUBLIC_WEB_URL` di bot agar tombol jeda mengarah
+ke domain web lingkungannya. Untuk pratinjau bukti, `TELEGRAM_BOT_TOKEN` di aplikasi
+web harus berasal dari bot yang menerima bukti transfer pada lingkungan tersebut.
+Schema router yang dipakai CI berasal dari pin `.server-infra` dan perlu memuat
+migrasi yang sama sebelum menjalankan pemeriksaan integrasi web.
+
 ### 7.2 Alur Otomatisasi CI/CD GitHub Actions
 
 Pemeriksaan dipisahkan ke runner lint, typecheck, konfigurasi, unit, UI, dan

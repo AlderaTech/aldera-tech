@@ -4,8 +4,7 @@ Halaman publik `/pricing` memakai bahasa visual studio yang sama dengan Beranda,
 
 ## Komposisi halaman
 
-- Hero mempertahankan judul “Harga transparan, tanpa kejutan” dan keterangan bahwa semua harga mencakup pajak. Tautan Jelajahi Paket menuju `#pricing-plans`, sedangkan Hitung Estimasi memakai `PUBLIC_ROUTES.calculator`.
-- Panduan “Rencanakan langkah Anda” berada dalam panel putih transparan di samping hero. Judul panduan memakai 20px, teks langkah 17px, penanda nomor 36px, dan catatan harga 13px. Pada HP judul memakai 18px dan langkah 15px; seluruh judul, langkah, serta catatan tetap terlihat, dengan maskot kecil di sampingnya.
+- Hero memakai `StudioIllustratedHero` bersama Blog dan Kontak. Judul “Harga transparan, tanpa kejutan” dan informasi pajak berada di sisi teks. Maskot mendampingi panel faktor biaya yang merangkum jenis proyek, fitur dan integrasi, serta jadwal pengerjaan. Jelajahi Paket menuju `#pricing-plans` dan Hitung Estimasi memakai `PUBLIC_ROUTES.calculator`. Catatan harga final berada di bawah tombol.
 - Kartu paket menampilkan nama, tagline, label Mulai dari, nominal, seluruh fitur, dan CTA dari `PublicPricingPlan`. Fitur termasuk/tidak termasuk dibedakan dengan ikon, teks alternatif untuk pembaca layar, dan legenda. Tombol berada di bawah kartu dengan posisi sejajar pada setiap baris.
 - Penekanan “Paket unggulan” hanya muncul ketika `plan.featured` bernilai benar. Tampilan tidak menyimpulkan popularitas, diskon, atau periode pembayaran yang tidak ada pada data.
 - Daftar paket memakai satu kolom pada layar kecil, dua kolom mulai 700px, dan tiga kolom mulai 1024px. Kartu terakhir pada baris tablet yang berjumlah ganjil ditempatkan di tengah. Tidak ada tabel perbandingan atau tombol periode pembayaran tambahan.
@@ -29,11 +28,11 @@ Kelas studio hanya diterapkan pada varian tersebut. Token warna, kontrol, progre
 
 `CalculatorChoice` menggunakan Card yang sama dengan callback pilihan asli. Pada varian studio, kartu juga menerima fokus, `aria-pressed`, dan aktivasi Enter/Space; varian default mempertahankan markup serta penanganan klik Card. Informasi kosong jenis proyek tersedia pada varian studio saat sumber data tidak menyediakan pilihan.
 
-## Mini maskot
+## Maskot hero
 
-Hero menggunakan kembali [aldera-cat-vision.webp](../public/images/about/aldera-cat-vision.webp), karakter kucing Aldera yang menunjuk ke arah pilihan. Tidak ada karakter atau aset gambar pengganti.
+Hero memakai [aldera-cat-vision.webp](../public/images/about/aldera-cat-vision.webp), karakter kucing Aldera yang menunjuk ke arah pilihan.
 
-Gambar memakai static import dan `next/image`, alpha transparan, kualitas 90, dimensi intrinsik, serta sizes responsif. Lebar tampilannya 128px desktop, 92px tablet, dan 72px HP. Alt kosong, `aria-hidden`, dan `pointer-events: none` menjadikannya dekoratif. Floating berhenti pada `prefers-reduced-motion`; efek hover kartu hanya bergerak saat pengaturan motion mengizinkan.
+Gambar dekoratif memakai static import, `next/image`, preload, kualitas 90, dan `sizes` responsif. Pada HP, panel dan ilustrasi berada di bawah teks dan tombol.
 
 ## Pemeriksaan UI
 

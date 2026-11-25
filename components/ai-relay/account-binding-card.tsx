@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCw, Send, ShieldCheck } from "lucide-react";
 import { BindingLinkedPanel } from "./_components/binding-linked-panel";
 import { BindingUnlinkedPanel } from "./_components/binding-unlinked-panel";
+import { RelayPauseCard } from "./relay-pause-card";
 import {
   useAccountBinding,
   type AccountBindingState,
@@ -22,6 +23,24 @@ export function AccountBindingCard() {
 }
 export function AccountBindingView({ state }: { state: AccountBindingState }) {
   const { loading, submitting, status, fetchStatus } = state;
+  if (status.availability === "paused") {
+    return (
+      <div className="space-y-4">
+        <RelayPauseCard view="telegram" />
+        {status.isBound && <BindingLinkedPanel state={state} />}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={fetchStatus}
+          disabled={loading || submitting}
+        >
+          <RefreshCw className="size-3.5" aria-hidden="true" />
+          Periksa ketersediaan
+        </Button>
+      </div>
+    );
+  }
   if (status.error && !loading)
     return (
       <DataLoadError

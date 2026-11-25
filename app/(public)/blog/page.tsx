@@ -33,7 +33,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
 
   return (
     <div className={styles.page}>
-      <BlogHero />
+      <BlogHero article={visiblePosts[0]} />
       <section
         className={styles.listSection}
         aria-labelledby="blog-list-heading"

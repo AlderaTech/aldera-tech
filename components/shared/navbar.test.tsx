@@ -18,5 +18,9 @@ it("preserves navigation, login and mobile menu while sharing the studio navbar"
     expect(html).toContain(AUTH_ROUTES.login);
     expect(html).toContain(PUBLIC_ROUTES.contact);
     expect(html).toContain(PUBLIC_ROUTES.portfolio);
+    expect(html).toContain("lg:flex");
+    expect(html).toContain("lg:hidden");
+    expect(html).toContain("h-9");
+    expect(html).toContain("size-10");
   }
 });

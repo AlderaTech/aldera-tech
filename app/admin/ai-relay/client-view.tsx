@@ -1,4 +1,5 @@
 "use client";
+import type { ReactNode } from "react";
 import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import {
   WorkspaceTabsList as TabsList,
@@ -34,7 +35,10 @@ import {
   type AdminClientViewProps,
 } from "./_hooks/use-admin-ai-relay";
 export type { AdminClientViewProps } from "./_hooks/use-admin-ai-relay";
-export function AiRelayAdminClientView(props: AdminClientViewProps) {
+export function AiRelayAdminClientView({
+  serviceControl,
+  ...props
+}: AdminClientViewProps & { serviceControl?: ReactNode }) {
   const state = useAdminAiRelay(props);
   const {
     activeTab,
@@ -106,6 +110,8 @@ export function AiRelayAdminClientView(props: AdminClientViewProps) {
           </Button>
         </div>
       </AdminBanner>
+
+      {serviceControl}
 
       {/* Global Toast / Notification */}
       {notification && (

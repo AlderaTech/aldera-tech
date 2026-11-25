@@ -7,7 +7,8 @@ it("menampilkan dialog hanya saat dibuka tanpa menjalankan mutasi", () => {
   const html = renderRelay(Component, "overview", { viewProofTicket: ticket });
   expect(html).toContain('role="dialog"');
   expect(html).toContain("Tutup");
-  expect(html).toContain("fixture-proof");
+  expect(html).toContain("/api/admin/ai-relay/topups/902/proof");
+  expect(html).not.toContain("fixture-proof");
   expect(html).toContain("noopener noreferrer");
   Object.values(mutations).forEach((fn) => expect(fn).not.toHaveBeenCalled());
 });

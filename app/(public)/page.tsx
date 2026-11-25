@@ -27,11 +27,11 @@ export default function HomePage() {
         <HomeHero />
         <HomeSummary />
         <ServicesIntro />
-        <CtaSection />
         <ServicesPreview />
         <FeaturesSection />
         <PortfolioPreview />
         <TestimonialsSection />
+        <CtaSection />
       </div>
     </>
   );

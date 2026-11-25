@@ -100,7 +100,7 @@ export function Navbar({ session }: { session: Session | null }) {
                 asChild
                 size="sm"
                 className={cn(
-                  "h-11 rounded-full bg-brand-navy px-2.5 text-xs font-bold text-white hover:bg-brand-navy-light motion-reduce:active:scale-100 sm:hidden",
+                  "h-10 rounded-full bg-brand-navy px-3 text-xs font-bold text-white hover:bg-brand-navy-light motion-reduce:active:scale-100 sm:hidden",
                   usesStudioChrome && studioStyles.consultation
                 )}
               >
@@ -112,7 +112,7 @@ export function Navbar({ session }: { session: Session | null }) {
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    "h-10 rounded-full border border-brand-divider/80 bg-white px-4 font-semibold text-brand-navy shadow-xs hover:bg-slate-50 hover:text-brand-navy-light motion-reduce:active:scale-100",
+                    "h-9 rounded-full border border-brand-divider/80 bg-white px-3 font-semibold text-brand-navy shadow-xs hover:bg-slate-50 hover:text-brand-navy-light motion-reduce:active:scale-100",
                     usesStudioChrome && studioStyles.login
                   )}
                 >
@@ -122,7 +122,7 @@ export function Navbar({ session }: { session: Session | null }) {
                   asChild
                   size="sm"
                   className={cn(
-                    "h-10 rounded-full bg-brand-navy px-5 font-bold text-white shadow-sm hover:bg-brand-navy-light motion-reduce:active:scale-100",
+                    "h-9 rounded-full bg-brand-navy px-3.5 font-bold text-white shadow-sm hover:bg-brand-navy-light motion-reduce:active:scale-100",
                     usesStudioChrome && studioStyles.consultation
                   )}
                 >
@@ -144,7 +144,7 @@ export function Navbar({ session }: { session: Session | null }) {
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  "size-11 rounded-xl text-brand-navy hover:bg-brand-canvas motion-reduce:active:scale-100 xl:hidden",
+                  "size-10 rounded-xl text-brand-navy hover:bg-brand-canvas motion-reduce:active:scale-100 lg:hidden",
                   usesStudioChrome && studioStyles.menuTrigger
                 )}
                 aria-label="Buka menu"
@@ -156,12 +156,12 @@ export function Navbar({ session }: { session: Session | null }) {
               side="right"
               aria-describedby={undefined}
               className={cn(
-                "tech-playful flex w-[90%] max-w-sm flex-col overflow-y-auto border-brand-divider bg-brand-surface font-jakarta text-brand-navy",
+                "tech-playful flex w-[90%] max-w-[22rem] flex-col overflow-y-auto border-brand-divider bg-brand-surface font-jakarta text-brand-navy",
                 usesStudioChrome && studioStyles.drawer
               )}
             >
               <SheetTitle className="sr-only">Menu Navigasi</SheetTitle>
-              <Logo size="md" />
+              <Logo size="sm" />
               <NavbarLinks
                 pathname={pathname}
                 modern={usesStudioChrome}
@@ -178,7 +178,7 @@ export function Navbar({ session }: { session: Session | null }) {
                     <Button
                       asChild
                       variant="outline"
-                      className="h-11 rounded-full motion-reduce:active:scale-100"
+                      className="h-10 rounded-full motion-reduce:active:scale-100"
                     >
                       <Link href={AUTH_ROUTES.login}>Masuk</Link>
                     </Button>
@@ -186,7 +186,7 @@ export function Navbar({ session }: { session: Session | null }) {
                   <SheetClose asChild>
                     <Button
                       asChild
-                      className="h-11 rounded-full bg-brand-cyan font-bold text-brand-navy hover:bg-brand-cyan-hover motion-reduce:active:scale-100"
+                      className="h-10 rounded-full bg-brand-cyan font-bold text-brand-navy hover:bg-brand-cyan-hover motion-reduce:active:scale-100"
                     >
                       <Link href={PUBLIC_ROUTES.contact}>Konsultasi</Link>
                     </Button>

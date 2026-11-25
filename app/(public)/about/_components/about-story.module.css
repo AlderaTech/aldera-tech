@@ -285,17 +285,3 @@
     padding: 1rem;
   }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .artwork {
-    animation: story-float 8s ease-in-out infinite;
-  }
-}
-@keyframes story-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
-  }
-}

@@ -60,6 +60,14 @@ export function useAccountBinding() {
     try {
       setSubmitting(true);
       const res = await generateBindingTokenAction();
+      if (res.availability === "paused") {
+        setStatus((current) => ({
+          ...current,
+          availability: "paused",
+          activeToken: null,
+        }));
+        return;
+      }
       if (!res.success || !res.token || !res.code || !res.deepLink) {
         toast.error(res.error ?? "Gagal membuat kode verifikasi binding");
         return;

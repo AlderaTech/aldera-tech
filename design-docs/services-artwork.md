@@ -14,7 +14,7 @@
 
 Ilustrasi menyatu ke gradasi CSS biru muda/putih tanpa panel latar gambar. Bayangan dan tiga badge layanan dirender terpisah dalam komponen. Antarmuka di layar bersifat abstrak, tanpa angka atau klaim bisnis. Aset ini tidak menambahkan maskot; maskot utama tetap berada di hero.
 
-Gambar dirender dengan Next Image memakai static import, `object-contain`, `sizes` responsif, kualitas 90, dan lazy loading. Animasi floating mengikuti `prefers-reduced-motion`. PNG asli disimpan oleh tool pembuat gambar; aplikasi hanya memakai WebP pada tautan di atas.
+Gambar dirender dengan Next Image memakai static import, `object-contain`, `sizes` responsif, kualitas 90, dan lazy loading. Ilustrasi tampil statis. PNG asli disimpan oleh tool pembuat gambar; aplikasi hanya memakai WebP pada tautan di atas.
 
 ## Prompt final
 

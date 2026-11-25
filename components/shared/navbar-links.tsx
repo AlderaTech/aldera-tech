@@ -3,7 +3,6 @@
 import { Fragment } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
 import { SheetClose } from "@/components/ui/sheet";
 import { publicNavLinks } from "@/lib/nav-config";
 import { PUBLIC_ROUTES } from "@/lib/routes";
@@ -26,8 +25,8 @@ export function NavbarLinks({
       aria-label={mobile ? "Navigasi mobile" : "Navigasi utama"}
       className={cn(
         mobile
-          ? "mt-6 flex flex-1 flex-col gap-1"
-          : "relative hidden items-center gap-5 xl:flex 2xl:gap-6",
+          ? cn("flex flex-1 flex-col gap-1", modern ? "mt-4" : "mt-6")
+          : "relative hidden items-center gap-2 lg:flex xl:gap-3",
         modern && (mobile ? styles.mobileNav : styles.desktopNav)
       )}
     >
@@ -73,9 +72,6 @@ export function NavbarLinks({
               <span className={styles.linkLabel}>{link.label}</span>
             ) : (
               link.label
-            )}
-            {modern && mobile && (
-              <ArrowUpRight className="size-4" aria-hidden="true" />
             )}
           </Link>
         );

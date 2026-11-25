@@ -47,11 +47,15 @@ function TikTokIcon({ className }: { className?: string }) {
 }
 
 export async function Footer() {
-  const settings = await safeDb(async () => {
-    return await prisma.siteSetting.findUnique({
-      where: { id: SITE_SETTING_ID },
-    });
-  }, null);
+  const settings = await safeDb(
+    async () => {
+      return await prisma.siteSetting.findUnique({
+        where: { id: SITE_SETTING_ID },
+      });
+    },
+    null,
+    { brandingFallback: true }
+  );
 
   const brandName = settings?.brandName || defaultSiteSettings.brandName;
   const footerDescription =

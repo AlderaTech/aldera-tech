@@ -17,19 +17,16 @@ export function CtaSection() {
     <section className={styles.section} aria-labelledby="consultation-heading">
       <div className={shared.container}>
         <FadeUp className={styles.panel}>
-          <div className={styles.notch} aria-hidden="true" />
-          <TechGlobe className={styles.globe} />
           <div className={styles.content}>
-            <p className={styles.eyebrow}>Bersama, melangkah lebih jauh</p>
             <h2 id="consultation-heading">
-              KEMBANGKAN BISNIS DENGAN TEKNOLOGI YANG TEPAT.
+              Kembangkan bisnis dengan teknologi yang tepat.
             </h2>
             <p>
               Konsultasi 30 menit pertama gratis. Diskusikan ide, arsitektur,
               dan timeline produk Anda bersama tim engineering kami.
             </p>
             <div className={styles.actions}>
-              <Link href={PUBLIC_ROUTES.contact} className={styles.outline}>
+              <Link href={PUBLIC_ROUTES.contact} className={shared.blueButton}>
                 Diskusikan Proyek Anda{" "}
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </Link>
@@ -39,16 +36,22 @@ export function CtaSection() {
               </Link>
             </div>
           </div>
-          <div className={styles.deliverables}>
-            {proposalSteps.map((step) => (
-              <span key={step}>
-                <CheckCircle2
-                  className="size-3.5 shrink-0"
-                  aria-hidden="true"
-                />
-                {step}
-              </span>
-            ))}
+          <div className={styles.proposal}>
+            <div className={styles.proposalHeader}>
+              <TechGlobe />
+              <h3>Agenda konsultasi</h3>
+            </div>
+            <ul className={styles.deliverables}>
+              {proposalSteps.map((step) => (
+                <li key={step}>
+                  <CheckCircle2
+                    className="size-4 shrink-0"
+                    aria-hidden="true"
+                  />
+                  {step}
+                </li>
+              ))}
+            </ul>
           </div>
         </FadeUp>
       </div>

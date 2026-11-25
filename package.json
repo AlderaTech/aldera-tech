@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:local": "docker compose -f docker/docker-compose.yml up -d db && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -19,6 +20,8 @@
     "db:reset": "prisma migrate reset",
     "db:studio": "prisma studio",
     "docker:build": "docker build -f docker/Dockerfile -t aldera-tech .",
+    "docker:db:up": "docker compose -f docker/docker-compose.yml up -d db",
+    "docker:db:down": "docker compose -f docker/docker-compose.yml stop db",
     "docker:up": "docker compose -f docker/docker-compose.yml up -d",
     "docker:down": "docker compose -f docker/docker-compose.yml down",
     "postinstall": "prisma generate --no-hints || true"

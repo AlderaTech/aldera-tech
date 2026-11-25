@@ -61,11 +61,18 @@ export function BindingLinkedPanel({ state }: { state: AccountBindingState }) {
       </div>
 
       <p className="border-t border-emerald-200/60 pt-3 text-xs leading-relaxed text-slate-600">
-        ✅ Akun Telegram Anda aktif tersinkronisasi. Anda dapat menggunakan
-        perintah <code className="font-semibold text-emerald-800">/saldo</code>,{" "}
-        <code className="font-semibold text-emerald-800">/apikey</code>, dan{" "}
-        <code className="font-semibold text-emerald-800">/models</code> di bot
-        Telegram dengan saldo yang sama dengan akun web ini.
+        {status.availability === "paused" ? (
+          "Akun Telegram Anda tetap terhubung selama jeda."
+        ) : (
+          <>
+            ✅ Akun Telegram Anda aktif tersinkronisasi. Anda dapat menggunakan
+            perintah{" "}
+            <code className="font-semibold text-emerald-800">/saldo</code>,{" "}
+            <code className="font-semibold text-emerald-800">/apikey</code>, dan{" "}
+            <code className="font-semibold text-emerald-800">/models</code> di
+            bot Telegram dengan saldo yang sama dengan akun web ini.
+          </>
+        )}
       </p>
     </div>
   );

@@ -473,5 +473,7 @@ Format deterministik untuk transisi status antar entitas sistem:
 
 - Penghapusan proyek memerlukan `project.delete`; pengelolaan proposal `proposal.manage`; publikasi dan penghapusan blog memeriksa izin masing-masing; pengelolaan testimoni mengikuti `testimonial.manage`. Developer tidak mendapat hak admin melalui pemeriksaan staf umum.
 - `/api/files/[id]` dan rewrite unggahan lama memeriksa pemilik berkas/proyek/invoice/tiket; administrator dapat meninjau bukti. Developer tidak dapat membaca bukti invoice klien lain. `PUBLIC_MEDIA` tetap terbuka.
+- Admin mengatur ketersediaan **Layanan Telegram** dan **Akses API & Playground** secara independen dari halaman Pengaturan Bot Telegram dan Operasional AI Gateway. Saat akses AI dijeda, katalog, API key, saldo, top-up, dan riwayat tetap tersedia. Saat layanan Telegram dijeda, percakapan beralih ke web dan hasil verifikasi top-up tetap dikirim ke Telegram.
+- `/api/admin/ai-relay/topups/[id]/proof` hanya melayani admin. Bukti dibaca dari tiket top-up yang masih tertunda. Foto yang dikirim ke Telegram diambil melalui server dan disajikan tanpa penyimpanan di cache.
 - `/api/cron/reconcile-integrations` hanya menerima secret cron; tindakan tinjauan saldo di Admin AI Relay memerlukan `invoice.edit`. Pembukaan akses ditolak bila refund belum direkonsiliasi.
 - Versi keamanan sesi berubah saat reset password dan perubahan status aktif. Identitas profil tetap memakai sumber akun asli.

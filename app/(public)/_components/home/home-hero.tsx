@@ -11,16 +11,12 @@ export function HomeHero() {
   return (
     <section className={styles.hero} aria-labelledby="home-heading">
       <div className={styles.backdrop} aria-hidden="true" />
-      <div className={shared.container}>
-        <p className={styles.kicker}>Software Engineering & Digital Studio</p>
+      <div className={cn(shared.container, styles.heroLayout)}>
+        <p className={cn(shared.heroKicker, styles.kicker)}>
+          Software Engineering & Digital Studio
+        </p>
         <HeroVisual />
         <FadeUp className={styles.heroCopy}>
-          <Link
-            href={PUBLIC_ROUTES.contact}
-            className={cn(shared.blueButton, styles.startButton)}
-          >
-            Mulai Proyek <ArrowUpRight className="size-4" aria-hidden="true" />
-          </Link>
           <h1 id="home-heading">
             BANGUN IDE.
             <br />
@@ -30,6 +26,12 @@ export function HomeHero() {
             Teknologi yang dirancang dengan tujuan. Pengalaman digital yang
             berarti.
           </p>
+          <Link
+            href={PUBLIC_ROUTES.contact}
+            className={cn(shared.blueButton, styles.startButton)}
+          >
+            Mulai Proyek <ArrowUpRight className="size-4" aria-hidden="true" />
+          </Link>
         </FadeUp>
       </div>
     </section>

@@ -261,6 +261,8 @@ export const API_ROUTES = {
   exportTimesheet: "/api/admin/export/timesheet",
   exportTimesheetWithRange: (from: string, to: string) =>
     `/api/admin/export/timesheet?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`,
+  adminRelayTopupProof: (id: number) =>
+    `/api/admin/ai-relay/topups/${id}/proof`,
   invoicePdf: (id: string) => `/api/invoices/${id}/pdf`,
   paymentWebhook: "/api/webhooks/payment",
   upload: "/api/upload",

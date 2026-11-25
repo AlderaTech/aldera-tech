@@ -7,6 +7,7 @@ import {
   getPaymentMethodsAction,
 } from "@/lib/actions/telegram-bot";
 import { TelegramBotAdminClientView } from "./client-view";
+import { ServiceAvailabilityControl } from "../_components/service-availability-control";
 
 export const metadata = {
   title: "Pengaturan Bot Telegram & Pembayaran — Aldera Tech",
@@ -29,6 +30,7 @@ export default async function AdminTelegramBotPage() {
     <TelegramBotAdminClientView
       initialConfig={botConfig}
       initialPaymentMethods={paymentMethods}
+      serviceControl={<ServiceAvailabilityControl service="telegram_bot" />}
     />
   );
 }

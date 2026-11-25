@@ -73,6 +73,7 @@ const ALLOWED_BOT_TABS = ["bot-cms", "payment-methods"] as const;
 type TelegramBotTab = (typeof ALLOWED_BOT_TABS)[number];
 
 interface TelegramBotAdminClientViewProps {
+  serviceControl?: React.ReactNode;
   initialConfig: {
     id: string;
     ticketTemplate: string;
@@ -89,6 +90,7 @@ interface TelegramBotAdminClientViewProps {
 export function TelegramBotAdminClientView({
   initialConfig,
   initialPaymentMethods,
+  serviceControl,
 }: TelegramBotAdminClientViewProps) {
   const router = useRouter();
   const { getParam, setParam } = useUrlState();
@@ -384,6 +386,8 @@ export function TelegramBotAdminClientView({
           </p>
         </div>
       </AdminBanner>
+
+      {serviceControl}
 
       {/* Tabs */}
       <Tabs

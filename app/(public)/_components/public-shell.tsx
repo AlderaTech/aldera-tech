@@ -18,12 +18,13 @@ export function PublicShell({
   footer: ReactNode;
 }) {
   const pathname = usePathname();
+  const isHomePage = pathname === PUBLIC_ROUTES.home;
   const isAiRelayPage = pathname === PUBLIC_ROUTES.aiRelay;
   const isPricingPage = pathname === PUBLIC_ROUTES.pricing;
   const isContactPage = pathname === PUBLIC_ROUTES.contact;
-  const isBlogPage =
-    pathname === PUBLIC_ROUTES.blog ||
-    pathname.startsWith(`${PUBLIC_ROUTES.blog}/`);
+  const isStudioHeroPage =
+    isPricingPage || isContactPage || pathname === PUBLIC_ROUTES.blog;
+  const isBlogDetail = pathname.startsWith(`${PUBLIC_ROUTES.blog}/`);
   const isPortfolioPage =
     pathname === PUBLIC_ROUTES.portfolio ||
     pathname.startsWith(`${PUBLIC_ROUTES.portfolio}/`);
@@ -34,16 +35,21 @@ export function PublicShell({
       className={cn(
         "flex flex-1 flex-col font-jakarta",
         usesStudioChrome && styles.studioTheme,
+        isHomePage && styles.homeLayout,
         isPortfolioPage && styles.portfolioTheme,
         isAiRelayPage && styles.aiRelayTheme,
-        isPricingPage && styles.pricingTheme,
-        isBlogPage && styles.blogTheme,
-        isContactPage && styles.contactTheme
+        isStudioHeroPage && styles.pageHeroTheme,
+        isBlogDetail && styles.blogDetailTheme
       )}
     >
       {navbar}
       <main className="flex-1">{children}</main>
-      <div className={usesStudioChrome ? footerStyles.scope : undefined}>
+      <div
+        className={cn(
+          usesStudioChrome && footerStyles.scope,
+          isHomePage && styles.homeFooter
+        )}
+      >
         {footer}
       </div>
     </div>

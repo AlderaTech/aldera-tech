@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { toast } from "sonner";
+import { getRouterAvailabilityAction } from "@/lib/actions/service-availability";
 import {
   executePlaygroundChat,
   type ModelCatalogItem,
@@ -36,15 +37,27 @@ export function useAiPlayground({
   >(null);
   const [lastDuration, setLastDuration] = useState<number | null>(null);
   const [currentBalance, setCurrentBalance] = useState<number>(userBalance);
+  const [paused, setPaused] = useState(false);
 
   const currentModelMeta = models.find((m) => m.id === selectedModel);
 
   const handleSend = async () => {
-    if (!prompt.trim()) return;
+    if (isLoading || !prompt.trim()) return;
     if (currentBalance <= 0) {
-      toast.error(
-        "Saldo Anda Rp 0. Silakan top-up terlebih dahulu di tab Saldo."
-      );
+      setIsLoading(true);
+      try {
+        if (await getRouterAvailabilityAction()) {
+          toast.error(
+            "Saldo Anda Rp 0. Silakan top-up terlebih dahulu di tab Saldo."
+          );
+        } else {
+          setPaused(true);
+        }
+      } catch {
+        toast.error("Ketersediaan AI belum bisa diperiksa. Coba lagi.");
+      } finally {
+        setIsLoading(false);
+      }
       return;
     }
 
@@ -65,6 +78,13 @@ export function useAiPlayground({
         prompt: userMessageContent,
         systemPrompt: systemPrompt.trim() || undefined,
       });
+
+      if ("code" in res && res.code === "router_paused") {
+        setMessages(messages);
+        setPrompt(userMessageContent);
+        setPaused(true);
+        return;
+      }
 
       if (res.success) {
         const assistantMsg: ChatMessage = {
@@ -120,6 +140,7 @@ export function useAiPlayground({
     prompt,
     setPrompt,
     isLoading,
+    paused,
     messages,
     lastUsage,
     lastDuration,
