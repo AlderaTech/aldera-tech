@@ -169,40 +169,6 @@ export async function sendInvoiceWhatsAppAction(invoiceId: string) {
 // Backward-compatible alias
 export const sendInvoiceEmailAction = sendInvoiceWhatsAppAction;
 
-export async function sendReminderAction(invoiceId: string) {
-  await requireAdmin();
-  const invoice = await prisma.invoice.findUnique({
-    where: { id: invoiceId },
-    include: { client: true },
-  });
-  if (!invoice) throw new Error("Invoice not found");
-  if (!invoice.client.phone) {
-    throw new Error(
-      "Nomor WhatsApp klien belum terdaftar. Lengkapi nomor telepon klien terlebih dahulu."
-    );
-  }
-
-  const tpl = waTemplates.invoiceReminder(
-    invoice.number,
-    formatCurrency(Number(invoice.total)),
-    formatDate(invoice.dueDate)
-  );
-
-  await prisma.invoice.update({
-    where: { id: invoiceId },
-    data: { lastReminderSentAt: new Date() },
-  });
-
-  // Exactly one WhatsApp notification via notify()
-  await notify({
-    userId: invoice.clientId,
-    type: "INVOICE_SENT",
-    ...tpl,
-  });
-
-  revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
-}
-
 export async function deleteInvoiceAction(invoiceId: string) {
   await requireAdmin();
   await prisma.invoice.delete({ where: { id: invoiceId } });

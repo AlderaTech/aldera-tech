@@ -143,11 +143,11 @@ Jika database PostgreSQL di-host secara terpisah (misal AWS RDS, Supabase, Neon,
 
 Aldera Tech memiliki 3 cron endpoint aktif:
 
-| Endpoint                      | Frekuensi                      | Deskripsi                                                   |
-| :---------------------------- | :----------------------------- | :---------------------------------------------------------- |
-| `/api/cron/invoice-reminder`  | Harian (09:00 WIB / 02:00 UTC) | Kirim pengingat invoice jatuh tempo via WhatsApp Fonnte.    |
-| `/api/cron/issue-recurring`   | Harian (00:01 WIB / 17:01 UTC) | Terbitkan invoice rutin baru sesuai jadwal template.        |
-| `/api/cron/publish-scheduled` | Per 15 Menit                   | Publikasikan artikel blog yang tanggal rilisnya telah tiba. |
+| Endpoint                      | Frekuensi                      | Deskripsi                                                              |
+| :---------------------------- | :----------------------------- | :--------------------------------------------------------------------- |
+| `/api/cron/invoice-reminder`  | Harian (09:00 WIB / 02:00 UTC) | Menandai invoice lewat jatuh tempo; pengiriman reminder dinonaktifkan. |
+| `/api/cron/issue-recurring`   | Harian (00:01 WIB / 17:01 UTC) | Terbitkan invoice rutin baru sesuai jadwal template.                   |
+| `/api/cron/publish-scheduled` | Per 15 Menit                   | Publikasikan artikel blog yang tanggal rilisnya telah tiba.            |
 
 ### Bagaimana Cron Bekerja dalam Container:
 

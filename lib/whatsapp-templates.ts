@@ -28,13 +28,6 @@ export const waTemplates = {
     };
   },
 
-  invoiceReminder(invoiceNumber: string, total: string, dueDate: string) {
-    return {
-      title: "Pengingat Invoice",
-      message: `Invoice ${invoiceNumber} sebesar ${total} akan/sudah jatuh tempo (${dueDate}).\n\nLihat: ${APP_URL}${DASHBOARD_ROUTES.invoices}`,
-    };
-  },
-
   newMessage(senderName: string, projectTitle: string, projectId: string) {
     return {
       title: "Pesan Baru",
@@ -137,22 +130,6 @@ export const waTemplates = {
     return {
       title: "Proposal Berhasil Ditandatangani",
       message: `Halo *${args.clientName}*,\n\nTerima kasih! Proposal *${args.proposalTitle}* (${args.proposalNumber}) telah berhasil ditandatangani secara digital pada *${args.signedAt}*.\n\nTim Aldera Tech akan segera menghubungi Anda untuk tahap onboarding dan peluncuran proyek.\n\nSalam hangat,\nTim Aldera Tech`,
-    };
-  },
-
-  lowBalanceAlert(args: {
-    userName?: string;
-    balance: number;
-    threshold?: number;
-    topupUrl?: string;
-  }) {
-    const name = args.userName || "Pengguna";
-    const formattedBalance = `Rp ${args.balance.toLocaleString("id-ID")}`;
-    const formattedThreshold = `Rp ${(args.threshold ?? 10000).toLocaleString("id-ID")}`;
-    const url = args.topupUrl || `${APP_URL}/dashboard/ai-relay?tab=billing`;
-    return {
-      title: "Peringatan Saldo Rendah Aldera AI Relay",
-      message: `⚠️ *Peringatan Saldo Rendah Aldera AI Relay*\n\nHalo *${name}*,\n\nSisa saldo akun AI Relay Anda saat ini adalah *${formattedBalance}*, berada di bawah batas minimum pengingat (*${formattedThreshold}*).\n\nUntuk menghindari gangguan pada integrasi IDE (Cursor, Cline, Roo Code, dll), silakan lakukan pengisian saldo melalui tautan berikut:\n${url}\n\nTerima kasih,\nTim Aldera Tech`,
     };
   },
 } as const;

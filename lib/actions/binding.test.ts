@@ -16,9 +16,6 @@ let mockSession: MockSession = null;
 mock.module("@/lib/telegram", () => ({
   sendTelegramMessage: mock(async () => ({ success: true, simulated: true })),
 }));
-mock.module("@/lib/whatsapp", () => ({
-  sendWhatsApp: mock(async () => ({ success: true, simulated: true })),
-}));
 
 mock.module("@/auth", () => ({
   auth: mock(async () => mockSession),
@@ -339,14 +336,11 @@ describe("Milestone 4: Omnichannel Web ↔ Telegram Bot & Alerts", () => {
         threshold: 10000,
         lastAlertSentAt: null,
         telegramId: 11223344,
-        phone: "081234567890",
       });
       expect(res.shouldAlert).toBe(true);
       expect(res.telegramPayload).toBeDefined();
       expect(res.telegramPayload?.telegramId).toBe(11223344);
       expect(res.telegramPayload?.message).toContain("Rp 7.500");
-      expect(res.whatsappPayload).toBeDefined();
-      expect(res.whatsappPayload?.target).toBe("081234567890");
     });
 
     it("suppresses alert when balance is equal to or above threshold", () => {
@@ -394,28 +388,17 @@ describe("Milestone 4: Omnichannel Web ↔ Telegram Bot & Alerts", () => {
       expect(res.shouldAlert).toBe(true);
     });
 
-    it("handles partial channel availability (telegram only / whatsapp only)", () => {
-      const tgOnly = evaluateLowBalanceAlert({
+    it("builds a Telegram alert when the user has a Telegram destination", () => {
+      const res = evaluateLowBalanceAlert({
         userId: 1,
         currentBalance: 2000,
         threshold: 10000,
         lastAlertSentAt: null,
         telegramId: 12345,
       });
-      expect(tgOnly.shouldAlert).toBe(true);
-      expect(tgOnly.telegramPayload).toBeDefined();
-      expect(tgOnly.whatsappPayload).toBeUndefined();
-
-      const waOnly = evaluateLowBalanceAlert({
-        userId: 1,
-        currentBalance: 2000,
-        threshold: 10000,
-        lastAlertSentAt: null,
-        phone: "628111222333",
-      });
-      expect(waOnly.shouldAlert).toBe(true);
-      expect(waOnly.telegramPayload).toBeUndefined();
-      expect(waOnly.whatsappPayload).toBeDefined();
+      expect(res.shouldAlert).toBe(true);
+      expect(res.telegramPayload).toBeDefined();
+      expect(res.telegramPayload?.telegramId).toBe(12345);
     });
   });
 
