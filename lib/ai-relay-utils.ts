@@ -541,7 +541,7 @@ export function formatTelegramModelsMessage(
 }
 
 // ============================================================================
-// F13: Multi-channel Low Balance Alerts Pure Logic
+// F13: Telegram Low Balance Alert Pure Logic
 // ============================================================================
 
 export const LOW_BALANCE_DEFAULT_THRESHOLD = 5000;
@@ -554,10 +554,6 @@ export interface LowBalanceAlertCheck {
     telegramId: number;
     message: string;
   };
-  whatsappPayload?: {
-    target: string;
-    message: string;
-  };
 }
 
 export function evaluateLowBalanceAlert(params: {
@@ -566,7 +562,6 @@ export function evaluateLowBalanceAlert(params: {
   threshold?: number;
   lastAlertSentAt: Date | null;
   telegramId?: number;
-  phone?: string;
   now?: Date;
 }): LowBalanceAlertCheck {
   const threshold = params.threshold ?? LOW_BALANCE_DEFAULT_THRESHOLD;
@@ -594,12 +589,6 @@ export function evaluateLowBalanceAlert(params: {
     telegramPayload: params.telegramId
       ? {
           telegramId: params.telegramId,
-          message,
-        }
-      : undefined,
-    whatsappPayload: params.phone
-      ? {
-          target: params.phone,
           message,
         }
       : undefined,

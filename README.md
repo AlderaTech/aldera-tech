@@ -146,7 +146,7 @@ prisma.config.ts          # Prisma 7 config (datasource.url lives here)
 
 ## WhatsApp Setup (Fonnte API)
 
-Semua notifikasi transaksi (pengiriman invoice, pengingat jatuh tempo, tautan penawaran proposal, dan tautan reset password) dikirimkan melalui WhatsApp menggunakan **Fonnte API**. Konfigurasikan pada `.env`:
+WhatsApp menggunakan **Fonnte API** untuk OTP verifikasi, pengiriman invoice dan proposal, reset password, notifikasi pembayaran, dan aktivitas proyek. Peringatan saldo rendah AI Relay dikirim melalui Telegram; pengingat jatuh tempo invoice tidak dikirim. Konfigurasikan pada `.env`:
 
 ```bash
 WHATSAPP_API_URL="https://api.fonnte.com/send"
@@ -159,7 +159,7 @@ Jika `WHATSAPP_API_KEY` belum diisi (misalnya pada local development), pengirima
 
 Aplikasi memiliki 3 background cron endpoints:
 
-- `/api/cron/invoice-reminder` (Harian 09:00 WIB — kirim pengingat jatuh tempo via WhatsApp)
+- `/api/cron/invoice-reminder` (Harian 09:00 WIB — menandai invoice lewat jatuh tempo; pengiriman reminder dinonaktifkan)
 - `/api/cron/issue-recurring` (Harian 00:01 WIB — penerbitan tagihan berkala)
 - `/api/cron/publish-scheduled` (Per 15 Menit — penerbitan blog terjadwal)
 

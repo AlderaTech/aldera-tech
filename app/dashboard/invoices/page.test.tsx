@@ -20,7 +20,6 @@ mock.module("@/lib/actions/invoice", () => ({
   createInvoiceAction: mock(),
   updateInvoiceStatusAction: mock(),
   sendInvoiceWhatsAppAction: mock(),
-  sendReminderAction: mock(),
   deleteInvoiceAction: mock(),
   verifyPaymentProofAction: mock(),
   rejectPaymentProofAction: mock(),
