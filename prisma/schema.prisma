@@ -16,6 +16,10 @@ enum Role {
   ADMIN
   DEVELOPER
   CLIENT
+  // Retained for compatibility with existing databases; no extra permissions.
+  OWNER
+  DESIGNER
+  ACCOUNTANT
 }
 
 enum ProjectStatus {
@@ -142,18 +146,20 @@ enum BlogReactionType {
 // Models
 // ----------------------------------------------------------------
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  password      String
-  name          String
-  roles         Role[]    @default([CLIENT])
-  avatar        String?
-  phone         String?
-  phoneVerified DateTime?
-  isActive      Boolean   @default(true)
-  emailVerified DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  email           String    @unique
+  password        String
+  name            String
+  roles           Role[]    @default([CLIENT])
+  avatar          String?
+  phone           String?
+  phoneVerified   DateTime?
+  invitedAt       DateTime?
+  securityVersion Int       @default(0)
+  isActive        Boolean   @default(true)
+  emailVerified   DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   projects            Project[]            @relation("ClientProjects")
   activityLogs        ActivityLog[]
@@ -257,8 +263,11 @@ model ActivityLog {
 }
 
 model File {
-  id           String @id @default(cuid())
+  id           String    @id @default(cuid())
   filename     String
+  scope        FileScope @default(PRIVATE_LEGACY)
+  invoiceId    String?
+  topupId      Int?
   originalName String
   mimeType     String
   size         Int
@@ -278,10 +287,20 @@ model File {
   @@index([createdAt])
 }
 
+enum FileScope {
+  PRIVATE_LEGACY
+  PUBLIC_MEDIA
+  PROJECT
+  INVOICE_PROOF
+  TOPUP_PROOF
+}
+
 model Invoice {
-  id     String        @id @default(cuid())
-  number String        @unique
-  status InvoiceStatus @default(DRAFT)
+  id             String                 @id @default(cuid())
+  number         String                 @unique
+  status         InvoiceStatus          @default(DRAFT)
+  purpose        InvoicePurpose         @default(PROJECT)
+  balanceEffects InvoiceBalanceEffect[]
 
   issueDate DateTime  @default(now())
   dueDate   DateTime
@@ -294,9 +313,9 @@ model Invoice {
   currency  String  @default("IDR")
   notes     String? @db.Text
 
-  paymentProofUrl    String?
-  paymentMethod      String?
-  payments           Payment[]
+  paymentProofUrl String?
+  paymentMethod   String?
+  payments        Payment[]
 
   pdfPath            String?
   lastReminderSentAt DateTime?
@@ -319,6 +338,40 @@ model Invoice {
   @@index([projectId])
   @@index([status])
   @@index([dueDate])
+  @@index([status, paidAt])
+}
+
+enum InvoicePurpose {
+  PROJECT
+  AI_RELAY_TOPUP
+}
+
+enum BalanceEffectKind {
+  CREDIT
+  REFUND
+}
+
+enum BalanceEffectStatus {
+  PENDING
+  APPLIED
+  REVIEW
+}
+
+model InvoiceBalanceEffect {
+  id        String              @id @default(cuid())
+  invoiceId String
+  invoice   Invoice             @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  kind      BalanceEffectKind
+  amount    Decimal             @db.Decimal(14, 2)
+  status    BalanceEffectStatus @default(PENDING)
+  attempts  Int                 @default(0)
+  lastError String?
+  appliedAt DateTime?
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  @@unique([invoiceId, kind])
+  @@index([status, createdAt])
 }
 
 model InvoiceItem {
@@ -336,34 +389,34 @@ model InvoiceItem {
 }
 
 model Payment {
-  id              String        @id @default(cuid())
-  invoiceId       String
-  invoice         Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  id        String  @id @default(cuid())
+  invoiceId String
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 
-  amount          Decimal       @db.Decimal(14, 2)
-  currency        String        @default("IDR")
-  status          PaymentStatus @default(PENDING)
-  paymentMethod   PaymentMethod @default(MANUAL_TRANSFER)
+  amount        Decimal       @db.Decimal(14, 2)
+  currency      String        @default("IDR")
+  status        PaymentStatus @default(PENDING)
+  paymentMethod PaymentMethod @default(MANUAL_TRANSFER)
 
   // Payment Gateway specifics
-  gateway         String?       // "midtrans" | "manual"
-  transactionId   String?       @unique // Midtrans transaction_id / token / internal id
-  paymentType     String?       // e.g. "qris", "bank_transfer", "cstore", "credit_card"
-  gatewayResponse Json?         // Raw webhook payload for audit
+  gateway         String? // "midtrans" | "manual"
+  transactionId   String? @unique // Midtrans transaction_id / token / internal id
+  paymentType     String? // e.g. "qris", "bank_transfer", "cstore", "credit_card"
+  gatewayResponse Json? // Raw webhook payload for audit
 
   // Manual Receipt specifics
-  proofUrl        String?       // Path to uploaded receipt
+  proofUrl        String? // Path to uploaded receipt
   proofUploadedAt DateTime?
-  notes           String?       @db.Text
+  notes           String?   @db.Text
 
   // Staff verification specifics
   verifiedAt      DateTime?
   verifiedById    String?
-  verifiedBy      User?         @relation("PaymentVerifier", fields: [verifiedById], references: [id], onDelete: SetNull)
-  rejectionReason String?       @db.Text
+  verifiedBy      User?     @relation("PaymentVerifier", fields: [verifiedById], references: [id], onDelete: SetNull)
+  rejectionReason String?   @db.Text
 
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([invoiceId])
   @@index([status])
@@ -442,22 +495,22 @@ model BlogPost {
 }
 
 model Testimonial {
-  id         String    @id @default(cuid())
+  id         String   @id @default(cuid())
   clientName String
   clientRole String?
-  content    String    @db.Text
-  rating     Int       @default(5)
+  content    String   @db.Text
+  rating     Int      @default(5)
   avatar     String?
-  published  Boolean   @default(true)
-  order      Int       @default(0)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @default(now()) @updatedAt
+  published  Boolean  @default(true)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
 
-  projectId  String?   @unique
-  project    Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  projectId String?  @unique
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
 
-  clientId   String?
-  client     User?     @relation("ClientTestimonials", fields: [clientId], references: [id], onDelete: SetNull)
+  clientId String?
+  client   User?   @relation("ClientTestimonials", fields: [clientId], references: [id], onDelete: SetNull)
 
   @@index([published, order])
   @@index([clientId])
@@ -560,12 +613,12 @@ model PricingPlan {
 }
 
 model PricingPlanFeature {
-  id        String      @id @default(cuid())
-  text      String
-  included  Boolean     @default(true)
-  order     Int         @default(0)
-  planId    String
-  plan      PricingPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  id       String      @id @default(cuid())
+  text     String
+  included Boolean     @default(true)
+  order    Int         @default(0)
+  planId   String
+  plan     PricingPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
 
   @@index([planId, order])
 }
@@ -686,16 +739,16 @@ model AuditLog {
 }
 
 model Proposal {
-  id            String         @id @default(cuid())
-  number        String         @unique
-  token         String         @unique
-  title         String
-  summary       String?        @db.Text
-  content       String         @db.Text
-  status        ProposalStatus @default(DRAFT)
-  clientName    String
-  clientEmail   String
-  clientPhone   String?
+  id          String         @id @default(cuid())
+  number      String         @unique
+  token       String         @unique
+  title       String
+  summary     String?        @db.Text
+  content     String         @db.Text
+  status      ProposalStatus @default(DRAFT)
+  clientName  String
+  clientEmail String
+  clientPhone String?
 
   currency    String  @default("IDR")
   taxRate     Decimal @default(0) @db.Decimal(5, 2)
@@ -719,7 +772,7 @@ model Proposal {
   convertedProjectId String?
   convertedProject   Project? @relation("ProposalConvertedProject", fields: [convertedProjectId], references: [id], onDelete: SetNull)
 
-  items ProposalItem[]
+  items              ProposalItem[]
   convertedFromOrder OrderRequest?
 
   createdAt DateTime @default(now())
@@ -743,6 +796,15 @@ model ProposalItem {
   @@index([proposalId])
 }
 
+model AuthRateLimit {
+  key       String   @id
+  attempts  Int      @default(1)
+  resetAt   DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([resetAt])
+}
+
 model PasswordResetToken {
   id        String    @id @default(cuid())
   token     String    @unique
@@ -757,16 +819,16 @@ model PasswordResetToken {
 }
 
 model Notification {
-  id        String           @id @default(cuid())
-  type      NotificationType
-  title     String
-  message   String           @db.Text
-  channel   String           @default("whatsapp")
-  metadata  Json?
-  sentAt    DateTime?
-  readAt    DateTime?
-  failedAt  DateTime?
-  error     String?
+  id       String           @id @default(cuid())
+  type     NotificationType
+  title    String
+  message  String           @db.Text
+  channel  String           @default("whatsapp")
+  metadata Json?
+  sentAt   DateTime?
+  readAt   DateTime?
+  failedAt DateTime?
+  error    String?
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -808,14 +870,14 @@ model ProjectType {
 }
 
 model FeatureOption {
-  id         String  @id @default(cuid())
-  name       String
+  id          String  @id @default(cuid())
+  name        String
   description String?
-  price      Decimal @db.Decimal(14, 2)
-  isMajor    Boolean @default(false)
-  disclaimer String? @db.Text
-  order      Int     @default(0)
-  active     Boolean @default(true)
+  price       Decimal @db.Decimal(14, 2)
+  isMajor     Boolean @default(false)
+  disclaimer  String? @db.Text
+  order       Int     @default(0)
+  active      Boolean @default(true)
 
   projectTypeId String?
   projectType   ProjectType? @relation(fields: [projectTypeId], references: [id], onDelete: SetNull)
@@ -846,14 +908,14 @@ model AddOnOption {
 }
 
 model CalculatorConfig {
-  id                   String  @id @default("calculator")
-  featureDisclaimer    String  @db.Text
-  revisionPolicy       String  @db.Text
-  freeRevisions        Int     @default(2)
-  revisionPricePerItem Decimal @db.Decimal(14, 2) @default(300000)
-  urgencyMultiplier    Decimal @db.Decimal(3, 2) @default(1.50)
-  urgencyThresholdDays Int     @default(14)
-  dpPercentage         Int     @default(25)
+  id                   String   @id @default("calculator")
+  featureDisclaimer    String   @db.Text
+  revisionPolicy       String   @db.Text
+  freeRevisions        Int      @default(2)
+  revisionPricePerItem Decimal  @default(300000) @db.Decimal(14, 2)
+  urgencyMultiplier    Decimal  @default(1.50) @db.Decimal(3, 2)
+  urgencyThresholdDays Int      @default(14)
+  dpPercentage         Int      @default(25)
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 }
@@ -870,8 +932,8 @@ model OrderRequest {
   dependentValues Json               @default("{}")
   customFeatures  Json               @default("[]")
 
-  userId    String
-  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   projectTypeId String
   projectType   ProjectType @relation(fields: [projectTypeId], references: [id], onDelete: Cascade)
@@ -887,14 +949,15 @@ model OrderRequest {
 }
 
 model VerificationToken {
-  id         String    @id @default(cuid())
-  identifier String    // Phone number or proposal token
-  token      String    // numeric OTP code
-  type       String    @default("WHATSAPP_OTP") // "WHATSAPP_OTP" | "PROPOSAL_SIGN" | "PHONE_VERIFY"
-  expiresAt  DateTime
-  attempts   Int       @default(0)
-  verifiedAt DateTime?
-  createdAt  DateTime  @default(now())
+  id            String    @id @default(cuid())
+  subjectUserId String?
+  identifier    String // Phone number or proposal token
+  token         String // numeric OTP code
+  type          String    @default("WHATSAPP_OTP") // "WHATSAPP_OTP" | "PROPOSAL_SIGN" | "PHONE_VERIFY"
+  expiresAt     DateTime
+  attempts      Int       @default(0)
+  verifiedAt    DateTime?
+  createdAt     DateTime  @default(now())
 
   @@unique([identifier, token])
   @@index([identifier, type])
@@ -909,8 +972,8 @@ model BlogComment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([postId, createdAt])
   @@map("blog_comments")
@@ -923,8 +986,8 @@ model BlogReaction {
   userId    String
   createdAt DateTime         @default(now())
 
-  post      BlogPost         @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([postId, userId])
   @@index([postId, type])
@@ -962,4 +1025,11 @@ model PaymentMethodSetting {
   @@map("payment_method_settings")
 }
 
-
+// Durable synchronization of primary settings into the Telegram router database.
+model IntegrationSyncState {
+  id              String   @id
+  revision        Int      @default(1)
+  appliedRevision Int      @default(0)
+  lastError       String?
+  updatedAt       DateTime @updatedAt
+}

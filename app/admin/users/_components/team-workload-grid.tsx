@@ -1,3 +1,4 @@
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -12,8 +13,8 @@ import {
 export function TeamWorkloadGrid({ staff }: { staff: StaffWorkloadItem[] }) {
   if (staff.length === 0) {
     return (
-      <Card className="p-10 text-center text-muted-foreground">
-        Belum ada anggota tim staf aktif.
+      <Card className="p-0">
+        <AdminEmptyState context="workload" />
       </Card>
     );
   }

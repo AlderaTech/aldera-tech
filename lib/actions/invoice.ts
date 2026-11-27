@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { InvoiceStatus } from "@prisma/client";
 import { auth } from "@/auth";
+import { changeInvoiceStatus } from "@/lib/invoice-status-transition";
 import { prisma } from "@/lib/prisma";
+import { nextDocumentNumber } from "@/lib/document-number";
 import { invoiceCreateSchema } from "@/lib/validations/invoice";
 import { sendWhatsApp } from "@/lib/whatsapp";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
@@ -12,6 +14,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { notify } from "@/lib/notifications";
 import { waTemplates } from "@/lib/whatsapp-templates";
 import { calculateInvoiceTotals } from "@/lib/invoice-utils";
+import { verifyManualPayment } from "@/lib/manual-payment-verification";
 
 async function requireAdmin() {
   const session = await auth();
@@ -19,17 +22,6 @@ async function requireAdmin() {
     throw new Error("Forbidden");
   }
   return session.user;
-}
-
-async function generateInvoiceNumber() {
-  const year = new Date().getFullYear();
-  const last = await prisma.invoice.findFirst({
-    where: { number: { startsWith: `INV-${year}-` } },
-    orderBy: { number: "desc" },
-    select: { number: true },
-  });
-  const seq = last ? Number(last.number.split("-")[2] ?? 0) + 1 : 1;
-  return `INV-${year}-${String(seq).padStart(4, "0")}`;
 }
 
 export type InvoiceActionState = {
@@ -54,6 +46,7 @@ export async function createInvoiceAction(
 
   const parsed = invoiceCreateSchema.safeParse({
     clientId: formData.get("clientId"),
+    purpose: formData.get("purpose") || "PROJECT",
     projectId: formData.get("projectId") || "",
     issueDate: formData.get("issueDate"),
     dueDate: formData.get("dueDate"),
@@ -69,36 +62,52 @@ export async function createInvoiceAction(
     };
   }
   const data = parsed.data;
+  if (data.purpose === "AI_RELAY_TOPUP" && data.projectId)
+    return {
+      ok: false,
+      message: "Tagihan saldo AI tidak dapat ditautkan ke proyek.",
+    };
+  if (
+    data.purpose === "AI_RELAY_TOPUP" &&
+    totalIsInvalid(data.items, data.taxRate)
+  )
+    return {
+      ok: false,
+      message: "Nominal top-up harus positif dan dalam Rupiah.",
+    };
 
   const { subtotal, taxAmount, total } = calculateInvoiceTotals(
     data.items,
     data.taxRate
   );
-  const number = await generateInvoiceNumber();
 
-  const invoice = await prisma.invoice.create({
-    data: {
-      number,
-      clientId: data.clientId,
-      projectId: data.projectId || null,
-      issueDate: new Date(data.issueDate),
-      dueDate: new Date(data.dueDate),
-      subtotal: subtotal.toFixed(2),
-      taxRate: data.taxRate.toString(),
-      taxAmount: taxAmount.toFixed(2),
-      total: total.toFixed(2),
-      notes: data.notes || null,
-      items: {
-        create: data.items.map((it, idx) => ({
-          description: it.description,
-          quantity: it.quantity.toString(),
-          price: it.price.toString(),
-          total: (it.quantity * it.price).toFixed(2),
-          order: idx,
-        })),
+  const invoice = await prisma.$transaction(async (tx) => {
+    const number = await nextDocumentNumber(tx, "invoice");
+    return tx.invoice.create({
+      data: {
+        number,
+        purpose: data.purpose,
+        clientId: data.clientId,
+        projectId: data.projectId || null,
+        issueDate: new Date(data.issueDate),
+        dueDate: new Date(data.dueDate),
+        subtotal: subtotal.toFixed(2),
+        taxRate: data.taxRate.toString(),
+        taxAmount: taxAmount.toFixed(2),
+        total: total.toFixed(2),
+        notes: data.notes || null,
+        items: {
+          create: data.items.map((it, idx) => ({
+            description: it.description,
+            quantity: it.quantity.toString(),
+            price: it.price.toString(),
+            total: (it.quantity * it.price).toFixed(2),
+            order: idx,
+          })),
+        },
       },
-    },
-    select: { id: true },
+      select: { id: true },
+    });
   });
 
   revalidatePath(ADMIN_ROUTES.invoices);
@@ -112,15 +121,8 @@ export async function updateInvoiceStatusAction(
   invoiceId: string,
   status: InvoiceStatus
 ) {
-  await requireAdmin();
-  const invoice = await prisma.invoice.update({
-    where: { id: invoiceId },
-    data: {
-      status,
-      paidAt: status === "PAID" ? new Date() : null,
-    },
-    select: { id: true, clientId: true },
-  });
+  const admin = await requireAdmin();
+  const [invoice] = await changeInvoiceStatus([invoiceId], status, admin.id);
   revalidatePath(ADMIN_ROUTES.invoices);
   revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
   revalidatePath(DASHBOARD_ROUTES.invoices);
@@ -167,40 +169,6 @@ export async function sendInvoiceWhatsAppAction(invoiceId: string) {
 // Backward-compatible alias
 export const sendInvoiceEmailAction = sendInvoiceWhatsAppAction;
 
-export async function sendReminderAction(invoiceId: string) {
-  await requireAdmin();
-  const invoice = await prisma.invoice.findUnique({
-    where: { id: invoiceId },
-    include: { client: true },
-  });
-  if (!invoice) throw new Error("Invoice not found");
-  if (!invoice.client.phone) {
-    throw new Error(
-      "Nomor WhatsApp klien belum terdaftar. Lengkapi nomor telepon klien terlebih dahulu."
-    );
-  }
-
-  const tpl = waTemplates.invoiceReminder(
-    invoice.number,
-    formatCurrency(Number(invoice.total)),
-    formatDate(invoice.dueDate)
-  );
-
-  await prisma.invoice.update({
-    where: { id: invoiceId },
-    data: { lastReminderSentAt: new Date() },
-  });
-
-  // Exactly one WhatsApp notification via notify()
-  await notify({
-    userId: invoice.clientId,
-    type: "INVOICE_SENT",
-    ...tpl,
-  });
-
-  revalidatePath(ADMIN_ROUTES.invoiceDetail(invoiceId));
-}
-
 export async function deleteInvoiceAction(invoiceId: string) {
   await requireAdmin();
   await prisma.invoice.delete({ where: { id: invoiceId } });
@@ -242,29 +210,61 @@ export async function submitPaymentProofAction(input: {
     return { ok: false, message: "Invoice ini sudah lunas." };
   }
 
-  await prisma.$transaction(async (tx) => {
-    await tx.invoice.update({
-      where: { id: invoice.id },
+  const proof = await prisma.file.findFirst({
+    where: {
+      url: input.proofUrl,
+      invoiceId: invoice.id,
+      scope: "INVOICE_PROOF",
+      ...(session.user.role !== "ADMIN" ? { uploaderId: session.user.id } : {}),
+    },
+    select: { id: true },
+  });
+  if (!proof && input.proofUrl !== invoice.paymentProofUrl)
+    return {
+      ok: false,
+      message: "Unggah bukti pembayaran untuk invoice ini terlebih dahulu.",
+    };
+
+  const submitted = await prisma.$transaction(async (tx) => {
+    const updated = await tx.invoice.updateMany({
+      where: {
+        id: invoice.id,
+        status: { in: ["SENT", "OVERDUE", "PENDING_VERIFICATION"] },
+      },
       data: {
         status: "PENDING_VERIFICATION",
         paymentProofUrl: input.proofUrl,
         paymentMethod: "MANUAL_TRANSFER",
       },
     });
+    if (!updated.count) return false;
 
-    await tx.payment.create({
-      data: {
-        invoiceId: invoice.id,
-        amount: invoice.total,
-        currency: invoice.currency,
-        status: "PENDING",
-        paymentMethod: "MANUAL_TRANSFER",
-        gateway: "manual",
-        proofUrl: input.proofUrl,
-        proofUploadedAt: new Date(),
-        notes: input.notes || null,
-      },
+    const pending = await tx.payment.findFirst({
+      where: { invoiceId: invoice.id, status: "PENDING" },
     });
+    if (pending) {
+      await tx.payment.update({
+        where: { id: pending.id },
+        data: {
+          proofUrl: input.proofUrl,
+          notes: input.notes ?? null,
+          proofUploadedAt: new Date(),
+        },
+      });
+    } else
+      await tx.payment.create({
+        data: {
+          invoiceId: invoice.id,
+          amount: invoice.total,
+          currency: invoice.currency,
+          status: "PENDING",
+          paymentMethod: "MANUAL_TRANSFER",
+          gateway: "manual",
+          proofUrl: input.proofUrl,
+          proofUploadedAt: new Date(),
+          notes: input.notes || null,
+        },
+      });
 
     if (invoice.projectId) {
       await tx.activityLog.create({
@@ -281,7 +281,14 @@ export async function submitPaymentProofAction(input: {
         },
       });
     }
+    return true;
   });
+  if (!submitted)
+    return {
+      ok: false,
+      message:
+        "Invoice ini tidak dapat menerima bukti pembayaran. Silakan muat ulang.",
+    };
 
   if (invoice.client.phone) {
     const tpl = waTemplates.paymentProofReceived(
@@ -309,70 +316,10 @@ export async function verifyPaymentProofAction(
 ): Promise<{ ok: boolean; message?: string }> {
   const admin = await requireAdmin();
 
-  const invoice = await prisma.invoice.findUnique({
-    where: { id: invoiceId },
-    include: { client: true },
-  });
-
-  if (!invoice) {
-    return { ok: false, message: "Invoice tidak ditemukan." };
-  }
-
-  await prisma.$transaction(async (tx) => {
-    await tx.invoice.update({
-      where: { id: invoiceId },
-      data: {
-        status: "PAID",
-        paidAt: new Date(),
-      },
-    });
-
-    const pendingPayment = await tx.payment.findFirst({
-      where: { invoiceId, status: "PENDING" },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (pendingPayment) {
-      await tx.payment.update({
-        where: { id: pendingPayment.id },
-        data: {
-          status: "SUCCESS",
-          verifiedAt: new Date(),
-          verifiedById: admin.id,
-        },
-      });
-    } else {
-      await tx.payment.create({
-        data: {
-          invoiceId: invoice.id,
-          amount: invoice.total,
-          currency: invoice.currency,
-          status: "SUCCESS",
-          paymentMethod: "MANUAL_TRANSFER",
-          gateway: "manual",
-          proofUrl: invoice.paymentProofUrl,
-          verifiedAt: new Date(),
-          verifiedById: admin.id,
-        },
-      });
-    }
-
-    if (invoice.projectId) {
-      await tx.activityLog.create({
-        data: {
-          projectId: invoice.projectId,
-          userId: admin.id,
-          action: "INVOICE_PAID",
-          description: `Pembayaran invoice ${invoice.number} senilai ${formatCurrency(Number(invoice.total))} telah diverifikasi lunas.`,
-          metadata: {
-            invoiceId: invoice.id,
-            invoiceNumber: invoice.number,
-            amount: Number(invoice.total),
-          },
-        },
-      });
-    }
-  });
+  const result = await verifyManualPayment(invoiceId, admin.id);
+  if (!result.ok) return result;
+  if (!result.changed) return { ok: true, message: "Invoice ini sudah lunas." };
+  const { invoice } = result;
 
   const tpl = waTemplates.invoicePaid(
     invoice.number,
@@ -412,14 +359,15 @@ export async function rejectPaymentProofAction(
     return { ok: false, message: "Invoice tidak ditemukan." };
   }
 
-  await prisma.$transaction(async (tx) => {
-    await tx.invoice.update({
-      where: { id: invoiceId },
+  const rejected = await prisma.$transaction(async (tx) => {
+    const updated = await tx.invoice.updateMany({
+      where: { id: invoiceId, status: "PENDING_VERIFICATION" },
       data: {
         status: "SENT",
         paymentProofUrl: null,
       },
     });
+    if (!updated.count) return false;
 
     const pendingPayment = await tx.payment.findFirst({
       where: { invoiceId, status: "PENDING" },
@@ -437,7 +385,14 @@ export async function rejectPaymentProofAction(
         },
       });
     }
+    return true;
   });
+  if (!rejected)
+    return {
+      ok: false,
+      message:
+        "Bukti pembayaran tidak lagi menunggu verifikasi. Silakan muat ulang.",
+    };
 
   const tpl = waTemplates.paymentProofRejected(invoice.number, reason);
 
@@ -454,4 +409,11 @@ export async function rejectPaymentProofAction(
   revalidatePath(DASHBOARD_ROUTES.invoices);
 
   return { ok: true, message: "Bukti pembayaran ditolak." };
+}
+
+function totalIsInvalid(
+  items: Array<{ quantity: number; price: number }>,
+  taxRate: number
+) {
+  return calculateInvoiceTotals(items, taxRate).total <= 0;
 }

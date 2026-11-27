@@ -1,4 +1,5 @@
 "use client";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -102,7 +103,7 @@ export function MilestonesTab({
       {showForm && (
         <Card className="border-slate-200 bg-white p-4 shadow-sm">
           <form onSubmit={handleCreate} className="space-y-3">
-            <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_180px_180px]">
+            <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_180px_180px]">
               <div className="space-y-1.5">
                 <Label htmlFor="m-title">Judul</Label>
                 <Input
@@ -161,8 +162,8 @@ export function MilestonesTab({
       )}
 
       {milestones.length === 0 ? (
-        <Card className="border-dashed p-8 text-center text-sm text-muted-foreground">
-          Belum ada milestone.
+        <Card className="p-0">
+          <AdminEmptyState context="milestones" />
         </Card>
       ) : (
         <ol className="relative ml-3 space-y-3 border-l-2 border-slate-200">

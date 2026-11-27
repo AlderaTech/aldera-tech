@@ -1,8 +1,7 @@
 import { queryRouter } from "@/lib/router-db";
 import { prisma } from "@/lib/prisma";
-import { sendWhatsApp } from "@/lib/whatsapp";
-import { waTemplates } from "@/lib/whatsapp-templates";
 import { sendTelegramMessage } from "@/lib/telegram";
+import { getServiceAvailability } from "@/lib/service-availability";
 import {
   evaluateLowBalanceAlert,
   type LowBalanceAlertCheck,
@@ -64,7 +63,7 @@ export async function ensureAlertCooldownsTable(): Promise<void> {
 
 /**
  * Runs the Balance Guard check across all users with balance < Rp 10.000.
- * Dispatches multi-channel alerts (Telegram Bot + WhatsApp Fonnte) respecting a 12-hour cooldown,
+ * Dispatches Telegram alerts respecting a 12-hour cooldown,
  * which resets automatically if a top-up occurred after the last alert.
  */
 export async function runBalanceGuard(
@@ -72,6 +71,15 @@ export async function runBalanceGuard(
   now = new Date()
 ): Promise<BalanceGuardRunSummary> {
   await ensureAlertCooldownsTable();
+  const telegramEnabled = await getServiceAvailability("telegram_bot").catch(
+    (error) => {
+      console.error(
+        "[runBalanceGuard] Could not check Telegram availability",
+        error
+      );
+      return false;
+    }
+  );
 
   // Query candidate users who have balance below threshold
   const candidatesRes = await queryRouter<{
@@ -124,19 +132,17 @@ export async function runBalanceGuard(
       effectiveLastAlert = null;
     }
 
-    // Check Prisma user phone if web_user_id is linked
-    let phone: string | undefined;
+    // Check Prisma user name if web_user_id is linked
     let clientName = row.full_name;
 
     if (row.web_user_id) {
       try {
         const webUser = await prisma.user.findUnique({
           where: { id: row.web_user_id },
-          select: { name: true, phone: true },
+          select: { name: true },
         });
         if (webUser) {
           if (webUser.name) clientName = webUser.name;
-          if (webUser.phone) phone = webUser.phone;
         }
       } catch (err) {
         console.warn(
@@ -152,7 +158,6 @@ export async function runBalanceGuard(
       threshold,
       lastAlertSentAt: effectiveLastAlert,
       telegramId,
-      phone,
       now,
     });
 
@@ -165,12 +170,13 @@ export async function runBalanceGuard(
       userId,
       name: clientName,
       balance,
+      whatsappStatus: "skipped",
     };
 
     let alertSent = false;
 
     // 1. Telegram Dispatch
-    if (telegramId) {
+    if (telegramId && telegramEnabled) {
       const formattedBalance = `Rp ${balance.toLocaleString("id-ID")}`;
       const safeClientName = escapeTelegramHtml(clientName);
       const tgText =
@@ -208,32 +214,7 @@ export async function runBalanceGuard(
       alertResult.telegramStatus = "skipped";
     }
 
-    // 2. WhatsApp Fonnte Dispatch
-    if (phone) {
-      const tpl = waTemplates.lowBalanceAlert({
-        userName: clientName,
-        balance,
-        threshold,
-        topupUrl,
-      });
-
-      const waRes = await sendWhatsApp({
-        to: phone,
-        message: `*${tpl.title}*\n\n${tpl.message}`,
-      });
-
-      if (waRes.success) {
-        alertResult.whatsappStatus = waRes.simulated ? "simulated" : "sent";
-        alertSent = true;
-      } else {
-        alertResult.whatsappStatus = "failed";
-        if (!alertResult.error) alertResult.error = waRes.error;
-      }
-    } else {
-      alertResult.whatsappStatus = "skipped";
-    }
-
-    // Record or update alert cooldown if at least one channel dispatch succeeded/simulated
+    // Record or update alert cooldown if Telegram dispatch succeeded/simulated
     if (alertSent) {
       await queryRouter(
         `INSERT INTO user_alert_cooldowns (user_id, last_low_balance_alert_at, alert_count)

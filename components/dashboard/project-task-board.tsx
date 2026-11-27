@@ -51,15 +51,18 @@ export function ProjectTaskBoard({
   } = useTaskBoard(projectId, tasks);
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="space-y-4 rounded-[1.4rem] border border-[#e1e8f2] bg-white p-5 shadow-[0_4px_16px_rgb(16_38_81/5%)]">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e1e8f2] pb-3.5">
         <div>
-          <h2 className="text-base font-semibold text-slate-950">
+          <p className="m-0 text-[11px] font-extrabold tracking-[0.12em] text-[#65748b] uppercase">
+            Manajemen Tugas
+          </p>
+          <h2 className="mt-1 text-base font-extrabold tracking-[-0.03em] text-[#102651]">
             Kanban task board
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="mt-0.5 text-xs text-[#65748b]">
             {readOnly
-              ? "Pantau status task proyek."
+              ? "Pantau status task proyek secara real-time."
               : "Kelola task proyek dengan drag-and-drop."}
           </p>
         </div>

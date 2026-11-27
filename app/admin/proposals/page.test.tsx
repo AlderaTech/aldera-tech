@@ -81,8 +81,6 @@ describe("AdminProposalsPage", () => {
     });
 
     const html = renderToStaticMarkup(pageElement);
-    expect(html).toContain(
-      "Belum ada proposal atau tidak ada proposal yang sesuai kriteria filter."
-    );
+    expect(html).toContain("Belum ada proposal");
   });
 });

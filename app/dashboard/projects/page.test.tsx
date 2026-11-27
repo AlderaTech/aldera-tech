@@ -6,6 +6,9 @@ const mockCount = mock(async (): Promise<number> => 0);
 const mockFindMany = mock(async (): Promise<unknown[]> => []);
 
 mock.module("@/auth", () => ({
+  handlers: {},
+  signIn: mock(),
+  signOut: mock(),
   auth: async () => ({ user: { id: "test-client" } }),
 }));
 

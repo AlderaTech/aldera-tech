@@ -1,3 +1,4 @@
+import { parsePage } from "@/lib/pagination";
 import type { Metadata } from "next";
 import { PUBLIC_ROUTES } from "@/lib/routes";
 import { BlogGrid } from "./_components/blog-grid";
@@ -23,7 +24,7 @@ type PageProps = {
 
 export default async function BlogPage({ searchParams }: PageProps) {
   const { page: pageParam, category, q } = await searchParams;
-  const page = Math.max(1, Number(pageParam) || 1);
+  const page = parsePage(pageParam);
   const [posts, categories] = await Promise.all([
     getBlogList({ page, category, q }),
     getBlogCategories(),
@@ -32,7 +33,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
 
   return (
     <div className={styles.page}>
-      <BlogHero />
+      <BlogHero article={visiblePosts[0]} />
       <section
         className={styles.listSection}
         aria-labelledby="blog-list-heading"

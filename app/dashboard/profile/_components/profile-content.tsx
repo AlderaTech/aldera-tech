@@ -20,13 +20,14 @@ export async function ProfileContent({ userId }: { userId: string }) {
           createdAt: true,
         },
       }),
-    null
+    null,
+    { errorFallback: true }
   );
 
   if (!user) return <ProfileUnavailable />;
 
   return (
-    <div className={styles.layout}>
+    <div className={styles.workspace}>
       <ProfileIdentity user={user} />
       <ProfileForm
         defaultValues={{ name: user.name, phone: user.phone ?? "" }}

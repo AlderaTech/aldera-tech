@@ -15,3 +15,6 @@ CLAUDE.md
 docs
 public/uploads/*
 !public/uploads/.gitkeep
+
+# Runtime private documents and payment proofs must never enter build context.
+storage/private-uploads

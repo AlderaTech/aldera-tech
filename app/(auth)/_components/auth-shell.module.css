@@ -1,0 +1,35 @@
+.content :global([data-slot="card-content"]),
+.content :global([data-slot="card-footer"]) {
+  padding-inline: 0;
+}
+.content :global([data-slot="card-footer"]) {
+  padding-bottom: 0;
+}
+.content :global(form) {
+  margin-top: 1.5rem;
+}
+.content :global(label) {
+  color: var(--login-ink);
+}
+.content :global(input) {
+  color: var(--login-ink);
+}
+.content :global(input:focus-visible) {
+  border-color: var(--login-blue);
+  outline-color: var(--login-blue);
+}
+.content :global(button[type="submit"]) {
+  background: var(--login-blue);
+  color: var(--login-paper);
+}
+.content :global(button[type="submit"]:hover:not(:disabled)) {
+  background: var(--login-blue-hover);
+}
+.content :global(button[type="submit"] svg) {
+  color: inherit;
+}
+.footer {
+  color: var(--login-muted);
+  font-size: 0.7rem;
+  text-align: center;
+}

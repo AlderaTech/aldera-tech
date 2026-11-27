@@ -7,13 +7,24 @@ const invoiceCount = mock(async () => 2);
 const aggregate = mock(async () => ({ _sum: { total: 1234567.89 } }));
 const findProjects = mock(async () => projects);
 const findActivity = mock(async () => recent);
-mock.module("@/auth", () => ({ auth: async () => ({ user }) }));
+mock.module("@/auth", () => ({
+  auth: async () => ({ user }),
+  signIn: mock(),
+  signOut: mock(),
+  handlers: {},
+}));
 mock.module("@/lib/prisma", () => ({
   prisma: {
     project: { count: projectCount, findMany: findProjects },
     invoice: { count: invoiceCount, aggregate },
     activityLog: { findMany: findActivity },
   },
+}));
+mock.module("./_data/overview-analytics", () => ({
+  getOverviewAnalytics: async () => ({
+    work: { completed: 2, active: 1, pending: 1 },
+    payments: { paid: 1, waiting: 2, verification: 0 },
+  }),
 }));
 const { default: Page, metadata } = await import("./page");
 const { default: Loading } = await import("./loading");
@@ -77,12 +88,9 @@ describe("Data dan susunan halaman Ringkasan", () => {
     findProjects.mockResolvedValueOnce([]);
     expect((await Page()).props.empty).toBe(false);
   });
-  it("mempertahankan fallback safeDb serta nilai nol ketika pembacaan gagal", async () => {
+  it("menampilkan kondisi error dan tidak mengganti kegagalan dengan nilai nol", async () => {
     projectCount.mockRejectedValueOnce(new Error("fixture unavailable"));
-    findActivity.mockRejectedValueOnce(new Error("fixture unavailable"));
-    const page = await Page();
-    expect(page.props.stats.props).toEqual({ active: 0, pending: 0, spent: 0 });
-    expect(page.props.empty).toBe(true);
+    await expect(Page()).rejects.toThrow("Data belum dapat dimuat");
   });
   it("memiliki metadata dan tetap menyediakan skeleton dashboard yang sudah ada", () => {
     expect(metadata.title).toBe("Ringkasan");

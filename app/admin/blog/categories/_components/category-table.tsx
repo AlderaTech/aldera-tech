@@ -1,3 +1,4 @@
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 import { Edit3, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +21,7 @@ type CategoryTableProps = {
   permissions: BlogCategoryPermissions;
   onEdit: (category: BlogCategoryRow) => void;
   onDelete: (category: BlogCategoryRow) => void;
+  onCreate?: () => void;
 };
 
 export function CategoryTable({
@@ -27,6 +29,7 @@ export function CategoryTable({
   permissions,
   onEdit,
   onDelete,
+  onCreate,
 }: CategoryTableProps) {
   return (
     <Table>
@@ -41,7 +44,10 @@ export function CategoryTable({
       </TableHeader>
       <TableBody>
         {categories.length === 0 ? (
-          <EmptyCategoryRow canCreate={permissions.canCreate} />
+          <EmptyCategoryRow
+            canCreate={permissions.canCreate}
+            onCreate={onCreate}
+          />
         ) : (
           categories.map((category) => (
             <CategoryTableRow
@@ -58,16 +64,29 @@ export function CategoryTable({
   );
 }
 
-function EmptyCategoryRow({ canCreate }: { canCreate: boolean }) {
+function EmptyCategoryRow({
+  canCreate,
+  onCreate,
+}: {
+  canCreate: boolean;
+  onCreate?: () => void;
+}) {
   return (
     <TableRow>
-      <TableCell
-        colSpan={5}
-        className="py-12 text-center text-sm text-muted-foreground"
-      >
-        {canCreate
-          ? "Belum ada kategori blog. Buat kategori pertama untuk merapikan artikel."
-          : "Belum ada kategori blog."}
+      <TableCell colSpan={5} className="p-0">
+        <AdminEmptyState
+          context="categories"
+          description={
+            canCreate
+              ? "Buat kategori pertama untuk merapikan artikel."
+              : "Kategori yang tersedia akan digunakan untuk mengelompokkan artikel."
+          }
+          action={
+            canCreate && onCreate ? (
+              <Button onClick={onCreate}>Kategori Baru</Button>
+            ) : undefined
+          }
+        />
       </TableCell>
     </TableRow>
   );

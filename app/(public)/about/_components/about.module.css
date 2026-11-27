@@ -94,7 +94,6 @@
   filter: drop-shadow(
     0 14px 16px color-mix(in srgb, var(--home-ink) 12%, transparent)
   );
-  animation: float 8s ease-in-out infinite;
 }
 .mascotShadow {
   position: absolute;
@@ -423,15 +422,6 @@
 .ctaPanel a:focus-visible {
   outline-color: var(--home-blue);
 }
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
 @media (min-width: 1024px) {
   .heroGrid {
     grid-template-columns: 1.05fr 0.95fr;
@@ -560,10 +550,5 @@
   }
   .ctaOfferCopy > span {
     font-size: 0.625rem;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .mascot {
-    animation: none;
   }
 }

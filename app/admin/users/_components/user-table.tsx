@@ -1,3 +1,4 @@
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -39,11 +40,8 @@ export function UserTable({ users, canManageUsers }: UserTableProps) {
         <TableBody>
           {users.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={canManageUsers ? 7 : 6}
-                className="py-10 text-center text-muted-foreground"
-              >
-                Tidak ada pengguna dalam kategori ini.
+              <TableCell colSpan={canManageUsers ? 7 : 6} className="p-0">
+                <AdminEmptyState context="users" />
               </TableCell>
             </TableRow>
           ) : (

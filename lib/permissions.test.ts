@@ -1,7 +1,7 @@
 import { describe, it, expect } from "bun:test";
 import { NextRequest } from "next/server";
 import type { Role } from "@prisma/client";
-import middleware from "../middleware";
+import proxy from "../proxy";
 import {
   isStaff,
   isAdmin,
@@ -17,6 +17,19 @@ import {
 
 describe("Permissions Matrix & Role Guard Verification", () => {
   describe("Role checks", () => {
+    it("retains legacy role storage without granting staff or admin permissions", () => {
+      for (const role of ["OWNER", "DESIGNER", "ACCOUNTANT"] as const) {
+        expect(isStaff(role)).toBe(false);
+        expect(isAdmin(role)).toBe(false);
+        expect(canAccessAiRelayAdmin(role)).toBe(false);
+        expect(getEffectivePermissions(role)).toEqual([]);
+        expect(hasPermission(role, PERMISSIONS.USER_MANAGE)).toBe(false);
+        expect(hasPermission([role, "ADMIN"], PERMISSIONS.USER_MANAGE)).toBe(
+          true
+        );
+      }
+    });
+
     it("identifies ADMIN as staff and admin", () => {
       expect(isStaff("ADMIN")).toBe(true);
       expect(isAdmin("ADMIN")).toBe(true);
@@ -278,10 +291,10 @@ describe("Permissions Matrix & Role Guard Verification", () => {
       );
     });
 
-    it("verifies middleware normalizes consecutive slashes in callbackUrl redirects", async () => {
+    it("verifies proxy normalizes consecutive slashes in callbackUrl redirects", async () => {
       const req = new NextRequest("http://localhost:3000/admin//ai-relay");
       const res = await (
-        middleware as unknown as (r: NextRequest) => Promise<Response | null>
+        proxy as unknown as (r: NextRequest) => Promise<Response | null>
       )(req);
       expect(res?.status).toBe(307);
       const location = res?.headers?.get("location");

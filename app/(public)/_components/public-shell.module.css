@@ -24,6 +24,42 @@
   color: var(--home-ink);
 }
 
+.homeLayout {
+  --studio-navbar-content-height: 3.5rem;
+  --studio-navbar-padding-start: 0.65rem;
+  --studio-navbar-padding-end: 0.35rem;
+  --home-navbar-height: calc(
+    var(--studio-navbar-content-height) + var(--studio-navbar-padding-start) +
+      var(--studio-navbar-padding-end)
+  );
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
+}
+
+.homeLayout > * {
+  grid-column: 1;
+}
+
+.homeLayout > header {
+  grid-row: 1 / -1;
+  align-self: start;
+}
+
+.homeLayout > main {
+  grid-row: 1;
+}
+
+.homeFooter {
+  grid-row: 2;
+}
+
+@media (min-width: 640px) {
+  .homeLayout {
+    --studio-navbar-content-height: 3.75rem;
+  }
+}
+
 .portfolioTheme {
   background: linear-gradient(
     180deg,
@@ -42,29 +78,20 @@
   );
 }
 
-.pricingTheme {
+.pageHeroTheme {
   background: linear-gradient(
     180deg,
     var(--home-sky) 0,
-    color-mix(in srgb, var(--home-sky) 45%, var(--home-paper)) 24rem,
-    var(--home-paper) 52rem
+    color-mix(in srgb, var(--home-sky) 45%, var(--home-paper)) 26rem,
+    var(--home-paper) 44rem
   );
 }
 
-.blogTheme {
+.blogDetailTheme {
   background: linear-gradient(
     180deg,
     var(--home-sky) 0,
     color-mix(in srgb, var(--home-sky) 45%, var(--home-paper)) 24rem,
     var(--home-paper) 47rem
-  );
-}
-
-.contactTheme {
-  background: linear-gradient(
-    180deg,
-    var(--home-sky) 0,
-    color-mix(in srgb, var(--home-sky) 45%, var(--home-paper)) 26rem,
-    var(--home-paper) 54rem
   );
 }

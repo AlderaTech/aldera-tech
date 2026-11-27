@@ -84,14 +84,14 @@ describe("ProjectDetailTabs UI Component", () => {
       <ProjectDetailTabs project={mockProject} session={mockSession} />
     );
 
-    expect(html).toContain("Overview");
-    expect(html).toContain("Milestones");
-    expect(html).toContain("Tasks");
-    expect(html).toContain("Activity");
+    expect(html).toContain("Ringkasan");
+    expect(html).toContain("Tahapan");
+    expect(html).toContain("Tugas");
+    expect(html).toContain("Aktivitas");
     expect(html).toContain("Diskusi");
-    expect(html).toContain("Time");
-    expect(html).toContain("Files");
-    expect(html).toContain("Invoices");
+    expect(html).toContain("Waktu");
+    expect(html).toContain("Berkas");
+    expect(html).toContain("Invoice");
   });
 
   it("activates overview tab by default when no ?tab= query param is present", () => {

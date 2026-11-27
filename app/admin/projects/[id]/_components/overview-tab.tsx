@@ -89,7 +89,7 @@ export function ProjectOverviewTab({ project }: Props) {
           </div>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.8fr)]">
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(16rem,0.8fr)]">
           <div className="space-y-3">
             <div className="space-y-1.5">
               <Label htmlFor="title">Judul</Label>

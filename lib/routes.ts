@@ -55,7 +55,7 @@ export const DASHBOARD_ROUTES = {
   orders: "/dashboard/orders",
   invoices: "/dashboard/invoices",
   profile: "/dashboard/profile",
-  settings: "/dashboard/settings",
+
   projectDetail: (id: string) => `/dashboard/projects/${id}`,
   projectDetailTab: (id: string, tab: string) =>
     `/dashboard/projects/${id}?tab=${encodeURIComponent(tab)}`,
@@ -248,12 +248,21 @@ export const ADMIN_ROUTES = {
 } as const;
 
 export const API_ROUTES = {
+  health: "/api/health",
+  cronReconcileIntegrations: "/api/cron/reconcile-integrations",
+  fileDownload: (id: string, filename?: string) =>
+    `/api/files/${encodeURIComponent(id)}${filename ? `?filename=${encodeURIComponent(filename)}` : ""}`,
+  publicUpload: (path: string) => `/uploads/${path}`,
+  uploadsPattern: "/uploads/:path*",
+  legacyFilePattern: "/api/files/legacy/:path*",
   exportAnalytics: "/api/admin/export/analytics",
   exportInvoices: "/api/admin/export/invoices",
   exportProjects: "/api/admin/export/projects",
   exportTimesheet: "/api/admin/export/timesheet",
   exportTimesheetWithRange: (from: string, to: string) =>
     `/api/admin/export/timesheet?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`,
+  adminRelayTopupProof: (id: number) =>
+    `/api/admin/ai-relay/topups/${id}/proof`,
   invoicePdf: (id: string) => `/api/invoices/${id}/pdf`,
   paymentWebhook: "/api/webhooks/payment",
   upload: "/api/upload",
@@ -262,6 +271,16 @@ export const API_ROUTES = {
   cronInvoiceReminder: "/api/cron/invoice-reminder",
   cronIssueRecurring: "/api/cron/issue-recurring",
   cronPublishScheduled: "/api/cron/publish-scheduled",
+} as const;
+
+export const SITE_ORIGINS = {
+  production: "https://aldera.tech",
+  staging: "https://staging.aldera.tech",
+} as const;
+
+export const RELAY_ORIGINS = {
+  production: "https://api.aldera.tech",
+  staging: "https://api-staging.aldera.tech",
 } as const;
 
 /**

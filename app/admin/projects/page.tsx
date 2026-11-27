@@ -1,3 +1,6 @@
+import { parsePage } from "@/lib/pagination";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import Link from "next/link";
 import { Plus, ExternalLink, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,6 +24,7 @@ import { ProjectStatus, type Prisma } from "@prisma/client";
 import { SearchFilterBar } from "@/components/shared/search-filter-bar";
 import { DataPagination } from "@/components/shared/data-pagination";
 import { ParamFilterSelect } from "@/components/shared/param-filter-select";
+import { AdminMascot } from "../_components/admin-mascot";
 
 const statusFilterOptions = [
   { label: "Semua Status", value: "ALL" },
@@ -44,7 +48,7 @@ export default async function AdminProjectsList({
   searchParams,
 }: AdminProjectsPageProps) {
   const sp = await searchParams;
-  const page = Math.max(1, Number(sp?.page) || 1);
+  const page = parsePage(sp?.page);
   const PAGE_SIZE = 10;
   const q = sp?.q?.trim();
   const rawStatus = sp?.status?.trim()?.toUpperCase();
@@ -89,17 +93,22 @@ export default async function AdminProjectsList({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <AdminBanner
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+        category="projects"
+        mascot={<AdminMascot pose="guide" size="header" />}
+      >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Proyek</h1>
           <p className="text-muted-foreground">
-            Manage semua proyek yang sedang berjalan.
+            Kelola dan pantau seluruh proyek klien yang sedang berjalan.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           <Button asChild variant="outline">
             <a href={API_ROUTES.exportProjects} download>
-              <Download className="size-4" /> Export CSV
+              <Download className="size-4" /> Ekspor CSV
             </a>
           </Button>
           <Button asChild>
@@ -108,7 +117,7 @@ export default async function AdminProjectsList({
             </Link>
           </Button>
         </div>
-      </div>
+      </AdminBanner>
 
       <SearchFilterBar
         placeholder="Cari judul proyek atau nama client..."
@@ -139,11 +148,18 @@ export default async function AdminProjectsList({
           <TableBody>
             {projects.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="py-10 text-center text-muted-foreground"
-                >
-                  Belum ada proyek atau tidak ada proyek yang sesuai kriteria.
+                <TableCell colSpan={7} className="p-0">
+                  <AdminEmptyState
+                    context="projects"
+                    action={
+                      <Button asChild>
+                        <Link href={ADMIN_ROUTES.projectNew}>
+                          <Plus aria-hidden="true" className="size-4" /> Proyek
+                          Baru
+                        </Link>
+                      </Button>
+                    }
+                  />
                 </TableCell>
               </TableRow>
             ) : (

@@ -8,7 +8,7 @@
  *   - Evaluates active users with balance < Rp 10.000.
  *   - Enforces a 12-hour cooldown window between alerts for the same user.
  *   - Automatically resets cooldown when user tops up balance.
- *   - Dispatches formatted alert with top-up action to Telegram Bot and WhatsApp Fonnte.
+ *   - Dispatches formatted alert with top-up action to Telegram Bot.
  */
 
 import { NextResponse, type NextRequest } from "next/server";

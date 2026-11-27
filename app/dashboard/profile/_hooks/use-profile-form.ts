@@ -37,8 +37,9 @@ export function useProfileForm(defaultValues: ProfileValues) {
       try {
         const result = await updateProfile(formData);
         if (result.ok) {
-          setStatus({ kind: "success", message: "Profil diperbarui" });
-          toast.success("Profil diperbarui");
+          const message = result.message || "Profil diperbarui";
+          setStatus({ kind: "success", message });
+          toast.success(message);
         } else {
           const message = result.message ?? "Gagal memperbarui profil";
           if (message === "Nama wajib diisi") {

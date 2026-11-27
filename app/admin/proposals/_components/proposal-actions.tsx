@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { ClientCredentialsDialog } from "./client-credentials-dialog";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import {
@@ -38,6 +39,11 @@ export function ProposalActions({
   const router = useRouter();
   const [pendingAction, setPendingAction] = React.useState<string | null>(null);
 
+  const [credentials, setCredentials] = React.useState<{
+    email: string;
+    password: string;
+    projectId: string;
+  } | null>(null);
   const isBusy = pendingAction !== null;
   const canSend = status !== "SIGNED" && status !== "CONVERTED";
   const canConvert = status === "SIGNED" && !convertedProjectId;
@@ -75,7 +81,9 @@ export function ProposalActions({
     runAction("convert", async () => {
       const result = await convertProposalToProjectAction(proposalId);
       toast.success("Proposal dikonversi menjadi proyek");
-      router.push(ADMIN_ROUTES.projectDetail(result.projectId));
+      if (result.credentials)
+        setCredentials({ ...result.credentials, projectId: result.projectId });
+      else router.push(ADMIN_ROUTES.projectDetail(result.projectId));
     });
   }
 
@@ -89,6 +97,14 @@ export function ProposalActions({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
+      <ClientCredentialsDialog
+        credentials={credentials}
+        onClose={() => {
+          if (credentials)
+            router.push(ADMIN_ROUTES.projectDetail(credentials.projectId));
+          setCredentials(null);
+        }}
+      />
       <Button type="button" variant="outline" onClick={handleCopy}>
         <Copy className="size-4" /> Copy Link
       </Button>

@@ -1,12 +1,12 @@
 import type { InvoiceStatus } from "@prisma/client";
-import { Download } from "lucide-react";
+import { Download, Receipt } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { invoiceStatusMeta } from "@/lib/status-meta";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { API_ROUTES } from "@/lib/routes";
+import styles from "./project-detail.module.css";
 
 export interface ProjectInvoiceItem {
   id: string;
@@ -21,43 +21,70 @@ interface ProjectInvoicesTabProps {
 }
 
 export function ProjectInvoicesTab({ invoices }: ProjectInvoicesTabProps) {
-  if (invoices.length === 0) {
-    return (
-      <Card className="p-10 text-center text-muted-foreground">
-        Belum ada invoice untuk proyek ini.
-      </Card>
-    );
-  }
-
   return (
-    <div className="space-y-3">
-      {invoices.map((inv) => {
-        const m = invoiceStatusMeta[inv.status];
-        return (
-          <Card
-            key={inv.id}
-            className="flex flex-wrap items-center justify-between gap-3 p-4"
-          >
-            <div>
-              <div className="font-medium">{inv.number}</div>
-              <div className="text-xs text-muted-foreground">
-                Due: {formatDate(inv.dueDate)}
+    <section
+      className={styles.panel}
+      aria-labelledby="project-invoices-heading"
+    >
+      <div className={styles.panelHeader}>
+        <div>
+          <p className={styles.eyebrow}>
+            <Receipt className="size-3.5" aria-hidden="true" /> Keuangan Proyek
+          </p>
+          <h2 id="project-invoices-heading" className={styles.panelTitle}>
+            Daftar Invoice Proyek
+          </h2>
+          <p className={styles.panelSubtitle}>
+            Rincian tagihan dan bukti pembayaran yang terkait dengan proyek ini.
+          </p>
+        </div>
+        <span className={styles.countBadge}>{invoices.length} Invoice</span>
+      </div>
+
+      {invoices.length === 0 ? (
+        <div className={styles.emptyBox}>
+          Belum ada invoice untuk proyek ini.
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {invoices.map((inv) => {
+            const m = invoiceStatusMeta[inv.status];
+            return (
+              <div key={inv.id} className={styles.invoiceRow}>
+                <div className="flex items-center gap-3">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-[#e1e8f2] bg-[#e8f0ff] text-[#245fe5]">
+                    <Receipt className="size-4" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <div className="text-sm font-bold text-[#102651]">
+                      {inv.number}
+                    </div>
+                    <div className="text-xs font-medium text-[#65748b]">
+                      Jatuh tempo: {formatDate(inv.dueDate)}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <Badge variant={m.variant}>{m.label}</Badge>
+                  <span className="text-sm font-extrabold text-[#102651] tabular-nums">
+                    {formatCurrency(Number(inv.total))}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-[#e1e8f2] bg-[#f5f8fd] font-semibold text-[#102651] hover:border-[#245fe5] hover:bg-[#e8f0ff] hover:text-[#245fe5]"
+                    asChild
+                  >
+                    <a href={API_ROUTES.invoicePdf(inv.id)} download>
+                      <Download className="size-3.5" /> PDF
+                    </a>
+                  </Button>
+                </div>
               </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <Badge variant={m.variant}>{m.label}</Badge>
-              <span className="font-semibold">
-                {formatCurrency(Number(inv.total))}
-              </span>
-              <Button size="sm" variant="outline" asChild>
-                <a href={API_ROUTES.invoicePdf(inv.id)} download>
-                  <Download className="size-3.5" /> PDF
-                </a>
-              </Button>
-            </div>
-          </Card>
-        );
-      })}
-    </div>
+            );
+          })}
+        </div>
+      )}
+    </section>
   );
 }

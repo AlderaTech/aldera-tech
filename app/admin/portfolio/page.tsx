@@ -1,3 +1,4 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
 import { ADMIN_ROUTES } from "@/lib/routes";
 import { safeDb } from "@/lib/safe-db";
+import { AdminMascot } from "../_components/admin-mascot";
 import { PortfolioStatGrid } from "./_components/portfolio-stat-grid";
 import { PortfolioTable } from "./_components/portfolio-table";
 
@@ -19,25 +21,32 @@ export default async function AdminPortfolioPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <AdminBanner
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+        category="content"
+        mascot={<AdminMascot pose="portfolio" size="header" />}
+      >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
             Portfolio & Case Studies
           </h1>
           <p className="text-muted-foreground">
-            Kelola studi kasus dan etalase karya digital yang tampil di website
+            Kelola studi kasus dan karya digital yang ditampilkan pada situs
             publik.
           </p>
         </div>
-        <Button
-          asChild
-          className="gap-1.5 bg-brand-primary text-white hover:bg-brand-primary-hover"
-        >
-          <Link href={ADMIN_ROUTES.portfolioNew}>
-            <Plus className="size-4" /> Tambah Studi Kasus
-          </Link>
-        </Button>
-      </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            asChild
+            className="gap-1.5 bg-brand-primary text-white hover:bg-brand-primary-hover"
+          >
+            <Link href={ADMIN_ROUTES.portfolioNew}>
+              <Plus className="size-4" /> Tambah Studi Kasus
+            </Link>
+          </Button>
+        </div>
+      </AdminBanner>
 
       <PortfolioStatGrid items={caseStudies} />
 

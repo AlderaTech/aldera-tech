@@ -1,4 +1,5 @@
 "use client";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 
 import * as React from "react";
 import Link from "next/link";
@@ -136,20 +137,20 @@ export function InvoiceTable({
         <TableBody>
           {invoices.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={8}
-                className="py-10 text-center text-muted-foreground"
-              >
-                Belum ada invoice.
+              <TableCell colSpan={8} className="p-0">
+                <AdminEmptyState
+                  context="invoices"
+                  action={
+                    <Button asChild>
+                      <Link href={ADMIN_ROUTES.invoiceNew}>Invoice Baru</Link>
+                    </Button>
+                  }
+                />
               </TableCell>
             </TableRow>
           ) : (
             invoices.map((inv) => {
               const m = invoiceStatusMeta[inv.status];
-              const overdue =
-                inv.status !== "PAID" &&
-                inv.status !== "CANCELLED" &&
-                inv.dueDate < new Date();
               return (
                 <TableRow
                   key={inv.id}
@@ -173,9 +174,7 @@ export function InvoiceTable({
                     {formatCurrency(Number(inv.total))}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={overdue ? "destructive" : m.variant}>
-                      {overdue ? "Overdue" : m.label}
-                    </Badge>
+                    <Badge variant={m.variant}>{m.label}</Badge>
                   </TableCell>
                   <TableCell className="hidden text-sm text-muted-foreground lg:table-cell">
                     {formatDate(inv.dueDate)}

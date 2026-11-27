@@ -53,18 +53,12 @@ async function resolveAdminSession(): Promise<{
     throw new Error("Forbidden: Operasi AI Relay dibatasi khusus untuk ADMIN.");
   }
 
-  let adminId = 1;
-  try {
-    const adminUser = await ensureRouterUser(
-      session.user.id,
-      session.user.name ?? "Admin",
-      session.user.email ?? "admin@aldera.tech"
-    );
-    if (adminUser?.id) adminId = adminUser.id;
-  } catch {
-    // fallback adminId = 1
-  }
-
+  const adminUser = await ensureRouterUser(
+    session.user.id,
+    session.user.name ?? "Admin",
+    session.user.email ?? undefined
+  );
+  const adminId = adminUser.id;
   return { adminId, webUserId: session.user.id };
 }
 

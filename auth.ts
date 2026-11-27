@@ -3,7 +3,12 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import {
+  consumeLoginAttempt,
+  clearLoginAttempts,
+} from "@/lib/login-rate-limit";
 import type { Role } from "@prisma/client";
+import { canSignInAccount, refreshSessionToken } from "@/lib/auth-session";
 import {
   getPrimaryRole,
   isStaff,
@@ -26,6 +31,7 @@ declare module "next-auth" {
   interface User {
     role: Role;
     roles: Role[];
+    securityVersion?: number;
   }
 }
 
@@ -45,11 +51,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const parsed = credentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
         const { email, password } = parsed.data;
+        try {
+          const ip = request.headers.get("x-real-ip")?.slice(0, 64) ?? null;
+          if (!(await consumeLoginAttempt(email, ip))) return null;
+        } catch {
+          console.error("Login temporarily unavailable.");
+          return null;
+        }
         const user = await prisma.user.findUnique({
           where: { email: email.toLowerCase() },
           select: {
@@ -61,25 +74,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             avatar: true,
             isActive: true,
             phoneVerified: true,
+            invitedAt: true,
+            securityVersion: true,
           },
         });
 
-        if (!user || !user.isActive) return null;
-
-        // Reject credentials login if phone is unverified (unless seeded staff)
-        const isSeededStaff =
-          isStaff(user.roles) &&
-          (user.email.endsWith("@aldera.tech") ||
-            user.email === "gading@gmail.com" ||
-            user.email === "dery@gmail.com" ||
-            user.email === "rafli@gmail.com");
-
-        if (!user.phoneVerified && !isSeededStaff) {
-          return null;
-        }
+        if (!user || !canSignInAccount(user)) return null;
 
         const ok = await bcrypt.compare(password, user.password);
         if (!ok) return null;
+        await clearLoginAttempts(email);
 
         const primaryRole = getPrimaryRole(user.roles);
 
@@ -90,6 +94,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           role: primaryRole,
           roles: user.roles,
           image: user.avatar ?? null,
+          securityVersion: user.securityVersion,
         };
       },
     }),
@@ -105,8 +110,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         appToken.id = user.id as string;
         appToken.roles = user.roles ?? ["CLIENT"];
         appToken.role = user.role ?? getPrimaryRole(appToken.roles);
+        appToken.securityVersion = user.securityVersion ?? 0;
+        return appToken;
       }
-      return appToken;
+      return refreshSessionToken(appToken);
     },
     async session({ session, token }) {
       const appToken = token as typeof token & {

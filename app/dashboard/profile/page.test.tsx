@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it, mock } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
+import { Children, isValidElement, type ReactNode } from "react";
 import { AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
 import { getStudioDashboardSection } from "@/components/dashboard/studio-dashboard-routes";
 import type { ProfileUser } from "./_types/profile";
+import type { ProfileValues } from "./_types/profile";
 
 const user: ProfileUser = {
   id: "test-profile-user",
@@ -20,7 +22,12 @@ const getSession = mock(async (): Promise<{ user: { id: string } } | null> => ({
 const redirect = mock((path: string): never => {
   throw new Error(`redirect:${path}`);
 });
-mock.module("@/auth", () => ({ auth: getSession }));
+mock.module("@/auth", () => ({
+  auth: getSession,
+  signIn: mock(),
+  signOut: mock(),
+  handlers: {},
+}));
 mock.module("@/lib/prisma", () => ({ prisma: { user: { findUnique } } }));
 mock.module("@/lib/actions/profile", () => ({ updateProfile: mock() }));
 mock.module("next/navigation", () => ({
@@ -30,6 +37,22 @@ mock.module("next/navigation", () => ({
 const { default: Page, metadata } = await import("./page");
 const { ProfileContent } = await import("./_components/profile-content");
 const { default: Loading } = await import("./loading");
+const { ProfileForm } = await import("./_components/profile-form");
+
+function findFormValues(node: ReactNode): ProfileValues | undefined {
+  for (const child of Children.toArray(node)) {
+    if (
+      !isValidElement<{
+        children?: ReactNode;
+        defaultValues?: ProfileValues;
+      }>(child)
+    )
+      continue;
+    if (child.type === ProfileForm) return child.props.defaultValues;
+    const found = findFormValues(child.props.children);
+    if (found) return found;
+  }
+}
 
 describe("Halaman Profil Saya", () => {
   beforeEach(() => {
@@ -45,10 +68,9 @@ describe("Halaman Profil Saya", () => {
     await expect(Page()).rejects.toThrow(`redirect:${AUTH_ROUTES.login}`);
     expect(redirect).toHaveBeenCalledWith(AUTH_ROUTES.login);
   });
-  it("mempertahankan query, field yang dipilih, dan nilai awal dari pengguna", async () => {
-    const html = renderToStaticMarkup(
-      await ProfileContent({ userId: user.id })
-    );
+  it("mempertahankan query, field yang dipilih, dan nilai awal dari pengguna tanpa kartu demo", async () => {
+    const content = await ProfileContent({ userId: user.id });
+    const html = renderToStaticMarkup(content);
     expect(findUnique).toHaveBeenCalledWith({
       where: { id: user.id },
       select: {
@@ -62,8 +84,17 @@ describe("Halaman Profil Saya", () => {
       },
     });
     expect(html).toContain(user.email);
-    expect(html).toContain(`value="${user.name}"`);
-    expect(html).toContain(`value="${user.phone}"`);
+    expect(html).toContain(user.phone!);
+    expect(html).toContain("Informasi profil");
+    expect(html).toContain("Simpan Perubahan");
+    expect(findFormValues(content)).toEqual({
+      name: user.name,
+      phone: user.phone,
+    });
+    expect(html).not.toContain("Demo");
+    expect(html).not.toContain("Seluruh Proyek Saya");
+    expect(html).not.toContain("Informasi Pembayaran");
+    expect(html).not.toContain("Aktivitas Terbaru");
   });
   it("tidak menampilkan form kosong ketika data tidak tersedia atau query gagal", async () => {
     findUnique.mockResolvedValueOnce(null);
@@ -78,10 +109,10 @@ describe("Halaman Profil Saya", () => {
   });
   it("mendukung telepon kosong, metadata, loading, dan tema khusus rute profil", async () => {
     findUnique.mockResolvedValueOnce({ ...user, phone: null });
-    const html = renderToStaticMarkup(
-      await ProfileContent({ userId: user.id })
-    );
-    expect(html).toMatch(/name="phone"[^>]*value=""/);
+    const content = await ProfileContent({ userId: user.id });
+    const html = renderToStaticMarkup(content);
+    expect(findFormValues(content)).toEqual({ name: user.name, phone: "" });
+    expect(html).toContain("Belum ditambahkan");
     expect(metadata.title).toBe("Profil Saya");
     expect(metadata.description).toContain("profil");
     expect(renderToStaticMarkup(<Loading />)).toContain(
@@ -90,9 +121,7 @@ describe("Halaman Profil Saya", () => {
     expect(getStudioDashboardSection(DASHBOARD_ROUTES.profile)).toBe(
       "Profil Saya"
     );
-    expect(getStudioDashboardSection(DASHBOARD_ROUTES.settings)).toBe(
-      "Pengaturan"
-    );
+    expect(getStudioDashboardSection("/dashboard/settings")).toBeNull();
     expect(
       getStudioDashboardSection(`${DASHBOARD_ROUTES.profile}/detail`)
     ).toBeNull();

@@ -1,3 +1,6 @@
+import { parsePage } from "@/lib/pagination";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import Link from "next/link";
 import { Plus, FileSignature } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +23,7 @@ import { ProposalStatus, type Prisma } from "@prisma/client";
 import { SearchFilterBar } from "@/components/shared/search-filter-bar";
 import { DataPagination } from "@/components/shared/data-pagination";
 import { ParamFilterSelect } from "@/components/shared/param-filter-select";
+import { AdminMascot } from "../_components/admin-mascot";
 
 const proposalStatusOptions = [
   { label: "Semua Status", value: "ALL" },
@@ -44,7 +48,7 @@ export default async function AdminProposalsPage({
   searchParams,
 }: AdminProposalsPageProps) {
   const sp = await searchParams;
-  const page = Math.max(1, Number(sp?.page) || 1);
+  const page = parsePage(sp?.page);
   const PAGE_SIZE = 10;
   const q = sp?.q?.trim();
   const rawStatus = sp?.status?.trim()?.toUpperCase();
@@ -85,23 +89,30 @@ export default async function AdminProposalsPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <AdminBanner
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+        category="projects"
+        mascot={<AdminMascot pose="contact" size="header" />}
+      >
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
             <FileSignature className="size-6" />
             Proposal
           </h1>
           <p className="text-muted-foreground">
-            Kirim proposal dengan e-signature. Setelah ditandatangani, konversi
-            menjadi proyek.
+            Kirim proposal dengan tanda tangan elektronik, lalu ubah menjadi
+            proyek setelah ditandatangani.
           </p>
         </div>
-        <Button asChild>
-          <Link href={ADMIN_ROUTES.proposalNew}>
-            <Plus className="size-4" /> Proposal Baru
-          </Link>
-        </Button>
-      </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button asChild>
+            <Link href={ADMIN_ROUTES.proposalNew}>
+              <Plus className="size-4" /> Proposal Baru
+            </Link>
+          </Button>
+        </div>
+      </AdminBanner>
 
       <SearchFilterBar
         placeholder="Cari nomor proposal, judul, atau client..."
@@ -129,12 +140,18 @@ export default async function AdminProposalsPage({
           <TableBody>
             {proposals.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={6}
-                  className="py-10 text-center text-muted-foreground"
-                >
-                  Belum ada proposal atau tidak ada proposal yang sesuai
-                  kriteria filter.
+                <TableCell colSpan={6} className="p-0">
+                  <AdminEmptyState
+                    context="proposals"
+                    action={
+                      <Button asChild>
+                        <Link href={ADMIN_ROUTES.proposalNew}>
+                          <Plus aria-hidden="true" className="size-4" />{" "}
+                          Proposal Baru
+                        </Link>
+                      </Button>
+                    }
+                  />
                 </TableCell>
               </TableRow>
             ) : (

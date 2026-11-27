@@ -2,13 +2,21 @@
 
 import { AuthError } from "next-auth";
 import bcrypt from "bcryptjs";
+import { lockAccountKey } from "@/lib/account-locks";
+import {
+  issueVerificationCode,
+  consumeVerificationCode,
+} from "@/lib/verification-store";
 import type { Role } from "@prisma/client";
 import { signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { loginSchema, registerSchema } from "@/lib/validations/auth";
+import {
+  loginSchema,
+  registerSchema,
+  resendOtpSchema,
+} from "@/lib/validations/auth";
 import { getPrimaryRole } from "@/lib/permissions";
-import { sendWhatsApp } from "@/lib/whatsapp";
-import { waTemplates } from "@/lib/whatsapp-templates";
+import { deliverVerificationOtp } from "@/lib/otp-delivery";
 
 export type ActionState = {
   ok: boolean;
@@ -177,44 +185,56 @@ export async function registerAction(
   }
 
   const hashed = await bcrypt.hash(password, 10);
-  await prisma.user.create({
-    data: {
-      email,
-      name,
-      password: hashed,
-      roles: ["CLIENT"],
+  const createdUser = await prisma.$transaction(async (tx) => {
+    await lockAccountKey(tx, "email:" + email.toLowerCase());
+    await lockAccountKey(tx, "phone:" + normalizedPhone);
+    if (await tx.user.findUnique({ where: { email }, select: { id: true } }))
+      return null;
+    const duplicate = await tx.user.findFirst({
+      where: { phone: { in: [phone, normalizedPhone] } },
+      select: { id: true },
+    });
+    if (duplicate) return null;
+    return tx.user.create({
+      data: {
+        email,
+        name,
+        password: hashed,
+        roles: ["CLIENT"],
+        phone: normalizedPhone,
+        phoneVerified: null,
+      },
+      select: { id: true },
+    });
+  });
+  if (!createdUser)
+    return {
+      ok: false,
+      success: false,
+      message: "Email atau nomor WhatsApp sudah terdaftar.",
+      errors: { email: "Periksa email atau nomor WhatsApp Anda." },
+    };
+  const issued = await issueVerificationCode(normalizedPhone, createdUser.id);
+  if (!issued.ok)
+    return {
+      ...issued,
+      success: false,
+      requiresVerification: true,
       phone: normalizedPhone,
-      phoneVerified: null,
-    },
-  });
-
-  // Generate 6-digit numeric OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
-
-  // Remove duplicate unverified tokens for this identifier to prevent unique constraint conflict
-  await prisma.verificationToken.deleteMany({
-    where: {
-      identifier: normalizedPhone,
-      token: otp,
-    },
-  });
-
-  await prisma.verificationToken.create({
-    data: {
-      identifier: normalizedPhone,
-      token: otp,
-      type: "WHATSAPP_OTP",
-      expiresAt,
-      attempts: 0,
-    },
-  });
-
-  const otpTpl = waTemplates.verificationOtp({ code: otp, ttlMinutes: 10 });
-  await sendWhatsApp({
-    to: phone,
-    message: otpTpl.message,
-  });
+      email,
+    };
+  const otp = issued.code;
+  if (!(await deliverVerificationOtp(phone, normalizedPhone, otp))) {
+    return {
+      ok: false,
+      success: false,
+      requiresVerification: true,
+      phone: normalizedPhone,
+      email,
+      message:
+        "Akun berhasil dibuat, tetapi kode OTP belum berhasil dikirim. Silakan kirim ulang kode di halaman verifikasi.",
+    };
+  }
 
   return {
     ok: true,
@@ -282,117 +302,23 @@ export async function verifyOtpAction(
     };
   }
 
-  const normalized = internalNormalizePhone(identifier);
-
-  // Finds latest unverified token in prisma.verificationToken
-  const tokenRecord = await prisma.verificationToken.findFirst({
-    where: {
-      identifier: { in: [identifier, normalized] },
-      type: "WHATSAPP_OTP",
-      verifiedAt: null,
-    },
-    orderBy: { createdAt: "desc" },
-  });
-
-  if (!tokenRecord) {
-    return {
-      ok: false,
-      success: false,
-      message:
-        "Kode OTP tidak valid atau belum diminta. Silakan minta kode baru.",
-    };
-  }
-
-  // If attempts >= 5 or expired, reject.
-  if (tokenRecord.attempts >= 5) {
-    return {
-      ok: false,
-      success: false,
-      attempts: tokenRecord.attempts,
-      remainingAttempts: 0,
-      isLocked: true,
-      message:
-        "Batas percobaan verifikasi telah habis (maksimal 5 kali). Silakan minta kode OTP baru.",
-    };
-  }
-
-  if (new Date() > tokenRecord.expiresAt) {
-    return {
-      ok: false,
-      success: false,
-      attempts: tokenRecord.attempts,
-      message: "Kode OTP telah kadaluarsa. Silakan minta kode baru.",
-    };
-  }
-
-  // If token mismatch, increment attempts and reject.
-  if (tokenRecord.token !== token) {
-    const updatedAttempts = tokenRecord.attempts + 1;
-    await prisma.verificationToken.update({
-      where: { id: tokenRecord.id },
-      data: { attempts: updatedAttempts },
-    });
-    const remainingAttempts = Math.max(0, 5 - updatedAttempts);
-    return {
-      ok: false,
-      success: false,
-      attempts: updatedAttempts,
-      remainingAttempts,
-      isLocked: updatedAttempts >= 5,
-      message:
-        remainingAttempts > 0
-          ? `Kode OTP salah. Sisa percobaan: ${remainingAttempts}.`
-          : "Batas percobaan verifikasi telah habis (maksimal 5 kali). Silakan minta kode OTP baru.",
-    };
-  }
-
-  // On valid match: updates User.phoneVerified = new Date(), updates token verifiedAt = new Date().
-  const now = new Date();
-  await prisma.verificationToken.update({
-    where: { id: tokenRecord.id },
-    data: { verifiedAt: now },
-  });
-
-  const user = await prisma.user.findFirst({
-    where: {
-      OR: [{ phone: identifier }, { phone: normalized }, { email: identifier }],
-    },
-  });
-
-  if (user) {
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        phoneVerified: now,
-        ...(user.phone ? {} : { phone: normalized }),
-      },
-    });
-
-    if (password) {
-      try {
-        await signIn("credentials", {
-          email: user.email,
-          password,
-          redirect: false,
-        });
-      } catch {
-        // Auto-login failure handled gracefully
-      }
+  const result = await consumeVerificationCode(identifier, token);
+  if (result.ok && password) {
+    try {
+      await signIn("credentials", {
+        email: result.email,
+        password,
+        redirect: false,
+      });
+    } catch {
+      return {
+        ...result,
+        message:
+          "Nomor terverifikasi. Silakan masuk menggunakan email dan password Anda.",
+      };
     }
   }
-
-  const primaryRole = getPrimaryRole(user?.roles);
-
-  return {
-    ok: true,
-    success: true,
-    verified: true,
-    phone: normalized,
-    email: user?.email,
-    role: primaryRole,
-    roles: user?.roles,
-    message: "Verifikasi nomor WhatsApp berhasil! Akun Anda telah aktif.",
-  };
+  return result;
 }
 
 export async function resendOtpAction(
@@ -422,66 +348,39 @@ export async function resendOtpAction(
     };
   }
 
-  const normalizedPhone = internalNormalizePhone(phone);
-
-  // Rate limit check (60s cooldown from last token)
-  const lastToken = await prisma.verificationToken.findFirst({
-    where: {
-      identifier: { in: [phone, normalizedPhone] },
-      type: "WHATSAPP_OTP",
-    },
-    orderBy: { createdAt: "desc" },
+  const parsedPhone = resendOtpSchema.safeParse({ phone });
+  if (!parsedPhone.success)
+    return {
+      ok: false,
+      success: false,
+      message: "Nomor WhatsApp tidak valid.",
+    };
+  const normalizedPhone = internalNormalizePhone(parsedPhone.data.phone);
+  const user = await prisma.user.findFirst({
+    where: { isActive: true, phone: { in: [phone, normalizedPhone] } },
+    select: { id: true },
   });
-
-  const COOLDOWN_SECONDS = 60;
-  if (lastToken) {
-    const elapsedSeconds = Math.floor(
-      (Date.now() - lastToken.createdAt.getTime()) / 1000
-    );
-    if (elapsedSeconds < COOLDOWN_SECONDS) {
-      const remainingSeconds = COOLDOWN_SECONDS - elapsedSeconds;
-      return {
-        ok: false,
-        success: false,
-        cooldownSeconds: remainingSeconds,
-        message: `Silakan tunggu ${remainingSeconds} detik sebelum meminta kode OTP baru.`,
-      };
-    }
-  }
-
-  // Issues fresh 6-digit OTP, updates/creates token, calls sendWhatsApp.
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
-
-  // Ensure unique constraint [identifier, token] doesn't conflict
-  await prisma.verificationToken.deleteMany({
-    where: {
-      identifier: normalizedPhone,
-      token: otp,
-    },
-  });
-
-  await prisma.verificationToken.create({
-    data: {
-      identifier: normalizedPhone,
-      token: otp,
-      type: "WHATSAPP_OTP",
-      expiresAt,
-      attempts: 0,
-    },
-  });
-
-  const otpTpl = waTemplates.verificationOtp({ code: otp, ttlMinutes: 10 });
-  await sendWhatsApp({
-    to: phone,
-    message: otpTpl.message,
-  });
-
+  if (!user)
+    return {
+      ok: false,
+      success: false,
+      message: "Nomor WhatsApp belum dapat diverifikasi.",
+    };
+  const issued = await issueVerificationCode(normalizedPhone, user.id);
+  if (!issued.ok) return { ...issued, success: false };
+  if (!(await deliverVerificationOtp(phone, normalizedPhone, issued.code)))
+    return {
+      ok: false,
+      success: false,
+      phone: normalizedPhone,
+      message:
+        "Kode OTP belum berhasil dikirim. Silakan coba lagi beberapa saat.",
+    };
   return {
     ok: true,
     success: true,
     phone: normalizedPhone,
-    cooldownSeconds: COOLDOWN_SECONDS,
+    cooldownSeconds: 60,
     message: "Kode OTP baru telah berhasil dikirim ke nomor WhatsApp Anda.",
   };
 }

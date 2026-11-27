@@ -51,7 +51,7 @@ export function TaskCard({ task, readOnly, onEdit, onDelete }: TaskCardProps) {
         transition,
       }}
       className={cn(
-        "border-slate-200 bg-white p-3 shadow-xs transition-shadow",
+        "rounded-xl border-[#e1e8f2] bg-white p-3.5 text-[#102651] shadow-2xs transition-shadow hover:border-[#245fe5]/40",
         isDragging && "opacity-70 shadow-lg"
       )}
     >
@@ -59,7 +59,7 @@ export function TaskCard({ task, readOnly, onEdit, onDelete }: TaskCardProps) {
         {!readOnly && (
           <button
             type="button"
-            className="mt-0.5 cursor-grab rounded p-1 text-muted-foreground hover:bg-accent active:cursor-grabbing"
+            className="mt-0.5 cursor-grab rounded p-1 text-[#65748b] hover:bg-[#e8f0ff] hover:text-[#245fe5] active:cursor-grabbing"
             aria-label="Drag task"
             {...attributes}
             {...listeners}
@@ -69,7 +69,9 @@ export function TaskCard({ task, readOnly, onEdit, onDelete }: TaskCardProps) {
         )}
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="text-sm leading-snug font-semibold">{task.title}</h3>
+            <h3 className="text-sm leading-snug font-bold text-[#102651]">
+              {task.title}
+            </h3>
             {!readOnly && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

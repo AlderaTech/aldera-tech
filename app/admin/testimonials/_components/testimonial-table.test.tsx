@@ -72,6 +72,6 @@ describe("TestimonialTable Component", () => {
       />
     );
 
-    expect(html).toContain("Tidak ada testimoni yang ditemukan.");
+    expect(html).toContain("Belum ada testimoni");
   });
 });

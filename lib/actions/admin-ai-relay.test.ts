@@ -50,11 +50,7 @@ import {
   runLedgerAudit,
 } from "./admin-ai-relay";
 import { queryRouter, closeRouterPool } from "@/lib/router-db";
-import {
-  ensureRouterUser,
-  createTopupRequest,
-  getUserBalance,
-} from "@/lib/actions/ai-relay";
+import { createTopupRequest, getUserBalance } from "@/lib/actions/ai-relay";
 
 describe("Admin AI Operations & Relay Server Actions (M5: F14, F15, F16)", () => {
   const adminTestAuth = {
@@ -77,13 +73,13 @@ describe("Admin AI Operations & Relay Server Actions (M5: F14, F15, F16)", () =>
 
   beforeAll(async () => {
     // Create test user and test admin in aldera_router.users
-    await ensureRouterUser(
+    await seedRouterAccount(
       "test_client_m5_web_id",
       "M5 Client Tester",
       "m5.client@aldera.test"
     );
 
-    const admin = await ensureRouterUser(
+    const admin = await seedRouterAccount(
       adminTestAuth.id,
       "M5 Admin Tester",
       "m5.admin@aldera.test"
@@ -571,3 +567,11 @@ describe("Admin AI Operations & Relay Server Actions (M5: F14, F15, F16)", () =>
     });
   });
 });
+
+async function seedRouterAccount(webId: string, name?: string, email?: string) {
+  const result = await queryRouter<{ id: number }>(
+    "INSERT INTO users (web_user_id, full_name, username, balance, is_active) VALUES ($1,$2,$3,0,true) ON CONFLICT (web_user_id) DO UPDATE SET updated_at=NOW() RETURNING id",
+    [webId, name ?? webId, email ?? webId]
+  );
+  return { id: Number(result.rows[0].id) };
+}

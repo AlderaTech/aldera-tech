@@ -5,10 +5,13 @@ import { OverviewWelcome } from "./overview-welcome";
 import { user } from "./_fixtures/overview";
 
 describe("Sambutan Ringkasan", () => {
-  it("menambahkan corak dekoratif tanpa menambah navigasi atau maskot", () => {
+  it("menambahkan corak dekoratif dan ilustrasi maskot kucing menyapa 3D", () => {
     const html = renderToStaticMarkup(<OverviewWelcome user={user} />);
-    expect(html).toContain('focusable="false"');
+    expect(html).toContain("data-workspace-banner-badge");
+    expect(html).toContain('aria-hidden="true"');
+    expect(html).toContain("lucide-panels-top-left");
     expect(html.match(/<img\b/g)).toHaveLength(1);
+    expect(html).toContain("aldera-cat-greeting");
     expect(html.match(/<a\b/g)).toHaveLength(1);
     expect(html).toContain(`href="${DASHBOARD_ROUTES.profile}"`);
   });
@@ -19,9 +22,12 @@ describe("Sambutan Ringkasan", () => {
     expect(html).toContain(user.email!);
     expect(html).toContain("MP");
     expect(html).toContain(`href="${DASHBOARD_ROUTES.profile}"`);
-    expect(html).toContain('sizes="(min-width: 640px) 80px, 1px"');
+    expect(html).toContain(
+      'sizes="(min-width: 1024px) 144px, (min-width: 640px) 120px, 0px"'
+    );
     expect(html).toContain('alt=""');
   });
+
   it("menangani nama/email kosong dan identitas panjang tanpa mengubah konten", () => {
     expect(
       renderToStaticMarkup(

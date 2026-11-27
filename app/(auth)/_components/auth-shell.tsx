@@ -1,18 +1,14 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { PUBLIC_ROUTES } from "@/lib/routes";
-import type { AuthVariant } from "../_constants/auth-panel-copy";
-import { AuthCard } from "./auth-card";
-import { AuthSidePanel } from "./auth-side-panel";
-
-type AuthShellProps = {
-  eyebrow: string;
-  title: string;
-  description: string;
-  variant: AuthVariant;
-  children: ReactNode;
-};
+import { Logo } from "@/components/shared/logo";
+import { AUTH_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
+import { cn } from "@/lib/utils";
+import recoveryMascot from "@/public/images/auth/aldera-cat-recovery.webp";
+import registerMascot from "@/public/images/auth/aldera-cat-register.webp";
+import frame from "../login/_components/login-experience.module.css";
+import styles from "./auth-shell.module.css";
 
 export function AuthShell({
   eyebrow,
@@ -20,22 +16,53 @@ export function AuthShell({
   description,
   variant,
   children,
-}: AuthShellProps) {
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  variant: "register" | "reset";
+  children: ReactNode;
+}) {
   return (
-    <div className="mx-auto w-full max-w-[1040px]">
-      <Link
-        href={PUBLIC_ROUTES.home}
-        className="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition-colors hover:text-[#0F263A]"
-      >
-        <ArrowLeft className="size-4" />
-        Kembali ke beranda
-      </Link>
-
-      <div className="grid overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-2xl shadow-slate-900/10 lg:min-h-[580px] lg:grid-cols-[minmax(0,480px)_minmax(0,1fr)]">
-        <AuthCard eyebrow={eyebrow} title={title} description={description}>
-          {children}
-        </AuthCard>
-        <AuthSidePanel variant={variant} />
+    <div className={cn("tech-playful", frame.loginExperience)}>
+      <div className={frame.frame}>
+        <aside className={frame.brandPanel}>
+          <div className={frame.brandHeader}>
+            <Logo size="md" href={PUBLIC_ROUTES.home} />
+          </div>
+          <div className={frame.mascotStage} aria-hidden="true">
+            <span className={frame.mascotGlow} />
+            <Image
+              src={variant === "reset" ? recoveryMascot : registerMascot}
+              alt=""
+              quality={90}
+              sizes="(min-width:1024px) 450px, (min-width:640px) 340px, 1px"
+              className={frame.mascot}
+            />
+          </div>
+          <div className={frame.brandCopy}>
+            <h2>
+              {variant === "reset" ? "Akses kembali." : "Satu langkah lagi."}
+              <span>Terhubung bersama Aldera.</span>
+            </h2>
+            <p className={frame.brandDescription}>
+              Kami bantu Anda melanjutkan langkah digital.
+            </p>
+          </div>
+        </aside>
+        <section className={frame.formPanel} aria-labelledby="auth-page-title">
+          <Link href={AUTH_ROUTES.login} className={frame.homeLink}>
+            <ArrowLeft aria-hidden="true" />
+            Kembali ke Login
+          </Link>
+          <div className={cn(frame.formContent, styles.content)}>
+            <p className={frame.formEyebrow}>{eyebrow}</p>
+            <h1 id="auth-page-title">{title}</h1>
+            <p className={frame.formDescription}>{description}</p>
+            {children}
+          </div>
+          <p className={styles.footer}>Aldera Tech · Ruang kerja klien</p>
+        </section>
       </div>
     </div>
   );

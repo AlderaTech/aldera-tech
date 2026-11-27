@@ -146,7 +146,7 @@ prisma.config.ts          # Prisma 7 config (datasource.url lives here)
 
 ## WhatsApp Setup (Fonnte API)
 
-Semua notifikasi transaksi (pengiriman invoice, pengingat jatuh tempo, tautan penawaran proposal, dan tautan reset password) dikirimkan melalui WhatsApp menggunakan **Fonnte API**. Konfigurasikan pada `.env`:
+WhatsApp menggunakan **Fonnte API** untuk OTP verifikasi, pengiriman invoice dan proposal, reset password, notifikasi pembayaran, dan aktivitas proyek. Peringatan saldo rendah AI Relay dikirim melalui Telegram; pengingat jatuh tempo invoice tidak dikirim. Konfigurasikan pada `.env`:
 
 ```bash
 WHATSAPP_API_URL="https://api.fonnte.com/send"
@@ -159,7 +159,7 @@ Jika `WHATSAPP_API_KEY` belum diisi (misalnya pada local development), pengirima
 
 Aplikasi memiliki 3 background cron endpoints:
 
-- `/api/cron/invoice-reminder` (Harian 09:00 WIB — kirim pengingat jatuh tempo via WhatsApp)
+- `/api/cron/invoice-reminder` (Harian 09:00 WIB — menandai invoice lewat jatuh tempo; pengiriman reminder dinonaktifkan)
 - `/api/cron/issue-recurring` (Harian 00:01 WIB — penerbitan tagihan berkala)
 - `/api/cron/publish-scheduled` (Per 15 Menit — penerbitan blog terjadwal)
 
@@ -196,7 +196,7 @@ docker compose -f docker/docker-compose.yml logs -f app
 ### Menjalankan Mandiri (Bare Metal VPS)
 
 1. **Server prep**: Node.js 20+, PostgreSQL 16
-2. **Install**: `bun install` (atau `npm ci`)
+2. **Install**: `bun install --frozen-lockfile` menggunakan Bun >= 1.4.4
 3. **Database**: `bun run db:push`
 4. **Build & Start**: `bun run build && bun run start` (atau kelola via PM2)
 5. **Reverse proxy**: Nginx / Caddy pointing to `127.0.0.1:3000` dengan SSL Let's Encrypt
@@ -225,3 +225,5 @@ This project uses Next.js 16, which introduces several breaking changes from v15
 2. **Async Request APIs**: `params` and `searchParams` are awaited
 3. **Turbopack default**: no more `--turbopack` flag
 4. **No `next lint`**: use `eslint` directly
+
+Pengujian aman: gunakan `bun run test`; runner menyiapkan database sementara. Lihat [panduan infrastruktur pengujian](ai-agent-docs/testing-infrastructure.md).

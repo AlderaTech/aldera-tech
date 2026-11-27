@@ -1,8 +1,12 @@
+import { parsePage } from "@/lib/pagination";
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { Download, File as FileIcon, ImageIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
+import { AdminEmptyState } from "../_components/admin-empty-state";
+import { AdminMascot } from "../_components/admin-mascot";
 import { safeDb } from "@/lib/safe-db";
 import { formatDate } from "@/lib/utils";
 import { FileUploader } from "@/components/dashboard/file-uploader";
@@ -37,7 +41,7 @@ export default async function AdminFilesPage({
   searchParams,
 }: AdminFilesPageProps) {
   const sp = await searchParams;
-  const page = Math.max(1, Number(sp?.page) || 1);
+  const page = parsePage(sp?.page);
   const PAGE_SIZE = 12;
   const q = sp?.q?.trim();
   const rawType = sp?.type?.trim()?.toUpperCase();
@@ -85,12 +89,19 @@ export default async function AdminFilesPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">File Manager</h1>
-        <p className="text-muted-foreground">
-          Semua file yang diunggah ke platform.
-        </p>
-      </div>
+      <AdminBanner
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+        category="projects"
+        mascot={<AdminMascot pose="guide" size="header" />}
+      >
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Manajer Berkas</h1>
+          <p className="text-muted-foreground">
+            Kelola dan telusuri seluruh berkas yang diunggah ke platform.
+          </p>
+        </div>
+      </AdminBanner>
 
       <FileUploader />
 
@@ -103,8 +114,8 @@ export default async function AdminFilesPage({
       </SearchFilterBar>
 
       {files.length === 0 ? (
-        <Card className="p-10 text-center text-muted-foreground">
-          Belum ada file terunggah atau tidak ada file yang sesuai kriteria.
+        <Card>
+          <AdminEmptyState context="files" />
         </Card>
       ) : (
         <div className="space-y-6">

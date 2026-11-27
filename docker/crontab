@@ -14,3 +14,6 @@
 # 4. AI Relay Low Balance Guard (Every 30 minutes)
 */30 * * * * curl -s -f -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/balance-guard > /dev/null 2>&1
 
+
+# Durable invoice balance effects, Telegram configuration sync and expired login counter cleanup
+*/5 * * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/reconcile-integrations >> /proc/1/fd/1 2>&1

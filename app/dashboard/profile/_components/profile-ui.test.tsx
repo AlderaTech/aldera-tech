@@ -1,4 +1,5 @@
 import { describe, expect, it, mock } from "bun:test";
+import { readFileSync } from "node:fs";
 import { Children, isValidElement } from "react";
 import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -103,5 +104,41 @@ describe("Identitas dan formulir profil", () => {
     expect(frame).toContain("Profil Saya");
     expect(frame).toContain('role="status"');
     expect(frame).not.toContain(user.email);
+  });
+  it("memperjelas panel dan formulir dalam tema lokal yang konsisten dengan Pengaturan", () => {
+    const css = readFileSync(
+      new URL("./profile.module.css", import.meta.url),
+      "utf8"
+    );
+    const frame = renderToStaticMarkup(<ProfileFrame>Konten</ProfileFrame>);
+    expect(frame).toContain("data-profile-page");
+    expect(css).toContain("var(--overview-ink) 18%");
+    expect(css).toContain("var(--overview-ink) 72%");
+    expect(css).toContain("@container (min-width: 54rem)");
+    expect(css).toContain("prefers-reduced-motion");
+    expect(css).toMatch(/\[data-slot="skeleton"\]\s*\{\s*animation: none;/);
+    const input = css.match(/\.field input\s*\{([^}]+)\}/)?.[1];
+    expect(input).toContain("font-size: 1rem;");
+    expect(input).toContain("height: 48px;");
+    const formCard = css.match(/\.formCard\s*\{([^}]+)\}/)?.[1];
+    expect(formCard).toContain("overflow: visible;");
+    const workspace = css.match(/\.workspace\s*\{([^}]+)\}/)?.[1];
+    expect(workspace).toContain("display: grid;");
+    expect(css).toContain(".identityDetails");
+    expect(css).not.toMatch(/:global|(?:^|\n)(?:body|html)\s*\{/);
+  });
+  it("memisahkan identitas asli, formulir, dan maskot profil", () => {
+    const identity = renderToStaticMarkup(<ProfileIdentity user={user} />);
+    const form = renderToStaticMarkup(
+      <ProfileForm defaultValues={{ name: user.name, phone: "" }} />
+    );
+    expect(identity).not.toContain("aldera-relay-assistant");
+    expect(identity).toContain("aldera-profile-guide");
+    expect(identity).toContain('data-slot="avatar-fallback"');
+    expect(form).not.toContain("aldera-relay-assistant");
+    expect(form).toContain('id="personal-heading"');
+    expect(form).toContain('id="contact-heading"');
+    expect(form).toContain('id="name-hint"');
+    expect(form).not.toMatch(/>0[12]</);
   });
 });

@@ -10,7 +10,6 @@ import {
   Users,
   Newspaper,
   Loader2,
-  Search as SearchIcon,
   LayoutDashboard,
   Plus,
   FileSignature,
@@ -29,24 +28,18 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
-import { ADMIN_ROUTES, DASHBOARD_ROUTES, API_ROUTES } from "@/lib/routes";
+import { ADMIN_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
+import {
+  useCommandSearch,
+  type SearchResult,
+} from "./_hooks/use-command-search";
 import {
   hasPermission,
   isStaff,
   PERMISSIONS,
   type Permission,
 } from "@/lib/permissions";
-
-type SearchResult = {
-  kind: "project" | "invoice" | "user" | "blog";
-  id: string;
-  title: string;
-  subtitle?: string | null;
-  href: string;
-};
 
 const kindIcon = {
   project: FolderKanban,
@@ -132,7 +125,7 @@ const adminQuickNav: QuickNavItem[] = [
     permission: PERMISSIONS.BLOG_CREATE,
   },
   {
-    label: "File Manager",
+    label: "Manajer Berkas",
     href: ADMIN_ROUTES.files,
     icon: FolderClosed,
     permission: PERMISSIONS.FILE_MANAGE,
@@ -164,7 +157,7 @@ const adminQuickNav: QuickNavItem[] = [
 ];
 
 const clientQuickNav: QuickNavItem[] = [
-  { label: "Overview", href: DASHBOARD_ROUTES.home, icon: LayoutDashboard },
+  { label: "Ringkasan", href: DASHBOARD_ROUTES.home, icon: LayoutDashboard },
   {
     label: "Proyek Saya",
     href: DASHBOARD_ROUTES.projects,
@@ -187,8 +180,7 @@ export function CommandPalette({ role }: { role?: Role | null }) {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
-  const [results, setResults] = React.useState<SearchResult[]>([]);
-  const [loading, setLoading] = React.useState(false);
+  const { results, loading, error, retry } = useCommandSearch(query, open);
 
   // ⌘K / Ctrl+K global shortcut
   React.useEffect(() => {
@@ -201,37 +193,6 @@ export function CommandPalette({ role }: { role?: Role | null }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
-
-  // Debounced search
-  React.useEffect(() => {
-    if (!open) return;
-    const trimmed = query.trim();
-    if (!trimmed) {
-      // Defer clearing results so we don't setState during effect mount.
-      const clearTimer = setTimeout(() => setResults([]), 0);
-      return () => clearTimeout(clearTimer);
-    }
-    const controller = new AbortController();
-    const timer = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(API_ROUTES.search(trimmed), {
-          signal: controller.signal,
-        });
-        if (!res.ok) throw new Error("Search failed");
-        const data = (await res.json()) as { results: SearchResult[] };
-        setResults(data.results);
-      } catch {
-        // swallow
-      } finally {
-        setLoading(false);
-      }
-    }, 200);
-    return () => {
-      controller.abort();
-      clearTimeout(timer);
-    };
-  }, [query, open]);
 
   function handleSelect(href: string) {
     setOpen(false);
@@ -263,7 +224,22 @@ export function CommandPalette({ role }: { role?: Role | null }) {
             <Loader2 className="size-4 animate-spin" /> Mencari…
           </div>
         )}
-        {!loading && query && results.length === 0 && (
+        {!loading && error && (
+          <div
+            role="alert"
+            className="space-y-3 px-4 py-6 text-center text-sm text-muted-foreground"
+          >
+            <p>{error}</p>
+            <button
+              type="button"
+              onClick={retry}
+              className="rounded-lg border px-3 py-2 font-medium text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              Coba lagi
+            </button>
+          </div>
+        )}
+        {!loading && !error && query && results.length === 0 && (
           <CommandEmpty>
             Tidak ada hasil untuk &ldquo;{query}&rdquo;
           </CommandEmpty>
@@ -281,12 +257,6 @@ export function CommandPalette({ role }: { role?: Role | null }) {
                 {n.label}
               </CommandItem>
             ))}
-            <CommandSeparator />
-            <CommandItem disabled className="!opacity-60">
-              <SearchIcon className="size-4" />
-              Ketik untuk mencari…
-              <CommandShortcut>⌘K</CommandShortcut>
-            </CommandItem>
           </CommandGroup>
         )}
 

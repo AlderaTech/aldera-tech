@@ -19,7 +19,7 @@ describe("Isolasi background Ringkasan", () => {
     for (const route of [
       DASHBOARD_ROUTES.projects,
       DASHBOARD_ROUTES.profile,
-      DASHBOARD_ROUTES.settings,
+
       DASHBOARD_ROUTES.invoices,
       DASHBOARD_ROUTES.aiRelay,
     ]) {

@@ -1,0 +1,71 @@
+.scope [data-relay-balance-panel] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.scope :is([data-slot="card-header"], [data-relay-section-heading]) {
+  position: relative;
+  isolation: isolate;
+}
+.scope [data-relay-balance-panel]::before,
+.scope [data-slot="card-header"]::after,
+.scope [data-relay-section-heading]::after {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  content: "";
+}
+.scope [data-relay-balance-panel]::before {
+  top: -4rem;
+  right: -3rem;
+  width: 9rem;
+  height: 9rem;
+  border: 1px solid color-mix(in srgb, var(--relay-blue) 14%, transparent);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1.35rem color-mix(in srgb, var(--relay-blue) 3%, transparent),
+    0 0 0 2.7rem color-mix(in srgb, var(--relay-blue) 2%, transparent);
+  opacity: 0.75;
+}
+.scope [data-slot="card-header"]::after {
+  top: 0;
+  right: 0.75rem;
+  width: min(26%, 6rem);
+  height: 4.5rem;
+  border-radius: 0 1rem 0 0;
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 9px,
+    color-mix(in srgb, var(--relay-blue) 12%, transparent) 9px 10px,
+    transparent 10px 19px
+  );
+  mask-image: linear-gradient(225deg, black, transparent 75%);
+  opacity: 0.65;
+}
+.scope [data-relay-section-heading]::after {
+  right: 0;
+  bottom: -0.25rem;
+  width: 6rem;
+  height: 1.25rem;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--relay-blue) 30%, transparent) 1px,
+    transparent 1.5px
+  );
+  background-size: 8px 8px;
+  mask-image: linear-gradient(to left, black, transparent);
+  opacity: 0.4;
+}
+@media (max-width: 639px) {
+  .scope [data-relay-balance-panel]::before {
+    opacity: 0.5;
+  }
+  .scope [data-slot="card-header"]::after {
+    width: 4rem;
+    height: 3rem;
+    opacity: 0.4;
+  }
+  .scope [data-relay-section-heading]::after {
+    display: none;
+  }
+}

@@ -27,8 +27,10 @@ const CHART_INITIAL_DIMENSION = { width: 640, height: 256 };
 
 export function RevenueAreaChart({
   data,
+  animate = true,
 }: {
   data: { month: string; revenue: number }[];
+  animate?: boolean;
 }) {
   return (
     <div className="h-64 min-h-64 w-full min-w-0">
@@ -89,6 +91,7 @@ export function RevenueAreaChart({
             formatter={(value) => [formatCurrency(Number(value)), "Revenue"]}
           />
           <Area
+            isAnimationActive={animate}
             type="monotone"
             dataKey="revenue"
             stroke="oklch(0.55 0.18 250)"
@@ -103,8 +106,10 @@ export function RevenueAreaChart({
 
 export function ProjectStatusPie({
   data,
+  animate = true,
 }: {
   data: { name: string; value: number }[];
+  animate?: boolean;
 }) {
   const total = data.reduce((s, d) => s + d.value, 0);
   if (total === 0) {
@@ -125,6 +130,7 @@ export function ProjectStatusPie({
       >
         <PieChart>
           <Pie
+            isAnimationActive={animate}
             data={data}
             dataKey="value"
             nameKey="name"

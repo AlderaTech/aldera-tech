@@ -30,10 +30,17 @@ export async function sendWhatsApp({
   const apiUrl = process.env.WHATSAPP_API_URL || API_URL;
 
   if (!apiUrl || !apiKey) {
-    console.log("[WhatsApp] No API configured. Message:", {
-      to: phone,
-      message,
-    });
+    if (
+      process.env.NODE_ENV !== "development" &&
+      process.env.NODE_ENV !== "test"
+    ) {
+      return {
+        success: false,
+        code: "NOT_CONFIGURED",
+        error: "Layanan WhatsApp belum dikonfigurasi.",
+      };
+    }
+    console.info("[WhatsApp] Delivery simulated; message content omitted.");
     return { success: true, simulated: true };
   }
 
@@ -61,6 +68,19 @@ export async function sendWhatsApp({
       };
     }
 
+    const payload: unknown = await res.json();
+    if (
+      !payload ||
+      typeof payload !== "object" ||
+      !("status" in payload) ||
+      payload.status !== true
+    ) {
+      return {
+        success: false,
+        code: "PROVIDER_REJECTED",
+        error: "Provider WhatsApp menolak pengiriman pesan.",
+      };
+    }
     return { success: true };
   } catch (err) {
     const hasCode = typeof err === "object" && err !== null && "code" in err;
@@ -74,8 +94,8 @@ export async function sendWhatsApp({
     const error = isTimeout
       ? "WhatsApp service timeout (4s exceeded)"
       : err instanceof Error
-      ? err.message
-      : "Unknown error";
+        ? err.message
+        : "Unknown error";
 
     console.error("[WhatsApp] Send failed:", error);
     return {
@@ -88,7 +108,7 @@ export async function sendWhatsApp({
 }
 
 /** Normalize phone to international format (62xxx) */
-function normalizePhone(phone: string): string | null {
+export function normalizePhone(phone: string): string | null {
   const digits = phone.replace(/\D/g, "");
   if (!digits || digits.length < 9) return null;
   if (digits.startsWith("0")) return "62" + digits.slice(1);

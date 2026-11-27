@@ -37,14 +37,15 @@ function render(props: Partial<Props> = {}) {
 }
 
 describe("Empty state Estimasi Biaya dashboard", () => {
-  it("menempatkan maskot dekoratif di atas instruksi tanpa total atau DP", () => {
+  it("menempatkan ilustrasi non-kucing seragam di atas instruksi tanpa total atau DP", () => {
     const html = render();
     expect(html).toContain('id="calculator-estimate"');
     expect(html).toContain("Estimasi Biaya");
     expect(html).toContain("lucide-calculator");
     expect(html).not.toContain("lucide-list-checks");
     expect(html.match(/<img\b/g)).toHaveLength(1);
-    expect(html).toContain("aldera-cat-services");
+    expect(html).toContain("design");
+    expect(html).not.toContain("aldera-cat");
     expect(html).toContain('alt=""');
     expect(html).toContain('sizes="120px"');
     expect(html.indexOf("<img")).toBeLessThan(
@@ -58,7 +59,7 @@ describe("Empty state Estimasi Biaya dashboard", () => {
   it("memakai aset WebP transparan yang benar-benar tersedia dan dapat dibaca", async () => {
     const asset = readFileSync(
       new URL(
-        "../../../../public/images/services/aldera-cat-services.webp",
+        "../../../../public/images/about/technology/design.webp",
         import.meta.url
       )
     );

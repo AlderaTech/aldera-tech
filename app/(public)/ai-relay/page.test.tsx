@@ -7,9 +7,71 @@ import {
   filterModelCatalog,
   generateIdePresetConfig,
   calculateMonthlyCost,
-  DEFAULT_MODEL_CATALOG,
   type ModelCatalogItem,
 } from "@/lib/ai-relay-utils";
+
+const MODEL_CATALOG_FIXTURE: ModelCatalogItem[] = [
+  {
+    id: "deepseek-chat",
+    displayName: "DeepSeek V3",
+    category: "Budget",
+    contextWindow: 64000,
+    inputPricePerM: 2200,
+    outputPricePerM: 8800,
+    bestFor: "Ultra-affordable reasoning and general intelligence",
+    isActive: true,
+  },
+  {
+    id: "gpt-4o-mini",
+    displayName: "OpenAI GPT-4o Mini",
+    category: "Fast",
+    contextWindow: 128000,
+    inputPricePerM: 2500,
+    outputPricePerM: 10000,
+    bestFor: "High-speed lightweight completions, cost-efficient chat",
+    isActive: true,
+  },
+  {
+    id: "deepseek-reasoner",
+    displayName: "DeepSeek R1",
+    category: "Reasoning",
+    contextWindow: 64000,
+    inputPricePerM: 8000,
+    outputPricePerM: 32000,
+    bestFor: "Complex mathematical proofs, step-by-step logic",
+    isActive: true,
+  },
+  {
+    id: "claude-3-5-haiku-20241022",
+    displayName: "Claude 3.5 Haiku",
+    category: "Fast",
+    contextWindow: 200000,
+    inputPricePerM: 16000,
+    outputPricePerM: 80000,
+    bestFor: "Rapid agent workflows, low-latency code review",
+    isActive: true,
+  },
+  {
+    id: "gpt-4o",
+    displayName: "OpenAI GPT-4o",
+    category: "Vision",
+    contextWindow: 128000,
+    inputPricePerM: 40000,
+    outputPricePerM: 160000,
+    bestFor: "Multimodal analysis, complex reasoning, general tasks",
+    isActive: true,
+  },
+  {
+    id: "claude-3-5-sonnet-20241022",
+    displayName: "Claude 3.5 Sonnet",
+    category: "Coding",
+    contextWindow: 200000,
+    inputPricePerM: 48000,
+    outputPricePerM: 240000,
+    bestFor: "Advanced code generation, refactoring, architectural reasoning",
+    isActive: true,
+  },
+];
 
 describe("Public Showcase & Marketing Page (F17)", () => {
   // ==========================================================================
@@ -86,7 +148,7 @@ describe("Public Showcase & Marketing Page (F17)", () => {
     });
 
     it("ensures all models in public catalog have valid positive IDR pricing", () => {
-      const activeModels = filterModelCatalog(DEFAULT_MODEL_CATALOG, {
+      const activeModels = filterModelCatalog(MODEL_CATALOG_FIXTURE, {
         activeOnly: true,
       });
       expect(activeModels.length).toBeGreaterThan(0);
@@ -102,7 +164,7 @@ describe("Public Showcase & Marketing Page (F17)", () => {
 
     it("filters out inactive models from public view", () => {
       const catalogWithInactive: ModelCatalogItem[] = [
-        ...DEFAULT_MODEL_CATALOG,
+        ...MODEL_CATALOG_FIXTURE,
         {
           id: "test-inactive-model",
           displayName: "Inactive Secret Model",
@@ -121,39 +183,39 @@ describe("Public Showcase & Marketing Page (F17)", () => {
       expect(publicVisible.some((m) => m.id === "test-inactive-model")).toBe(
         false
       );
-      expect(publicVisible.length).toBe(DEFAULT_MODEL_CATALOG.length);
+      expect(publicVisible.length).toBe(MODEL_CATALOG_FIXTURE.length);
     });
 
     it("filters catalog correctly across all 5 active categories", () => {
-      const coding = filterModelCatalog(DEFAULT_MODEL_CATALOG, {
+      const coding = filterModelCatalog(MODEL_CATALOG_FIXTURE, {
         category: "Coding",
         activeOnly: true,
       });
       expect(coding.length).toBeGreaterThan(0);
       expect(coding.every((m) => m.category === "Coding")).toBe(true);
 
-      const reasoning = filterModelCatalog(DEFAULT_MODEL_CATALOG, {
+      const reasoning = filterModelCatalog(MODEL_CATALOG_FIXTURE, {
         category: "Reasoning",
         activeOnly: true,
       });
       expect(reasoning.length).toBeGreaterThan(0);
       expect(reasoning.every((m) => m.category === "Reasoning")).toBe(true);
 
-      const vision = filterModelCatalog(DEFAULT_MODEL_CATALOG, {
+      const vision = filterModelCatalog(MODEL_CATALOG_FIXTURE, {
         category: "Vision",
         activeOnly: true,
       });
       expect(vision.length).toBeGreaterThan(0);
       expect(vision.every((m) => m.category === "Vision")).toBe(true);
 
-      const fast = filterModelCatalog(DEFAULT_MODEL_CATALOG, {
+      const fast = filterModelCatalog(MODEL_CATALOG_FIXTURE, {
         category: "Fast",
         activeOnly: true,
       });
       expect(fast.length).toBeGreaterThan(0);
       expect(fast.every((m) => m.category === "Fast")).toBe(true);
 
-      const budget = filterModelCatalog(DEFAULT_MODEL_CATALOG, {
+      const budget = filterModelCatalog(MODEL_CATALOG_FIXTURE, {
         category: "Budget",
         activeOnly: true,
       });

@@ -35,7 +35,6 @@ describe("Panel konfigurasi Kalkulator dashboard", () => {
     );
     expect(css).toContain(".dashboard.wizard");
     expect(css).toContain("align-items: start;");
-    expect(css).toContain("var(--overview-line) 35%");
     const summary = css.match(/\.dashboard \.summaryCard \{([^}]+)\}/)?.[1];
     expect(summary).toContain("background: var(--overview-paper);");
     expect(summary).not.toContain("linear-gradient");
@@ -44,6 +43,56 @@ describe("Panel konfigurasi Kalkulator dashboard", () => {
     expect(page).toContain("var(--overview-ink) 18%");
     expect(page).toContain("var(--overview-ink) 72%");
     expect(css).not.toMatch(/:global|(?:^|\n)(?:body|html)\b/);
+  });
+
+  it("tidak menggambar bingkai kosong di bawah ringkasan yang lebih pendek", () => {
+    const css = readFileSync(
+      new URL(
+        "../../../(public)/pricing/_components/calculator-dashboard.module.css",
+        import.meta.url
+      ),
+      "utf8"
+    );
+    const wizard = css.match(/\.dashboard\.wizard \{([^}]+)\}/)?.[1];
+    const summary = css.match(/\.dashboard \.summary \{([^}]+)\}/)?.[1];
+    expect(wizard).toContain("background: transparent;");
+    expect(wizard).toContain("border: 0;");
+    expect(wizard).toContain("padding: 0;");
+    expect(wizard).toContain("align-items: start;");
+    expect(summary).toContain("align-self: start;");
+    expect(summary).toContain("height: fit-content;");
+    expect(css).not.toMatch(/(?:min-)?height:\s*(?:100%|100vh|100dvh)/);
+  });
+
+  it("menempatkan corak statis di belakang isi tanpa menghalangi kontrol", () => {
+    const css = readFileSync(
+      new URL(
+        "../../../(public)/pricing/_components/calculator-dashboard.module.css",
+        import.meta.url
+      ),
+      "utf8"
+    );
+    const page = readFileSync(
+      new URL("./calculator-page.module.css", import.meta.url),
+      "utf8"
+    );
+    for (const selector of [
+      ".stepper::before",
+      ".stepper::after",
+      ".dashboard .choice::before",
+      ".dashboard .summaryCard::before",
+      ".dashboard .summaryCard::after",
+    ])
+      expect(css).toContain(selector);
+    for (const sheet of [css, page]) {
+      expect(sheet).toContain("z-index: -1;");
+      expect(sheet).toContain("pointer-events: none;");
+      expect(sheet).toContain("mask-image:");
+      expect(sheet).not.toMatch(
+        /:global|(?:^|\n)(?:body|html)\b|animation\s*:(?!\s*none\b)/
+      );
+    }
+    expect(page).toContain(".header::before");
   });
 
   it("mempertahankan pilihan Jenis dan validasi Skala", () => {

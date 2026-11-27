@@ -9,7 +9,7 @@ import { TipTapEditor } from "@/components/editor/tiptap-editor";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { AdminFieldLabel as Label } from "../../_components/admin-field-label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   createProposalAction,
@@ -95,7 +95,9 @@ export function ProposalCreateForm() {
       <Card className="space-y-5 p-6">
         <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
           <div className="space-y-2">
-            <Label htmlFor="title">Judul Proposal</Label>
+            <Label required htmlFor="title">
+              Judul Proposal
+            </Label>
             <Input
               id="title"
               name="title"
@@ -104,7 +106,9 @@ export function ProposalCreateForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="expiresAt">Berlaku Sampai</Label>
+            <Label optional htmlFor="expiresAt">
+              Berlaku Sampai
+            </Label>
             <Input
               id="expiresAt"
               name="expiresAt"
@@ -114,7 +118,9 @@ export function ProposalCreateForm() {
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="summary">Ringkasan</Label>
+          <Label optional htmlFor="summary">
+            Ringkasan
+          </Label>
           <Textarea
             id="summary"
             name="summary"
@@ -128,7 +134,9 @@ export function ProposalCreateForm() {
         <h2 className="font-semibold">Client</h2>
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-2">
-            <Label htmlFor="clientName">Nama</Label>
+            <Label required htmlFor="clientName">
+              Nama
+            </Label>
             <Input
               id="clientName"
               name="clientName"
@@ -137,7 +145,9 @@ export function ProposalCreateForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="clientEmail">Email</Label>
+            <Label required htmlFor="clientEmail">
+              Email
+            </Label>
             <Input
               id="clientEmail"
               name="clientEmail"
@@ -147,7 +157,9 @@ export function ProposalCreateForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="clientPhone">No. WhatsApp</Label>
+            <Label optional htmlFor="clientPhone">
+              No. WhatsApp
+            </Label>
             <Input
               id="clientPhone"
               name="clientPhone"
@@ -169,38 +181,56 @@ export function ProposalCreateForm() {
           {items.map((item, index) => (
             <div
               key={index}
-              className="grid items-start gap-2 sm:grid-cols-[1fr_90px_160px_40px]"
+              className="grid items-start gap-2 sm:grid-cols-[minmax(0,1fr)_90px_160px_40px]"
             >
-              <Input
-                value={item.description}
-                onChange={(event) =>
-                  updateItem(index, { description: event.target.value })
-                }
-                placeholder="Deskripsi pekerjaan"
-                required
-              />
-              <Input
-                value={item.quantity}
-                onChange={(event) =>
-                  updateItem(index, { quantity: event.target.value })
-                }
-                type="number"
-                min="0.01"
-                step="0.01"
-                placeholder="Qty"
-                required
-              />
-              <Input
-                value={item.price}
-                onChange={(event) =>
-                  updateItem(index, { price: event.target.value })
-                }
-                type="number"
-                min="0"
-                step="0.01"
-                placeholder="Harga"
-                required
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor={`proposal-item-description-${index}`} required>
+                  Deskripsi
+                </Label>
+                <Input
+                  id={`proposal-item-description-${index}`}
+                  value={item.description}
+                  onChange={(event) =>
+                    updateItem(index, { description: event.target.value })
+                  }
+                  placeholder="Deskripsi pekerjaan"
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor={`proposal-item-quantity-${index}`} required>
+                  Kuantitas
+                </Label>
+                <Input
+                  id={`proposal-item-quantity-${index}`}
+                  value={item.quantity}
+                  onChange={(event) =>
+                    updateItem(index, { quantity: event.target.value })
+                  }
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="Qty"
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor={`proposal-item-price-${index}`} required>
+                  Harga (Rp)
+                </Label>
+                <Input
+                  id={`proposal-item-price-${index}`}
+                  value={item.price}
+                  onChange={(event) =>
+                    updateItem(index, { price: event.target.value })
+                  }
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="Harga"
+                  required
+                />
+              </div>
               <Button
                 type="button"
                 size="icon"
@@ -216,7 +246,9 @@ export function ProposalCreateForm() {
         </div>
         <div className="grid gap-4 border-t pt-4 md:grid-cols-[180px_1fr]">
           <div className="space-y-2">
-            <Label htmlFor="taxRate">Pajak (%)</Label>
+            <Label optional htmlFor="taxRate">
+              Pajak (%)
+            </Label>
             <Input
               id="taxRate"
               value={taxRate}

@@ -16,7 +16,7 @@ export function PortfolioForm({ initial }: { initial?: PortfolioFormInitial }) {
   return (
     <form onSubmit={form.handleSubmit} className="space-y-6">
       {/* Top action bar */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Button variant="ghost" size="sm" asChild className="gap-1.5 text-xs">
           <Link href={ADMIN_ROUTES.portfolio}>
             <ArrowLeft className="size-4" /> Kembali ke Daftar Portfolio
@@ -39,7 +39,7 @@ export function PortfolioForm({ initial }: { initial?: PortfolioFormInitial }) {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(16rem,22.5rem)]">
         <div className="space-y-6">
           <PortfolioGeneralFields form={form} />
           <PortfolioContentFields form={form} />

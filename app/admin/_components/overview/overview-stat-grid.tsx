@@ -1,12 +1,12 @@
-import { AnimatedCounter } from "@/components/dashboard/animated-counter";
+import { formatCurrency } from "@/lib/utils";
 import { AdminStatCard } from "../admin-stat-card";
 import type { getOverviewStatCards } from "../../_utils/overview-config";
+import styles from "./admin-overview.module.css";
 
 type OverviewStat = ReturnType<typeof getOverviewStatCards>[number];
-
 export function OverviewStatGrid({ stats }: { stats: OverviewStat[] }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div className={styles.statsGrid} aria-label="Statistik operasional">
       {stats.map((stat) => (
         <AdminStatCard
           key={stat.label}
@@ -15,10 +15,9 @@ export function OverviewStatGrid({ stats }: { stats: OverviewStat[] }) {
           helper={stat.helper}
           toneClassName={stat.color}
           value={
-            <AnimatedCounter
-              value={stat.value}
-              format={stat.isCurrency ? "currency" : "number"}
-            />
+            stat.isCurrency
+              ? formatCurrency(stat.value)
+              : stat.value.toLocaleString("id-ID")
           }
         />
       ))}

@@ -15,10 +15,7 @@ export function PortfolioHero({ items }: PortfolioHeroProps) {
     <section className={styles.hero} aria-labelledby="portfolio-heading">
       <div className={cn(shared.container, styles.heroContainer)}>
         <FadeUp className={styles.heroLabel}>
-          <p className={styles.eyebrow}>
-            <span aria-hidden="true" />
-            Portofolio Aldera Tech
-          </p>
+          <p className={shared.heroKicker}>Portofolio Aldera Tech</p>
         </FadeUp>
 
         <FadeUp delay={0.1} className={styles.visualWrap}>

@@ -10,9 +10,9 @@ export const publicNavLinks: NavLink[] = [
   { href: PUBLIC_ROUTES.home, label: "Beranda" },
   { href: PUBLIC_ROUTES.about, label: "Tentang" },
   { href: PUBLIC_ROUTES.services, label: "Layanan" },
-  { href: PUBLIC_ROUTES.aiRelay, label: "AI Relay" },
   { href: PUBLIC_ROUTES.portfolio, label: "Portfolio" },
   { href: PUBLIC_ROUTES.pricing, label: "Harga" },
+  { href: PUBLIC_ROUTES.aiRelay, label: "AI Relay" },
   { href: PUBLIC_ROUTES.blog, label: "Blog" },
   { href: PUBLIC_ROUTES.contact, label: "Kontak" },
 ];

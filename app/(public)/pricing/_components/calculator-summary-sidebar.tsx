@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { cn, formatCurrency } from "@/lib/utils";
-import mascot from "@/public/images/services/aldera-cat-services.webp";
+import mascot from "@/public/images/about/technology/design.webp";
 import styles from "./pricing-calculator.module.css";
 import dashboardStyles from "./calculator-dashboard.module.css";
 import { Calculator } from "lucide-react";

@@ -1,4 +1,14 @@
 .dialog {
+  --overview-line: color-mix(
+    in srgb,
+    var(--overview-ink) 18%,
+    var(--overview-paper)
+  );
+  --overview-muted: color-mix(
+    in srgb,
+    var(--overview-ink) 72%,
+    var(--overview-paper)
+  );
   width: calc(100% - 2rem);
   max-width: 600px;
   max-height: calc(100dvh - 2rem);
@@ -23,7 +33,7 @@
   background: var(--overview-canvas);
   color: var(--overview-muted);
 }
-.dialog :is(button, a, textarea):focus-visible {
+.dialog :is(button, a, input, textarea):focus-visible {
   outline: 2px solid var(--overview-blue);
   outline-offset: 3px;
 }
@@ -31,6 +41,8 @@
   gap: 0.45rem;
   text-align: left;
   padding-right: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--overview-line);
 }
 .headerIcon {
   display: grid;
@@ -66,11 +78,7 @@
   padding: 1rem 1.1rem;
   border: 1px solid var(--overview-line);
   border-radius: 15px;
-  background: linear-gradient(
-    110deg,
-    var(--overview-sky),
-    var(--overview-canvas)
-  );
+  background: var(--overview-canvas);
 }
 .invoiceSummary dt {
   color: var(--overview-muted);
@@ -180,6 +188,7 @@
   padding: 0.8rem 1rem;
   border-radius: 11px;
   background: var(--overview-canvas);
+  border: 1px solid var(--overview-line);
 }
 .primaryButton {
   min-width: 0;
@@ -187,7 +196,7 @@
   height: auto;
   padding: 0.75rem 1rem;
   gap: 0.45rem;
-  border-radius: 11px;
+  border-radius: 999px;
   background: var(--overview-blue);
   color: var(--overview-paper);
   font-size: 0.75rem;
@@ -339,6 +348,8 @@
   padding: 0.75rem;
   border-color: var(--overview-line);
   border-radius: 11px;
+  background: var(--overview-paper);
+  color: var(--overview-ink);
   font-size: 0.75rem;
   line-height: 1.7;
 }
@@ -365,9 +376,14 @@
 }
 .formActions > button:not(.primaryButton) {
   min-height: 44px;
-  border-radius: 11px;
+  border-radius: 999px;
   border-color: var(--overview-line);
   font-size: 0.75rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dialog :is(button, a, input, textarea) {
+    transition: none;
+  }
 }
 @media (max-width: 479px) {
   .dialog {

@@ -39,139 +39,29 @@ export type PublicBlogPost = {
   updatedAt: Date;
 };
 
-const fallbackDate = new Date("2026-03-18T09:00:00.000Z");
-
-export const publicCaseStudies: PublicCaseStudy[] = [
-  {
-    id: "fallback-case-technova",
-    slug: "technova-b2b-platform",
-    title: "TechNova: Platform B2B yang Men-Triple Revenue",
-    client: "TechNova Indonesia",
-    industry: "B2B SaaS",
-    summary:
-      "Platform B2B enterprise dengan self-serve onboarding dan analytics yang mempercepat pipeline sales.",
-    challenge:
-      "TechNova mengelola proses onboarding enterprise secara manual. Tim sales sulit memprioritaskan lead, tim operasional bekerja dari spreadsheet terpisah, dan calon pelanggan tidak mendapat pengalaman self-serve yang konsisten.",
-    solution:
-      "Kami merancang platform B2B berbasis Next.js dengan onboarding mandiri, workflow approval, dashboard analytics, dan integrasi billing. Setiap milestone dikirim sebagai sprint kecil agar tim TechNova bisa memberi feedback tanpa menunggu fase besar selesai.",
-    result:
-      "Konversi demo ke trial naik 3x, waktu onboarding turun dari 10 hari menjadi 2 hari, dan tim leadership mendapat visibilitas funnel langsung untuk mengambil keputusan komersial lebih cepat.",
-    featuredImage: "/images/portfolio/technova-b2b-platform.webp",
-    techStack: ["Next.js", "PostgreSQL", "Prisma", "Stripe"],
-    published: true,
-    order: 1,
-    createdAt: fallbackDate,
-    updatedAt: fallbackDate,
-  },
-  {
-    id: "fallback-case-kopi-kita",
-    slug: "kopi-kita-ecommerce",
-    title: "Kopi Kita: E-Commerce yang Menggandakan Penjualan",
-    client: "Kopi Kita",
-    industry: "F&B E-Commerce",
-    summary:
-      "Storefront custom dengan checkout cepat, payment gateway, dan integrasi kurir untuk brand kopi lokal.",
-    challenge:
-      "Kopi Kita bergantung pada marketplace sehingga margin tipis, data pelanggan tersebar, dan promosi sulit dipersonalisasi. Checkout di kanal lama juga terlalu panjang untuk pembelian repeat order.",
-    solution:
-      "Kami membangun storefront mobile-first dengan katalog modular, checkout dua langkah, Midtrans, integrasi kurir, dan CMS promo. Sistem dibuat ringan agar campaign flash sale tetap cepat diakses dari mobile.",
-    result:
-      "Penjualan direct-to-consumer naik 2.1x dalam tiga bulan, repeat order meningkat 38%, dan tim marketing mulai menjalankan promo berbasis segmentasi pelanggan.",
-    featuredImage: "/images/portfolio/kopi-kita-ecommerce.webp",
-    techStack: ["Next.js", "Prisma", "Midtrans", "Tailwind CSS"],
-    published: true,
-    order: 2,
-    createdAt: fallbackDate,
-    updatedAt: fallbackDate,
-  },
-  {
-    id: "fallback-case-finsmart",
-    slug: "finsmart-mobile-app",
-    title: "FinSmart: Mobile App dengan 100K+ Download",
-    client: "FinSmart",
-    industry: "FinTech",
-    summary:
-      "Aplikasi finance personal dengan onboarding jelas, insight pengeluaran, dan rating 4.8 di store.",
-    challenge:
-      "FinSmart memiliki konsep kuat, tetapi pengguna baru sering berhenti sebelum menautkan data keuangan pertama. Tim produk juga belum punya sistem eksperimen untuk memahami titik drop-off.",
-    solution:
-      "Kami menyusun ulang onboarding, membangun design system mobile, menambahkan insight pengeluaran yang mudah dipindai, dan memasang analytics event untuk tiap langkah aktivasi.",
-    result:
-      "Aktivasi pengguna baru naik 52%, aplikasi mencapai 100K+ download, dan rating store stabil di 4.8 berkat pengalaman onboarding yang lebih jelas.",
-    featuredImage: "/images/portfolio/finsmart-mobile-app.webp",
-    techStack: ["React Native", "TypeScript", "Firebase", "Recharts"],
-    published: true,
-    order: 3,
-    createdAt: fallbackDate,
-    updatedAt: fallbackDate,
-  },
-];
-
-export const publicBlogPosts: PublicBlogPost[] = [
-  {
-    id: "fallback-blog-modern-website",
-    slug: "kenapa-bisnis-anda-butuh-website-modern",
-    title: "Kenapa Bisnis Anda Butuh Website Modern",
-    excerpt:
-      "Website bukan sekadar etalase digital. Ini mesin pertumbuhan 24/7 yang membantu calon pelanggan percaya, paham, lalu mengambil tindakan.",
-    content: `
-      <h2>Website modern bekerja seperti sales system</h2>
-      <p>Website yang baik tidak hanya menampilkan profil perusahaan. Ia menjawab pertanyaan calon pelanggan, menunjukkan bukti kerja, dan mengarahkan orang ke aksi yang jelas.</p>
-      <h2>Kecepatan memengaruhi trust</h2>
-      <p>Halaman yang lambat membuat bisnis terlihat kurang siap. Dengan struktur konten yang padat, gambar yang dioptimasi, dan Core Web Vitals yang sehat, pengalaman pertama terasa jauh lebih profesional.</p>
-      <h2>Konten harus mudah dipindai</h2>
-      <p>Pengunjung jarang membaca semuanya dari awal sampai akhir. Mereka memindai judul, bukti sosial, harga, layanan, dan CTA. Karena itu struktur halaman perlu membantu mereka mengambil keputusan tanpa banyak friksi.</p>
-      <h2>Website adalah aset yang bisa diukur</h2>
-      <p>Dengan analytics, formulir yang benar, dan funnel yang rapi, website menjadi sumber data. Tim bisa melihat halaman mana yang bekerja, penawaran mana yang menarik, dan bagian mana yang perlu diperbaiki.</p>
-    `,
-    featuredImage: "/images/blog/modern-website-strategy.webp",
-    published: true,
-    publishedAt: fallbackDate,
-    scheduledAt: null,
-    views: 1280,
-    isPinned: false,
-    pinnedAt: null,
-    draftContent: null,
-    draftSavedAt: null,
-    authorId: "fallback-author-aldera",
-    author: { name: "Aldera Admin", avatar: null },
-    categoryId: "fallback-category-business",
-    category: { name: "Business", slug: "business" },
-    createdAt: fallbackDate,
-    updatedAt: fallbackDate,
-  },
-];
-
-export function getFallbackCaseStudy(slug: string) {
-  return publicCaseStudies.find((item) => item.slug === slug) ?? null;
-}
-
-export function resolveCaseStudyImage(slug: string, image: string | null) {
-  if (image && image !== "/logo/logo-transparent.png") return image;
-  return getFallbackCaseStudy(slug)?.featuredImage ?? image;
-}
-
-export function getFallbackBlogPost(slug: string) {
-  return publicBlogPosts.find((item) => item.slug === slug) ?? null;
-}
-
-const blogImageBySlug: Record<string, string> = {
+const caseStudyImages: Record<string, string> = {
+  "technova-b2b-platform": "/images/portfolio/technova-b2b-platform.webp",
+  "kopi-kita-ecommerce": "/images/portfolio/kopi-kita-ecommerce.webp",
+  "finsmart-mobile-app": "/images/portfolio/finsmart-mobile-app.webp",
+};
+const blogImages: Record<string, string> = {
   "kenapa-bisnis-anda-butuh-website-modern":
     "/images/blog/modern-website-strategy.webp",
   "next-js-16-apa-yang-baru": "/images/blog/nextjs-16-development.webp",
   "micro-interactions-yang-meningkatkan-ux":
     "/images/blog/micro-interactions-ux.webp",
 };
-
+// Image mappings only: publication, text and pagination always come from the database.
+export function resolveCaseStudyImage(slug: string, image: string | null) {
+  if (image && image !== "/logo/logo-transparent.png") return image;
+  return caseStudyImages[slug] ?? image;
+}
 export function resolveBlogPostImage(slug: string, image: string | null) {
   if (
     image &&
     image !== "/logo/logo-transparent.png" &&
     !image.startsWith("/images/portfolio/")
-  ) {
+  )
     return image;
-  }
-  return (
-    blogImageBySlug[slug] ?? getFallbackBlogPost(slug)?.featuredImage ?? image
-  );
+  return blogImages[slug] ?? image;
 }

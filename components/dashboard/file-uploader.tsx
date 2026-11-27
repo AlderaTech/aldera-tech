@@ -53,8 +53,10 @@ export function FileUploader({ projectId }: { projectId?: string }) {
     <div
       {...getRootProps()}
       className={cn(
-        "cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-all sm:p-12",
-        isDragActive ? "border-primary bg-primary/5" : "hover:bg-muted/30",
+        "cursor-pointer rounded-2xl border-2 border-dashed border-[#e1e8f2] bg-[#f5f8fd] p-7 text-center transition-all sm:p-9",
+        isDragActive
+          ? "border-[#245fe5] bg-[#e8f0ff]/60"
+          : "hover:border-[#245fe5]/50 hover:bg-[#e8f0ff]/35",
         uploading && "pointer-events-none opacity-60"
       )}
     >
@@ -66,18 +68,20 @@ export function FileUploader({ projectId }: { projectId?: string }) {
       />
       <div className="flex flex-col items-center gap-2">
         {uploading ? (
-          <Loader2 className="size-8 animate-spin text-primary" />
+          <Loader2 className="size-8 animate-spin text-[#245fe5]" />
         ) : (
-          <UploadCloud className="size-8 text-muted-foreground" />
+          <span className="grid size-11 place-items-center rounded-2xl border border-[#e1e8f2] bg-white text-[#245fe5] shadow-2xs">
+            <UploadCloud className="size-5" />
+          </span>
         )}
-        <div className="text-sm">
+        <div className="text-sm font-bold text-[#102651]">
           {isDragActive
             ? "Lepaskan file di sini…"
             : uploading
               ? "Mengunggah…"
               : "Drag & drop file, atau klik untuk memilih"}
         </div>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs font-medium text-[#65748b]">
           Max 10MB per file. PNG/JPG/PDF/DOC/XLS/ZIP diterima.
         </div>
       </div>

@@ -1,6 +1,9 @@
 "use client";
 
 import { ParamFilterSelect } from "@/components/shared/param-filter-select";
+import { SlidersHorizontal } from "lucide-react";
+import { cn } from "@/lib/utils";
+import styles from "./invoices.module.css";
 
 export const INVOICE_STATUS_OPTIONS = [
   { value: "ALL", label: "Semua Status" },
@@ -17,19 +20,16 @@ export function InvoiceStatusFilter({
   className?: string;
 }) {
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <label
-        htmlFor="invoice-status-select"
-        className="text-xs font-semibold whitespace-nowrap text-muted-foreground"
-      >
-        Status:
-      </label>
+    <div className={cn(styles.statusFilter, className)}>
+      <span>
+        <SlidersHorizontal aria-hidden="true" /> Status invoice
+      </span>
       <ParamFilterSelect
         paramKey="status"
         options={INVOICE_STATUS_OPTIONS}
         placeholder="Semua Status"
         ariaLabel="Filter status invoice"
-        className="h-8 w-44 rounded-lg bg-background text-xs"
+        className={styles.statusSelect}
       />
     </div>
   );

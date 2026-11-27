@@ -1,3 +1,5 @@
+import { parsePage } from "@/lib/pagination";
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import Link from "next/link";
 import { Plus, Download, Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +11,7 @@ import { InvoiceTable } from "./_components/invoice-table";
 import { InvoiceStatus, type Prisma } from "@prisma/client";
 import { SearchFilterBar } from "@/components/shared/search-filter-bar";
 import { ParamFilterSelect } from "@/components/shared/param-filter-select";
+import { AdminMascot } from "../_components/admin-mascot";
 
 const invoiceStatusOptions = [
   { label: "Semua Status", value: "ALL" },
@@ -32,7 +35,7 @@ export default async function AdminInvoicesPage({
   searchParams,
 }: AdminInvoicesPageProps) {
   const sp = await searchParams;
-  const page = Math.max(1, Number(sp?.page) || 1);
+  const page = parsePage(sp?.page);
   const PAGE_SIZE = 10;
   const q = sp?.q?.trim();
   const rawStatus = sp?.status?.trim()?.toUpperCase();
@@ -85,20 +88,25 @@ export default async function AdminInvoicesPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <AdminBanner
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+        category="billing"
+        mascot={<AdminMascot pose="invoice" size="header" />}
+      >
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Invoice</h1>
           <p className="text-muted-foreground">Kelola tagihan untuk klien.</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           <Button asChild variant="outline">
             <Link href={ADMIN_ROUTES.invoicesRecurring}>
-              <Repeat className="size-4" /> Recurring
+              <Repeat className="size-4" /> Tagihan Berkala
             </Link>
           </Button>
           <Button asChild variant="outline">
             <a href={API_ROUTES.exportInvoices} download>
-              <Download className="size-4" /> Export CSV
+              <Download className="size-4" /> Ekspor CSV
             </a>
           </Button>
           <Button asChild>
@@ -107,7 +115,7 @@ export default async function AdminInvoicesPage({
             </Link>
           </Button>
         </div>
-      </div>
+      </AdminBanner>
 
       <SearchFilterBar
         placeholder="Cari nomor invoice, client, atau proyek..."

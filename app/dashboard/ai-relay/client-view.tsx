@@ -10,6 +10,7 @@ import { ModelCatalog } from "@/components/ai-relay/model-catalog";
 import { ModelHealthMonitor } from "@/components/ai-relay/model-health-monitor";
 import { CostSimulator } from "@/components/ai-relay/cost-simulator";
 import { AccountBindingCard } from "@/components/ai-relay/account-binding-card";
+import { RelayPauseCard } from "@/components/ai-relay/relay-pause-card";
 import {
   type ApiKeyRecord,
   type BalanceTransactionRecord,
@@ -19,12 +20,15 @@ import {
   type UsageLogRecord,
 } from "@/lib/actions/ai-relay";
 import { useUrlState } from "@/lib/hooks/use-url-state";
+import { cn } from "@/lib/utils";
 import { useRelayWorkspace } from "./_hooks/use-relay-workspace";
 import { RelayHeader } from "./_components/relay-header";
 import { RelayTabs } from "./_components/relay-tabs";
 import { RelayMascot } from "./_components/relay-mascot";
 import { RelayLoading } from "./_components/relay-loading";
+import { RelaySectionHeading } from "./_components/relay-section-heading";
 import styles from "./_components/relay-workspace.module.css";
+import patternStyles from "./_components/relay-patterns.module.css";
 
 interface ClientViewProps {
   initialBalance: number;
@@ -34,6 +38,7 @@ interface ClientViewProps {
   initialLogs: UsageLogRecord[];
   catalog: ModelCatalogItem[];
   healthMetrics: ModelHealthStatus[];
+  routerEnabled?: boolean;
 }
 
 function AiRelayClientViewInner({
@@ -44,6 +49,7 @@ function AiRelayClientViewInner({
   initialLogs,
   catalog,
   healthMetrics,
+  routerEnabled = true,
 }: ClientViewProps) {
   const { isPending } = useUrlState();
   const {
@@ -58,7 +64,7 @@ function AiRelayClientViewInner({
 
   return (
     <div
-      className={styles.workspace}
+      className={cn(styles.workspace, patternStyles.scope)}
       data-ai-relay-workspace
       aria-busy={isPending}
     >
@@ -71,38 +77,59 @@ function AiRelayClientViewInner({
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
-        className="space-y-6"
+        className={styles.mainTabs}
       >
-        <RelayTabs />
+        <RelayTabs activeTab={activeTab} />
 
         {/* Tab 1: Model Catalog */}
-        <TabsContent value="catalog" className="space-y-6 outline-hidden">
+        <TabsContent value="catalog" className={styles.sectionPanel}>
+          <RelaySectionHeading
+            tab="catalog"
+            description={
+              routerEnabled
+                ? undefined
+                : "Bandingkan model, tarif, dan batas konteks selama akses AI dijeda."
+            }
+          />
           <ModelCatalog
             catalog={catalog}
             ideIllustration={<RelayMascot pose="coding" />}
             apiKeys={initialKeys}
-            onSelectPlaygroundModel={handleSelectPlaygroundModel}
+            onSelectPlaygroundModel={
+              routerEnabled ? handleSelectPlaygroundModel : undefined
+            }
+            routerEnabled={routerEnabled}
           />
         </TabsContent>
 
         {/* Tab 2: Playground */}
-        <TabsContent value="playground" className="space-y-6 outline-hidden">
-          <AiPlayground
-            key={selectedPlaygroundModel || "default"}
-            models={playgroundModels}
-            emptyIllustration={<RelayMascot pose="assistant" />}
-            userBalance={currentBalance}
-            onBalanceChange={setCurrentBalance}
+        <TabsContent value="playground" className={styles.sectionPanel}>
+          <RelaySectionHeading
+            tab="playground"
+            description={routerEnabled ? undefined : ""}
           />
+          {routerEnabled ? (
+            <AiPlayground
+              key={selectedPlaygroundModel || "default"}
+              models={playgroundModels}
+              emptyIllustration={<RelayMascot pose="assistant" />}
+              userBalance={currentBalance}
+              onBalanceChange={setCurrentBalance}
+            />
+          ) : (
+            <RelayPauseCard view="playground" />
+          )}
         </TabsContent>
 
         {/* Tab 3: API Key Manager */}
-        <TabsContent value="keys" className="space-y-6 outline-hidden">
+        <TabsContent value="keys" className={styles.sectionPanel}>
+          <RelaySectionHeading tab="keys" />
           <ApiKeyManager initialKeys={initialKeys} />
         </TabsContent>
 
         {/* Tab 4: Saldo & Top-up */}
-        <TabsContent value="billing" className="space-y-6 outline-hidden">
+        <TabsContent value="billing" className={styles.sectionPanel}>
+          <RelaySectionHeading tab="billing" />
           <BalanceTopupCard
             initialBalance={currentBalance}
             initialTransactions={initialTransactions}
@@ -110,22 +137,26 @@ function AiRelayClientViewInner({
         </TabsContent>
 
         {/* Tab: Telegram Bot Integration */}
-        <TabsContent value="telegram" className="space-y-6 outline-hidden">
+        <TabsContent value="telegram" className={styles.sectionPanel}>
+          <RelaySectionHeading tab="telegram" />
           <AccountBindingCard />
         </TabsContent>
 
         {/* Tab 5: Analytics */}
-        <TabsContent value="analytics" className="space-y-6 outline-hidden">
+        <TabsContent value="analytics" className={styles.sectionPanel}>
+          <RelaySectionHeading tab="analytics" />
           <UsageAnalyticsCharts summary={initialAnalytics} logs={initialLogs} />
         </TabsContent>
 
         {/* Tab 6: Comparison & Simulator */}
-        <TabsContent value="simulator" className="space-y-6 outline-hidden">
+        <TabsContent value="simulator" className={styles.sectionPanel}>
+          <RelaySectionHeading tab="simulator" />
           <CostSimulator catalog={catalog} />
         </TabsContent>
 
         {/* Tab 7: Health & Latency */}
-        <TabsContent value="health" className="space-y-6 outline-hidden">
+        <TabsContent value="health" className={styles.sectionPanel}>
+          <RelaySectionHeading tab="health" />
           <ModelHealthMonitor healthMetrics={healthMetrics} dashboard />
         </TabsContent>
       </Tabs>

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { MessageSquare, Bell, Loader2, Trash2 } from "lucide-react";
+import { MessageSquare, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { InvoiceStatus } from "@prisma/client";
 
@@ -18,7 +18,6 @@ import {
 import {
   updateInvoiceStatusAction,
   sendInvoiceWhatsAppAction,
-  sendReminderAction,
   deleteInvoiceAction,
 } from "@/lib/actions/invoice";
 import { isNextNavigationError } from "@/lib/is-next-nav-error";
@@ -35,9 +34,9 @@ export function InvoiceStatusControls({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [confirmAction, setConfirmAction] = useState<
-    "send" | "reminder" | "delete" | null
-  >(null);
+  const [confirmAction, setConfirmAction] = useState<"send" | "delete" | null>(
+    null
+  );
 
   function handleStatus(value: string) {
     startTransition(async () => {
@@ -56,18 +55,6 @@ export function InvoiceStatusControls({
       try {
         await sendInvoiceWhatsAppAction(invoiceId);
         toast.success("Invoice dikirim via WhatsApp");
-        router.refresh();
-      } catch (err) {
-        toast.error((err as Error).message);
-      }
-    });
-  }
-
-  function handleReminder() {
-    startTransition(async () => {
-      try {
-        await sendReminderAction(invoiceId);
-        toast.success("Reminder terkirim via WhatsApp");
         router.refresh();
       } catch (err) {
         toast.error((err as Error).message);
@@ -132,14 +119,6 @@ export function InvoiceStatusControls({
           Kirim WhatsApp
         </Button>
         <Button
-          variant="outline"
-          onClick={() => setConfirmAction("reminder")}
-          disabled={isPending}
-          className="h-10"
-        >
-          <Bell className="size-4" /> Reminder
-        </Button>
-        <Button
           variant="destructive"
           onClick={() => setConfirmAction("delete")}
           disabled={isPending}
@@ -158,17 +137,6 @@ export function InvoiceStatusControls({
         confirmLabel="Kirim WhatsApp"
         pending={isPending}
         onConfirm={handleSend}
-      />
-      <ConfirmDialog
-        open={confirmAction === "reminder"}
-        onOpenChange={(open) => {
-          if (!open) setConfirmAction(null);
-        }}
-        title="Kirim reminder pembayaran via WhatsApp?"
-        description="Reminder pembayaran akan dikirim via WhatsApp ke klien untuk invoice ini."
-        confirmLabel="Kirim reminder"
-        pending={isPending}
-        onConfirm={handleReminder}
       />
       <ConfirmDialog
         open={confirmAction === "delete"}

@@ -4,17 +4,30 @@ import { revalidatePath } from "next/cache";
 import type { Prisma } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { z } from "zod";
-import { isStaff } from "@/lib/permissions";
+import { submitOrderRequestSchema } from "@/lib/validations/order-request";
+import { hasPermission, isAdmin, PERMISSIONS } from "@/lib/permissions";
 import { calculateOrderTotal } from "@/lib/calculator-utils";
 import { ADMIN_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/routes";
 
 // --- Helpers ---
 async function requireAdmin() {
   const session = await auth();
-  if (!session?.user || !isStaff(session.user.role))
+  if (!session?.user || !isAdmin(session.user.roles ?? session.user.role))
     throw new Error("Unauthorized");
   return session;
+}
+
+async function requireCalculatorPermission() {
+  const session = await auth();
+  if (
+    !session?.user ||
+    !hasPermission(
+      session.user.roles ?? session.user.role,
+      PERMISSIONS.SETTINGS_MANAGE
+    )
+  ) {
+    throw new Error("Forbidden");
+  }
 }
 
 function revalidateCalculator() {
@@ -36,7 +49,7 @@ export async function upsertProjectType(
     active: boolean;
   }
 ) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   const payload = { ...data, dependentFields: data.dependentFields };
   if (id) {
     await prisma.projectType.update({ where: { id }, data: payload });
@@ -47,7 +60,7 @@ export async function upsertProjectType(
 }
 
 export async function deleteProjectType(id: string) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   await prisma.projectType.delete({ where: { id } });
   revalidateCalculator();
 }
@@ -66,7 +79,7 @@ export async function upsertFeatureOption(
     active: boolean;
   }
 ) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   if (id) {
     await prisma.featureOption.update({ where: { id }, data });
   } else {
@@ -76,7 +89,7 @@ export async function upsertFeatureOption(
 }
 
 export async function deleteFeatureOption(id: string) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   await prisma.featureOption.delete({ where: { id } });
   revalidateCalculator();
 }
@@ -95,7 +108,7 @@ export async function upsertAddOnOption(
     active: boolean;
   }
 ) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   if (id) {
     await prisma.addOnOption.update({ where: { id }, data });
   } else {
@@ -105,7 +118,7 @@ export async function upsertAddOnOption(
 }
 
 export async function deleteAddOnOption(id: string) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   await prisma.addOnOption.delete({ where: { id } });
   revalidateCalculator();
 }
@@ -120,7 +133,7 @@ export async function updateCalculatorConfig(data: {
   urgencyThresholdDays: number;
   dpPercentage: number;
 }) {
-  await requireAdmin();
+  await requireCalculatorPermission();
   await prisma.calculatorConfig.upsert({
     where: { id: "calculator" },
     update: data,
@@ -130,33 +143,7 @@ export async function updateCalculatorConfig(data: {
 }
 
 // --- OrderRequest ---
-export const submitOrderRequestSchema = z.object({
-  projectTypeId: z.string().min(1, "Tipe proyek wajib dipilih"),
-  features: z.array(z.string()).default([]),
-  customFeatures: z
-    .array(
-      z.object({
-        name: z.string(),
-        description: z.string().optional().default(""),
-      })
-    )
-    .default([]),
-  addOns: z
-    .array(
-      z.object({
-        addOnId: z.string().min(1),
-        months: z.number().int().default(1),
-      })
-    )
-    .default([]),
-  dependentValues: z.record(z.string(), z.number()).default({}),
-  urgency: z.string().default("normal"),
-  deadline: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
-  estimatedTotal: z.number().optional(),
-});
-
-export type SubmitOrderRequestInput = z.infer<typeof submitOrderRequestSchema>;
+export type { SubmitOrderRequestInput } from "@/lib/validations/order-request";
 
 export async function submitOrderRequest(data: {
   projectTypeId: string;
@@ -189,10 +176,12 @@ export async function submitOrderRequest(data: {
   const projectType = await prisma.projectType.findUnique({
     where: { id: validData.projectTypeId },
   });
-  if (!projectType) {
+  if (!projectType || !projectType.active) {
     throw new Error("Tipe proyek tidak ditemukan");
   }
   const basePrice = Number(projectType.basePrice);
+  if (!Number.isFinite(basePrice) || basePrice < 0)
+    throw new Error("Harga dasar tidak valid.");
 
   // 2. Dependent fields
   const depFields = Array.isArray(projectType.dependentFields)
@@ -205,19 +194,35 @@ export async function submitOrderRequest(data: {
     value: (field.label && validData.dependentValues[field.label]) || 0,
     pricePerUnit: Number(field.pricePerUnit || 0),
   }));
+  const scopeLabels = new Set(
+    depFields.map((field) => field.label).filter(Boolean)
+  );
+  if (
+    Object.keys(validData.dependentValues).some(
+      (label) => !scopeLabels.has(label)
+    )
+  )
+    throw new Error("Parameter skala tidak tersedia untuk jenis proyek ini.");
 
   // 3. Features
   const dbFeatures = await prisma.featureOption.findMany({
     where: {
       id: { in: validData.features },
       active: true,
+      OR: [{ projectTypeId: projectType.id }, { projectTypeId: null }],
     },
   });
+  if (dbFeatures.length !== validData.features.length)
+    throw new Error("Sebagian fitur tidak tersedia untuk jenis proyek ini.");
   const featurePrices = dbFeatures.map((f) => Number(f.price));
 
   // 4. Custom feature standard unit price
   const stdFeature = await prisma.featureOption.findFirst({
-    where: { isMajor: false, active: true },
+    where: {
+      isMajor: false,
+      active: true,
+      OR: [{ projectTypeId: projectType.id }, { projectTypeId: null }],
+    },
     orderBy: { order: "asc" },
   });
   const customFeaturePrice = stdFeature ? Number(stdFeature.price) : 500000;
@@ -228,8 +233,11 @@ export async function submitOrderRequest(data: {
     where: {
       id: { in: addOnIds },
       active: true,
+      OR: [{ projectTypeId: projectType.id }, { projectTypeId: null }],
     },
   });
+  if (dbAddOns.length !== addOnIds.length)
+    throw new Error("Sebagian add-on tidak tersedia untuk jenis proyek ini.");
 
   const clampedAddOns: Array<{ addOnId: string; months: number }> = [];
   const addOnCalcParams: Array<{ pricePerMonth: number; months: number }> = [];
@@ -269,6 +277,12 @@ export async function submitOrderRequest(data: {
     urgency: validData.urgency === "urgent" ? "urgent" : "normal",
     urgencyMultiplier,
   });
+  if (
+    !Number.isSafeInteger(authoritativeTotal) ||
+    authoritativeTotal < 0 ||
+    authoritativeTotal > 999999999999
+  )
+    throw new Error("Estimasi di luar rentang biaya yang didukung.");
 
   await prisma.orderRequest.create({
     data: {

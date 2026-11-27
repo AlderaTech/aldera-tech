@@ -1,3 +1,4 @@
+import { parsePage } from "@/lib/pagination";
 import type { InvoiceStatus, Prisma } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -30,7 +31,7 @@ export async function InvoicesContent({
   const userId = session!.user.id;
 
   const rawStatus = searchParams?.status?.trim().toUpperCase();
-  const page = Math.max(1, parseInt(searchParams?.page || "1", 10) || 1);
+  const page = parsePage(searchParams?.page);
 
   const statusFilter =
     rawStatus &&
@@ -43,31 +44,35 @@ export async function InvoicesContent({
     status: statusFilter ? statusFilter : { not: "DRAFT" },
   };
 
-  const result = await safeDb(async () => {
-    const [totalCount, rawInvoices, allRawInvoices] = await Promise.all([
-      prisma.invoice.count({ where }),
-      prisma.invoice.findMany({
-        where,
-        orderBy: { issueDate: "desc" },
-        skip: (page - 1) * INVOICES_PER_PAGE,
-        take: INVOICES_PER_PAGE,
-        include: { project: { select: { title: true } } },
-      }),
-      prisma.invoice.findMany({
-        where: { clientId: userId, status: { not: "DRAFT" } },
-        select: {
-          id: true,
-          number: true,
-          status: true,
-          issueDate: true,
-          dueDate: true,
-          total: true,
-          paymentProofUrl: true,
-        },
-      }),
-    ]);
-    return { totalCount, rawInvoices, allRawInvoices };
-  }, null);
+  const result = await safeDb(
+    async () => {
+      const [totalCount, rawInvoices, allRawInvoices] = await Promise.all([
+        prisma.invoice.count({ where }),
+        prisma.invoice.findMany({
+          where,
+          orderBy: { issueDate: "desc" },
+          skip: (page - 1) * INVOICES_PER_PAGE,
+          take: INVOICES_PER_PAGE,
+          include: { project: { select: { title: true } } },
+        }),
+        prisma.invoice.findMany({
+          where: { clientId: userId, status: { not: "DRAFT" } },
+          select: {
+            id: true,
+            number: true,
+            status: true,
+            issueDate: true,
+            dueDate: true,
+            total: true,
+            paymentProofUrl: true,
+          },
+        }),
+      ]);
+      return { totalCount, rawInvoices, allRawInvoices };
+    },
+    null,
+    { errorFallback: true }
+  );
 
   if (result === null) return <InvoicesLoadError />;
 

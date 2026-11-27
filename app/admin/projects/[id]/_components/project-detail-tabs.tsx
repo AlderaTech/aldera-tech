@@ -1,4 +1,5 @@
 "use client";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
 
 import Link from "next/link";
 import {
@@ -19,7 +20,12 @@ import { TimeTab } from "@/components/dashboard/time-tab";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import {
+  WorkspaceTabsList as TabsList,
+  WorkspaceTabsTrigger as TabsTrigger,
+} from "@/components/dashboard/workspace-segmented-tabs";
+import layoutStyles from "@/components/dashboard/workspace-layout.module.css";
 import { useUrlState } from "@/lib/hooks/use-url-state";
 import { isStaff } from "@/lib/permissions";
 import { ADMIN_ROUTES } from "@/lib/routes";
@@ -66,29 +72,29 @@ export function ProjectDetailTabs({
       onValueChange={(val) => setParam("tab", val)}
       className="gap-0"
     >
-      <div className="sticky top-16 z-20 -mx-1 overflow-x-auto border-b border-slate-200 bg-slate-50/95 px-1 py-2 backdrop-blur">
-        <TabsList className="h-auto w-max justify-start gap-1 bg-white p-1 shadow-sm">
+      <div className={layoutStyles.stickyTabs}>
+        <TabsList density="compact" aria-label="Bagian proyek">
           <ProjectTabTrigger
             value="overview"
             icon={FolderOpen}
-            label="Overview"
+            label="Ringkasan"
           />
           <ProjectTabTrigger
             value="milestones"
             icon={CheckCircle2}
-            label="Milestones"
+            label="Tahapan"
             count={project.milestones.length}
           />
           <ProjectTabTrigger
             value="tasks"
             icon={Clock3}
-            label="Tasks"
+            label="Tugas"
             count={project.tasks.length}
           />
           <ProjectTabTrigger
             value="activity"
             icon={Activity}
-            label="Activity"
+            label="Aktivitas"
             count={project.activities.length}
           />
           <ProjectTabTrigger
@@ -100,19 +106,19 @@ export function ProjectDetailTabs({
           <ProjectTabTrigger
             value="time"
             icon={Timer}
-            label="Time"
+            label="Waktu"
             count={project.timeEntries.length}
           />
           <ProjectTabTrigger
             value="files"
             icon={FolderOpen}
-            label="Files"
+            label="Berkas"
             count={project.files.length}
           />
           <ProjectTabTrigger
             value="invoices"
             icon={FileText}
-            label="Invoices"
+            label="Invoice"
             count={project.invoices.length}
           />
         </TabsList>
@@ -220,8 +226,8 @@ function ProjectFilesPanel({ project }: { project: AdminProjectDetail }) {
       </Card>
 
       {project.files.length === 0 ? (
-        <Card className="border-dashed p-8 text-center text-sm text-muted-foreground">
-          Belum ada file untuk proyek ini.
+        <Card className="p-0">
+          <AdminEmptyState context="files" />
         </Card>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -270,8 +276,8 @@ function ProjectInvoicesPanel({ project }: { project: AdminProjectDetail }) {
         </Button>
       </div>
       {project.invoices.length === 0 ? (
-        <Card className="border-dashed p-8 text-center text-sm text-muted-foreground">
-          Belum ada invoice untuk proyek ini.
+        <Card className="p-0">
+          <AdminEmptyState context="invoices" />
         </Card>
       ) : (
         <div className="space-y-3">
@@ -286,7 +292,7 @@ function ProjectInvoicesPanel({ project }: { project: AdminProjectDetail }) {
                   <div>
                     <div className="font-medium">{invoice.number}</div>
                     <div className="mt-0.5 text-xs text-muted-foreground">
-                      Issued: {formatDate(invoice.issueDate)} · Due:{" "}
+                      Terbit: {formatDate(invoice.issueDate)} · Due:{" "}
                       {formatDate(invoice.dueDate)}
                     </div>
                   </div>

@@ -11,7 +11,14 @@ export function toCsv<T extends Record<string, unknown>>(
 
   const escape = (value: unknown): string => {
     if (value === null || value === undefined) return "";
-    const s = value instanceof Date ? value.toISOString() : String(value);
+    const raw = value instanceof Date ? value.toISOString() : String(value);
+    // Preserve numeric values; untrusted text must remain text in spreadsheets.
+    const s =
+      typeof value === "string" &&
+      !/^-?\d+(?:\.\d+)?$/.test(raw) &&
+      /^[\s\u0000-\u001f]*[=+\-@＝＋－＠]/u.test(raw)
+        ? `'${raw}`
+        : raw;
     if (/[",\n\r]/.test(s)) {
       return `"${s.replace(/"/g, '""')}"`;
     }

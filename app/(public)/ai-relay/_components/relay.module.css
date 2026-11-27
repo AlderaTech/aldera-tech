@@ -120,8 +120,6 @@
   filter: drop-shadow(
     0 6px 8px color-mix(in srgb, var(--home-ink) 12%, transparent)
   );
-  animation: mascotSway 7s ease-in-out infinite;
-  transform-origin: bottom center;
 }
 .miniMascot img {
   display: block;
@@ -248,15 +246,6 @@
 .ctaActions a:last-child:hover {
   background: var(--home-paper);
 }
-@keyframes mascotSway {
-  0%,
-  100% {
-    rotate: -1deg;
-  }
-  50% {
-    rotate: 1deg;
-  }
-}
 @media (min-width: 900px) {
   .sectionHeading {
     grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
@@ -326,9 +315,6 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .miniMascot {
-    animation: none;
-  }
   .page *,
   .page *::before,
   .page *::after {

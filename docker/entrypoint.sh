@@ -16,7 +16,8 @@ if [ "${AUTO_MIGRATE}" = "true" ]; then
   if bunx prisma db push; then
     echo "[Entrypoint] Database schema push succeeded."
   else
-    echo "[Entrypoint] WARNING: Database push failed. Continuing with startup..."
+    echo "[Entrypoint] ERROR: Required database schema sync failed. Startup aborted."
+    exit 1
   fi
 fi
 
@@ -46,6 +47,8 @@ EOF
 */15 * * * * /app/run-cron.sh publish-scheduled
 # AI Relay Low Balance Guard (Every 30 minutes)
 */30 * * * * /app/run-cron.sh balance-guard
+# Durable wallet and bot settings reconciliation
+*/5 * * * * /app/run-cron.sh reconcile-integrations
 EOF
   chmod 0600 /etc/crontabs/nextjs
 
@@ -59,11 +62,11 @@ else
 fi
 
 # 3. Ensure uploads folder exists
-mkdir -p /app/public/uploads
+mkdir -p /app/public/uploads /app/storage/private-uploads
 
 echo "[Entrypoint] Starting application on port ${PORT}..."
 if [ "$(id -u)" = "0" ]; then
-  chown -R nextjs:nodejs /app/public/uploads
+  chown -R nextjs:nodejs /app/public/uploads /app/storage/private-uploads
   exec su-exec nextjs "$@"
 else
   exec "$@"

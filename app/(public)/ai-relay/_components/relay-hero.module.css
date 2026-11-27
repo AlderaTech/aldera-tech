@@ -18,14 +18,8 @@
 .heroCopy h1 span {
   color: var(--home-blue);
 }
-.heroCopy > p:first-child > span {
-  min-width: 0.5rem;
-  width: 0.5rem;
-  height: 0.5rem;
-  border: 0;
-  border-radius: 50%;
-  background: var(--home-blue);
-  box-shadow: 0 0 0 5px color-mix(in srgb, var(--home-blue) 8%, transparent);
+.heroCopy > p:first-child {
+  margin-bottom: 1.25rem;
 }
 .description {
   max-width: 34rem;

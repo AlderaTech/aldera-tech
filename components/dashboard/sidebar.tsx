@@ -204,10 +204,10 @@ export function DashboardSidebar({
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
-        <div className="space-y-5">
+      <nav className="flex-1 overflow-y-auto px-3 py-3">
+        <div className="space-y-2.5">
           {groups.map((group) => (
-            <div key={group.label} className="space-y-1.5">
+            <div key={group.label} className="space-y-1">
               <div className="px-3 text-[11px] font-semibold tracking-[0.14em] text-slate-400 uppercase">
                 {group.label}
               </div>

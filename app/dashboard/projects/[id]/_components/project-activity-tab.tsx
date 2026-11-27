@@ -1,6 +1,6 @@
-import { FadeUp } from "@/components/shared/motion";
-import { Card } from "@/components/ui/card";
+import { Activity } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import styles from "./project-detail.module.css";
 
 export interface ProjectActivityItem {
   id: string;
@@ -14,35 +14,60 @@ interface ProjectActivityTabProps {
 }
 
 export function ProjectActivityTab({ activities }: ProjectActivityTabProps) {
-  if (activities.length === 0) {
-    return (
-      <Card className="p-10 text-center text-muted-foreground">
-        Belum ada aktivitas.
-      </Card>
-    );
-  }
-
   return (
-    <div className="relative ml-3 space-y-4 border-l-2 pl-6">
-      {activities.map((a) => (
-        <FadeUp key={a.id}>
-          <div className="relative">
-            <span className="absolute top-1 -left-[29px] size-3 rounded-full bg-primary ring-4 ring-background" />
-            <Card className="p-4">
-              <p className="text-sm">{a.description}</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {a.user?.name} •{" "}
-                {formatDate(a.createdAt, {
-                  day: "numeric",
-                  month: "short",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
-            </Card>
-          </div>
-        </FadeUp>
-      ))}
-    </div>
+    <section
+      className={styles.panel}
+      aria-labelledby="project-activity-heading"
+    >
+      <div className={styles.panelHeader}>
+        <div>
+          <p className={styles.eyebrow}>
+            <Activity className="size-3.5" aria-hidden="true" /> Tetap Terhubung
+          </p>
+          <h2 id="project-activity-heading" className={styles.panelTitle}>
+            Log Aktivitas Proyek
+          </h2>
+          <p className={styles.panelSubtitle}>
+            Riwayat pembaruan terbaru dari pengerjaan proyek Anda.
+          </p>
+        </div>
+        <span className={styles.countBadge}>{activities.length} Aktivitas</span>
+      </div>
+
+      {activities.length === 0 ? (
+        <div className={styles.emptyBox}>Belum ada aktivitas.</div>
+      ) : (
+        <ol className={styles.timelineList}>
+          {activities.map((a) => (
+            <li key={a.id} className={styles.timelineItem}>
+              <span
+                className={styles.timelineMarker}
+                data-status="IN_PROGRESS"
+                aria-hidden="true"
+              >
+                <Activity className="size-4" />
+              </span>
+              <div className={styles.timelineCard}>
+                <p className="m-0 text-sm font-semibold text-[#102651]">
+                  {a.description}
+                </p>
+                <div className={styles.timelineMeta}>
+                  {a.user?.name && <span>Oleh {a.user.name}</span>}
+                  <time dateTime={a.createdAt.toISOString()}>
+                    {formatDate(a.createdAt, {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </time>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
   );
 }

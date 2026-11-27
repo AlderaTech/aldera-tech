@@ -65,6 +65,6 @@ describe("PortfolioTable Component", () => {
   it("renders empty state when no portfolio items match", () => {
     const html = renderToStaticMarkup(<PortfolioTable items={[]} />);
 
-    expect(html).toContain("Tidak ada studi kasus yang sesuai.");
+    expect(html).toContain("Belum ada studi kasus");
   });
 });

@@ -1,16 +1,11 @@
 "use client";
 
+import { parsePage } from "@/lib/pagination";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
+
 import * as React from "react";
 import Image from "next/image";
-import {
-  Star,
-  Pencil,
-  Trash2,
-  Eye,
-  EyeOff,
-  User,
-  MessageSquare,
-} from "lucide-react";
+import { Star, Pencil, Trash2, Eye, EyeOff, User } from "lucide-react";
 import { toast } from "sonner";
 import {
   Table,
@@ -33,16 +28,18 @@ export function TestimonialTable({
   onEdit,
   onDelete,
   onRefresh,
+  onCreate,
 }: {
   items: TestimonialItem[];
   onEdit: (item: TestimonialItem) => void;
   onDelete: (item: TestimonialItem) => void;
   onRefresh: () => void;
+  onCreate?: () => void;
 }) {
   const { getParam, setParam } = useUrlState();
   const search = getParam("q", "");
   const statusFilter = getParam("status", "all").toLowerCase();
-  const currentPage = Math.max(1, Number(getParam("page", "1")) || 1);
+  const currentPage = parsePage(getParam("page", "1"));
   const PAGE_SIZE = 10;
 
   const [pendingToggleId, setPendingToggleId] = React.useState<string | null>(
@@ -95,7 +92,7 @@ export function TestimonialTable({
 
   return (
     <div className="space-y-4">
-      <div className="p-4">
+      <div className="border-b border-slate-100 px-5 py-4">
         <SearchFilterBar
           placeholder="Cari nama klien, ulasan, atau proyek..."
           searchParamKey="q"
@@ -150,12 +147,15 @@ export function TestimonialTable({
         <TableBody>
           {paginatedItems.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={6}
-                className="py-10 text-center text-muted-foreground"
-              >
-                <MessageSquare className="mx-auto mb-2 size-8 opacity-40" />
-                Tidak ada testimoni yang ditemukan.
+              <TableCell colSpan={6} className="p-0">
+                <AdminEmptyState
+                  context="testimonials"
+                  action={
+                    onCreate ? (
+                      <Button onClick={onCreate}>Tambah Testimoni</Button>
+                    ) : undefined
+                  }
+                />
               </TableCell>
             </TableRow>
           ) : (

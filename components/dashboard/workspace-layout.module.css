@@ -1,0 +1,9 @@
+.stickyTabs {
+  position: sticky;
+  top: var(--workspace-header-height);
+  z-index: 20;
+  min-width: 0;
+  padding-block: 0.5rem;
+  background: color-mix(in srgb, var(--overview-canvas) 95%, transparent);
+  backdrop-filter: blur(12px);
+}

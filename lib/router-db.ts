@@ -4,6 +4,7 @@ import {
   type QueryResult,
   type QueryResultRow,
 } from "pg";
+import { assertTestDatabaseUrl } from "@/lib/test-database-url";
 
 /**
  * Secondary PostgreSQL Database Client for Aldera AI API Relay (`aldera_router`).
@@ -69,10 +70,14 @@ export function assertAuditTableImmutability(sql: string): void {
  * Returns the singleton `pg.Pool` instance connected to `process.env.ROUTER_DATABASE_URL`.
  */
 export function getRouterPool(): Pool {
+  if (process.env.NODE_ENV === "test")
+    assertTestDatabaseUrl(process.env.ROUTER_DATABASE_URL);
   if (!globalForRouterDb.routerPool) {
     const connectionString =
       process.env.ROUTER_DATABASE_URL ||
       "postgresql://postgres:postgres@localhost:5432/aldera_router";
+    if (process.env.NODE_ENV === "test")
+      assertTestDatabaseUrl(connectionString);
 
     globalForRouterDb.routerPool = new Pool({
       connectionString,
@@ -98,19 +103,30 @@ export async function queryRouter<T extends QueryResultRow = QueryResultRow>(
 }
 
 function wrapClientWithSafety(client: PoolClient): PoolClient {
-  const originalQuery = client.query.bind(client);
-  client.query = (async (...args: Parameters<typeof originalQuery>) => {
-    const firstArg = args[0] as unknown;
-    const text =
-      typeof firstArg === "string"
-        ? firstArg
-        : (firstArg as { text?: string } | undefined)?.text;
-    if (text) {
-      assertQuerySafety(text);
-    }
-    return originalQuery(...args);
-  }) as typeof client.query;
-  return client;
+  const query = new Proxy(client.query, {
+    async apply(target, _receiver, args: unknown[]) {
+      const first = args[0];
+      const sql =
+        typeof first === "string"
+          ? first
+          : first &&
+              typeof first === "object" &&
+              "text" in first &&
+              typeof first.text === "string"
+            ? first.text
+            : undefined;
+      if (sql) assertQuerySafety(sql);
+      return Reflect.apply(target, client, args);
+    },
+  });
+  // Do not mutate client.query: released clients are reused by the pg pool.
+  return new Proxy(client, {
+    get(target, property) {
+      if (property === "query") return query;
+      const value: unknown = Reflect.get(target, property);
+      return typeof value === "function" ? value.bind(target) : value;
+    },
+  });
 }
 
 /**

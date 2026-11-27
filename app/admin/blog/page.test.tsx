@@ -81,6 +81,6 @@ describe("AdminBlogPage", () => {
     });
 
     const html = renderToStaticMarkup(pageElement);
-    expect(html).toContain("Belum ada post. Buat yang pertama!");
+    expect(html).toContain("Belum ada artikel blog");
   });
 });

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import mascot from "@/public/images/services/aldera-cat-services.webp";
+import emptyIllustration from "@/public/images/about/technology/design.webp";
 import { cn } from "@/lib/utils";
 import commonStyles from "../../projects/_components/project-list.module.css";
 import { EmptyStatePattern } from "../../_components/empty-state-pattern";
@@ -11,13 +11,13 @@ export function OrdersEmptyState() {
       aria-labelledby="orders-empty-heading"
     >
       <Image
-        src={mascot}
+        src={emptyIllustration}
         alt=""
-        width={140}
-        height={140}
+        width={120}
+        height={120}
         aria-hidden="true"
         className={commonStyles.mascot}
-        sizes="(min-width: 640px) 140px, 112px"
+        sizes="(min-width: 640px) 120px, 104px"
         quality={90}
       />
       <div className={commonStyles.stateContent}>

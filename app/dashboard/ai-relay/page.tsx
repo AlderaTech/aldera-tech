@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/routes";
+import { getServiceAvailability } from "@/lib/service-availability";
 import {
   getUserBalance,
   getBalanceTransactions,
@@ -32,6 +33,7 @@ export default async function AiRelayDashboardPage() {
     usageLogs,
     catalog,
     healthMetrics,
+    routerEnabled,
   ] = await Promise.all([
     getUserBalance(),
     getBalanceTransactions(50),
@@ -40,6 +42,7 @@ export default async function AiRelayDashboardPage() {
     getUsageLogs(100),
     getModelCatalog(),
     getModelHealthMetrics(),
+    getServiceAvailability("ai_router"),
   ]);
 
   return (
@@ -51,6 +54,7 @@ export default async function AiRelayDashboardPage() {
       initialLogs={usageLogs}
       catalog={catalog}
       healthMetrics={healthMetrics}
+      routerEnabled={routerEnabled}
     />
   );
 }

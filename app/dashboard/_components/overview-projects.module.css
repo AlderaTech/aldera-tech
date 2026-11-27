@@ -1,11 +1,19 @@
+.contentWrap {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.85rem;
+}
 .list {
   display: grid;
   gap: 0.8rem;
 }
 .project {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
   min-width: 0;
-  padding: 1.1rem;
+  padding: 1rem 1.1rem;
   border: 1px solid var(--overview-line);
   border-radius: 1rem;
   background: var(--overview-paper);
@@ -73,18 +81,22 @@
   color: var(--overview-muted);
 }
 .milestone {
-  margin: 0.85rem 0 0;
+  margin: 0;
   color: var(--overview-muted);
   font-size: 0.775rem;
-  line-height: 1.65;
+  line-height: 1.5;
   overflow-wrap: anywhere;
+}
+.progressBlock {
+  margin-top: 0.1rem;
+  padding-top: 0;
 }
 .progressLabel {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  margin: 0.9rem 0 0.5rem;
+  margin: 0 0 0.45rem;
   color: var(--overview-muted);
   font-size: 0.7rem;
 }
@@ -96,16 +108,94 @@
   display: flex;
   align-items: flex-start;
   gap: 0.35rem;
-  margin: 0.75rem 0 0;
+  margin: 0.55rem 0 0;
   color: var(--overview-muted);
   font-size: 0.6875rem;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 .updated svg {
   width: 0.8rem;
   height: 0.8rem;
   flex-shrink: 0;
   margin-top: 0.1rem;
+}
+.footerCallout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-top: auto;
+  padding: 0.95rem 1.1rem;
+  border: 1px dashed
+    color-mix(in srgb, var(--overview-blue) 28%, var(--overview-line));
+  border-radius: 1rem;
+  background: color-mix(
+    in srgb,
+    var(--overview-sky) 45%,
+    var(--overview-paper)
+  );
+}
+.footerCalloutCopy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 0.75rem;
+}
+.footerCalloutIcon {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 0.7rem;
+  background: var(--overview-paper);
+  color: var(--overview-blue);
+  box-shadow: 0 2px 8px rgb(36 95 229 / 10%);
+}
+.footerCalloutIcon svg {
+  width: 1rem;
+  height: 1rem;
+}
+.footerCalloutCopy strong {
+  display: block;
+  color: var(--overview-ink);
+  font-size: 0.78rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+.footerCalloutCopy p {
+  margin: 0.15rem 0 0;
+  color: var(--overview-muted);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+.footerCalloutLink {
+  display: inline-flex;
+  min-height: 2.15rem;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid
+    color-mix(in srgb, var(--overview-blue) 26%, var(--overview-line));
+  border-radius: 0.65rem;
+  background: var(--overview-paper);
+  color: var(--overview-blue);
+  font-size: 0.73rem;
+  font-weight: 700;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+.footerCalloutLink:hover {
+  border-color: var(--overview-blue);
+  background: var(--overview-sky);
+}
+.footerCalloutLink svg {
+  width: 0.85rem;
+  height: 0.85rem;
 }
 @media (max-width: 639px) {
   .project {

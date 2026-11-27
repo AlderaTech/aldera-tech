@@ -1,3 +1,6 @@
+import { parsePage } from "@/lib/pagination";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -11,6 +14,7 @@ import { OrderRequestStatus, type Prisma } from "@prisma/client";
 import { SearchFilterBar } from "@/components/shared/search-filter-bar";
 import { DataPagination } from "@/components/shared/data-pagination";
 import { ParamFilterSelect } from "@/components/shared/param-filter-select";
+import { AdminMascot } from "../_components/admin-mascot";
 
 const statusMeta: Record<
   string,
@@ -50,7 +54,7 @@ export default async function AdminOrdersPage({
   }
 
   const sp = await searchParams;
-  const page = Math.max(1, Number(sp?.page) || 1);
+  const page = parsePage(sp?.page);
   const PAGE_SIZE = 10;
   const q = sp?.q?.trim();
   const rawStatus = sp?.status?.trim()?.toUpperCase();
@@ -92,12 +96,21 @@ export default async function AdminOrdersPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Order Requests</h1>
-        <p className="text-muted-foreground">
-          Estimasi proyek yang diajukan klien dari kalkulator harga.
-        </p>
-      </div>
+      <AdminBanner
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+        category="estimates"
+        mascot={<AdminMascot pose="activity" size="header" />}
+      >
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Permohonan Pesanan
+          </h1>
+          <p className="text-muted-foreground">
+            Estimasi proyek yang diajukan klien dari kalkulator harga.
+          </p>
+        </div>
+      </AdminBanner>
 
       <SearchFilterBar
         placeholder="Cari nama client, email, atau tipe proyek..."
@@ -111,8 +124,8 @@ export default async function AdminOrdersPage({
       </SearchFilterBar>
 
       {orders.length === 0 ? (
-        <Card className="p-12 text-center text-muted-foreground">
-          Belum ada order request atau tidak ada yang sesuai kriteria.
+        <Card className="p-0">
+          <AdminEmptyState context="orders" />
         </Card>
       ) : (
         <div className="space-y-3">

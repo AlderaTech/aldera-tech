@@ -3,6 +3,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 // Mock auth
 mock.module("@/auth", () => ({
+  handlers: {},
+  signIn: mock(),
+  signOut: mock(),
   auth: () =>
     Promise.resolve({
       user: { id: "admin-1", role: "ADMIN", name: "Super Admin" },
@@ -98,8 +101,6 @@ describe("AuditLogPage", () => {
     });
 
     const html = renderToStaticMarkup(pageElement);
-    expect(html).toContain(
-      "Belum ada audit log atau tidak ada log yang sesuai kriteria filter."
-    );
+    expect(html).toContain("Belum ada catatan audit");
   });
 });

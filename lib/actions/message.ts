@@ -32,6 +32,17 @@ export async function postMessageAction(
   if (content.length < 1 || content.length > 5000) {
     return { ok: false, error: "Pesan harus 1-5000 karakter." };
   }
+  if (
+    parentId &&
+    !(await prisma.projectMessage.findFirst({
+      where: { id: parentId, projectId },
+      select: { id: true },
+    }))
+  )
+    return {
+      ok: false,
+      error: "Pesan balasan tidak ditemukan pada proyek ini.",
+    };
   await prisma.projectMessage.create({
     data: {
       projectId,

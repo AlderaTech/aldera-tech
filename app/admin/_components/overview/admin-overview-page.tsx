@@ -13,6 +13,7 @@ import type {
   AdminOverviewAnalytics,
   AdminRecentActivity,
 } from "../../_data/overview";
+import styles from "./admin-overview.module.css";
 
 type AdminOverviewPageProps = {
   statCards: ReturnType<typeof getOverviewStatCards>;
@@ -30,15 +31,15 @@ export function AdminOverviewPage({
   recent,
 }: AdminOverviewPageProps) {
   return (
-    <div className="space-y-5">
+    <div className={styles.workspace}>
       <OverviewHero actions={quickActions} />
       <OverviewStatGrid stats={statCards} />
       <OverviewCharts analytics={analytics} />
-      <TopClientsCard clients={analytics.clientsData} />
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
+      <div className={styles.bottomGrid}>
+        <TopClientsCard clients={analytics.clientsData} />
         <RecentActivityCard activities={recent} />
-        <OperationalPanel cards={operationalCards} actions={quickActions} />
       </div>
+      <OperationalPanel cards={operationalCards} actions={quickActions} />
     </div>
   );
 }

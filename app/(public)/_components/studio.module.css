@@ -11,6 +11,13 @@
 .softSection {
   background: var(--home-soft);
 }
+.heroKicker {
+  color: var(--home-muted);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
 .eyebrow {
   margin-bottom: 1.25rem;
   color: var(--home-blue);
@@ -77,6 +84,12 @@
   transition:
     border-color 200ms,
     transform 200ms;
+}
+@media (max-width: 639px) {
+  .heroKicker {
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+  }
 }
 @media (min-width: 640px) {
   .container {

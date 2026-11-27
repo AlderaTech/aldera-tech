@@ -79,6 +79,6 @@ describe("AdminInvoicesPage", () => {
     });
 
     const html = renderToStaticMarkup(pageElement);
-    expect(html).toContain("Belum ada invoice.");
+    expect(html).toContain("Belum ada invoice");
   });
 });

@@ -1,16 +1,12 @@
 "use client";
 
+import { parsePage } from "@/lib/pagination";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
+
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  ExternalLink,
-  Pencil,
-  Trash2,
-  Eye,
-  EyeOff,
-  Briefcase,
-} from "lucide-react";
+import { ExternalLink, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import {
   Table,
@@ -38,7 +34,7 @@ export function PortfolioTable({ items }: { items: PortfolioCaseStudyItem[] }) {
   const { getParam, setParam } = useUrlState();
   const search = getParam("q", "");
   const statusFilter = getParam("status", "all").toLowerCase();
-  const currentPage = Math.max(1, Number(getParam("page", "1")) || 1);
+  const currentPage = parsePage(getParam("page", "1"));
   const PAGE_SIZE = 10;
 
   const [deleteTarget, setDeleteTarget] =
@@ -107,7 +103,7 @@ export function PortfolioTable({ items }: { items: PortfolioCaseStudyItem[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="p-4">
+      <div className="border-b border-slate-100 px-5 py-4">
         <SearchFilterBar
           placeholder="Cari judul, klien, atau industri..."
           searchParamKey="q"
@@ -162,12 +158,17 @@ export function PortfolioTable({ items }: { items: PortfolioCaseStudyItem[] }) {
         <TableBody>
           {paginatedItems.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={6}
-                className="py-10 text-center text-muted-foreground"
-              >
-                <Briefcase className="mx-auto mb-2 size-8 opacity-40" />
-                Tidak ada studi kasus yang sesuai.
+              <TableCell colSpan={6} className="p-0">
+                <AdminEmptyState
+                  context="portfolio"
+                  action={
+                    <Button asChild>
+                      <Link href={ADMIN_ROUTES.portfolioNew}>
+                        Tambah Studi Kasus
+                      </Link>
+                    </Button>
+                  }
+                />
               </TableCell>
             </TableRow>
           ) : (

@@ -3,6 +3,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 // Mock auth
 mock.module("@/auth", () => ({
+  handlers: {},
+  signIn: mock(),
+  signOut: mock(),
   auth: () =>
     Promise.resolve({
       user: { id: "admin-1", role: "ADMIN", name: "Super Admin" },
@@ -71,7 +74,7 @@ describe("AdminOrdersPage", () => {
     });
 
     const html = renderToStaticMarkup(pageElement);
-    expect(html).toContain("Order Requests");
+    expect(html).toContain("Permohonan Pesanan");
     expect(html).toContain("Budi Santoso");
     expect(html).toContain("budi@example.com");
     expect(html).toContain("Web Application");
@@ -92,8 +95,6 @@ describe("AdminOrdersPage", () => {
     });
 
     const html = renderToStaticMarkup(pageElement);
-    expect(html).toContain(
-      "Belum ada order request atau tidak ada yang sesuai kriteria."
-    );
+    expect(html).toContain("Belum ada permohonan pesanan");
   });
 });

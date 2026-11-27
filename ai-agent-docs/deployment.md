@@ -18,7 +18,7 @@ Aldera Tech dibangun di atas arsitektur container modern dan efisien:
 │   └──────────┬──────────┘                                     │
 │              │ Proxy http://127.0.0.1:3000                    │
 │   ┌──────────▼────────────────────────────────────────────┐   │
-│   │ Container: aldera_tech_app (oven/bun:1-alpine)         │   │
+│   │ Container: aldera_tech_app (oven/bun:1.4.4-alpine)         │   │
 │   │                                                       │   │
 │   │   ├── Next.js 16 Standalone (bun server.js :3000)     │   │
 │   │   ├── Background crond (BusyBox Cron Runner)          │   │
@@ -143,11 +143,11 @@ Jika database PostgreSQL di-host secara terpisah (misal AWS RDS, Supabase, Neon,
 
 Aldera Tech memiliki 3 cron endpoint aktif:
 
-| Endpoint                      | Frekuensi                      | Deskripsi                                                   |
-| :---------------------------- | :----------------------------- | :---------------------------------------------------------- |
-| `/api/cron/invoice-reminder`  | Harian (09:00 WIB / 02:00 UTC) | Kirim pengingat invoice jatuh tempo via WhatsApp Fonnte.    |
-| `/api/cron/issue-recurring`   | Harian (00:01 WIB / 17:01 UTC) | Terbitkan invoice rutin baru sesuai jadwal template.        |
-| `/api/cron/publish-scheduled` | Per 15 Menit                   | Publikasikan artikel blog yang tanggal rilisnya telah tiba. |
+| Endpoint                      | Frekuensi                      | Deskripsi                                                              |
+| :---------------------------- | :----------------------------- | :--------------------------------------------------------------------- |
+| `/api/cron/invoice-reminder`  | Harian (09:00 WIB / 02:00 UTC) | Menandai invoice lewat jatuh tempo; pengiriman reminder dinonaktifkan. |
+| `/api/cron/issue-recurring`   | Harian (00:01 WIB / 17:01 UTC) | Terbitkan invoice rutin baru sesuai jadwal template.                   |
+| `/api/cron/publish-scheduled` | Per 15 Menit                   | Publikasikan artikel blog yang tanggal rilisnya telah tiba.            |
 
 ### Bagaimana Cron Bekerja dalam Container:
 
@@ -257,7 +257,27 @@ Aldera Tech menerapkan isolasi lingkungan multi-stack pada server VPS produksi t
 | **Router Docker Tag**      | `:staging` (`router-telegram-bot:staging`, etc.)       | `:latest`                                      |
 | **CI/CD Auto-Deploy**      | Push ke branch `staging`                               | Push ke branch `main`                          |
 
+#### Ketersediaan AI Relay dan Telegram
+
+Toggle layanan memakai tabel `service_availability` di database router setiap
+lingkungan. Untuk database yang sudah berjalan, terapkan `database/migrations/004_service_availability.sql`
+dari repositori `router-billing-proxy` sebelum menjalankan versi gateway, bot,
+dan web yang membaca tabel tersebut. Bootstrap database baru sudah membuat tabel
+dan mengaktifkan kedua layanan. Setelah migrasi, perbarui gateway dan bot sebelum
+merilis kontrol admin di web. Set `PUBLIC_WEB_URL` di bot agar tombol jeda mengarah
+ke domain web lingkungannya. Untuk pratinjau bukti, `TELEGRAM_BOT_TOKEN` di aplikasi
+web harus berasal dari bot yang menerima bukti transfer pada lingkungan tersebut.
+Schema router yang dipakai CI berasal dari pin `.server-infra` dan perlu memuat
+migrasi yang sama sebelum menjalankan pemeriksaan integrasi web.
+
 ### 7.2 Alur Otomatisasi CI/CD GitHub Actions
+
+Pemeriksaan dipisahkan ke runner lint, typecheck, konfigurasi, unit, UI, dan
+integration. Lane lint/unit/UI/integration menggunakan matrix dinamis yang
+menambah shard pada pipeline berikutnya bila durasi job sebelumnya melebihi
+tujuh menit. Build dan deploy menunggu seluruh gerbang serta verifikasi manifest
+file test lulus. Rincian pemetaan, artifact, dan batas sharding tersedia pada
+[panduan CI testing](ci-testing.md).
 
 1. **Push ke `staging`**:
    - Memvalidasi linter dan typecheck Next.js.
@@ -275,3 +295,93 @@ Aldera Tech menerapkan isolasi lingkungan multi-stack pada server VPS produksi t
   - `staging.aldera.tech` $\rightarrow$ `http://aldera-tech-staging:3000`
 - Service staging router proxy tidak menggunakan alias generik `billing-proxy` pada bridge proxy untuk mencegah tabrakan rute (collision).
 - Database staging `aldera_tech_staging` dan `aldera_router_staging` terisolasi penuh dari database produksi untuk mencegah kontaminasi data transaksi finansial dan pengguna.
+
+## Prasyarat integritas backend
+
+### Diagnostik staging tanpa deployment
+
+Workflow **Build and Deploy** menyediakan input manual `diagnose_staging=true`.
+Mode ini hanya membaca status container staging dan pesan startup yang telah
+difilter serta disamarkan melalui `docker/inspect-staging.sh`. Mode diagnostik
+tidak membangun image, menjalankan deployment, membaca environment container,
+atau mengubah database. Gunakan log job **Inspect Staging Startup** untuk
+membedakan kegagalan proses startup dari kegagalan layanan upstream.
+
+Setelah deployment staging, skrip yang sama dijalankan dengan
+`VERIFY_STAGING_READY=true` pada job CI. Pemeriksaan mensyaratkan container
+`running` dan tiga respons HTTP 200 berturut-turut dari halaman Login. Jika
+aplikasi tetap restart atau halaman tidak dapat dilayani, workflow gagal meskipun
+`update.sh` mengembalikan exit code 0. Setelah Login stabil, pemeriksaan mewajibkan
+HTTP 200 dari `/api/health`; kegagalan database/storage/upstream menggagalkan
+deployment. Input diagnostik dan flag verifikasi hanya untuk
+job deployment, bukan environment aplikasi.
+
+### Pemulihan credential AI staging
+
+Input manual `inspect_staging_ai=true` bersama `diagnose_staging=true` memeriksa
+metadata konfigurasi dan schema penyimpanan upstream tanpa mencetak secret.
+Password `INITIAL_PASSWORD` adalah password dashboard 9Router, bukan bearer API.
+`NINE_ROUTER_API_KEY` harus berisi API key upstream yang aktif.
+
+Input manual `repair_staging_ai=true` menjalankan operasi pemeliharaan eksplisit
+melalui `docker/repair-staging-ai.sh`. Operasi ini hanya menargetkan container dan
+direktori compose staging, memakai key aktif yang sudah tersedia di SQLite
+upstream staging, memvalidasinya melalui GET model, mengganti satu setting pada
+`.env` secara atomik, lalu membuat ulang service web tersebut. Tidak ada key baru,
+request completion, perubahan ledger, atau perubahan konfigurasi produksi.
+Kegagalan rekreasi/health mengembalikan `.env` semula. Credential tidak dicetak
+dan tidak dikirim ke GitHub. Uji guard/rollback dengan
+`python3 -B docker/staging-relay-auth-test.py`.
+
+Workflow deployment staging menjalankan rekonsiliasi yang sama sebelum update
+image. Credential runtime yang sudah valid diprioritaskan; operasi idempoten
+tidak membuat ulang service bila file environment dan runtime sudah sesuai.
+
+Endpoint publik AI berasal dari origin aplikasi: produksi memakai
+`https://api.aldera.tech`, staging memakai `https://api-staging.aldera.tech`.
+Keduanya merupakan endpoint billing proxy; password/API key upstream tidak boleh
+dimasukkan ke konfigurasi IDE pengguna. IDE tetap menggunakan key akun pengguna.
+Nilai endpoint dan origin disentralisasi pada `lib/routes.ts`; tidak ada variabel
+environment publik baru. Staging menggunakan robots noindex pada metadata dan
+header respons; origin produksi mempertahankan pengindeksan.
+
+Konfigurasi hasil pemulihan bertahan pada deployment image biasa. Pengelola vault
+infrastruktur harus menyimpan API key staging yang sama dalam secret API khusus;
+template `NINE_ROUTER_API_KEY` tidak boleh mengambil nilai dari password awal
+dashboard. Reprovision melalui template lama dapat mengembalikan konfigurasi
+yang keliru. Jangan menyalin credential staging ke produksi atau sebaliknya.
+
+### Kompatibilitas schema
+
+- Enum database `Role` mempertahankan nilai `OWNER`, `DESIGNER`, dan `ACCOUNTANT`
+  untuk kompatibilitas data yang sudah tersimpan. Nilai tersebut tidak memberi
+  izin staf/admin baru; akses tetap mengikuti `STAFF_ROLES` dan matriks izin.
+  Migrasi `20261116010000_preserve_legacy_role_values` bersifat aditif dan dapat
+  diterapkan ulang. Sinkronisasi startup tidak menggunakan `--accept-data-loss`
+  maupun reset database.
+- Image runner menggunakan `node_modules` dari stage builder setelah Prisma
+  client dibuat. Build memverifikasi konstruksi client tanpa koneksi database.
+
+- Sinkronkan kolom nullable `User.invitedAt` sebelum menjalankan aplikasi. Migrasi aditif tersedia pada `prisma/migrations/20261115000000_admin_invitation_marker/migration.sql`; deployment dengan `AUTO_MIGRATE=true` memakai schema Prisma yang sama. Tidak ada perubahan atau backfill identitas akun lama secara otomatis.
+- Entrypoint menghentikan startup jika sinkronisasi skema yang diaktifkan gagal; aplikasi tidak dijalankan dengan skema yang tidak kompatibel.
+- Produksi memerlukan `TURNSTILE_SECRET_KEY` untuk verifikasi captcha dan `WHATSAPP_API_KEY` valid untuk OTP/notifikasi. Konfigurasi kosong menghasilkan kegagalan, bukan keberhasilan simulasi. Jangan menggunakan test key dalam produksi.
+- Upstream AI Relay harus tersedia pada `NINE_ROUTER_BASE_URL` dari jaringan container. HTTP 503 pada health check akibat upstream down harus diperbaiki melalui layanan/config upstream; jangan mengganti hasilnya dengan status sukses buatan.
+- Gunakan lockfile yang disertakan: Next.js `16.4.3`, NextAuth `5.0.0-beta.32`. Validasi alur login, undangan, upload bukti, dan persetujuan pembayaran di staging sebelum Release PR.
+- Detail kontrak: [Integritas Backend](backend-integrity.md).
+
+## Penyimpanan privat dan rekonsiliasi lintas database
+
+- Schema aktif memerlukan migrasi aditif `prisma/migrations/20261116000000_backend_security_and_reconciliation/migration.sql` atau sinkronisasi schema Prisma melalui entrypoint. Tidak ada backfill tujuan invoice berdasarkan catatan bebas. Admin harus meninjau invoice top-up lama secara eksplisit sebelum mengubah tujuannya; jangan menerbitkan kredit ulang untuk transaksi lama.
+- Persist volume `private_uploads_data` pada direktori runtime `storage/private-uploads`; Docker menggunakan `/app/storage/private-uploads`. Backup volume publik dan privat bersama database. Jangan menerbitkan direktori privat melalui reverse proxy.
+- Semua URL `/uploads/*` harus diteruskan ke aplikasi agar rewrite kontrol akses berjalan. Hapus aturan nginx/CDN yang menyajikan unggahan langsung dan purge cache unggahan lama sebelum rilis; cache publik lama tidak dapat dicabut oleh kode aplikasi. Media publik lama dikenali melalui referensi artikel terbit, portfolio, testimoni dan avatar.
+- Cron terautentikasi `/api/cron/reconcile-integrations` berjalan setiap lima menit pada `docker/crontab` dan crontab entrypoint. Pantau `InvoiceBalanceEffect` berstatus PENDING/REVIEW dan `IntegrationSyncState.lastError`; jangan mengubah ledger secara langsung.
+- Refund bersaldo kurang memblokir konsumsi AI pada akun router. Lakukan verifikasi ledger dan proses top-up resmi bila diperlukan, retry refund, lalu buka akses secara eksplisit melalui panel admin. Integrasi proxy/router eksternal harus menghormati `users.is_active`; verifikasi perilakunya di VPS staging.
+- Uji staging dengan sandbox gateway, upstream AI mock dan kanal pesan pengujian: duplikasi webhook, refund setelah saldo dipakai, pemulihan setelah router terputus, unduhan privat, serta reset password dan pencabutan sesi. Promosi produksi hanya setelah E2E staging terverifikasi.
+
+## Runtime dan migrasi pemeriksaan integritas
+
+- Docker dan CI dipin pada Bun 1.4.4. Lockfile v3 serta override berbasis rentang versi membutuhkan Bun minimal 1.4.4; gunakan `bun install --frozen-lockfile`. Jangan meregenerasi lockfile memakai Bun lama.
+- Terapkan migrasi aditif `prisma/migrations/20261116010000_auth_login_limits/migration.sql` sebelum image baru melayani login. Migrasi membuat `AuthRateLimit` dan indeks Invoice(status, paidAt), tanpa mengubah saldo, invoice atau identitas. Entrypoint dengan `AUTO_MIGRATE=true` menyinkronkan schema dan menghentikan startup jika gagal.
+- Cron `reconcile-integrations` yang sudah berjalan setiap lima menit juga membersihkan maksimal 1.000 counter login kedaluwarsa per eksekusi. Tidak ada cron, port, volume atau environment variable baru. Counter tidak menyimpan email/IP mentah.
+- Login dibatasi 10 percobaan per akun dan 120 per jaringan dalam jendela 15 menit di database bersama. Proxy harus menimpa header IP dari klien; limiter akun tetap bekerja tanpa header jaringan. Keberhasilan login menghapus counter akun.
+- Verifikasi login, penolakan percobaan berlebih, pemulihan setelah jendela berakhir, pembayaran sandbox dan provider mock di VPS staging sebelum Release PR. Bukti lokal tidak menggantikan verifikasi E2E staging.

@@ -40,10 +40,10 @@ export function OrderStatusFilter({ className = "" }: { className?: string }) {
             aria-pressed={isActive}
             data-status={opt.value}
             className={cn(
-              "cursor-pointer rounded-full px-3 py-1 text-xs font-semibold transition-all select-none",
+              "cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all select-none",
               isActive
-                ? "bg-primary text-primary-foreground shadow-xs"
-                : "border border-border/80 bg-background text-muted-foreground hover:bg-muted hover:text-foreground"
+                ? "border border-primary bg-primary text-white shadow-xs"
+                : "border border-slate-300 bg-white text-slate-600 shadow-2xs hover:border-primary/40 hover:bg-slate-50 hover:text-slate-900 dark:border-border/80 dark:bg-background dark:text-muted-foreground"
             )}
           >
             {opt.label}

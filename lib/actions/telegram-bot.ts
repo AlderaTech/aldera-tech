@@ -1,6 +1,12 @@
 "use server";
 
 import crypto from "crypto";
+import {
+  queueIntegrationSync,
+  syncIntegrationSettings,
+} from "@/lib/integration-sync";
+import { paymentMethodInputSchema } from "@/lib/validations/bot-settings";
+import { ADMIN_ROUTES } from "@/lib/routes";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { isAdmin } from "@/lib/permissions";
@@ -213,10 +219,8 @@ export async function updateTelegramBotConfigAction(
       ? data.adminTelegramUsername.replace(/^@/, "").trim()
       : current.adminTelegramUsername;
 
-  // 1. Upsert in Prisma
-  let updatedPrisma: unknown = null;
-  try {
-    updatedPrisma = await prisma.telegramBotConfig.upsert({
+  const updatedPrisma = await prisma.$transaction(async (tx) => {
+    const result = await tx.telegramBotConfig.upsert({
       where: { id: "default" },
       create: {
         id: "default",
@@ -250,38 +254,12 @@ export async function updateTelegramBotConfigAction(
         ...(data.helpText !== undefined ? { helpText: data.helpText } : {}),
       },
     });
-  } catch (err) {
-    console.warn("[updateTelegramBotConfigAction] Prisma upsert error:", err);
-  }
-
-  // 2. Synchronize to aldera_router
-  const amountsJson = JSON.stringify(finalTopupAmounts);
-  await queryRouter(
-    `INSERT INTO telegram_bot_configs (
-       id, ticket_template, important_notes, next_steps_notes, topup_amounts, admin_telegram_username, welcome_text, help_text, updated_at
-     ) VALUES ('default', $1, $2, $3, $4::jsonb, $5, $6, $7, NOW())
-     ON CONFLICT (id) DO UPDATE SET
-       ticket_template = EXCLUDED.ticket_template,
-       important_notes = EXCLUDED.important_notes,
-       next_steps_notes = EXCLUDED.next_steps_notes,
-       topup_amounts = EXCLUDED.topup_amounts,
-       admin_telegram_username = EXCLUDED.admin_telegram_username,
-       welcome_text = EXCLUDED.welcome_text,
-       help_text = EXCLUDED.help_text,
-       updated_at = NOW();`,
-    [
-      finalTicketTemplate,
-      finalImportantNotes,
-      finalNextStepsNotes,
-      amountsJson,
-      finalAdminUsername,
-      data.welcomeText ?? current.welcomeText ?? null,
-      data.helpText ?? current.helpText ?? null,
-    ]
-  );
-
+    await queueIntegrationSync(tx, "telegram-config");
+    return result;
+  });
+  await syncIntegrationSettings("telegram-config");
   try {
-    revalidatePath("/admin/telegram-bot");
+    revalidatePath(ADMIN_ROUTES.telegramBot);
   } catch {
     // ignore outside Next.js request context
   }
@@ -293,68 +271,9 @@ export async function updateTelegramBotConfigAction(
  * Lists all payment methods ordered by displayOrder ASC.
  */
 export async function getPaymentMethodsAction(): Promise<PaymentMethodItem[]> {
-  try {
-    const list = await prisma.paymentMethodSetting.findMany({
-      orderBy: { displayOrder: "asc" },
-    });
-
-    if (list.length > 0) {
-      return list.map((item) => ({
-        id: item.id,
-        type: item.type,
-        name: item.name,
-        accountNumber: item.accountNumber,
-        accountName: item.accountName,
-        qrisImageUrl: item.qrisImageUrl,
-        instructions: item.instructions,
-        isActive: item.isActive,
-        displayOrder: item.displayOrder,
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-      }));
-    }
-  } catch (err) {
-    console.warn("[getPaymentMethodsAction] Prisma read error:", err);
-  }
-
-  // Fallback to aldera_router
-  try {
-    const res = await queryRouter<{
-      id: string;
-      type: string;
-      name: string;
-      account_number: string;
-      account_name: string;
-      qris_image_url: string | null;
-      instructions: string | null;
-      is_active: boolean;
-      display_order: number;
-      created_at: string | Date;
-      updated_at: string | Date;
-    }>(
-      `SELECT id, type, name, account_number, account_name, qris_image_url, instructions, is_active, display_order, created_at, updated_at
-       FROM payment_method_settings
-       ORDER BY display_order ASC;`
-    );
-
-    return res.rows.map((r) => ({
-      id: r.id,
-      type: r.type,
-      name: r.name,
-      accountNumber: r.account_number,
-      accountName: r.account_name,
-      qrisImageUrl: r.qris_image_url,
-      instructions: r.instructions,
-      isActive: r.is_active,
-      displayOrder: r.display_order,
-      createdAt: new Date(r.created_at),
-      updatedAt: new Date(r.updated_at),
-    }));
-  } catch (err) {
-    console.warn("[getPaymentMethodsAction] Router DB read error:", err);
-  }
-
-  return [];
+  return prisma.paymentMethodSetting.findMany({
+    orderBy: { displayOrder: "asc" },
+  });
 }
 
 /**
@@ -364,75 +283,22 @@ export async function createPaymentMethodAction(
   data: CreatePaymentMethodInput
 ) {
   await requireAdminAuth();
-
-  if (!data.name || !data.name.trim()) {
-    throw new Error("Nama metode pembayaran wajib diisi.");
-  }
-
-  const id =
-    data.id || `pm_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
-  const type = data.type || "BANK_TRANSFER";
-  const name = data.name.trim();
-  const accountNumber = data.accountNumber?.trim() ?? "";
-  const accountName = data.accountName?.trim() ?? "";
-  const qrisImageUrl = data.qrisImageUrl?.trim() || null;
-  const instructions = data.instructions?.trim() || null;
-  const isActive = data.isActive ?? true;
-  const displayOrder = Number(data.displayOrder) || 0;
-
-  // 1. Prisma insert
-  try {
-    await prisma.paymentMethodSetting.create({
+  const parsed = paymentMethodInputSchema.parse(data);
+  const id = parsed.id ?? crypto.randomUUID();
+  await prisma.$transaction(async (tx) => {
+    await tx.paymentMethodSetting.create({
       data: {
+        ...parsed,
         id,
-        type,
-        name,
-        accountNumber,
-        accountName,
-        qrisImageUrl,
-        instructions,
-        isActive,
-        displayOrder,
+        type: parsed.type ?? "BANK_TRANSFER",
+        accountNumber: parsed.accountNumber ?? "",
+        accountName: parsed.accountName ?? "",
       },
     });
-  } catch (err) {
-    console.warn("[createPaymentMethodAction] Prisma create warning:", err);
-  }
-
-  // 2. aldera_router insert
-  await queryRouter(
-    `INSERT INTO payment_method_settings (
-       id, type, name, account_number, account_name, qris_image_url, instructions, is_active, display_order, created_at, updated_at
-     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
-     ON CONFLICT (id) DO UPDATE SET
-       type = EXCLUDED.type,
-       name = EXCLUDED.name,
-       account_number = EXCLUDED.account_number,
-       account_name = EXCLUDED.account_name,
-       qris_image_url = EXCLUDED.qris_image_url,
-       instructions = EXCLUDED.instructions,
-       is_active = EXCLUDED.is_active,
-       display_order = EXCLUDED.display_order,
-       updated_at = NOW();`,
-    [
-      id,
-      type,
-      name,
-      accountNumber,
-      accountName,
-      qrisImageUrl,
-      instructions,
-      isActive,
-      displayOrder,
-    ]
-  );
-
-  try {
-    revalidatePath("/admin/telegram-bot");
-  } catch {
-    // ignore
-  }
-
+    await queueIntegrationSync(tx, `payment-method:${id}`);
+  });
+  await syncIntegrationSettings(`payment-method:${id}`);
+  revalidatePath(ADMIN_ROUTES.telegramBot);
   return { ok: true, id };
 }
 
@@ -444,86 +310,13 @@ export async function updatePaymentMethodAction(
   data: UpdatePaymentMethodInput
 ) {
   await requireAdminAuth();
-
-  // 1. Prisma update
-  try {
-    await prisma.paymentMethodSetting.update({
-      where: { id },
-      data: {
-        ...(data.type !== undefined ? { type: data.type } : {}),
-        ...(data.name !== undefined ? { name: data.name } : {}),
-        ...(data.accountNumber !== undefined
-          ? { accountNumber: data.accountNumber }
-          : {}),
-        ...(data.accountName !== undefined
-          ? { accountName: data.accountName }
-          : {}),
-        ...(data.qrisImageUrl !== undefined
-          ? { qrisImageUrl: data.qrisImageUrl }
-          : {}),
-        ...(data.instructions !== undefined
-          ? { instructions: data.instructions }
-          : {}),
-        ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
-        ...(data.displayOrder !== undefined
-          ? { displayOrder: data.displayOrder }
-          : {}),
-      },
-    });
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.warn("[updatePaymentMethodAction] Prisma update warning:", msg);
-  }
-
-  // 2. aldera_router update
-  const updates: string[] = ["updated_at = NOW()"];
-  const params: unknown[] = [id];
-  let idx = 2;
-
-  if (data.type !== undefined) {
-    updates.push(`type = $${idx++}`);
-    params.push(data.type);
-  }
-  if (data.name !== undefined) {
-    updates.push(`name = $${idx++}`);
-    params.push(data.name);
-  }
-  if (data.accountNumber !== undefined) {
-    updates.push(`account_number = $${idx++}`);
-    params.push(data.accountNumber);
-  }
-  if (data.accountName !== undefined) {
-    updates.push(`account_name = $${idx++}`);
-    params.push(data.accountName);
-  }
-  if (data.qrisImageUrl !== undefined) {
-    updates.push(`qris_image_url = $${idx++}`);
-    params.push(data.qrisImageUrl);
-  }
-  if (data.instructions !== undefined) {
-    updates.push(`instructions = $${idx++}`);
-    params.push(data.instructions);
-  }
-  if (data.isActive !== undefined) {
-    updates.push(`is_active = $${idx++}`);
-    params.push(data.isActive);
-  }
-  if (data.displayOrder !== undefined) {
-    updates.push(`display_order = $${idx++}`);
-    params.push(data.displayOrder);
-  }
-
-  await queryRouter(
-    `UPDATE payment_method_settings SET ${updates.join(", ")} WHERE id = $1;`,
-    params
-  );
-
-  try {
-    revalidatePath("/admin/telegram-bot");
-  } catch {
-    // ignore
-  }
-
+  const parsed = paymentMethodInputSchema.partial().parse(data);
+  await prisma.$transaction(async (tx) => {
+    await tx.paymentMethodSetting.update({ where: { id }, data: parsed });
+    await queueIntegrationSync(tx, `payment-method:${id}`);
+  });
+  await syncIntegrationSettings(`payment-method:${id}`);
+  revalidatePath(ADMIN_ROUTES.telegramBot);
   return { ok: true };
 }
 
@@ -532,30 +325,13 @@ export async function updatePaymentMethodAction(
  */
 export async function togglePaymentMethodAction(id: string, isActive: boolean) {
   await requireAdminAuth();
-
-  // 1. Prisma update
-  try {
-    await prisma.paymentMethodSetting.update({
-      where: { id },
-      data: { isActive },
-    });
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.warn("[togglePaymentMethodAction] Prisma update warning:", msg);
-  }
-
-  // 2. aldera_router update
-  await queryRouter(
-    `UPDATE payment_method_settings SET is_active = $1, updated_at = NOW() WHERE id = $2;`,
-    [isActive, id]
-  );
-
-  try {
-    revalidatePath("/admin/telegram-bot");
-  } catch {
-    // ignore
-  }
-
+  if (typeof isActive !== "boolean") throw new Error("Status tidak valid.");
+  await prisma.$transaction(async (tx) => {
+    await tx.paymentMethodSetting.update({ where: { id }, data: { isActive } });
+    await queueIntegrationSync(tx, `payment-method:${id}`);
+  });
+  await syncIntegrationSettings(`payment-method:${id}`);
+  revalidatePath(ADMIN_ROUTES.telegramBot);
   return { ok: true };
 }
 
@@ -564,25 +340,11 @@ export async function togglePaymentMethodAction(id: string, isActive: boolean) {
  */
 export async function deletePaymentMethodAction(id: string) {
   await requireAdminAuth();
-
-  // 1. Prisma delete
-  try {
-    await prisma.paymentMethodSetting.delete({
-      where: { id },
-    });
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.warn("[deletePaymentMethodAction] Prisma delete warning:", msg);
-  }
-
-  // 2. aldera_router delete
-  await queryRouter(`DELETE FROM payment_method_settings WHERE id = $1;`, [id]);
-
-  try {
-    revalidatePath("/admin/telegram-bot");
-  } catch {
-    // ignore
-  }
-
+  await prisma.$transaction(async (tx) => {
+    await tx.paymentMethodSetting.delete({ where: { id } });
+    await queueIntegrationSync(tx, `payment-method:${id}`);
+  });
+  await syncIntegrationSettings(`payment-method:${id}`);
+  revalidatePath(ADMIN_ROUTES.telegramBot);
   return { ok: true };
 }

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
+import { requirePermission, PERMISSIONS } from "@/lib/permissions";
 import {
   projectCreateSchema,
   projectUpdateSchema,
@@ -173,7 +174,8 @@ export async function updateProjectAction(
 }
 
 export async function deleteProjectAction(projectId: string) {
-  await requireStaffUser();
+  const user = await requireStaffUser();
+  await requirePermission(PERMISSIONS.PROJECT_DELETE, { user });
   await prisma.project.delete({ where: { id: projectId } });
   revalidatePath(ADMIN_ROUTES.projects);
   revalidatePath(ADMIN_ROUTES.home);

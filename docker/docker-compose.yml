@@ -23,8 +23,6 @@ services:
       - MIDTRANS_SERVER_KEY=${MIDTRANS_SERVER_KEY}
       - MIDTRANS_CLIENT_KEY=${MIDTRANS_CLIENT_KEY}
       - MIDTRANS_IS_PRODUCTION=${MIDTRANS_IS_PRODUCTION:-false}
-      - XENDIT_SECRET_KEY=${XENDIT_SECRET_KEY}
-      - XENDIT_CALLBACK_TOKEN=${XENDIT_CALLBACK_TOKEN}
       - NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
       - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
       - ROUTER_DATABASE_URL=${ROUTER_DATABASE_URL:-postgresql://aldera:alderasecret@db:5432/aldera_router}
@@ -32,6 +30,7 @@ services:
       - NINE_ROUTER_API_KEY=${NINE_ROUTER_API_KEY:-}
     volumes:
       - uploads_data:/app/public/uploads
+      - private_uploads_data:/app/storage/private-uploads
     depends_on:
       db:
         condition: service_healthy
@@ -69,3 +68,6 @@ volumes:
     name: aldera_tech_postgres_data
   uploads_data:
     name: aldera_tech_uploads_data
+
+  private_uploads_data:
+    name: aldera_tech_private_uploads_data

@@ -5,14 +5,28 @@ import { ArrowUpRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DASHBOARD_ROUTES } from "@/lib/routes";
 import { getInitials } from "@/lib/utils";
-import mascot from "@/public/images/auth/aldera-cat-register.webp";
+import mascotGreeting from "@/public/images/dashboard/aldera-cat-greeting.webp";
 import styles from "./overview.module.css";
-import patternStyles from "./overview-patterns.module.css";
-import { EmptyStatePattern } from "./empty-state-pattern";
+import { WorkspaceBanner } from "@/components/dashboard/workspace-banner";
 
 export function OverviewWelcome({ user }: { user: Session["user"] }) {
   return (
-    <section className={styles.welcome} aria-labelledby="overview-heading">
+    <WorkspaceBanner
+      className={styles.welcome}
+      aria-labelledby="overview-heading"
+      eyebrow="Ruang kerja Anda"
+      mascot={
+        <Image
+          src={mascotGreeting}
+          alt=""
+          aria-hidden="true"
+          width={160}
+          height={160}
+          sizes="(min-width: 1024px) 144px, (min-width: 640px) 120px, 0px"
+          priority
+        />
+      }
+    >
       <div className={styles.welcomeIdentity}>
         <Avatar className={styles.avatar}>
           {user.image && (
@@ -21,7 +35,6 @@ export function OverviewWelcome({ user }: { user: Session["user"] }) {
           <AvatarFallback>{getInitials(user.name ?? "User")}</AvatarFallback>
         </Avatar>
         <div className={styles.welcomeCopy}>
-          <p className={styles.eyebrow}>Ruang kerja Anda</p>
           <h1 id="overview-heading">
             Halo, {user.name?.split(" ")[0] ?? "User"}
           </h1>
@@ -36,17 +49,6 @@ export function OverviewWelcome({ user }: { user: Session["user"] }) {
           </div>
         </div>
       </div>
-      <Image
-        src={mascot}
-        alt=""
-        aria-hidden="true"
-        className={styles.mascot}
-        width={80}
-        height={96}
-        sizes="(min-width: 640px) 80px, 1px"
-        quality={90}
-      />
-      <EmptyStatePattern className={patternStyles.welcomePattern} />
-    </section>
+    </WorkspaceBanner>
   );
 }

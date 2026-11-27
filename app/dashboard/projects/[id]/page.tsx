@@ -3,7 +3,12 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { MessagesTab } from "@/components/dashboard/messages-tab";
 import { ProjectTaskBoard } from "@/components/dashboard/project-task-board";
-import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { TabsContent } from "@/components/ui/tabs";
+import {
+  WorkspaceTabsList as TabsList,
+  WorkspaceTabsTrigger as TabsTrigger,
+} from "@/components/dashboard/workspace-segmented-tabs";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
 import { DASHBOARD_ROUTES } from "@/lib/routes";
@@ -15,6 +20,7 @@ import { ProjectInvoicesTab } from "./_components/project-invoices-tab";
 import { ProjectTimelineTab } from "./_components/project-timeline-tab";
 import { ProjectReviewPrompt } from "./_components/project-review-prompt";
 import { ProjectTabs } from "./_components/project-tabs";
+import styles from "./_components/project-detail.module.css";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -71,7 +77,7 @@ export default async function UserProjectDetail({
     redirect(DASHBOARD_ROUTES.projects);
 
   return (
-    <div className="space-y-6">
+    <div className={styles.page}>
       <ProjectHeader
         title={project.title}
         status={project.status}
@@ -90,28 +96,28 @@ export default async function UserProjectDetail({
       )}
 
       <ProjectTabs initialTab={resolvedParams?.tab}>
-        <TabsList className="w-full justify-start overflow-x-auto">
-          <TabsTrigger value="timeline">Timeline</TabsTrigger>
+        <TabsList density="compact" aria-label="Bagian proyek">
+          <TabsTrigger value="timeline">Linimasa</TabsTrigger>
           <TabsTrigger value="tasks">
-            Tasks ({project.tasks.length})
+            Tugas ({project.tasks.length})
           </TabsTrigger>
-          <TabsTrigger value="activity">Activity</TabsTrigger>
+          <TabsTrigger value="activity">Aktivitas</TabsTrigger>
           <TabsTrigger value="messages">
             Diskusi ({project.messages.filter((m) => !m.deletedAt).length})
           </TabsTrigger>
           <TabsTrigger value="files">
-            Files ({project.files.length})
+            Berkas ({project.files.length})
           </TabsTrigger>
           <TabsTrigger value="invoices">
-            Invoices ({project.invoices.length})
+            Invoice ({project.invoices.length})
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="timeline" className="mt-6">
+        <TabsContent value="timeline" className="mt-4">
           <ProjectTimelineTab milestones={project.milestones} />
         </TabsContent>
 
-        <TabsContent value="tasks" className="mt-6">
+        <TabsContent value="tasks" className="mt-4">
           <ProjectTaskBoard
             projectId={project.id}
             tasks={project.tasks}
@@ -124,11 +130,11 @@ export default async function UserProjectDetail({
           />
         </TabsContent>
 
-        <TabsContent value="activity" className="mt-6">
+        <TabsContent value="activity" className="mt-4">
           <ProjectActivityTab activities={project.activities} />
         </TabsContent>
 
-        <TabsContent value="messages" className="mt-6">
+        <TabsContent value="messages" className="mt-4">
           <MessagesTab
             projectId={project.id}
             messages={project.messages}
@@ -137,11 +143,11 @@ export default async function UserProjectDetail({
           />
         </TabsContent>
 
-        <TabsContent value="files" className="mt-6">
+        <TabsContent value="files" className="mt-4">
           <ProjectFilesTab projectId={project.id} files={project.files} />
         </TabsContent>
 
-        <TabsContent value="invoices" className="mt-6">
+        <TabsContent value="invoices" className="mt-4">
           <ProjectInvoicesTab invoices={project.invoices} />
         </TabsContent>
       </ProjectTabs>

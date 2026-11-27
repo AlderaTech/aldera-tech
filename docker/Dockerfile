@@ -3,7 +3,7 @@
 # ==============================================================================
 # Stage 1: Dependencies
 # ==============================================================================
-FROM oven/bun:1-alpine AS deps
+FROM oven/bun:1.4.4-alpine AS deps
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN bun install --frozen-lockfile
 # ==============================================================================
 # Stage 2: Builder
 # ==============================================================================
-FROM oven/bun:1-alpine AS builder
+FROM oven/bun:1.4.4-alpine AS builder
 
 WORKDIR /app
 
@@ -33,7 +33,7 @@ RUN bun run build
 # ==============================================================================
 # Stage 3: Runner
 # ==============================================================================
-FROM oven/bun:1-alpine AS runner
+FROM oven/bun:1.4.4-alpine AS runner
 
 WORKDIR /app
 
@@ -48,7 +48,8 @@ RUN apk add --no-cache curl su-exec busybox nodejs
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
 
-COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
+# Include the Prisma client generated from the deployed schema in the builder.
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
@@ -58,16 +59,20 @@ COPY --from=builder --chown=nextjs:nodejs /app/lib ./lib
 COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 
+# Fail the image build if the generated client or its runtime dependencies are missing.
+# Constructing the client is lazy and does not connect to a database.
+RUN node -e 'const { PrismaClient } = require("@prisma/client"); const { PrismaPg } = require("@prisma/adapter-pg"); new PrismaClient({ adapter: new PrismaPg({ connectionString: "" }) });'
+
 # Copy container entrypoint & crontab
 COPY docker/entrypoint.sh /app/docker-entrypoint.sh
 COPY docker/crontab /app/crontab
 RUN chmod +x /app/docker-entrypoint.sh
 
 # Setup uploads volume directory
-RUN mkdir -p /app/public/uploads \
-  && chown -R nextjs:nodejs /app/public/uploads
+RUN mkdir -p /app/public/uploads /app/storage/private-uploads \
+  && chown -R nextjs:nodejs /app/public/uploads /app/storage/private-uploads
 
-VOLUME ["/app/public/uploads"]
+VOLUME ["/app/public/uploads", "/app/storage/private-uploads"]
 
 EXPOSE 3000
 

@@ -4,10 +4,12 @@ import { safeDb } from "@/lib/safe-db";
 import { OnboardingChecklist } from "./_components/onboarding-checklist";
 import { OverviewWelcome } from "./_components/overview-welcome";
 import { OverviewStats } from "./_components/overview-stats";
+import { OverviewCharts } from "./_components/overview-charts";
 import { OverviewProjects } from "./_components/overview-projects";
 import { OverviewActivity } from "./_components/overview-activity";
 import { OverviewLayout } from "./_components/overview-layout";
 import type { Metadata } from "next";
+import { getOverviewAnalytics } from "./_data/overview-analytics";
 
 export const metadata: Metadata = {
   title: "Ringkasan",
@@ -18,6 +20,7 @@ export const metadata: Metadata = {
 export default async function DashboardHome() {
   const session = await auth();
   const userId = session!.user.id;
+  const analytics = await getOverviewAnalytics(userId);
 
   const stats = await safeDb(
     async () => {
@@ -80,6 +83,14 @@ export default async function DashboardHome() {
           active={stats.active}
           pending={stats.pending}
           spent={stats.spent}
+        />
+      }
+      charts={
+        <OverviewCharts
+          active={stats.active}
+          spent={stats.spent}
+          work={analytics.work}
+          payments={analytics.payments}
         />
       }
       projects={<OverviewProjects projects={stats.projects} />}

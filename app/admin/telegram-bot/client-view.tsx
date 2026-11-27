@@ -1,4 +1,7 @@
 "use client";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
+
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
@@ -25,7 +28,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import {
+  WorkspaceTabsList as TabsList,
+  WorkspaceTabsTrigger as TabsTrigger,
+} from "@/components/dashboard/workspace-segmented-tabs";
 import { useUrlState } from "@/lib/hooks/use-url-state";
 import {
   Card,
@@ -60,11 +67,13 @@ import {
   deletePaymentMethodAction,
   type PaymentMethodItem,
 } from "@/lib/actions/telegram-bot";
+import { AdminMascot } from "../_components/admin-mascot";
 
 const ALLOWED_BOT_TABS = ["bot-cms", "payment-methods"] as const;
 type TelegramBotTab = (typeof ALLOWED_BOT_TABS)[number];
 
 interface TelegramBotAdminClientViewProps {
+  serviceControl?: React.ReactNode;
   initialConfig: {
     id: string;
     ticketTemplate: string;
@@ -81,6 +90,7 @@ interface TelegramBotAdminClientViewProps {
 export function TelegramBotAdminClientView({
   initialConfig,
   initialPaymentMethods,
+  serviceControl,
 }: TelegramBotAdminClientViewProps) {
   const router = useRouter();
   const { getParam, setParam } = useUrlState();
@@ -357,18 +367,27 @@ export function TelegramBotAdminClientView({
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div>
-        <div className="flex items-center gap-2">
-          <Bot className="size-6 text-blue-600" />
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            Pengaturan Bot Telegram & Pembayaran
-          </h1>
+      <AdminBanner
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+        category="ai"
+        mascot={<AdminMascot pose="assistant" size="header" />}
+      >
+        <div>
+          <div className="flex items-center gap-2">
+            <Bot className="mt-1 size-6 shrink-0 self-start text-primary" />
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Pengaturan Bot Telegram & Pembayaran
+            </h1>
+          </div>
+          <p className="mt-1 text-sm text-slate-500">
+            Kelola format pesan bot Telegram, tautan konfirmasi admin, pilihan
+            nominal pengisian saldo, dan metode pembayaran.
+          </p>
         </div>
-        <p className="mt-1 text-sm text-slate-500">
-          Kelola markup teks bot Telegram, tautan konfirmasi admin, tombol
-          nominal top-up, serta metode pembayaran dinamis.
-        </p>
-      </div>
+      </AdminBanner>
+
+      {serviceControl}
 
       {/* Tabs */}
       <Tabs
@@ -376,7 +395,7 @@ export function TelegramBotAdminClientView({
         onValueChange={(val) => setParam("tab", val)}
         className="space-y-6"
       >
-        <TabsList className="bg-slate-200/60 p-1">
+        <TabsList aria-label="Pengaturan Telegram dan pembayaran">
           <TabsTrigger
             value="bot-cms"
             className="flex items-center gap-2 text-sm"
@@ -625,25 +644,20 @@ export function TelegramBotAdminClientView({
             </CardHeader>
             <CardContent>
               {paymentMethods.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-slate-200 p-8 text-center">
-                  <CreditCard className="mx-auto size-10 text-slate-400" />
-                  <p className="mt-2 text-sm font-medium text-slate-700">
-                    Belum ada metode pembayaran yang terdaftar
-                  </p>
-                  <p className="text-xs text-slate-500">
-                    Tambahkan rekening Bank atau QRIS agar pengguna dapat
-                    melakukan top-up saldo.
-                  </p>
-                  <Button
-                    onClick={handleOpenAddModal}
-                    size="sm"
-                    variant="outline"
-                    className="mt-4 gap-1.5 text-xs"
-                  >
-                    <Plus className="size-3.5" />
-                    Tambah Metode Pertama
-                  </Button>
-                </div>
+                <AdminEmptyState
+                  context="methods"
+                  action={
+                    <Button
+                      onClick={handleOpenAddModal}
+                      size="sm"
+                      variant="outline"
+                      className="mt-4 gap-1.5 text-xs"
+                    >
+                      <Plus className="size-3.5" />
+                      Tambah Metode Pertama
+                    </Button>
+                  }
+                />
               ) : (
                 <div className="overflow-hidden rounded-md border border-slate-200">
                   <Table>
@@ -675,7 +689,7 @@ export function TelegramBotAdminClientView({
                             {item.type === "QRIS" ? (
                               <Badge
                                 variant="outline"
-                                className="gap-1 border-purple-200 bg-purple-50 text-purple-700"
+                                className="gap-1 border-primary/20 bg-primary/5 text-primary"
                               >
                                 <QrCode className="size-3" />
                                 QRIS

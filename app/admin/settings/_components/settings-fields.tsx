@@ -19,7 +19,7 @@ export function SettingsSection({
   children: ReactNode;
 }) {
   return (
-    <section className="grid gap-4 p-4 sm:p-5 lg:grid-cols-[280px_minmax(0,1fr)]">
+    <section className="grid gap-4 p-4 sm:p-5 xl:grid-cols-[minmax(12rem,16rem)_minmax(0,1fr)]">
       <div className="flex gap-3">
         <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
           <Icon className="size-4" />

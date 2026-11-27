@@ -1,7 +1,21 @@
+import { API_ROUTES } from "./lib/routes";
 import type { NextConfig } from "next";
+import { isProductionSite } from "./lib/deployment-environment";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  async headers() {
+    return isProductionSite()
+      ? []
+      : [
+          {
+            source: "/:path*",
+            headers: [
+              { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+            ],
+          },
+        ];
+  },
   images: {
     // Allow serving images from public/uploads served by Next's built-in static handling.
     // Remote patterns are empty, all images served are local for now.
@@ -9,23 +23,23 @@ const nextConfig: NextConfig = {
     qualities: [50, 75, 90, 100],
   },
   experimental: {
+    agentUpgrade: "security",
     serverActions: {
       // Allow file uploads up to 20 MB via server actions.
       bodySizeLimit: "20mb",
     },
   },
-  async headers() {
-    return [
-      {
-        source: "/uploads/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-    ];
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: API_ROUTES.uploadsPattern,
+          destination: API_ROUTES.legacyFilePattern,
+        },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
   },
   async redirects() {
     return [

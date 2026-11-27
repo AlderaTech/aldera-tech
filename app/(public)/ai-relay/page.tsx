@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getModelCatalog } from "@/lib/actions/ai-relay";
 import { PUBLIC_ROUTES } from "@/lib/routes";
+import { getServiceAvailability } from "@/lib/service-availability";
 import { AiRelayPublicClientView } from "./client-view";
 
 export const metadata: Metadata = {
@@ -10,8 +11,18 @@ export const metadata: Metadata = {
   alternates: { canonical: PUBLIC_ROUTES.aiRelay },
 };
 
-export default async function AiRelayPublicPage() {
-  const catalog = await getModelCatalog();
+export const dynamic = "force-dynamic";
 
-  return <AiRelayPublicClientView initialCatalog={catalog} />;
+export default async function AiRelayPublicPage() {
+  const [catalog, routerEnabled] = await Promise.all([
+    getModelCatalog(),
+    getServiceAvailability("ai_router"),
+  ]);
+
+  return (
+    <AiRelayPublicClientView
+      initialCatalog={catalog}
+      routerEnabled={routerEnabled}
+    />
+  );
 }

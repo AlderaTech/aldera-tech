@@ -20,10 +20,7 @@ export function ServicesHero() {
       <div className={styles.heroBackdrop} aria-hidden="true" />
       <div className={cn(shared.container, styles.heroGrid)}>
         <FadeUp className={styles.heroCopy}>
-          <p className={styles.eyebrow}>
-            <span aria-hidden="true" />
-            Layanan Aldera Tech
-          </p>
+          <p className={shared.heroKicker}>Layanan Aldera Tech</p>
           <h1 id="services-heading">
             Solusi menyeluruh untuk kebutuhan <span>digital Anda.</span>
           </h1>
@@ -77,7 +74,7 @@ export function ServicesHero() {
               />
             </div>
 
-            <div className={cn(styles.floatBadge, styles.badgeEngineering)}>
+            <div className={cn(styles.serviceBadge, styles.badgeEngineering)}>
               <span>
                 <Code2 aria-hidden="true" />
               </span>
@@ -86,7 +83,7 @@ export function ServicesHero() {
                 <small>Engineering</small>
               </div>
             </div>
-            <div className={cn(styles.floatBadge, styles.badgeDesign)}>
+            <div className={cn(styles.serviceBadge, styles.badgeDesign)}>
               <span>
                 <Palette aria-hidden="true" />
               </span>
@@ -95,7 +92,7 @@ export function ServicesHero() {
                 <small>Pengalaman digital</small>
               </div>
             </div>
-            <div className={cn(styles.floatBadge, styles.badgeMobile)}>
+            <div className={cn(styles.serviceBadge, styles.badgeMobile)}>
               <span>
                 <Smartphone aria-hidden="true" />
               </span>

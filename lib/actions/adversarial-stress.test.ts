@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeAll, afterAll, mock } from "bun:test";
 
 type MockSession = {
@@ -45,7 +44,6 @@ import {
   getUsageLogs,
   getUsageAnalytics,
   executePlaygroundChat,
-  ensureRouterUser,
 } from "./ai-relay";
 
 import {
@@ -94,14 +92,14 @@ describe("Adversarial Stress Testing & Acceptance Verification", () => {
 
   beforeAll(async () => {
     // Seed users in aldera_router
-    const admin = await ensureRouterUser(
+    const admin = await seedRouterAccount(
       adminSession!.user.id,
       adminSession!.user.name,
       adminSession!.user.email
     );
     testAdminDbId = admin.id;
 
-    const client = await ensureRouterUser(
+    const client = await seedRouterAccount(
       clientSession!.user.id,
       clientSession!.user.name,
       clientSession!.user.email
@@ -214,17 +212,23 @@ describe("Adversarial Stress Testing & Acceptance Verification", () => {
           isAdmin: true,
         };
 
-        const untypedGetModelPricings = getModelPricings as any;
+        const untypedGetModelPricings = getModelPricings as (
+          override?: unknown
+        ) => Promise<unknown>;
         await expect(
           untypedGetModelPricings(maliciousOverride)
         ).rejects.toThrow(/Forbidden/);
 
-        const untypedGetFinancialMetrics = getFinancialMetrics as any;
+        const untypedGetFinancialMetrics = getFinancialMetrics as (
+          override?: unknown
+        ) => Promise<unknown>;
         await expect(
           untypedGetFinancialMetrics(maliciousOverride)
         ).rejects.toThrow(/Forbidden/);
 
-        const untypedRunLedgerAudit = runLedgerAudit as any;
+        const untypedRunLedgerAudit = runLedgerAudit as (
+          override?: unknown
+        ) => Promise<unknown>;
         await expect(untypedRunLedgerAudit(maliciousOverride)).rejects.toThrow(
           /Forbidden/
         );
@@ -305,13 +309,18 @@ describe("Adversarial Stress Testing & Acceptance Verification", () => {
       it("ignores extra injected arguments attempting user spoofing on client actions", async () => {
         currentSession = clientSession;
 
-        const untypedGetUserBalance = getUserBalance as any;
+        const untypedGetUserBalance = getUserBalance as (
+          spoofedId?: unknown
+        ) => Promise<{ webUserId: string; userId: number }>;
         const res = await untypedGetUserBalance("spoofed-victim-user-id");
         // Must strictly bind to clientSession.user.id
         expect(res.webUserId).toBe(clientSession!.user.id);
         expect(res.userId).toBe(testClientDbId);
 
-        const untypedCreateApiKey = createApiKey as any;
+        const untypedCreateApiKey = createApiKey as (
+          label: string,
+          spoofedId?: unknown
+        ) => Promise<{ id: number; label: string }>;
         const keyRes = await untypedCreateApiKey(
           "Injected Arg Key",
           "spoofed-victim-user-id"
@@ -408,7 +417,9 @@ describe("Adversarial Stress Testing & Acceptance Verification", () => {
       it("ignores extra arguments attempting identity override on binding actions", async () => {
         currentSession = clientSession;
 
-        const untypedGenerate = generateBindingTokenAction as any;
+        const untypedGenerate = generateBindingTokenAction as (
+          spoofedId?: unknown
+        ) => Promise<{ success: boolean; token: string }>;
         const res = await untypedGenerate("spoofed-victim-web-id");
         expect(res.success).toBe(true);
 
@@ -623,3 +634,11 @@ describe("Adversarial Stress Testing & Acceptance Verification", () => {
     });
   });
 });
+
+async function seedRouterAccount(webId: string, name?: string, email?: string) {
+  const result = await queryRouter<{ id: number }>(
+    "INSERT INTO users (web_user_id, full_name, username, balance, is_active) VALUES ($1,$2,$3,0,true) ON CONFLICT (web_user_id) DO UPDATE SET updated_at=NOW() RETURNING id",
+    [webId, name ?? webId, email ?? webId]
+  );
+  return { id: Number(result.rows[0].id) };
+}

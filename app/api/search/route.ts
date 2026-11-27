@@ -166,6 +166,10 @@ export async function GET(req: NextRequest) {
     }
   } catch (err) {
     console.error("Search error:", err);
+    return NextResponse.json(
+      { error: "Pencarian belum tersedia. Silakan coba kembali." },
+      { status: 503 }
+    );
   }
 
   return NextResponse.json({ results });

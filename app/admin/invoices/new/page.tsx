@@ -1,5 +1,7 @@
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { prisma } from "@/lib/prisma";
 import { safeDb } from "@/lib/safe-db";
+import { AdminMascot } from "../../_components/admin-mascot";
 import { InvoiceCreateForm } from "../_components/invoice-create-form";
 
 export default async function NewInvoicePage() {
@@ -25,12 +27,20 @@ export default async function NewInvoicePage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Invoice Baru</h1>
-        <p className="text-muted-foreground">
-          Buat invoice untuk client Anda. Nomor akan auto-generate.
-        </p>
-      </div>
+      <AdminBanner
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+        category="billing"
+        mascot={<AdminMascot pose="services" size="header" />}
+      >
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Invoice Baru</h1>
+          <p className="text-muted-foreground">
+            Buat tagihan untuk klien Anda dengan nomor invoice yang diterbitkan
+            otomatis.
+          </p>
+        </div>
+      </AdminBanner>
       <InvoiceCreateForm clients={clients} projects={projects} />
     </div>
   );

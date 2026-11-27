@@ -6,6 +6,7 @@ import patternStyles from "./overview-patterns.module.css";
 type OverviewLayoutProps = {
   welcome: ReactNode;
   stats: ReactNode;
+  charts?: ReactNode;
   projects: ReactNode;
   onboarding: ReactNode;
   activity: ReactNode;
@@ -15,6 +16,7 @@ type OverviewLayoutProps = {
 export function OverviewLayout({
   welcome,
   stats,
+  charts,
   projects,
   onboarding,
   activity,
@@ -24,6 +26,7 @@ export function OverviewLayout({
     <div className={cn(styles.page, patternStyles.scope)}>
       {welcome}
       {stats}
+      {charts}
       {onboarding}
       <div className={styles.columns} data-empty={empty || undefined}>
         {projects}

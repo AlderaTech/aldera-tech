@@ -1,3 +1,6 @@
+import { parsePage } from "@/lib/pagination";
+import { AdminEmptyState } from "@/app/admin/_components/admin-empty-state";
+import { AdminBanner } from "@/app/admin/_components/admin-banner";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { Card } from "@/components/ui/card";
@@ -18,6 +21,7 @@ import { ADMIN_ROUTES, AUTH_ROUTES } from "@/lib/routes";
 import { SearchFilterBar } from "@/components/shared/search-filter-bar";
 import { DataPagination } from "@/components/shared/data-pagination";
 import { ParamFilterSelect } from "@/components/shared/param-filter-select";
+import { AdminMascot } from "../_components/admin-mascot";
 import type { Prisma } from "@prisma/client";
 
 const auditActionOptions = [
@@ -47,7 +51,7 @@ export default async function AuditLogPage({
   }
 
   const sp = await searchParams;
-  const page = Math.max(1, Number(sp?.page) || 1);
+  const page = parsePage(sp?.page);
   const PAGE_SIZE = 20;
   const q = sp?.q?.trim();
   const rawAction = sp?.action?.trim();
@@ -85,12 +89,19 @@ export default async function AuditLogPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Audit Log</h1>
-        <p className="text-muted-foreground">
-          Log pencatatan aktivitas untuk transparansi perubahan di sistem.
-        </p>
-      </div>
+      <AdminBanner
+        data-admin-page-header
+        className="flex flex-wrap items-center justify-between gap-4"
+        category="audit"
+        mascot={<AdminMascot pose="security" size="header" />}
+      >
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Audit Log</h1>
+          <p className="text-muted-foreground">
+            Telusuri catatan aktivitas untuk memantau perubahan di dalam sistem.
+          </p>
+        </div>
+      </AdminBanner>
 
       <SearchFilterBar
         placeholder="Cari user, email, aksi, atau entitas..."
@@ -117,12 +128,8 @@ export default async function AuditLogPage({
           <TableBody>
             {logs.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="py-10 text-center text-muted-foreground"
-                >
-                  Belum ada audit log atau tidak ada log yang sesuai kriteria
-                  filter.
+                <TableCell colSpan={5} className="p-0">
+                  <AdminEmptyState context="logs" />
                 </TableCell>
               </TableRow>
             ) : (

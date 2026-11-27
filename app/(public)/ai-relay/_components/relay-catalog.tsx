@@ -10,12 +10,18 @@ import { RelayModelCards, RelayModelTable } from "./relay-model-table";
 import base from "./relay.module.css";
 import styles from "./relay-catalog.module.css";
 
-export function RelayCatalog({ state }: { state: RelayShowcaseState }) {
+export function RelayCatalog({
+  state,
+  routerEnabled,
+}: {
+  state: RelayShowcaseState;
+  routerEnabled: boolean;
+}) {
   const actions = {
     models: state.activeModels,
     copiedId: state.copiedId,
     onCopy: state.handleCopyModelId,
-    onUse: state.handleSelectModelForQuickstart,
+    onUse: routerEnabled ? state.handleSelectModelForQuickstart : undefined,
   };
   return (
     <section

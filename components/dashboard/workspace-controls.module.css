@@ -1,0 +1,122 @@
+.scope :global([data-slot="card"]) {
+  border-color: var(--overview-line);
+  border-radius: var(--workspace-card-radius);
+  background: var(--overview-paper);
+  box-shadow: 0 2px 12px
+    color-mix(in srgb, var(--overview-ink) 3.5%, transparent);
+}
+.scope :global([data-slot="card-title"]) {
+  font-size: 1rem;
+  font-weight: 750;
+  line-height: 1.45;
+}
+.scope :global([data-slot="card-description"]) {
+  font-size: var(--workspace-body-size);
+  color: var(--overview-muted);
+  line-height: 1.7;
+}
+.scope :global([data-slot="button"]) {
+  min-height: var(--workspace-control-height);
+  border-radius: var(--workspace-control-radius);
+  font-size: var(--workspace-body-size);
+  font-weight: 650;
+}
+.scope
+  :where(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    select,
+    textarea
+  ),
+.scope :global([data-slot="select-trigger"]) {
+  min-height: var(--workspace-control-height);
+  border-radius: var(--workspace-control-radius);
+  font-size: var(--workspace-body-size);
+}
+.scope :global([data-slot="badge"]) {
+  border-radius: 999px;
+  font-size: var(--workspace-caption-size);
+  line-height: 1.5;
+}
+.scope :global([data-slot="badge"][data-variant="default"]) {
+  border-color: color-mix(in srgb, var(--overview-blue) 18%, transparent);
+  background: var(--overview-sky);
+  color: var(--overview-blue);
+}
+.scope :global([data-slot="badge"][data-variant="secondary"]) {
+  border-color: var(--overview-line);
+  background: var(--overview-canvas);
+  color: var(--overview-muted);
+}
+.scope :global([data-slot="badge"][data-variant="success"]) {
+  border-color: color-mix(in srgb, var(--overview-success) 18%, transparent);
+  background: var(--overview-success-soft);
+  color: var(--overview-success);
+}
+.scope :global([data-slot="badge"][data-variant="warning"]) {
+  border-color: color-mix(in srgb, var(--overview-warning) 18%, transparent);
+  background: var(--overview-peach);
+  color: var(--overview-warning);
+}
+.scope :global([data-slot="badge"][data-variant="destructive"]) {
+  border-color: color-mix(in srgb, var(--overview-danger) 18%, transparent);
+  background: var(--overview-danger-soft);
+  color: var(--overview-danger);
+}
+.scope :global([data-slot="dialog-content"]),
+.scope :global([data-slot="alert-dialog-content"]) {
+  max-width: min(36rem, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-color: var(--overview-line);
+  border-radius: var(--workspace-card-radius);
+  background: var(--overview-paper);
+  color: var(--overview-ink);
+  font-family: var(--font-jakarta-sans), sans-serif;
+}
+.scope :global([data-slot="dialog-description"]),
+.scope :global([data-slot="alert-dialog-description"]) {
+  color: var(--overview-muted);
+  font-size: var(--workspace-body-size);
+  line-height: 1.7;
+}
+.scope :global([data-slot="dropdown-menu-content"]),
+.scope :global([data-slot="dropdown-menu-sub-content"]),
+.scope :global([data-slot="select-content"]) {
+  border-color: var(--overview-line);
+  border-radius: var(--workspace-control-radius);
+  background: var(--overview-paper);
+  color: var(--overview-ink);
+  font-family: var(--font-jakarta-sans), sans-serif;
+  box-shadow: 0 10px 30px
+    color-mix(in srgb, var(--overview-ink) 12%, transparent);
+}
+.scope :global([data-slot="dropdown-menu-item"]),
+.scope :global([data-slot="select-item"]) {
+  min-height: var(--workspace-control-height);
+  font-size: var(--workspace-body-size);
+}
+.scope :global([data-slot="dialog-close"]) {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 0.6rem;
+}
+.scope :is(a, button, input, textarea, [role="option"]):focus-visible {
+  outline: 2px solid var(--overview-blue);
+  outline-offset: 3px;
+}
+@media (max-width: 639px) {
+  .scope
+    :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea),
+  .scope :global([data-slot="select-trigger"]) {
+    font-size: 1rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scope :is(button, a, [role="dialog"], [role="alertdialog"], [role="menu"]) {
+    animation-duration: 0s;
+    transition-duration: 0s;
+  }
+}

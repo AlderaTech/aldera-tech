@@ -38,7 +38,7 @@ export function PortfolioImage({
       alt={alt}
       fill
       sizes={sizes}
-      quality={85}
+      quality={90}
       preload={preload}
       className={imageClassName}
       onError={() => setFailed(true)}
